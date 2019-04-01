@@ -121,13 +121,11 @@ module Installation
       #
       # @return [Boolean] true if user wants to skip it; false otherwise.
       def skip_ntp_server?
-        # TODO: improve this "Kubic specific" wording because probably it is not appropiate for any
-        # possible openSUSE use case. See https://github.com/yast/yast-installation/pull/791#pullrequestreview-220944366
         Yast::Popup.AnyQuestion(
           _("NTP Servers"),
           # TRANSLATORS: error message for invalid ntp server name/address
           _("You have not configured an NTP server. This may lead to\n" \
-          "your cluster not functioning properly or at all.\n" \
+          "your system not functioning properly.\n" \
           "Proceed with caution and at your own risk.\n\n" \
           "Would you like to continue with the installation?"),
           Yast::Label.YesButton,
