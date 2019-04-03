@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.0
+Version:        4.2.1
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -93,6 +93,9 @@ Requires:	yast2-users >= 3.2.8
 # storage-ng based version
 BuildRequires:	yast2-country >= 3.3.1
 Requires:	yast2-country >= 3.3.1
+
+# NtpSetup dialog (bsc#1129095)
+BuildRequires: yast2-ntp-client
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
