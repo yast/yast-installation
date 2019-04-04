@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr  4 08:10:42 UTC 2019 - Ladislav Slezák <lslezak@suse.cz>
+
+- Removed BuildRequires: yast2-ntp-client (causing dependency cycle)
+  (related to the previous fix bsc#1129095)
+- 4.2.2
+
+-------------------------------------------------------------------
 Fri Mar 29 12:58:51 UTC 2019 - David Diaz <dgonzalez@suse.com>
 
 - Add a new installation dialog which allows to setup the NTP
