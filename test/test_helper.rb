@@ -34,6 +34,8 @@ stub_module("Packages")
 stub_module("ProductLicense")
 stub_module("Profile")
 stub_module("ProfileLocation")
+# we cannot depend on this module (circular dependency)
+stub_module("NtpClient")
 
 if ENV["COVERAGE"]
   require "simplecov"
