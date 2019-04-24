@@ -389,7 +389,7 @@ module Yast
         "services",
         "services-manager",
         "configuration_management",
-        "pkg"   # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
+        "pkg" # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
       ].freeze
 
     def save_settings_steps
