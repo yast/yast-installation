@@ -352,7 +352,6 @@ module Yast
         "kernel",
         "x11",
         "proxy",
-        "pkg",
         "scc",
         "driver_update1",
         # bnc #340733
@@ -389,7 +388,8 @@ module Yast
         "roles",
         "services",
         "services-manager",
-        "configuration_management"
+        "configuration_management",
+        "pkg"   # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
       ].freeze
 
     def save_settings_steps
