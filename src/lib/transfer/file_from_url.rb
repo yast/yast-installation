@@ -217,33 +217,19 @@ module Yast::Transfer
           # Builtins.regexpsub can also return nil (bnc#959723)
           cdrom_device = install_url ? (Builtins.regexpsub(install_url, "devices=(.*)$", "\\1") || "") : ""
           if Installation.boot == "cd" && !cdrom_device.empty?
-            already_mounted = Ops.add(
-              Ops.add("grep ", cdrom_device),
-              " /proc/mounts ;"
-            )
-            am = Convert.to_map(
-              SCR.Execute(path(".target.bash_output"), already_mounted)
-            )
-
-            if Ops.get_integer(am, "exit", -1) == 0 &&
-                Ops.greater_than(
-                  Builtins.size(Ops.get_string(am, "stdout", "")),
-                  0
-                )
+            mtab =  File.open("/proc/mounts", "r").read
+            if mtab.include?(cdrom_device)
               Builtins.y2warning(
                 "%1 is already mounted, trying to bind mount...",
                 cdrom_device
               )
-              cmd = Ops.add(
-                Ops.add(
-                  Ops.add(
-                    Ops.add("mount -v --bind `grep ", cdrom_device),
-                    " /proc/mounts |cut -f 2 -d \\ ` "
-                  ),
-                  mount_point
-                ),
-                ";"
-              )
+              cmd = "mount -v --bind "
+              mtab.split("\n") do |line|
+               if line.split[0] == cdrom_device
+                  cmd << line.split[1] + " " + mount_point
+                  break
+               end
+              end
               am1 = Convert.to_map(
                 SCR.Execute(path(".target.bash_output"), cmd)
               )
