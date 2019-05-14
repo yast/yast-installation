@@ -219,17 +219,15 @@ module Yast::Transfer
 
           if Installation.boot == "cd" && !cdrom_device.empty?
             mtab =  File.read("/proc/mounts")
-            if mtab.match(Regexp.new("^#{cdrom_device}"))
+            m = mtab.match(/^#{cdrom_device}\s+(\S+)/)
+            if m
               Builtins.y2milestone(
                 "%1 is already mounted, trying to bind mount...",
                 cdrom_device
               )
-              cmd = "/bin/mount -v --bind "
-              cd_line = mtab.split("\n").find { |line| line.split[0] == cdrom_device }
-              cmd << cd_line.split[1] + " " + mount_point
-
               am1 = Convert.to_map(
-                SCR.Execute(path(".target.bash_output"), cmd)
+                SCR.Execute(path(".target.bash_output"),
+                "/bin/mount -v --bind #{m[1]} #{mount_point}")
               )
               if Ops.get_integer(am1, "exit", -1) == 0
                 ok = true
