@@ -1,5 +1,4 @@
 require "yast/rake"
-
 require "find"
 require "English"
 
