@@ -218,7 +218,7 @@ describe Yast::Transfer::FileFromUrl do
 
       context "CD has not been mounted" do
         before do
-          allow(File).to receive(:read).with("/proc/mounts").and_return([])
+          allow(File).to receive(:read).with("/proc/mounts").and_return("")
         end
 
         it "mounts CD and returns true" do

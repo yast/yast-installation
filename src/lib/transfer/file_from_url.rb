@@ -219,8 +219,8 @@ module Yast::Transfer
 
           if Installation.boot == "cd" && !cdrom_device.empty?
             mtab =  File.read("/proc/mounts")
-            if mtab.include?(cdrom_device)
-              Builtins.y2warning(
+            if mtab.match(Regexp.new("^#{cdrom_device}"))
+              Builtins.y2milestone(
                 "%1 is already mounted, trying to bind mount...",
                 cdrom_device
               )
