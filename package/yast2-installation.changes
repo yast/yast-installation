@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 10 15:07:17 CEST 2019 - schubi@suse.de
+
+- Downloading files: Remounting CD with bind option correctly if
+  the CD has already been mounted (bsc#1138117).
+- 4.0.75
+
+-------------------------------------------------------------------
 Thu Nov 15 15:40:49 CET 2018 - schubi@suse.de
 
 - Dialog complex_welcome: Translate the help button if the language
