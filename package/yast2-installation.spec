@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.5
+Version:        4.2.4
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
