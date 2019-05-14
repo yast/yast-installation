@@ -5,6 +5,8 @@ require_relative "test_helper"
 require "transfer/file_from_url"
 
 describe Yast::Transfer::FileFromUrl do
+  Yast.import "Installation"
+
   before do
     stub_const("Yast::FTP", double(fake_method: nil))
     stub_const("Yast::HTTP", double(Get: nil))
@@ -176,6 +178,56 @@ describe Yast::Transfer::FileFromUrl do
     context "when scheme is 'ftp'" do
     end
     context "when scheme is 'file'" do
+      let(:scheme) { "file" }
+      let(:destination) { "/tmp/auto.xml" }
+      let(:source) { "/oss.xml" }
+      let(:cd_device) { "/dev/sr0" }
+      let(:tmp_mount) { "/tmp_dir/tmp_mount" }
+
+      before do
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash"), "/bin/cp #{tmp_mount}/#{source} #{destination}")
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash"), "/bin/cp #{source} #{destination}")
+        allow(Yast::WFM).to receive(:Execute)
+          .with(Yast::Path.new(".local.umount"), tmp_mount)
+        allow(Yast::Installation).to receive(:sourcedir).and_return("/mnt")
+        allow(Yast::Installation).to receive(:boot).and_return("cd")
+        allow(Yast::InstURL).to receive("installInf2Url").and_return("cd:/?devices=#{cd_device}")
+        expect(Yast::SCR).to receive(:Read)
+          .with(Yast::Path.new(".target.size"), "/mnt/#{source}").and_return(0)
+        expect(Yast::SCR).to receive(:Read)
+          .with(Yast::Path.new(".target.size"), destination).and_return(0, 10)
+      end
+
+      context "CD has already been mounted multiple times" do
+        before do
+          allow(File).to receive(:read).with("/proc/mounts").and_return(
+            "#{cd_device} /mounts/mp_0005 iso9660 ro,relatime 0 0\n"\
+            "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
+          )
+        end
+
+        it "mounts with --bind option and returns true" do
+          expect(Yast::SCR).to receive(:Execute)
+            .with(Yast::Path.new(".target.bash_output"), "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
+            .and_return("exit" => 0, "stdout" => "ok")
+          expect(subject.Get(scheme, "", source, destination)).to eq(true)
+        end
+      end
+
+      context "CD has not been mounted" do
+        before do
+          allow(File).to receive(:read).with("/proc/mounts").and_return("")
+        end
+
+        it "mounts CD and returns true" do
+          expect(Yast::WFM).to receive(:Execute)
+            .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount, Yast::Installation.mountlog])
+            .and_return(true)
+          expect(subject.Get(scheme, "", source, destination)).to eq(true)
+        end
+      end
     end
     context "when scheme is 'nfs'" do
     end

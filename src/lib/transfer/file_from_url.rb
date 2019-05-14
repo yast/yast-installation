@@ -182,7 +182,7 @@ module Yast::Transfer
       elsif _Scheme == "file"
         file = Builtins.sformat("%1/%2", Installation.sourcedir, _Path) # FIXME: I have doubts this will ever work. Too early.
         if Ops.greater_than(SCR.Read(path(".target.size"), file), 0)
-          cpcmd = Builtins.sformat("cp %1 %2", file, _Localfile)
+          cpcmd = Builtins.sformat("/bin/cp %1 %2", file, _Localfile)
           Builtins.y2milestone("Copy profile: %1", cpcmd)
           SCR.Execute(path(".target.bash"), cpcmd)
         else
@@ -194,7 +194,7 @@ module Yast::Transfer
               _Path
             )
           )
-          cpcmd = Builtins.sformat("cp %1 %2", _Path, _Localfile)
+          cpcmd = Builtins.sformat("/bin/cp %1 %2", _Path, _Localfile)
           Builtins.y2milestone("Copy profile: %1", cpcmd)
           SCR.Execute(path(".target.bash"), cpcmd)
         end
@@ -216,36 +216,18 @@ module Yast::Transfer
           install_url = InstURL.installInf2Url("")
           # Builtins.regexpsub can also return nil (bnc#959723)
           cdrom_device = install_url ? (Builtins.regexpsub(install_url, "devices=(.*)$", "\\1") || "") : ""
-          if Installation.boot == "cd" && !cdrom_device.empty?
-            already_mounted = Ops.add(
-              Ops.add("grep ", cdrom_device),
-              " /proc/mounts ;"
-            )
-            am = Convert.to_map(
-              SCR.Execute(path(".target.bash_output"), already_mounted)
-            )
 
-            if Ops.get_integer(am, "exit", -1) == 0 &&
-                Ops.greater_than(
-                  Builtins.size(Ops.get_string(am, "stdout", "")),
-                  0
-                )
-              Builtins.y2warning(
+          if Installation.boot == "cd" && !cdrom_device.empty?
+            mtab =  File.read("/proc/mounts")
+            m = mtab.match(/^#{cdrom_device}\s+(\S+)/)
+            if m
+              Builtins.y2milestone(
                 "%1 is already mounted, trying to bind mount...",
                 cdrom_device
               )
-              cmd = Ops.add(
-                Ops.add(
-                  Ops.add(
-                    Ops.add("mount -v --bind `grep ", cdrom_device),
-                    " /proc/mounts |cut -f 2 -d \\ ` "
-                  ),
-                  mount_point
-                ),
-                ";"
-              )
               am1 = Convert.to_map(
-                SCR.Execute(path(".target.bash_output"), cmd)
+                SCR.Execute(path(".target.bash_output"),
+                "/bin/mount -v --bind #{m[1]} #{mount_point}")
               )
               if Ops.get_integer(am1, "exit", -1) == 0
                 ok = true
@@ -282,7 +264,7 @@ module Yast::Transfer
             end
             if ok
               cpcmd = Builtins.sformat(
-                Ops.add(Ops.add("cp ", mount_point), "/%1 %2"),
+                Ops.add(Ops.add("/bin/cp ", mount_point), "/%1 %2"),
                 _Path,
                 _Localfile
               )
