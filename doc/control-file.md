@@ -32,7 +32,7 @@ options:
 
     For example, it is possible to set the language variable in the
     configuration file if the installation language is to be forced for
-    some reason, eg. if an IT department wants to force French
+    some reason, e.g. if an IT department wants to force French
     installations, say in Quebec, Canada, then the entire dialog can
     be skipped. If the IT department is to recommend some settings but
     still give the user the choice to change the default settings, the
@@ -66,7 +66,7 @@ options:
 -   Partitioning
 
     This is to customize disk usage, including minimum and maximum useful size
-    of the root filesystem, what filesytem type to use, whether or not to use
+    of the root filesystem, what filesystem type to use, whether or not to use
     LVM and encryption, and what subvolumes to create if Btrfs is used on the
     root filesystem.
 
@@ -84,7 +84,7 @@ Implementation
 --------------
 
 The control file is implemented in simple structured XML syntax which so
-far has been used for automated installation . The XML structure used
+far has been used for automated installation. The XML structure used
 can be mapped easily to YaST data structures and all data types
 available in YaST are supported for easy data access and manipulation.
 
@@ -189,7 +189,7 @@ A workflow list element is a map with the following elements:
 
     -   name: The name of the module. All installation clients and
         modules have a unified prefix (inst\_) which can be omitted
-        here. The name is ofted used as an ID, so it should be unique within the whole
+        here. The name is often used as an ID, so it should be unique within the whole
         control file. That is why there is the _execute_ parameter (see below). For
         example, if the YaST file for the module is called *inst\_test*, then
         the name in the control file is *test*.
@@ -270,7 +270,7 @@ of a group of related configuration settings. For example *Network*,
 *Hardware* and the initial *Installation* proposal.
 
 If you want for some reason to add or modify a proposal, which is
-discourged because of configuration dependencies, then this would be
+discouraged because of configuration dependencies, then this would be
 possible using the control file.
 
 
@@ -405,7 +405,7 @@ These options usually enable or disable some installation feature.
     base-product licenses are stored (license.txt, license.de\_DE.txt,
     ...).
 
--   (boolean) *rle\_offer\_rulevel\_4* - defines whether runlevel 4
+-   (boolean) *rle\_offer\_runlevel\_4* - defines whether runlevel 4
     should be offered in the Runlevel Editor. The default is *false*.
 
 -   (boolean) *enable\_kdump* - defines whether kdump is proposed as
@@ -881,7 +881,7 @@ ppc, s390) to which a subvolume is restricted. The default is "all architectures
 if not specified. Notice that "all" is not a legal value for this element; if a
 subvolume is relevant for all architectures, omit *archs*.
 
-Use an exlamation mark ("!") to exclude the subvolume on an architecture:
+Use an exclamation mark ("!") to exclude the subvolume on an architecture:
 
 ```xml
 <archs>ppc,!board_powernv</archs>
@@ -1116,7 +1116,7 @@ time.
 #### Insert steps to installation sequence
 
 Before each step of base product installation, additional step can be
-inserted (eg. another proposal). For the order of additionally added
+inserted (e.g. another proposal). For the order of additionally added
 steps, the same rules as for items of proposal will be applied.
 
 #### Append steps to installation sequence
