@@ -50,6 +50,10 @@ module Yast
 
     BETA_FILE = "/README.BETA".freeze
 
+    def initialize
+      textdomain "installation"
+    end
+
     # Main client method
     def main
       if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
@@ -58,8 +62,6 @@ module Yast
 
       # bnc#206706
       return :auto if Mode.auto
-
-      textdomain "installation"
 
       Yast::Wizard.EnableAbortButton
 

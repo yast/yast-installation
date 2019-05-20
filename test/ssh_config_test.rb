@@ -34,6 +34,7 @@ describe Installation::SshConfig do
     let(:root4_dir) { FIXTURES_DIR.join("root4") }
 
     before do
+      textdomain "installation"
       # The ssh_host private key file is more recent than any other file
       allow(File).to receive(:atime) do |path|
         path =~ /ssh_host_key$/ ? recent_root1_atime : old_root1_atime

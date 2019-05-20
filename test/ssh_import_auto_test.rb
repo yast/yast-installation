@@ -11,6 +11,7 @@ describe ::Installation::SSHImportAutoClient do
   let(:args) { [] }
 
   before do
+    textdomain "installation"
     allow(Yast::WFM).to receive(:Args).and_return([func, args])
     allow(Yast::Mode).to receive(:mode).and_return(mode)
   end

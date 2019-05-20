@@ -16,6 +16,8 @@ describe ::Installation::SshImporterPresenter do
     let(:copy_config) { false }
 
     before do
+      textdomain "installation"
+
       importer.configurations.clear
       importer.reset
       importer.add_config(FIXTURES_DIR.join(config), "dev")
