@@ -55,7 +55,7 @@ describe Installation::SshConfig do
 
     it "uses name and version when PRETTY_NAME is missing in /etc/os-release" do
       root3 = described_class.from_dir(root3_dir)
-      expect(root3.system_name).to eq _("SUSE 10")
+      expect(root3.system_name).to eq "SUSE 10"
     end
 
     it "stores all the keys and files with their names" do
