@@ -12,26 +12,20 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 Name:           yast2-installation
 Version:        4.2.4
 Release:        0
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        %{name}-%{version}.tar.bz2
-
 Group:          System/YaST
 License:        GPL-2.0-only
-Url:            http://github.com/yast/yast-installation
-# for AbortException and handle direct abort
-Requires:       yast2-ruby-bindings >= 4.0.6
-
 Summary:        YaST2 - Installation Parts
+Url:            https://github.com/yast/yast-installation
 
-Source1:	YaST2-Second-Stage.service
-Source2:	YaST2-Firstboot.service
+Source0:        %{name}-%{version}.tar.bz2
+Source1:        YaST2-Second-Stage.service
+Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
@@ -41,129 +35,109 @@ BuildRequires:  yast2-ruby-bindings >= 4.0.6
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
-
 # Yast::Execute.stdout
 BuildRequires:  yast2 >= 4.1.42
-Requires:       yast2 >= 4.1.42
-
 # Y2Packager::KnownRepositories
-BuildRequires:	yast2-packager >= 4.1.27
-
+BuildRequires:  yast2-packager >= 4.1.27
 # Y2Storage::Inhibitors including systemd masking
-BuildRequires: yast2-storage-ng >= 4.0.194
-Requires:      yast2-storage-ng >= 4.0.175
-
-# Language::GetLanguageItems and other API
-# Language::Set (handles downloading the translation extensions)
-Requires:	yast2-country-data >= 2.16.11
-
-# Pkg::ProvidePackage
-Requires:	yast2-pkg-bindings >= 3.1.33
-
-# Mouse-related scripts moved to yast2-mouse
-Conflicts:	yast2-mouse < 2.18.0
-
-# Y2Packager::KnownRepositories
-Requires:	yast2-packager >= 4.1.27
-
-# use in startup scripts
-Requires:	initviocons
-
-# Proxy settings for 2nd stage (bnc#764951)
-Requires:       yast2-proxy
-
-# Systemd default target and services. This version supports
-# writing settings in the first installation stage.
-Requires: yast2-services-manager >= 3.2.1
-
+BuildRequires:  yast2-storage-ng >= 4.0.194
 ## y2remote based version
-BuildRequires: yast2-network >= 4.0.13
-Requires: yast2-network >= 4.0.13
+BuildRequires:  yast2-network >= 4.0.13
+# new root password cwm widget
+BuildRequires:  yast2-users >= 3.2.8
+# storage-ng based version
+BuildRequires:  yast2-country >= 3.3.1
 
+PreReq:         %fillup_prereq
+Requires:       yast2-users >= 3.2.8
+Requires:       yast2-country >= 3.3.1
+# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
+Requires:       tar
+Requires:       gzip
+Requires:       coreutils
 # Augeas lenses
 Requires:       augeas-lenses
-
 # Only in inst-sys
-# Requires:	yast2-add-on
-# Requires:	yast2-update
-
-# new root password cwm widget
-BuildRequires:	yast2-users >= 3.2.8
-Requires:	yast2-users >= 3.2.8
-# storage-ng based version
-BuildRequires:	yast2-country >= 3.3.1
-Requires:	yast2-country >= 3.3.1
-
-# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
-# pkg-bindings are not directly required
-Conflicts:	yast2-pkg-bindings < 2.17.25
-
-# InstError
-Conflicts:	yast2 < 2.18.6
-
-# storage-ng based version
-Conflicts:	yast2-bootloader < 3.3.1
-
-# Added new function WFM::ClientExists
-Conflicts:	yast2-core < 2.17.10
-
-# Top bar with logo
-Conflicts:	yast2-ycp-ui-bindings < 3.1.7
-
-# Registration#get_updates_list does not handle exceptions
-Conflicts:  yast2-registration < 3.2.3
-
-Obsoletes:	yast2-installation-devel-doc
-
-# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
-Requires:	tar gzip
-Requires:	coreutils
-
+# Requires:     yast2-add-on
+# Requires:     yast2-update
+Requires:       yast2-storage-ng >= 4.0.175
+# Language::GetLanguageItems and other API
+# Language::Set (handles downloading the translation extensions)
+Requires:       yast2-country-data >= 2.16.11
+# Pkg::ProvidePackage
+Requires:       yast2-pkg-bindings >= 3.1.33
+# Y2Packager::KnownRepositories
+Requires:       yast2-packager >= 4.1.27
+# use in startup scripts
+Requires:       initviocons
+# Proxy settings for 2nd stage (bnc#764951)
+Requires:       yast2-proxy
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires:       yast2-services-manager >= 3.2.1
+Requires:       yast2 >= 4.1.42
+Requires:       yast2-network >= 4.0.13
+# for AbortException and handle direct abort
+Requires:       yast2-ruby-bindings >= 4.0.6
+# for the first/second stage of installation
+# currently not used
+# bugzilla #208307
+#Requires:      /usr/bin/jpegtopnm
+#Requires:      /usr/bin/pnmtopng
+# BNC 446533, /sbin/lspci called but not installed
+Requires:       pciutils
+# Needed call /sbin/ip in vnc.sh/network.sh
+Requires:       iproute2
 %if 0%{?suse_version} >= 1210
 %{systemd_requires}
 %endif
 
-# for the first/second stage of installation
-# currently not used
-# bugzilla #208307
-#Requires:	/usr/bin/jpegtopnm
-#Requires:	/usr/bin/pnmtopng
 
-# BNC 446533, /sbin/lspci called but not installed
-Requires:	pciutils
+# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
+# pkg-bindings are not directly required
+Conflicts:      yast2-pkg-bindings < 2.17.25
+# InstError
+Conflicts:      yast2 < 2.18.6
+# storage-ng based version
+Conflicts:      yast2-bootloader < 3.3.1
+# Added new function WFM::ClientExists
+Conflicts:      yast2-core < 2.17.10
+# Top bar with logo
+Conflicts:      yast2-ycp-ui-bindings < 3.1.7
+# Registration#get_updates_list does not handle exceptions
+Conflicts:      yast2-registration < 3.2.3
+# Mouse-related scripts moved to yast2-mouse
+Conflicts:      yast2-mouse < 2.18.0
 
-# Needed call /sbin/ip in vnc.sh/network.sh
-Requires:	iproute2
+Obsoletes:      yast2-installation-devel-doc
 
 # install the registration module only in SLE (bsc#1043122)
 %if !0%{?is_opensuse}
-Recommends:	yast2-registration
+Recommends:     yast2-registration
 %endif
+Recommends:     yast2-online-update
+Recommends:     yast2-firewall
+Recommends:     release-notes
+Recommends:     curl
+Recommends:     yast2-update
+Recommends:     yast2-add-on
 
-Recommends:	yast2-online-update
-Recommends:	yast2-firewall
-Recommends:	release-notes
-Recommends:	curl
-Recommends:	yast2-update
-Recommends:	yast2-add-on
-
-PreReq:		%fillup_prereq
-
-BuildArch: noarch
+BuildArch:      noarch
 
 %description
 System installation code as present on installation media.
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q
 
 %check
-rake test:unit
+%yast_check
 
 %build
 
 %install
-rake install DESTDIR="%{buildroot}"
+%yast_install
+%yast_metainfo
 
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
     %suse_update_desktop_file $f
@@ -212,41 +186,27 @@ systemctl enable YaST2-Firstboot.service
 %endif #suse_version
 
 %files
-%defattr(-,root,root)
 
 # systemd service files
-%{_unitdir}/YaST2-Second-Stage.service
-%{_unitdir}/YaST2-Firstboot.service
-
-%{yast_clientdir}/*.rb
-%{yast_moduledir}/*.rb
-%{yast_desktopdir}/*.desktop
-/usr/share/autoinstall/modules/*.desktop
-/usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc
-/usr/share/YaST2/schema/autoyast/rnc/ssh_import.rnc
-%dir /usr/share/autoinstall
-%dir /usr/share/autoinstall/modules
-%dir %{yast_yncludedir}/installation
-%{yast_yncludedir}/installation/*
-%{yast_libdir}/installation
-%{yast_libdir}/transfer
-
+%{_unitdir}
+%{yast_clientdir}
+%{yast_moduledir}
+%{yast_desktopdir}
+%{yast_metainfodir}
+%{_datadir}/autoinstall/
+%{yast_schemadir}
+%{yast_yncludedir}
+%{yast_libdir}
 # agents
-%{yast_scrconfdir}/cfg_windowmanager.scr
-%{yast_scrconfdir}/etc_install_inf.scr
-%{yast_scrconfdir}/run_df.scr
+%{yast_scrconfdir}
 # fillup
 %{_fillupdir}/sysconfig.security-checksig
-
 # programs and scripts
 %{yast_ystartupdir}/startup
-
 # installation hooks
-%dir %{yast_vardir}/hooks
-%dir %{yast_vardir}/hooks/installation
-
-%dir %{yast_docdir}
+%{yast_vardir}
+%doc %{yast_docdir}
 %license COPYING
-%doc %{yast_docdir}/README.md
-%doc %{yast_docdir}/CONTRIBUTING.md
 %{yast_icondir}
+
+%changelog
