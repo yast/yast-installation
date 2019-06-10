@@ -10,6 +10,7 @@ X-SuSE-YaST-Keywords=support,installation,notes,documentation
 Icon=yast-release-notes
 Exec=/sbin/yast2 inst_release_notes
 
-Name=Release Notes
-GenericName=Show Release Notes
+Name=YaST Release Notes
+GenericName=Release Notes
+Comment=Show Release Notes
 StartupNotify=true

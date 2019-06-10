@@ -6,7 +6,7 @@ Categories=Settings;System;Documentation;
 Icon=yast-installation
 Exec=/bin/true
 
-Name=Installation
+Name=YaST Installation
 GenericName=System Upgrade
 Comment=Install system to the system
 StartupNotify=true
