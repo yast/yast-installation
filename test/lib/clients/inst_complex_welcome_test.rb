@@ -69,7 +69,7 @@ describe Yast::InstComplexWelcomeClient do
     allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
     allow(Y2Packager::Product).to receive(:available_base_products).and_return(products)
     allow(Y2Packager::Product).to receive(:forced_base_product).and_return(forced_base_product)
-    allow(Y2Packager::MediumType).to receive(:online?).and_return(false)
+    allow(Y2Packager::MediumType).to receive(:type).and_return(:standard)
   end
 
   describe "#main" do

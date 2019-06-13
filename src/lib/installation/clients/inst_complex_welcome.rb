@@ -28,11 +28,14 @@ require "installation/dialogs/complex_welcome"
 require "y2packager/medium_type"
 require "y2packager/product"
 require "y2packager/product_control_product"
+require "y2packager/product_location"
+require "y2packager/product_sorter"
 
 Yast.import "Console"
 Yast.import "FileUtils"
 Yast.import "GetInstArgs"
 Yast.import "InstShowInfo"
+Yast.import "InstURL"
 Yast.import "Keyboard"
 Yast.import "Language"
 Yast.import "Mode"
@@ -172,13 +175,21 @@ module Yast
     def available_base_products
       return @available_base_products if @available_base_products
 
-      if Y2Packager::MediumType.online?
+      case Y2Packager::MediumType.type
+      when :online
         # read the products from the control.xml
         @available_base_products = Y2Packager::ProductControlProduct.products
         log.info "Found base products in the control.xml: #{@available_base_products.pretty_inspect}"
 
         # we cannot continue, the control.xml in the installer is invalid
         raise "control.xml does not define any base products!" if @available_base_products.empty?
+      when :offline
+        url = InstURL.installInf2Url("")
+        @available_base_products = Y2Packager::ProductLocation
+                                   .scan(url)
+                                   .select { |p| p.details && p.details.base }
+                                   .sort(&::Y2Packager::PRODUCT_SORTER)
+        log.info "Found base products on the offline medium: #{@available_base_products.pretty_inspect}"
       else
         @available_base_products = Y2Packager::Product.available_base_products
       end
