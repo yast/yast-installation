@@ -19,11 +19,15 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-require "yaml"
 require "fileutils"
+require "pp"
+require "yaml"
 require "yast"
+
 require "installation/dialogs/complex_welcome"
+require "y2packager/medium_type"
 require "y2packager/product"
+require "y2packager/product_control_product"
 
 Yast.import "Console"
 Yast.import "FileUtils"
@@ -73,6 +77,8 @@ module Yast
         next unless result
 
         return result if !available_products? || result != :next
+        # in the online installation the workflow is merged after registering the system
+        return result if Y2Packager::MediumType.online?
         return merge_and_run_workflow
       end
     end
@@ -149,8 +155,9 @@ module Yast
     # list because the dialog will not show the license (we do not know which product we are
     # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>] List of available base products; if any, a list
-    # containing only the forced base product; empty list in update mode.
+    # @return [Array<Y2Packager::Product>,Array<Y2Packager::ProductControlProduct] List of
+    #    available base products; if any, a list containing only the forced base product;
+    #    empty list in update mode.
     def products
       return @products if @products
 
@@ -161,9 +168,22 @@ module Yast
 
     # Returns all available base products
     #
-    # @return [Array<Y2Packager::Product>] List of available base products
+    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct>] List of available base products
     def available_base_products
-      @available_base_products ||= Y2Packager::Product.available_base_products
+      return @available_base_products if @available_base_products
+
+      if Y2Packager::MediumType.online?
+        # read the products from the control.xml
+        @available_base_products = Y2Packager::ProductControlProduct.products
+        log.info "Found base products in the control.xml: #{@available_base_products.pretty_inspect}"
+
+        # we cannot continue, the control.xml in the installer is invalid
+        raise "control.xml does not define any base products!" if @available_base_products.empty?
+      else
+        @available_base_products = Y2Packager::Product.available_base_products
+      end
+
+      @available_base_products
     end
 
     # Determine whether some product is available or not
@@ -177,7 +197,11 @@ module Yast
     #
     # @return [Y2Packager::Product] Selected base product
     def selected_product
-      Y2Packager::Product.selected_base
+      if Y2Packager::MediumType.online?
+        Y2Packager::ProductControlProduct.selected
+      else
+        Y2Packager::Product.selected_base
+      end
     end
 
     # Buttons to disable according to GetInstArgs

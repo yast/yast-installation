@@ -6,8 +6,8 @@ require "y2packager/product"
 require "installation/widgets/product_selector"
 
 describe ::Installation::Widgets::ProductSelector do
-  let(:product1) { Y2Packager::Product.new(name: "test1", display_name: "Test 1") }
-  let(:product2) { Y2Packager::Product.new(name: "test2", display_name: "Test 2") }
+  let(:product1) { Y2Packager::Product.new(name: "test1", display_name: "Test 1", version: "15", arch: "x86_64") }
+  let(:product2) { Y2Packager::Product.new(name: "test2", display_name: "Test 2", version: "15", arch: "x86_64") }
   subject { described_class.new([product1, product2]) }
 
   include_examples "CWM::RadioButtons"
@@ -60,7 +60,7 @@ describe ::Installation::Widgets::ProductSelector do
       allow(Yast::AddOnProduct).to receive(:selected_installation_products)
         .and_return(["add-on-product"])
       # mock selecting the first product
-      allow(subject).to receive(:value).and_return("test1")
+      allow(subject).to receive(:value).and_return("test1-15-x86_64")
     end
 
     it "resets previous package configuration" do
