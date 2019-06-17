@@ -1,23 +1,23 @@
 # encoding: utf-8
 
-# ------------------------------------------------------------------------------
-# Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
+# Copyright (c) [2006-2019] SUSE LLC
 #
+# All Rights Reserved.
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of version 2 of the GNU General Public License as published by the
-# Free Software Foundation.
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of version 2 of the GNU General Public License as published
+# by the Free Software Foundation.
 #
 # This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
 #
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, contact Novell, Inc.
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, contact SUSE LLC.
 #
-# To contact Novell about this file by physical or electronic mail, you may find
-# current contact information at www.novell.com.
-# ------------------------------------------------------------------------------
+# To contact SUSE LLC about this file by physical or electronic mail, you may
+# find current contact information at www.suse.com.
 
 require "fileutils"
 require "installation/ssh_importer"
@@ -252,16 +252,26 @@ module Yast
     end
 
     def copy_multipath
-      # Copy multipath stuff (bnc#885628)
       # Only in install, as update should keep its old config
       return unless Mode.installation
 
-      multipath_config = "/etc/multipath/wwids"
-      if File.exist?(multipath_config)
-        log.info "Copying multipath blacklist '#{multipath_config}'"
-        target_path = File.join(Installation.destdir, multipath_config)
-        ::FileUtils.mkdir_p(File.dirname(target_path))
-        ::FileUtils.cp(multipath_config, target_path)
+      # Copy multipath stuff (bnc#885628, bsc#1133045)
+      #
+      # See {https://www.suse.com/support/kb/doc/?id=7001133}
+      multipath_config_files = [
+        "/etc/multipath.conf",
+        "/etc/multipath/bindings",
+        "/etc/multipath/wwids"
+      ]
+
+      multipath_config_files.each do |config_file|
+        next unless File.exist?(config_file)
+
+        log.info "Copying multipath config file: '#{config_file}'"
+        target_path = File.join(Installation.destdir, config_file)
+        target_dir = File.dirname(target_path)
+        ::FileUtils.mkdir_p(target_dir) unless File.exist?(target_dir)
+        ::FileUtils.cp(config_file, target_path)
       end
     end
 
