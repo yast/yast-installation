@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 17 13:37:35 UTC 2019 - José Iván López González <jlopez@suse.com>
+
+- Copy multipath config files into the target system.
+- Related to bsc#1133045.
+- 4.2.6
+
+-------------------------------------------------------------------
 Sat Jun  8 01:49:48 UTC 2019 - Stasiek Michalski <hellcp@mailbox.org>
 
 - Use new schema of desktop files (boo#1084864)
