@@ -1,3 +1,25 @@
+#!/usr/bin/env rspec
+# encoding: utf-8
+
+# Copyright (c) [2018-2019] SUSE LLC
+#
+# All Rights Reserved.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of version 2 of the GNU General Public License as published
+# by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, contact SUSE LLC.
+#
+# To contact SUSE LLC about this file by physical or electronic mail, you may
+# find current contact information at www.suse.com.
+
 require_relative "./test_helper.rb"
 
 require "installation/clients/copy_files_finish"
@@ -94,9 +116,12 @@ describe Yast::CopyFilesFinishClient do
       allow(Yast::Mode).to receive(:installation).and_return(true)
       allow(::FileUtils).to receive(:cp)
       allow(::FileUtils).to receive(:mkdir_p)
-      allow(::File).to receive(:exist?).with("/etc/multipath/wwids").and_return(true)
+      allow(::File).to receive(:exist?).with(/^\/etc\/multipath/).and_return(true)
+      allow(::File).to receive(:exist?).with(/^\/mnt\/etc\/multipath/).and_return(false)
 
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/multipath")
+      expect(::FileUtils).to receive(:cp).with("/etc/multipath.conf", "/mnt/etc/multipath.conf")
+      expect(::FileUtils).to receive(:cp).with("/etc/multipath/bindings", "/mnt/etc/multipath/bindings")
       expect(::FileUtils).to receive(:cp).with("/etc/multipath/wwids", "/mnt/etc/multipath/wwids")
 
       subject.write
