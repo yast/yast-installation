@@ -251,20 +251,21 @@ module Yast
       )
     end
 
+    # See {https://www.suse.com/support/kb/doc/?id=7001133}
+    MULTIPATH_CONFIG_FILES = [
+      "/etc/multipath.conf",
+      "/etc/multipath/bindings",
+      "/etc/multipath/wwids"
+    ].freeze
+
+    private_constant :MULTIPATH_CONFIG_FILES
+
     def copy_multipath
       # Only in install, as update should keep its old config
       return unless Mode.installation
 
       # Copy multipath stuff (bnc#885628, bsc#1133045)
-      #
-      # See {https://www.suse.com/support/kb/doc/?id=7001133}
-      multipath_config_files = [
-        "/etc/multipath.conf",
-        "/etc/multipath/bindings",
-        "/etc/multipath/wwids"
-      ]
-
-      multipath_config_files.each do |config_file|
+      MULTIPATH_CONFIG_FILES.each do |config_file|
         next unless File.exist?(config_file)
 
         log.info "Copying multipath config file: '#{config_file}'"
