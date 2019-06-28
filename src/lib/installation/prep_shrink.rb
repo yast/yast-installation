@@ -70,6 +70,7 @@ module Installation
         end
       end
 =end
+      # rubocop:enable Style/BlockComments
     end
 
     # 0x41 is PPC PREP Boot

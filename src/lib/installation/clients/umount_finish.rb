@@ -196,6 +196,7 @@ module Yast
         end
 
 =end
+        # rubocop:enable Style/BlockComments
 
         # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
@@ -259,6 +260,7 @@ module Yast
 
         log_running_processes(Installation.destdir)
 
+# rubocop:disable Style/BlockComments
 # storage-ng
 =begin
 
@@ -285,6 +287,7 @@ module Yast
         end
 
 =end
+      # rubocop:enable Style/BlockComments
 
       else
         Builtins.y2error("unknown function: %1", @func)

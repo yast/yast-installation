@@ -55,6 +55,7 @@ module Yast
 =begin
       Yast.import "Storage"
 =end
+      # rubocop:enable Style/BlockComments
 
       @modules_to_enable_with_AC_on = nil
     end
@@ -104,11 +105,13 @@ module Yast
 
         # storage-ng
         some_destructive = false
+# rubocop:disable Style/BlockComments
 =begin
         some_destructive = Storage.GetCommitInfos.any? do |info|
           Ops.get_boolean(info, :destructive, false)
         end
 =end
+        # rubocop:enable Style/BlockComments
 
         body = if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
