@@ -105,8 +105,7 @@ module Yast
     def FinishInstallation(ret)
       Builtins.y2milestone("Finishing the installation...")
 
-      if ret == :reboot || ret == :restart_yast || ret == :restart_same_step ||
-          ret == :abort
+      if [:reboot, :restart_yast, :restart_same_step, :abort].include?(ret)
         # TRANSLATORS: busy message
         UI.OpenDialog(Label(_("Writing YaST configuration..."))) # #2
       else

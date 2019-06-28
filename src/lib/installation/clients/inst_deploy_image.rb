@@ -271,7 +271,7 @@ module Yast
         current_step
       end
 
-      SetProgress() if id == "storing_user_prefs" || id == "restoring_user_prefs"
+      SetProgress() if ["storing_user_prefs", "restoring_user_prefs"].include?(id)
 
       # Should be 0 - 100%
       @_current_overall_progress = Ops.add(
