@@ -1,6 +1,6 @@
 # use the shared Yast defaults
 inherit_from:
-  /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
+  /usr/share/YaST2/data/devtools/data/rubocop-0.71.0_yast_style.yml
 
 # Offense count: 153
 Metrics/AbcSize:
@@ -43,7 +43,7 @@ Style/Documentation:
 
 # Offense count: 6
 # Configuration parameters: Exclude.
-Style/FileName:
+Naming/FileName:
   Include:
     - src/lib/**/*.rb
   Exclude:
@@ -51,7 +51,7 @@ Style/FileName:
 
 # Offense count: 179
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MethodName:
+Naming/MethodName:
   Include:
    - src/lib/**/*.rb
   Exclude:
@@ -59,8 +59,12 @@ Style/MethodName:
 
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/VariableName:
+Naming/VariableName:
   Include:
     - src/lib/**/*.rb
   Exclude:
     - src/lib/installation/clients/*.rb
+
+# Needs intensive testing
+Style/FrozenStringLiteralComment:
+  Enabled: false
