@@ -245,8 +245,8 @@ module Installation
     # Ask the user to chose a registration server
     #
     # @param services [Array<SlpServiceClass::Service>] Array of registration servers
-    # @return [SlpServiceClass::Service,Symbol] Registration service to use; :scc if SCC is selected;
-    #                                           :cancel if the dialog was dismissed.
+    # @return [SlpServiceClass::Service,Symbol] Registration service to use;
+    #   :scc if SCC is selected; :cancel if the dialog was dismissed.
     def registration_service_from_user(services)
       ::Registration::UI::RegserviceSelectionDialog.run(
         services:    services,

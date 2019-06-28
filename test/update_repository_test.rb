@@ -117,8 +117,10 @@ describe Installation::UpdateRepository do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
       allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
-      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package["name"]).and_return(downloader)
-      allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s).and_return(extractor)
+      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package["name"])
+        .and_return(downloader)
+      allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s)
+        .and_return(extractor)
       allow(Tempfile).to receive(:new).and_return(tempfile)
     end
 
@@ -139,7 +141,8 @@ describe Installation::UpdateRepository do
 
     context "when a package can't be retrieved" do
       before do
-        expect(downloader).to receive(:download).and_raise(Packages::PackageDownloader::FetchError)
+        expect(downloader).to receive(:download)
+          .and_raise(Packages::PackageDownloader::FetchError)
       end
 
       it "clear downloaded files and raises a CouldNotFetchUpdate error" do
@@ -151,7 +154,8 @@ describe Installation::UpdateRepository do
 
     context "when a package can't be extracted" do
       it "clear downloaded files and raises a CouldNotFetchUpdate error" do
-        expect(extractor).to receive(:extract).and_raise(Packages::PackageExtractor::ExtractionFailed)
+        expect(extractor).to receive(:extract)
+          .and_raise(Packages::PackageExtractor::ExtractionFailed)
 
         expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }

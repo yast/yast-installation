@@ -502,8 +502,10 @@ module Yast
     def merge_addon_steps(stages)
       # merge steps from add-on products
       # bnc #438678
-      stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") + stages[0]["steps"]
-      stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") + stages[1]["steps"]
+      stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") +
+        stages[0]["steps"]
+      stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") +
+        stages[1]["steps"]
       stages[3]["steps"].concat(WorkflowManager.GetAdditionalFinishSteps("after_chroot"))
     end
 
@@ -545,7 +547,8 @@ module Yast
           next nil
         end
         if info["when"] && !info["when"].include?(run_type) &&
-            # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
+            # special hack for autoupgrade - should be as regular upgrade as possible,
+            # scripts are the only exception
             !(Mode.autoupgrade && info["when"].include?(:autoupg))
           next nil
         end

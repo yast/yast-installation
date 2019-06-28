@@ -99,7 +99,9 @@ describe Installation::UpdateRepositoriesFinder do
 
         let(:regservice_selection) { Class.new }
 
-        let(:url_helpers) { double("url_helpers", registration_url: smt0.slp_url, slp_discovery: []) }
+        let(:url_helpers) do
+          double("url_helpers", registration_url: smt0.slp_url, slp_discovery: [])
+        end
         let(:regurl) { nil }
 
         let(:registration) { double("registration", url: smt0.slp_url) }

@@ -18,7 +18,8 @@ describe Yast::SaveY2logs do
 
     context "globals/save_y2logs in control.xml is false" do
       it "does not save y2logs" do
-        expect(Yast::ProductFeatures).to receive(:GetBooleanFeature).with("globals", "save_y2logs").and_return(false)
+        expect(Yast::ProductFeatures).to receive(:GetBooleanFeature)
+          .with("globals", "save_y2logs").and_return(false)
         expect(Yast::WFM).not_to receive(:Execute).with(
           bash_path,
           /save_y2logs/
@@ -29,7 +30,8 @@ describe Yast::SaveY2logs do
 
     context "globals/save_y2logs in control.xml is true" do
       before do
-        expect(Yast::ProductFeatures).to receive(:GetBooleanFeature).with("globals", "save_y2logs").and_return(true)
+        expect(Yast::ProductFeatures).to receive(:GetBooleanFeature)
+          .with("globals", "save_y2logs").and_return(true)
       end
 
       it "saves y2logs" do

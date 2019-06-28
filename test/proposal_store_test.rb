@@ -104,7 +104,8 @@ describe ::Installation::ProposalStore do
   describe "#proposal_names" do
     before do
       allow(Yast::WFM).to receive(:ClientExists).and_return(true)
-      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Description", anything]).and_return("id" => "id")
+      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Description", anything])
+        .and_return("id" => "id")
     end
 
     it "returns array with string names of clients" do
@@ -141,8 +142,10 @@ describe ::Installation::ProposalStore do
                       ["test3"]
                     ])
 
-      allow(Yast::WFM).to receive(:CallFunction).with("test2", ["Description", anything]).and_return({})
-      allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything]).and_return(nil)
+      allow(Yast::WFM).to receive(:CallFunction).with("test2", ["Description", anything])
+        .and_return({})
+      allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything])
+        .and_return(nil)
 
       expect(subject.proposal_names).to include("test1")
       expect(subject.proposal_names).not_to include("test2")
@@ -335,12 +338,18 @@ describe ::Installation::ProposalStore do
   describe "#make_proposals" do
     before do
       allow(subject).to receive(:proposal_names).and_return(proposal_names)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything]).and_return(proposal_a)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything]).and_return(proposal_b)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything]).and_return(proposal_c)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything]).and_return(proposal_a_desc)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything])
+        .and_return(proposal_a)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything])
+        .and_return(proposal_b)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything])
+        .and_return(proposal_c)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything])
+        .and_return(proposal_a_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything])
+        .and_return(proposal_b_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything])
+        .and_return(proposal_c_desc)
     end
 
     context "when all proposals return correct data" do
@@ -363,21 +372,29 @@ describe ::Installation::ProposalStore do
 
     context "when given callback is not a block" do
       it "raises an exception" do
-        expect { subject.make_proposals(callback: 4) }.to raise_exception(/Callback is not a block/)
+        expect { subject.make_proposals(callback: 4) }.to(
+          raise_exception(/Callback is not a block/)
+        )
       end
     end
 
     context "when returned proposal contains a 'trigger' section" do
-      it "for each proposal client, creates new proposal and calls the client while trigger evaluates to true" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a_desc_with_trigger)
+      it "for each proposal client, creates new proposal and calls the client "\
+          "while trigger evaluates to true" do
+        allow(Yast::WFM).to receive(:CallFunction)
+          .with("proposal_a", anything).and_return(proposal_a_desc_with_trigger)
 
         # Mock evaluation of the trigger
-        allow(Yast::Installation).to receive(:destdir).and_return("/x", "/y", proposal_a_expected_val)
+        allow(Yast::Installation).to receive(:destdir)
+          .and_return("/x", "/y", proposal_a_expected_val)
 
         # 1. initial call 2. (...) via trigger
-        expect(subject).to receive(:make_proposal).with("proposal_a", anything).exactly(3).times.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_b", anything).exactly(1).times.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_c", anything).exactly(1).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_a", anything)
+          .exactly(3).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", anything)
+          .exactly(1).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_c", anything)
+          .exactly(1).times.and_call_original
 
         subject.make_proposals
       end
@@ -385,16 +402,23 @@ describe ::Installation::ProposalStore do
 
     context "when returned proposal triggers changing a language" do
       it "calls all proposals again with language_changed: true" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc_with_language_change, proposal_b_desc)
+        allow(Yast::WFM).to receive(:CallFunction)
+          .with("proposal_b", ["MakeProposal", anything])
+          .and_return(proposal_b_desc_with_language_change, proposal_b_desc)
 
         # Call proposals till the one that changes the language
-        expect(subject).to receive(:make_proposal).with("proposal_a", hash_including(language_changed: false)).once.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_b", hash_including(language_changed: false)).once.and_call_original
+        expect(subject).to receive(:make_proposal)
+          .with("proposal_a", hash_including(language_changed: false)).once.and_call_original
+        expect(subject).to receive(:make_proposal)
+          .with("proposal_b", hash_including(language_changed: false)).once.and_call_original
 
         # Call all again with language_changed: true
-        expect(subject).to receive(:make_proposal).with("proposal_a", hash_including(language_changed: true)).once.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_b", hash_including(language_changed: true)).once.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_c", hash_including(language_changed: true)).once.and_call_original
+        expect(subject).to receive(:make_proposal)
+          .with("proposal_a", hash_including(language_changed: true)).once.and_call_original
+        expect(subject).to receive(:make_proposal)
+          .with("proposal_b", hash_including(language_changed: true)).once.and_call_original
+        expect(subject).to receive(:make_proposal)
+          .with("proposal_c", hash_including(language_changed: true)).once.and_call_original
 
         subject.make_proposals
       end
@@ -402,10 +426,13 @@ describe ::Installation::ProposalStore do
 
     context "when returned proposal contains a fatal error" do
       it "calls all proposals till fatal error is received, then it stops proceeding immediately" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc_with_fatal_error)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything])
+          .and_return(proposal_b_desc_with_fatal_error)
 
-        expect(subject).to receive(:make_proposal).with("proposal_a", anything).once.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_b", anything).once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_a", anything)
+          .once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", anything)
+          .once.and_call_original
         # Proposal C is never called, as it goes after proposal B
         expect(subject).not_to receive(:make_proposal).with("proposal_c", anything)
 
@@ -415,7 +442,8 @@ describe ::Installation::ProposalStore do
 
     context "when trigger from proposal is incorrectly set" do
       it "raises an exception" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_c_desc_with_incorrect_trigger)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything])
+          .and_return(proposal_c_desc_with_incorrect_trigger)
 
         expect { subject.make_proposals }.to raise_error(/Incorrect definition/)
       end
@@ -423,21 +451,27 @@ describe ::Installation::ProposalStore do
 
     context "when trigger from proposal raises an exception" do
       it "raises an exception" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc_with_exception)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything])
+          .and_return(proposal_c_desc_with_exception)
 
-        expect { subject.make_proposals }.to raise_error(/Checking the trigger expectations for proposal_c have failed/)
+        expect { subject.make_proposals }.to(
+          raise_error(/Checking the trigger expectations for proposal_c have failed/)
+        )
       end
     end
 
-    context "When any proposal client wants to retrigger its run more than MAX_LOOPS_IN_PROPOSAL times" do
+    context "When any proposal client wants to retrigger its run " \
+        "more than MAX_LOOPS_IN_PROPOSAL times" do
       it "stops iterating over proposals immediately" do
         allow(subject).to receive(:should_be_called_again?).with(/proposal_(a|b)/).and_return(false)
         # Proposal C wants to be called again and again
         allow(subject).to receive(:should_be_called_again?).with("proposal_c").and_return(true)
 
-        expect(subject).to receive(:make_proposal).with(/proposal_(a|b)/, anything).twice.and_call_original
+        expect(subject).to receive(:make_proposal).with(/proposal_(a|b)/, anything)
+          .twice.and_call_original
         # Number of calls including the initial one
-        expect(subject).to receive(:make_proposal).with("proposal_c", anything).exactly(8).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_c", anything)
+          .exactly(8).times.and_call_original
 
         subject.make_proposals
       end
@@ -464,7 +498,8 @@ describe ::Installation::ProposalStore do
 
   describe "#description_for" do
     it "returns description for a given client" do
-      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(client_description).once
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}])
+        .and_return(client_description).once
 
       desc1 = subject.description_for(client_name)
       # description should be cached
@@ -475,12 +510,14 @@ describe ::Installation::ProposalStore do
     end
 
     it "returns nil if description is nil" do
-      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(nil).once
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}])
+        .and_return(nil).once
       expect(subject.description_for(client_name)).to eq nil
     end
 
     it "returns nil if description is empty" do
-      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return({}).once
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}])
+        .and_return({}).once
       expect(subject.description_for(client_name)).to eq nil
     end
   end
@@ -506,7 +543,8 @@ describe ::Installation::ProposalStore do
       end
 
       it "removes all <a> tags from the title" do
-        allow(subject).to receive(:description_for).with(client_name).and_return(client_description_with_link)
+        allow(subject).to receive(:description_for).with(client_name)
+          .and_return(client_description_with_link)
         # compare with the client description without the link
         expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
       end
@@ -516,17 +554,25 @@ describe ::Installation::ProposalStore do
   describe "#handle_link" do
     before do
       allow(subject).to receive(:proposal_names).and_return(proposal_names)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything]).and_return(proposal_a)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything]).and_return(proposal_b)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything]).and_return(proposal_c)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything]).and_return(proposal_a_desc)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything])
+        .and_return(proposal_a)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything])
+        .and_return(proposal_b)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything])
+        .and_return(proposal_c)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything])
+        .and_return(proposal_a_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything])
+        .and_return(proposal_b_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything])
+        .and_return(proposal_c_desc)
     end
 
     context "when client('MakeProposal') has not been called before" do
       it "raises an exception" do
-        expect { subject.handle_link("proposal_a-link_2") }.to raise_error(/no client proposals known/)
+        expect { subject.handle_link("proposal_a-link_2") }.to(
+          raise_error(/no client proposals known/)
+        )
       end
     end
 
@@ -545,8 +591,10 @@ describe ::Installation::ProposalStore do
           # Proposals need to be cached first
           subject.make_proposals
 
-          expect(Yast::WFM).to receive(:CallFunction).with("proposal_a",
-            ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a-link_2" }]).and_return(:next)
+          expect(Yast::WFM).to receive(:CallFunction)
+            .with("proposal_a",
+              ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a-link_2" }])
+            .and_return(:next)
           expect(subject.handle_link("proposal_a-link_2")).to eq(:next)
         end
       end

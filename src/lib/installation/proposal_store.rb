@@ -20,8 +20,9 @@
 require "yast"
 
 module Installation
-  # 1. Provides access to metadata of proposal parts (clients), as defined in the control file elements
-  # /productDefines/proposals/proposal: https://github.com/yast/yast-installation-control/blob/master/control/control.rnc
+  # 1. Provides access to metadata of proposal parts (clients), as defined in the control file
+  #   elements /productDefines/proposals/proposal:
+  #   https://github.com/yast/yast-installation-control/blob/master/control/control.rnc
   # 2. Handles all calls to the parts (clients).
   class ProposalStore
     include Yast::Logger
@@ -127,13 +128,17 @@ module Installation
       @proposal_names.map!(&:first) # first element is name of client
 
       missing_proposals = @proposal_names.reject { |proposal| Yast::WFM::ClientExists(proposal) }
-      log.warn "These proposals are missing on system: #{missing_proposals}" unless missing_proposals.empty?
+      unless missing_proposals.empty?
+        log.warn "These proposals are missing on system: #{missing_proposals}"
+      end
 
       # Filter missing proposals out
       @proposal_names -= missing_proposals
 
       unavailable_proposals = @proposal_names.select { |name| description_for(name).nil? }
-      log.info "These proposals report itself as unavailable: #{unavailable_proposals}" unless unavailable_proposals.empty?
+      unless unavailable_proposals.empty?
+        log.info "These proposals report itself as unavailable: #{unavailable_proposals}"
+      end
 
       @proposal_names -= unavailable_proposals
     end
@@ -297,7 +302,9 @@ module Installation
     # @param [String] link ID
     # @return [String] client name
     def client_for_link(link)
-      raise "There are no client proposals known, call 'client(MakeProposal)' first" if @proposals.nil?
+      if @proposals.nil?
+        raise "There are no client proposals known, call 'client(MakeProposal)' first"
+      end
 
       matching_client = @proposals.find do |_client, proposal|
         link == proposal["id"] || proposal.fetch("links", []).include?(link)
@@ -544,7 +551,8 @@ module Installation
         _("<P><B>UML Installation Proposal</B></P>") \
         # help text
         _(
-          "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
+          "<P>UML (User Mode Linux) installation allows you to start independent\n" \
+            "Linux virtual machines in the host system.</P>"
         )
       else
         if properties["help"] && !properties["help"].empty?

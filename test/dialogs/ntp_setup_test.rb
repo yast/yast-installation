@@ -44,10 +44,11 @@ describe ::Installation::Dialogs::NtpSetup do
       end
 
       it "proposes to use a random openSUSE pool server" do
-        expect(::Installation::Widgets::NtpServer).to receive(:new).and_wrap_original do |original, arg|
-          expect(arg.first).to match(/\A[0-3]\.opensuse\.pool\.ntp\.org\z/)
-          original.call(arg)
-        end
+        expect(::Installation::Widgets::NtpServer).to receive(:new)
+          .and_wrap_original do |original, arg|
+            expect(arg.first).to match(/\A[0-3]\.opensuse\.pool\.ntp\.org\z/)
+            original.call(arg)
+          end
         subject.run
       end
     end

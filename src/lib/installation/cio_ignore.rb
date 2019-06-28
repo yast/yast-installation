@@ -100,7 +100,8 @@ module Installation
         "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK],
         # TRANSLATORS: help text
         "help"                  => _(
-          "<p>Use <b>Blacklist devices</b> if you want to create blacklist channels to such devices which will reduce kernel memory footprint.</p>"
+          "<p>Use <b>Blacklist devices</b> if you want to create blacklist channels " \
+            "to such devices which will reduce kernel memory footprint.</p>"
         )
       }
     end

@@ -235,7 +235,8 @@ describe Yast::InstComplexWelcomeClient do
       context "and user does not confirm" do
         it "reruns the dialog" do
           allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(false, true)
-          expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice.and_return(:abort, :abort)
+          expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+            .twice.and_return(:abort, :abort)
           subject.main
         end
       end

@@ -11,6 +11,7 @@ module Yast
       Yast.import "ProductFeatures"
 
       return unless ProductFeatures.GetBooleanFeature("globals", "save_y2logs")
+
       target_path = ::File.join(
         Yast::Installation.destdir,
         Yast::Directory.logdir

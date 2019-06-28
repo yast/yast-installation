@@ -5,8 +5,12 @@ require "installation/clients/inst_modules_extensions"
 
 describe ::Installation::Clients::InstModulesExtensions do
   describe "#run" do
-    let(:deps_package_a) { [{ "deps" => [{ "provides" => "installer_module_extension() = module_a" }] }] }
-    let(:deps_package_b) { [{ "deps" => [{ "provides" => "installer_module_extension() = module_b" }] }] }
+    let(:deps_package_a) do
+      [{ "deps" => [{ "provides" => "installer_module_extension() = module_a" }] }]
+    end
+    let(:deps_package_b) do
+      [{ "deps" => [{ "provides" => "installer_module_extension() = module_b" }] }]
+    end
     let(:product) { Y2Packager::Product.new(name: "SLES") }
 
     before do
@@ -35,7 +39,8 @@ describe ::Installation::Clients::InstModulesExtensions do
 
     context "when no product is specified in roles" do
       it "merges installation workflow for all module extension packages" do
-        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions).with(["package_a", "package_b"])
+        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions)
+          .with(["package_a", "package_b"])
 
         subject.run
       end
@@ -82,7 +87,8 @@ describe ::Installation::Clients::InstModulesExtensions do
       end
 
       it "merges installation workflow for all module extension packages" do
-        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions).with(["package_a", "package_b"])
+        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions)
+          .with(["package_a", "package_b"])
 
         subject.run
       end
@@ -101,7 +107,8 @@ describe ::Installation::Clients::InstModulesExtensions do
       end
 
       it "merges installation workflow for all module extension packages" do
-        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions).with(["package_a", "package_b"])
+        expect(Yast::WorkflowManager).to receive(:merge_modules_extensions)
+          .with(["package_a", "package_b"])
 
         subject.run
       end

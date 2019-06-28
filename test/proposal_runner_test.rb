@@ -45,7 +45,11 @@ describe ::Installation::ProposalRunner do
     let(:properties) { PROPERTIES }
     let(:proposals) { [["keyboard_proposal", 90], ["hwinfo_proposal", 15]] }
     let(:keyboard_description) do
-      { "id" => "keyboard_stuff", "menu_title" => "&Keyboard Layout", "rich_text_title" => "Keyboard Layout" }
+      {
+        "id"              => "keyboard_stuff",
+        "menu_title"      => "&Keyboard Layout",
+        "rich_text_title" => "Keyboard Layout"
+      }
     end
     let(:hwinfo_description) do
       { "id" => "init_hwinfo", "menu_title" => "S&ystem", "rich_text_title" => "System" }
@@ -100,7 +104,9 @@ describe ::Installation::ProposalRunner do
         # initialization of internal state
         expect(subject.run).to eq :auto
 
-        expect(subject.send(:html_header, "software", force_rw: true)).to eql Yast::HTML.Heading(Yast::HTML.Link("Software", "software"))
+        expect(subject.send(:html_header, "software", force_rw: true)).to eql(
+          Yast::HTML.Heading(Yast::HTML.Link("Software", "software"))
+        )
       end
     end
 

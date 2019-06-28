@@ -142,7 +142,8 @@ module Yast
             "    rm -rf $TMPFILE; \n"
           ),
           # Running update.post script
-          "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"./update.post\" \"$i\"; \n"
+          "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && " \
+            "\"./update.post\" \"$i\"; \n"
         ),
         "done;"
       )
@@ -175,7 +176,8 @@ module Yast
       SCR.Execute(
         path(".target.bash"),
         "cd / ; for i in /tmp/update/[0-9]*/install ; do " \
-          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \
+          "[ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" " \
+          "&& \"$i/update.post2\" \"$i\" ; " \
           "done"
       )
 

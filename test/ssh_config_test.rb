@@ -88,7 +88,8 @@ describe Installation::SshConfig do
       root1 = described_class.from_dir(root1_dir)
       contents = root1.keys.map { |k| k.files.map(&:content) }
       expect(contents).to contain_exactly(
-        ["root1: content of ssh_host_dsa_key file\n", "root1: content of ssh_host_dsa_key.pub file\n"],
+        ["root1: content of ssh_host_dsa_key file\n",
+         "root1: content of ssh_host_dsa_key.pub file\n"],
         ["root1: content of ssh_host_key file\n", "root1: content of ssh_host_key.pub file\n"]
       )
     end

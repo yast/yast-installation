@@ -12,7 +12,8 @@ module Installation
 
     def run
       if self.class.show
-        ret = Yast::PackagesUI.RunPatternSelector(enable_back: true, cancel_label: Yast::Label.AbortButton)
+        ret = Yast::PackagesUI.RunPatternSelector(enable_back:  true,
+                                                  cancel_label: Yast::Label.AbortButton)
         ret = :next if ret == :accept
       else
         ret = :auto

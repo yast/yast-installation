@@ -119,9 +119,9 @@ module Yast
           Pkg.SourceSaveAll
         end
 
-        # check during upgrade whether the added repositories provide an upgrade for installed package
-        # (openSUSE DVD does not contain all packages, packages from OSS repository might not have been upgraded,
-        # see bnc#693230 for details)
+        # check during upgrade whether the added repositories provide an upgrade for installed
+        # package (openSUSE DVD does not contain all packages, packages from OSS repository
+        # might not have been upgraded, see bnc#693230 for details)
         if Mode.update && Ops.greater_than(Builtins.size(@added_ids), 0)
           Builtins.y2milestone(
             "Checking whether there is and update provided by extra (non-update) repo..."
@@ -249,7 +249,8 @@ module Yast
     end
 
     # Register the installation sources in offline mode (no network connection required).
-    # The repository metadata will be downloaded by sw_single (or another yast module) when the repostory is enabled
+    # The repository metadata will be downloaded by sw_single (or another yast module)
+    # when the repostory is enabled
     #
     # @param url_list [Array<Hash>] list of the sources to register. Following
     #   keys are recognized with default in brackets:

@@ -12,10 +12,12 @@ describe Yast::InstExtrasourcesClient do
       subject.instance_variable_set(:"@usb_sources", {})
 
       allow(Yast::Pkg).to receive(:SourceGetCurrent).with(false).and_return([0, 1, 2, 3])
-      allow(Yast::Pkg).to receive(:SourceGeneralData).with(0).and_return("raw_url" => "http://test.com/")
+      allow(Yast::Pkg).to receive(:SourceGeneralData).with(0)
+        .and_return("raw_url" => "http://test.com/")
       allow(Yast::Pkg).to receive(:SourceGeneralData).with(1)
         .and_return("raw_url" => "usb://device=/dev/disk/by-id/usb-15")
-      allow(Yast::Pkg).to receive(:SourceGeneralData).with(2).and_return("raw_url" => "dir:///mnt/path")
+      allow(Yast::Pkg).to receive(:SourceGeneralData).with(2)
+        .and_return("raw_url" => "dir:///mnt/path")
       allow(Yast::Pkg).to receive(:SourceGeneralData).with(3).and_return({})
     end
 

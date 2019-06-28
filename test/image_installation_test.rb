@@ -11,8 +11,10 @@ Yast.import "Arch"
 
 IMAGES_DESCR_FILE = File.join(__dir__, "data/images/images.xml")
 
-KDE4_PATTERNS  = ["base", "enhanced_base", "games", "imaging", "kde4", "kde4_basis", "multimedia", "sw_management", "x11"].freeze
-GNOME_PATTERNS = ["base", "enhanced_base", "fonts", "games", "gnome", "gnome_basis", "imaging", "multimedia", "sw_management", "x11"].freeze
+KDE4_PATTERNS  = ["base", "enhanced_base", "games", "imaging", "kde4", "kde4_basis", "multimedia",
+                  "sw_management", "x11"].freeze
+GNOME_PATTERNS = ["base", "enhanced_base", "fonts", "games", "gnome", "gnome_basis", "imaging",
+                  "multimedia", "sw_management", "x11"].freeze
 X11_PATTERNS   = ["base", "enhanced_base", "fonts", "sw_management", "x11"].freeze
 BASE_PATTERNS  = ["base", "enhanced_base", "sw_management"].freeze
 
@@ -33,7 +35,8 @@ describe Yast::ImageInstallation do
       allow(Yast::Pkg).to receive(:SourceProvideDigestedFile).and_return(IMAGES_DESCR_FILE)
     end
 
-    it "finds images matching architecture and selected patterns and returns if processing was successful" do
+    it "finds images matching architecture and selected patterns and "\
+        "returns if processing was successful" do
       ARCHS.each do |arch|
         allow(Yast::Arch).to receive(:arch_short).and_return(arch)
 
@@ -46,7 +49,8 @@ describe Yast::ImageInstallation do
       end
     end
 
-    it "does not find any image using unsupported architecture and returns if processing was successful" do
+    it "does not find any image using unsupported architecture and " \
+        "returns if processing was successful" do
       [KDE4_PATTERNS, GNOME_PATTERNS, X11_PATTERNS, BASE_PATTERNS].each do |patterns|
         allow(Yast::Arch).to receive(:arch_short).and_return(NON_MATCHING_ARCH)
         Yast::ImageInstallation.FreeInternalVariables()
@@ -57,7 +61,8 @@ describe Yast::ImageInstallation do
       end
     end
 
-    it "does not find any image using unsupported patterns and returns if processing was successful" do
+    it "does not find any image using unsupported patterns and " \
+        "returns if processing was successful" do
       ARCHS.each do |arch|
         allow(Yast::Arch).to receive(:arch_short).and_return(arch)
 

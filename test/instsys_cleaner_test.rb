@@ -77,10 +77,13 @@ describe Installation::InstsysCleaner do
 
         # the order of the executed commands is important, check it explicitly
         expect(File).to receive(:exist?).with("/parts/mp_0000/lib/modules").and_return(true).ordered
-        expect(Yast::Execute).to receive(:locally).with("mount", stdout: :capture).and_return(load_fixture("inst-sys", "mount.out")).ordered
-        expect(Yast::Execute).to receive(:locally).with("losetup", "-n", "-O", "BACK-FILE", "/dev/loop0", stdout: :capture)
+        expect(Yast::Execute).to receive(:locally).with("mount", stdout: :capture)
+          .and_return(load_fixture("inst-sys", "mount.out")).ordered
+        expect(Yast::Execute).to receive(:locally)
+          .with("losetup", "-n", "-O", "BACK-FILE", "/dev/loop0", stdout: :capture)
           .and_return(load_fixture("inst-sys", "losetup.out")).ordered
-        expect(Yast::Execute).to receive(:locally).with("umount", "/parts/mp_0000").ordered
+        expect(Yast::Execute).to receive(:locally)
+          .with("umount", "/parts/mp_0000").ordered
         expect(Yast::Execute).to receive(:locally).with("losetup", "-d", "/dev/loop0").ordered
         expect(FileUtils).to receive(:rm_rf).with("/parts/00_lib").ordered
 
