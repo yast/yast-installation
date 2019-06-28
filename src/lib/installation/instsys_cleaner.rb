@@ -160,9 +160,7 @@ module Installation
       mounts.find { |m| m.match(/\A(\/dev\/loop.*) on #{Regexp.escape(KERNEL_MODULES_MOUNT_POINT)} /) }
       device = Regexp.last_match(1)
 
-      if !device
-        log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point")
-      end
+      log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point") if !device
 
       device
     end

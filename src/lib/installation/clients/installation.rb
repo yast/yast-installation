@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,13 +17,13 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# Module:	installation.ycp
+# Module:  installation.ycp
 #
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
-# Purpose:	Visual speeding-up the installation.
-#		This client only initializes the UI
-#		and calls the real installation.
+# Purpose:  Visual speeding-up the installation.
+#    This client only initializes the UI
+#    and calls the real installation.
 #
 # $Id$
 module Yast

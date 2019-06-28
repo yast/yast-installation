@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,11 +17,11 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_system_analysis.ycp
-# Package:	Installation
-# Summary:	Installation mode selection, system analysis
-# Authors:	Jiri Srain <jsrain@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
+# File:  clients/inst_system_analysis.ycp
+# Package:  Installation
+# Summary:  Installation mode selection, system analysis
+# Authors:  Jiri Srain <jsrain@suse.cz>
+#    Lukas Ocilka <locilka@suse.cz>
 
 require "yast"
 require "y2storage"
@@ -159,7 +157,7 @@ module Yast
 
     # Function definitions -->
 
-    #	USB initialization
+    #  USB initialization
     def ActionUSB
       Hotplug.StartUSB
 
@@ -173,7 +171,7 @@ module Yast
       true
     end
 
-    #	Hard disks initialization
+    #  Hard disks initialization
     #
     # @raise [AbortException] if an error is found and the installation must
     #   be aborted because of such error
@@ -188,9 +186,7 @@ module Yast
         "\nCheck 'drivers.suse.com' if you need specific hardware drivers for installation."
       )
 
-      if !ProductFeatures.GetBooleanFeature("globals", "show_drivers_info")
-        drivers_info = ""
-      end
+      drivers_info = "" if !ProductFeatures.GetBooleanFeature("globals", "show_drivers_info")
 
       # This error message is only shown when no disks where found during a normal
       # installation. The autoinstallation case will be handled later by AutoYaST at
@@ -274,6 +270,7 @@ module Yast
     #   or +nil+ for default.
     def activate_callbacks
       return nil unless Mode.auto
+
       Y2Autoinstallation::ActivateCallbacks.new
     end
 

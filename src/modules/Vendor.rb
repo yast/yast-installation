@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -20,18 +18,18 @@
 # ------------------------------------------------------------------------------
 
 # File:
-#	Vendor.ycp
+#  Vendor.ycp
 #
 # Module:
-#	Vendor
+#  Vendor
 #
 # Summary:
-#	provide vendor/driver update disk functions
+#  provide vendor/driver update disk functions
 #
 # $Id$
 #
 # Author:
-#	Klaus Kaempf <kkaempf@suse.de>
+#  Klaus Kaempf <kkaempf@suse.de>
 #
 require "yast"
 

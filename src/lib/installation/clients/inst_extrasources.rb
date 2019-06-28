@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -353,6 +351,7 @@ module Yast
         general = Pkg.SourceGeneralData(src)
         url = general["raw_url"]
         next if url.nil? || url.empty?
+
         @local_urls[src] = url if Mode.update && url =~ /^dir:\/+mnt\/+/
         # check for USB sources which should be disabled
         @usb_sources[src] = url if url.include?("device=/dev/disk/by-id/usb-")

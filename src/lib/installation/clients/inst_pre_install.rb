@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -49,9 +47,7 @@ module Yast
 
       # The ssh_import proposal doesn't make sense if there is no
       # configuration to import from.
-      if ::Installation::SshImporter.instance.configurations.empty?
-        ProductControl.DisableSubProposal("inst_initial", "ssh_import")
-      end
+      ProductControl.DisableSubProposal("inst_initial", "ssh_import") if ::Installation::SshImporter.instance.configurations.empty?
 
       # free the memory
       @useful_devices = nil
@@ -71,6 +67,7 @@ module Yast
           count = 0
           disks = disks.select do |dist|
             next true unless dist.start_with?(s)
+
             (count += 1) <= 8
           end
 

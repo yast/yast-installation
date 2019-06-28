@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,12 +17,12 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_license.ycp
-# Package:	Installation
-# Summary:	Generic License File
-# Authors:	Anas Nashif <nashif@suse.de>
-#		Jiri Srain <jsrain@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
+# File:  clients/inst_license.ycp
+# Package:  Installation
+# Summary:  Generic License File
+# Authors:  Anas Nashif <nashif@suse.de>
+#    Jiri Srain <jsrain@suse.cz>
+#    Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
 #
@@ -152,9 +150,7 @@ module Yast
         UI.CloseDialog
         # License has been aborted
         # bugzilla #282958
-        if @test_mode != true
-          SCR.Execute(path(".target.bash"), "/sbin/halt -f -n -p")
-        end
+        SCR.Execute(path(".target.bash"), "/sbin/halt -f -n -p") if @test_mode != true
         :abort
       when :next, :accepted
         :next

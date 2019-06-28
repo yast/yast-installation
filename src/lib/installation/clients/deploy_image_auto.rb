@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -400,7 +398,7 @@ module Yast
           WFM.call("inst_prepare_image")
 
           # moved to control.xml
-          #	WFM::call ("inst_deploy_image");
+          #  WFM::call ("inst_deploy_image");
         end
 
         @ret = true

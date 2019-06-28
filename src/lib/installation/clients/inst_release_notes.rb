@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,12 +17,12 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	installation/general/inst_relase_notes.ycp
-# Module:	Installation
-# Summary:	Display release notes
-# Authors:	Arvin Schnell <arvin@suse.de>
-#		Lukas Ocilka <locilka@suse.de>
-#		Jens Daniel Schmidt <jdsn@suse.de>
+# File:  installation/general/inst_relase_notes.ycp
+# Module:  Installation
+# Summary:  Display release notes
+# Authors:  Arvin Schnell <arvin@suse.de>
+#    Lukas Ocilka <locilka@suse.de>
+#    Jens Daniel Schmidt <jdsn@suse.de>
 #
 # Display release notes.
 #
@@ -72,9 +70,7 @@ module Yast
 
       # --- //
 
-      if Ops.get_string(@argmap, "directory", "") != ""
-        @basedirectory = Ops.add(Directory.custom_workflow_dir, @basedirectory)
-      end
+      @basedirectory = Ops.add(Directory.custom_workflow_dir, @basedirectory) if Ops.get_string(@argmap, "directory", "") != ""
 
       @readproducts = []
       # Release notes might be missing
@@ -95,6 +91,7 @@ module Yast
         @is_directory = nil
         @readproducts = Builtins.filter(@readproducts) do |one_prod|
           next false if one_prod == "" # there's empty line at the end of ls output
+
           @is_directory = FileUtils.IsDirectory(
             Builtins.sformat("%1/%2", @basedirectory, one_prod)
           )
@@ -131,9 +128,7 @@ module Yast
           " "
         )
         @relnotesproducts = Builtins.add(@relnotesproducts, cleanproduct)
-        if Ops.less_than(@minwidtprodsel, Builtins.size(cleanproduct))
-          @minwidtprodsel = Builtins.size(cleanproduct)
-        end
+        @minwidtprodsel = Builtins.size(cleanproduct) if Ops.less_than(@minwidtprodsel, Builtins.size(cleanproduct))
         Ops.set(@cleanproduct_product, cleanproduct, product)
         @prodnamelen = Ops.add(@prodnamelen, Builtins.size(cleanproduct))
         # read release notes
@@ -155,9 +150,7 @@ module Yast
           )
           lang_name = Ops.get(@languages_translations, relnotes_lang, "")
           # combobox item
-          if lang_name.nil? || lang_name == ""
-            lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang)
-          end
+          lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang) if lang_name.nil? || lang_name == ""
           # set minimal width (maximal length of language name)
           if Ops.less_than(
             Ops.get(@minwidthlang, product, 0),
@@ -223,18 +216,18 @@ module Yast
 
       # if there are more products installed, show them in tabs or with
       # combo box, bnc #359137 (do not show tab for one product)
-      if Ops.less_or_equal(Builtins.size(@relnotesproducts), 1)
-        @relnoteslayout = deep_copy(@relnotesscreen)
+      @relnoteslayout = if Ops.less_or_equal(Builtins.size(@relnotesproducts), 1)
+        deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
           (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
             Ops.less_than(@prodnamelen, 90) ||
             Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
               Ops.less_than(@prodnamelen, 70))
-        @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen)
+        DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else
-        @relnoteslayout = VBox(
+        VBox(
           Left(
             MinWidth(
               Ops.add(

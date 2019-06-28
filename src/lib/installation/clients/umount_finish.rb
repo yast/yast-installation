@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -97,9 +95,7 @@ module Yast
         umount_list = []
         SCR.Read(path(".proc.mounts")).each do |entry|
           mountpoint = entry["file"]
-          if mountpoint.start_with?(Installation.destdir)
-            umount_list << mountpoint[Installation.destdir.length, mountpoint.length]
-          end
+          umount_list << mountpoint[Installation.destdir.length, mountpoint.length] if mountpoint.start_with?(Installation.destdir)
         end
         umount_list.sort!
         log.info("umount_list:#{umount_list}")
@@ -226,6 +222,7 @@ module Yast
           # bnc #395034
           # Don't remount them read-only!
           next if @umount_status
+
           log_running_processes(@tmp)
 
           if Builtins.contains(
@@ -341,7 +338,7 @@ module Yast
         begin
           # (the details are printed on STDERR, redirect it)
           `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
-        rescue => e
+        rescue StandardError => e
           "fuser failed: #{e}"
         end
       log.warn("Running processes using #{mount_point}: #{fuser}")

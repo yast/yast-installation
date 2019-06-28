@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2014 Novell, Inc. All Rights Reserved.
 #
@@ -129,17 +127,13 @@ module Installation
       @proposal_names.map!(&:first) # first element is name of client
 
       missing_proposals = @proposal_names.reject { |proposal| Yast::WFM::ClientExists(proposal) }
-      unless missing_proposals.empty?
-        log.warn "These proposals are missing on system: #{missing_proposals}"
-      end
+      log.warn "These proposals are missing on system: #{missing_proposals}" unless missing_proposals.empty?
 
       # Filter missing proposals out
       @proposal_names -= missing_proposals
 
       unavailable_proposals = @proposal_names.select { |name| description_for(name).nil? }
-      unless unavailable_proposals.empty?
-        log.info "These proposals report itself as unavailable: #{unavailable_proposals}"
-      end
+      log.info "These proposals report itself as unavailable: #{unavailable_proposals}" unless unavailable_proposals.empty?
 
       @proposal_names -= unavailable_proposals
     end
@@ -173,6 +167,7 @@ module Installation
         call_proposals = proposal_names.select { |client| should_be_called_again?(client) }
 
         break if call_proposals.empty?
+
         log.info "These proposals want to be called again: #{call_proposals}"
 
         unless should_run_proposals_again?(call_proposals)
@@ -425,9 +420,11 @@ module Installation
 
       trigger = @proposals[client]["trigger"]
 
-      raise "Incorrect definition of 'trigger': #{trigger.inspect} \n" \
-        "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
-        "and [Any] 'value' must be set" unless valid_trigger?(trigger)
+      unless valid_trigger?(trigger)
+        raise "Incorrect definition of 'trigger': #{trigger.inspect} \n" \
+          "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
+          "and [Any] 'value' must be set"
+      end
 
       expectation_class  = trigger["expect"]["class"]
       expectation_method = trigger["expect"]["method"]
@@ -437,8 +434,8 @@ module Installation
 
       begin
         value = Object.const_get(expectation_class).send(expectation_method)
-      rescue StandardError, ScriptError => error
-        raise "Checking the trigger expectations for #{client} have failed:\n#{error}"
+      rescue StandardError, ScriptError => e
+        raise "Checking the trigger expectations for #{client} have failed:\n#{e}"
       end
 
       if value == expectation_value
@@ -492,6 +489,7 @@ module Installation
       log.debug "#{client} MakeProposal() returns #{proposal}"
 
       raise "Callback is not a block: #{callback.class}" unless callback.is_a? Proc
+
       callback.call(client, proposal)
 
       proposal
@@ -586,6 +584,7 @@ module Installation
     def full_module_name(name)
       # already a full name?
       return name if name.end_with?("_proposal")
+
       name + "_proposal"
     end
 

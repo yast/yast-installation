@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -23,13 +21,13 @@ module Yast
     def main
       Yast.import "UI"
       #
-      # Authors:	Lukas Ocilka <locilka@suse.cz>
+      # Authors:  Lukas Ocilka <locilka@suse.cz>
       #
-      # Purpose:	This script detects whether there is no active network.
-      #		In such case, user can configure network manually.
-      #		This should be used in the first stage installation.
+      # Purpose:  This script detects whether there is no active network.
+      #    In such case, user can configure network manually.
+      #    This should be used in the first stage installation.
       #
-      # See More:	FATE #301967
+      # See More:  FATE #301967
       #
       # $Id$
       #

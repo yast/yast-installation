@@ -9,7 +9,7 @@ Yast.import "Installation"
 Yast.import "Pkg"
 Yast.import "Arch"
 
-IMAGES_DESCR_FILE = File.join(File.expand_path(File.dirname(__FILE__)), "data/images/images.xml")
+IMAGES_DESCR_FILE = File.join(__dir__, "data/images/images.xml")
 
 KDE4_PATTERNS  = ["base", "enhanced_base", "games", "imaging", "kde4", "kde4_basis", "multimedia", "sw_management", "x11"].freeze
 GNOME_PATTERNS = ["base", "enhanced_base", "fonts", "games", "gnome", "gnome_basis", "imaging", "multimedia", "sw_management", "x11"].freeze

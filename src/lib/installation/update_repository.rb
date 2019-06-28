@@ -1,4 +1,3 @@
-# encoding: utf-8
 # ------------------------------------------------------------------------------
 # Copyright (c) 2016 SUSE LLC
 #
@@ -122,6 +121,7 @@ module Installation
       @update_files = []
       @packages = nil
       raise UnknownOrigin unless ORIGINS.include?(origin)
+
       @origin = origin
     end
 
@@ -148,6 +148,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
+
       add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
@@ -230,6 +231,7 @@ module Installation
     # @see #adddir
     def apply(mount_path = Pathname("/mounts"))
       raise UpdatesNotFetched if update_files.nil?
+
       update_files.each do |path|
         mountpoint = next_name(mount_path, length: 4)
         mount_squashfs(path, mountpoint)
@@ -324,6 +326,7 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Squashing packages into #{file}: #{out}")
       raise CouldNotSquashPackage unless out["exit"].zero?
+
       file
     end
 
@@ -339,9 +342,11 @@ module Installation
     # @raise CouldNotRefreshRepo
     def add_repo
       return @repo_id unless @repo_id.nil?
+
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
+
       new_repo_id = Yast::Pkg.RepositoryAdd("base_urls" => [uri.to_s],
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")

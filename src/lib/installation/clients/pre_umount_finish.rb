@@ -77,6 +77,7 @@ module Installation
       ret = WFM.Execute(path(".local.bash_output"), command)
       log.info "Command #{command} returned: #{ret}"
       return true if ret["exit"] == 0
+
       err = ret["stderr"]
       log.error "Error: #{err}" unless err.empty?
       false

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	modules/InstFunctions.rb
-# Package:	Installation
-# Summary:	Installation functions
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# File:  modules/InstFunctions.rb
+# Package:  Installation
+# Summary:  Installation functions
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
 # This library provides functions for installation clients that can be easily tested
 #

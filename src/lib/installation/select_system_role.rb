@@ -1,4 +1,3 @@
-# coding: utf-8
 # Copyright (c) 2016 SUSE LLC.
 #  All Rights Reserved.
 
@@ -82,7 +81,7 @@ module Installation
 
     def dialog_content
       @selected_role_id = SystemRole.current
-      @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
+      @selected_role_id ||= roles.first&.id if SystemRole.default?
 
       HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
     end
@@ -197,7 +196,7 @@ module Installation
         break unless (0..(clients.size - 1)).cover?(client_to_show)
       end
 
-      client_to_show >= clients.size ? :next : :back
+      (client_to_show >= clients.size) ? :next : :back
     end
 
     def clear_role

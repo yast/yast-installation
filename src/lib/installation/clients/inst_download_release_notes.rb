@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -20,9 +18,9 @@
 # ------------------------------------------------------------------------------
 
 #
-# Authors:	Jiri Srain <jsrain@suse.cz>
+# Authors:  Jiri Srain <jsrain@suse.cz>
 #
-# Purpose:	Downloads on-line release notes
+# Purpose:  Downloads on-line release notes
 #
 # $Id$
 
@@ -101,8 +99,10 @@ module Yast
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
       return Y2Packager::Product.with_status(:selected, :installed) unless Stage.initial
+
       selected = Y2Packager::Product.with_status(:selected)
       return selected unless selected.empty?
+
       Y2Packager::Product.with_status(:available)
     end
 

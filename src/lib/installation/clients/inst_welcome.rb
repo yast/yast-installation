@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_welcome.ycp
-# Package:	Installation
-# Summary:	Generic Welcome File
-# Authors:	Anas Nashif <nashif@suse.de>
+# File:  clients/inst_welcome.ycp
+# Package:  Installation
+# Summary:  Generic Welcome File
+# Authors:  Anas Nashif <nashif@suse.de>
 #
 # $Id$
 #
@@ -44,9 +42,7 @@ module Yast
 
       @directory = Ops.get_string(@argmap, "directory", Directory.datadir)
 
-      if Ops.get_string(@argmap, "directory", "") != ""
-        @directory = Ops.add(Directory.custom_workflow_dir, @directory)
-      end
+      @directory = Ops.add(Directory.custom_workflow_dir, @directory) if Ops.get_string(@argmap, "directory", "") != ""
 
       @patterns = Convert.convert(
         Ops.get(@argmap, "patterns", @default_patterns),

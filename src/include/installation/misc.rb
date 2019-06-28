@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -112,9 +110,9 @@ module Yast
         end
 =end
 
-        if some_destructive
+        body = if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
+          Ops.add(
             body,
             _(
               "<p>If you continue now, <b>existing\n" \
@@ -125,7 +123,7 @@ module Yast
           )
         else
           # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
+          Ops.add(
             body,
             _(
               "<p>If you continue now, partitions on your\n" \
@@ -293,7 +291,7 @@ module Yast
         path(".local.bash"),
         Builtins.sformat(
           "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; /usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
-          scst_required == false ? "0" : "1"
+          (scst_required == false) ? "0" : "1"
         )
       )
       Linuxrc.ResetInstallInf

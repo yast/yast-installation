@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	installation/general/inst_save_hardware_status.ycp
-# Module:	Installation
-# Summary:	Save status of configured hardware
-# Authors:	Jiri Srain <jsrain@suse.cz>
+# File:  installation/general/inst_save_hardware_status.ycp
+# Module:  Installation
+# Summary:  Save status of configured hardware
+# Authors:  Jiri Srain <jsrain@suse.cz>
 #
 # $Id$
 module Yast

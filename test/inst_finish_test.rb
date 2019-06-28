@@ -8,7 +8,7 @@ describe Yast::InstFinishClient do
   describe "#main" do
     before do
       allow(Yast::WFM).to receive(:ClientExists).and_return(true)
-      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Info"]) { Hash.new }
+      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Info"]) { {} }
       allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Write"])
 
       allow(Yast::UI).to receive(:PollInput)

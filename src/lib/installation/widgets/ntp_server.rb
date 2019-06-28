@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2019 SUSE LLC
 #
@@ -89,8 +87,10 @@ module Installation
       # @return [Boolean] true if value is valid; false otherwise.
       def validate
         return skip_ntp_server? if servers.empty?
+
         invalid_servers = servers.reject { |v| Yast::IP.Check(v) || Yast::Hostname.CheckFQ(v) }
         return true if invalid_servers.empty?
+
         Yast::Popup.Error(
           format(_(NOT_VALID_SERVERS_MESSAGE), servers: invalid_servers.join(", "))
         )

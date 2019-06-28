@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -20,18 +18,18 @@
 # ------------------------------------------------------------------------------
 
 # File:
-#	disintegrate_all_extensions.ycp
+#  disintegrate_all_extensions.ycp
 #
 # Module:
-#	Installation
+#  Installation
 #
 # Authors:
-#	Lukas Ocilka <locilka@suse.cz>
+#  Lukas Ocilka <locilka@suse.cz>
 #
 # Summary:
-#	Special client for unloading all downloaded and integrated
-#	language and other inst-sys extensions.
-#	See FATE #302955: 'Split translations out of installation system'.
+#  Special client for unloading all downloaded and integrated
+#  language and other inst-sys extensions.
+#  See FATE #302955: 'Split translations out of installation system'.
 #
 # $Id$
 #

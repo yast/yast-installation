@@ -70,8 +70,8 @@ module Installation
           name += " #{os_release["VERSION"]}"
         end
         name
-      rescue IOError, SystemCallError, RuntimeError => error
-        log.error("Reading /etc/os-release failed with exception: #{error.inspect}")
+      rescue IOError, SystemCallError, RuntimeError => e
+        log.error("Reading /etc/os-release failed with exception: #{e.inspect}")
         default_name
       end
 
@@ -85,6 +85,7 @@ module Installation
         File.readlines(filename).each do |line|
           line = line.lstrip.chomp
           next if line.empty? || line.start_with?("#")
+
           (key, value) = line.split("=")
           key.rstrip!
           value.gsub!(/^\s*"/, "")

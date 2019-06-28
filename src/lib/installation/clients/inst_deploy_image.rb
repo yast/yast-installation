@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -110,18 +108,18 @@ module Yast
       # Wizard::SetContents (
       #     _("Deploying Installation Images"),
       #     `VBox (
-      # 	`ProgressBar (
-      # 	    `id ("one_image"),
-      # 	    _("Initializing..."),
-      # 	    100,
-      # 	    0
-      # 	),
-      # 	`ProgressBar (
-      # 	    `id ("deploying_progress"),
-      # 	    _("Deploying Images..."),
-      # 	    100,
-      # 	    0
-      # 	)
+      #   `ProgressBar (
+      #       `id ("one_image"),
+      #       _("Initializing..."),
+      #       100,
+      #       0
+      #   ),
+      #   `ProgressBar (
+      #       `id ("deploying_progress"),
+      #       _("Deploying Images..."),
+      #       100,
+      #       0
+      #   )
       #     ),
       #     // TRANSLATORS: help idi#1
       #     _("<p>System images are being deployed. Please wait...</p>") +
@@ -273,9 +271,7 @@ module Yast
         current_step
       end
 
-      if id == "storing_user_prefs" || id == "restoring_user_prefs"
-        SetProgress()
-      end
+      SetProgress() if id == "storing_user_prefs" || id == "restoring_user_prefs"
 
       # Should be 0 - 100%
       @_current_overall_progress = Ops.add(

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -109,9 +107,7 @@ module Yast
         # Save Add-On products configuration
         # to be able to restore the settings
         @save_to = AddOnProduct.TmpExportFilename
-        if FileUtils.Exists(@save_to)
-          SCR.Execute(path(".target.remove"), @save_to)
-        end
+        SCR.Execute(path(".target.remove"), @save_to) if FileUtils.Exists(@save_to)
         if Stage.initial
           Builtins.y2milestone("Saving Add-On configuration...")
           @exported_add_ons = AddOnProduct.Export

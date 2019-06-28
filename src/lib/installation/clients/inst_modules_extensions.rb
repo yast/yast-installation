@@ -35,7 +35,7 @@ module Installation
           dependencies[pkg_name] = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "").first["deps"]
 
           product_provides = dependencies[pkg_name].find_all do |d|
-            d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_PRODUCT)}/)
+            d["provides"]&.match(/#{Regexp.escape(PROVIDES_PRODUCT)}/)
           end
           log.info "package #{pkg_name} contains the following product provides #{product_provides}"
 
@@ -50,7 +50,7 @@ module Installation
         extension_packages.map do |list|
           pkg_name = list.first
           extension_provide = dependencies[pkg_name].find do |d|
-            d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_KEY)}/)
+            d["provides"]&.match(/#{Regexp.escape(PROVIDES_KEY)}/)
           end
 
           module_name = extension_provide["provides"][/#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1]

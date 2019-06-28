@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_restore_settings
-# Package:	Installation
-# Summary:	Restore settings after restart during 2nd-stage installation
-# Authors:	Anas Nashif <nashif@suse.de>
+# File:  clients/inst_restore_settings
+# Package:  Installation
+# Summary:  Restore settings after restart during 2nd-stage installation
+# Authors:  Anas Nashif <nashif@suse.de>
 #
 # $Id$
 #

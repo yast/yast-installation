@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -87,10 +85,14 @@ module Installation
           # Fit to the given UI
           displayinfo = Yast::UI.GetDisplayInfo || {}
           width = displayinfo["TextMode"] ? displayinfo.fetch("Width", 80) : 80
-          Yast::Report.Warning(wrap_text(error_message,
-            width - 4)) unless error_message.empty?
-          Yast::Report.Warning(wrap_text(second_stage_error,
-            width - 4)) unless second_stage_error.empty?
+          unless error_message.empty?
+            Yast::Report.Warning(wrap_text(error_message,
+              width - 4))
+          end
+          unless second_stage_error.empty?
+            Yast::Report.Warning(wrap_text(second_stage_error,
+              width - 4))
+          end
           # skip if not interactive mode.
           return :auto
         else
@@ -102,9 +104,7 @@ module Installation
       log.info "Installation step #2"
       @proposal_mode = Yast::GetInstArgs.proposal
 
-      if Yast::ProductControl.GetDisabledProposals.include?(@proposal_mode)
-        return :auto
-      end
+      return :auto if Yast::ProductControl.GetDisabledProposals.include?(@proposal_mode)
 
       @store = @store_class.new(@proposal_mode)
 
@@ -236,6 +236,7 @@ module Installation
               # explain consequences of a decision
               _("You will lose all changes.")
           )
+
           make_proposal(true, false) # force_reset
 
         when :skip, :dontskip
@@ -492,9 +493,7 @@ module Installation
       # FATE #301151: Allow YaST proposals to have help texts
       Yast::Wizard.SetHelpText(@store.help_text(@current_tab))
 
-      if @store.tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
-        switch_to_tab(tab_to_switch)
-      end
+      switch_to_tab(tab_to_switch) if @store.tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
 
       # now do the display-only proposals
 
@@ -544,8 +543,8 @@ module Installation
 
     # Call a submodule's Write() function.
     #
-    # @param [String] submodule	name of the submodule's proposal dispatcher
-    # @return success		true if Write() was successful of if there is no Write() function
+    # @param [String] submodule  name of the submodule's proposal dispatcher
+    # @return success    true if Write() was successful of if there is no Write() function
     #
     def submod_write_settings(submodule)
       result = Yast::WFM.CallFunction(submodule, ["Write", {}]) || {}
@@ -734,8 +733,8 @@ module Installation
         end
       end
 
-      if !enable_skip
-        vbox = VBox(
+      vbox = if !enable_skip
+        VBox(
           # Help message between headline and installation proposal / settings summary.
           # May contain newlines, but don't make it very much longer than the original.
           Left(
@@ -755,7 +754,7 @@ module Installation
           menu_box
         )
       else
-        vbox = VBox(skip_buttons, HBox(HSpacing(4), rt), menu_box)
+        VBox(skip_buttons, HBox(HSpacing(4), rt), menu_box)
       end
 
       Yast::Wizard.SetContents(

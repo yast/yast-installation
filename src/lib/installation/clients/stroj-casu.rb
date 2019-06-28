@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -40,11 +38,11 @@ module Yast
       )
       @headings = [
         Tr("Time Machine"),
-        Tr("Temporal Range"), #
-        Tr("Spatial Range"), #
-        Tr("Temporal Accuracy"), #
+        Tr("Temporal Range"),
+        Tr("Spatial Range"),
+        Tr("Temporal Accuracy"),
         Tr("Spatial Accuracy")
-      ] #
+      ]
       @buttons = [
         [:repair, Tr("Self &Repair")],
         [:booooooooom, Tr("Self &Destruction")]

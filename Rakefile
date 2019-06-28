@@ -18,9 +18,7 @@ task :check_rng_status do
   rng_commit_time = `git log -1 --format="%ct" -- control/control.rng`
 
   # RNC must not be newer than RNG
-  if rng_commit_time.to_i < rnc_commit_time.to_i
-    raise "Error: control/control.rng is outdated, regenerate it from control/control.rnc file"
-  end
+  raise "Error: control/control.rng is outdated, regenerate it from control/control.rnc file" if rng_commit_time.to_i < rnc_commit_time.to_i
 end
 
 task tarball: :check_rng_status
@@ -31,6 +29,7 @@ task :"check:syntax" do
   Find.find("startup") do |path|
     # simple and stupid check, either it's executable or ends with .sh
     next unless File.file?(path) && (File.executable?(path) || path.end_with?(".sh"))
+
     # -n = read commands but do not execute them, syntax check only
     system("bash", "-n", path)
     raise "Syntax check failed" unless $CHILD_STATUS.success?

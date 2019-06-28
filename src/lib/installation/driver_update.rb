@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2016 SUSE LLC
 #
@@ -96,6 +94,7 @@ module Installation
     # @raise CouldNotBeApplied
     def apply
       return false if instsys_path.nil? || !instsys_path.exist?
+
       cmd = format(APPLY_CMD, source: instsys_path)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Applying update at #{path} (#{cmd}): #{out}")

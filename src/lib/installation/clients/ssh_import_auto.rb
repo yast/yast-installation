@@ -112,9 +112,7 @@ module Installation
         if ssh_importer.device && !ssh_importer.device.empty?
           ret["import"] = true
           ret["copy_config"] = ssh_importer.copy_config
-          if !ssh_importer.device.empty? && ssh_importer.device != "default"
-            ret["device"] = ssh_importer.device
-          end
+          ret["device"] = ssh_importer.device if !ssh_importer.device.empty? && ssh_importer.device != "default"
         else
           ret["import"] = false
           ret["copy_config"] = false

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -20,17 +18,17 @@
 # ------------------------------------------------------------------------------
 
 # File:
-#	ImageInstallation.ycp
+#  ImageInstallation.ycp
 #
 # Module:
-#	ImageInstallation
+#  ImageInstallation
 #
 # Summary:
-#	Support functions for installation via images
+#  Support functions for installation via images
 #
 # Authors:
-#	Jiri Srain <jsrain@suse.cz>
-#	Lukas Ocilka <locilka@suse.cz>
+#  Jiri Srain <jsrain@suse.cz>
+#  Lukas Ocilka <locilka@suse.cz>
 #
 require "yast"
 
@@ -303,7 +301,7 @@ module Yast
       end
 
       # reset, adjust labels, etc.
-      @tar_image_progress.call(0) if !@tar_image_progress.nil?
+      @tar_image_progress&.call(0)
 
       Builtins.y2milestone("Creating target directory")
       cmd = Builtins.sformat("test -d %1 || mkdir -p %1", target)
@@ -318,8 +316,8 @@ module Yast
       Builtins.y2milestone("Untarring the image")
 
       # lzma
-      if Builtins.regexpmatch(image, ".lzma$")
-        cmd = Builtins.sformat(
+      cmd = if Builtins.regexpmatch(image, ".lzma$")
+        Builtins.sformat(
           "lzmadec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
           String.Quote(image),
           String.Quote(target),
@@ -329,7 +327,7 @@ module Yast
         # xzdec
         # BNC #476079
       elsif Builtins.regexpmatch(image, ".xz$")
-        cmd = Builtins.sformat(
+        Builtins.sformat(
           "xzdec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
           String.Quote(image),
           String.Quote(target),
@@ -338,7 +336,7 @@ module Yast
         )
         # bzip2, gzip
       else
-        cmd = Builtins.sformat(
+        Builtins.sformat(
           "tar --numeric-owner --checkpoint=%3 --record-size=%4 --totals -C '%2' -xf '%1'",
           String.Quote(image),
           String.Quote(target),
@@ -373,11 +371,9 @@ module Yast
 
           next if newline.nil? || newline == ""
 
-          if !@tar_image_progress.nil?
-            @tar_image_progress.call(
-              Ops.add(Builtins.tointeger(newline), better_feeling_constant)
-            )
-          end
+          @tar_image_progress&.call(
+            Ops.add(Builtins.tointeger(newline), better_feeling_constant)
+          )
         else
           ret = UI.PollInput
           if ret == :abort || ret == :cancel
@@ -411,7 +407,7 @@ module Yast
       return false if aborted
 
       # adjust labels etc.
-      @tar_image_progress.call(100) if !@tar_image_progress.nil?
+      @tar_image_progress&.call(100)
 
       RemoveTemporaryImage(image)
 
@@ -549,9 +545,7 @@ module Yast
       img = deep_copy(img)
       @_current_image_from_imageset = Ops.add(@_current_image_from_imageset, 1)
 
-      if Builtins.size(@images_details) == 0
-        Builtins.y2warning("Images details are empty")
-      end
+      Builtins.y2warning("Images details are empty") if Builtins.size(@images_details) == 0
 
       @_current_image = {
         "file"         => Ops.get_string(img, "file", ""),
@@ -707,6 +701,7 @@ module Yast
       Builtins.foreach(Ops.get_list(read_details, "details", [])) do |image_detail|
         file = Ops.get_string(image_detail, "file", "")
         next if file.nil? || file == ""
+
         files = Builtins.tointeger(Ops.get_string(image_detail, "files", "0"))
         isize = Builtins.tointeger(Ops.get_string(image_detail, "size", "0"))
         Ops.set(@images_details, file, "files" => files, "size" => isize)
@@ -731,14 +726,10 @@ module Yast
       FillUpImagesDetails()
 
       # register own callback for downloading
-      if !@download_image_progress.nil?
-        Pkg.CallbackProgressDownload(@download_image_progress)
-      end
+      Pkg.CallbackProgressDownload(@download_image_progress) if !@download_image_progress.nil?
 
       # register own callback for start downloading
-      if !@start_download_handler.nil?
-        Pkg.CallbackStartDownload(@start_download_handler)
-      end
+      Pkg.CallbackStartDownload(@start_download_handler) if !@start_download_handler.nil?
 
       num = -1
       @_current_image_from_imageset = -1
@@ -746,13 +737,13 @@ module Yast
 
       Builtins.foreach(images) do |img|
         num = Ops.add(num, 1)
-        progress.call(num, 0) if !progress.nil?
+        progress&.call(num, 0)
         if !DeployImage(img, target)
           aborted = true
           Builtins.y2milestone("Aborting...")
           raise Break
         end
-        progress.call(num, 100) if !progress.nil?
+        progress&.call(num, 100)
       end
 
       return nil if aborted == true
@@ -775,22 +766,16 @@ module Yast
       ret = 0
 
       Builtins.foreach(installed_patterns) do |one_installed_pattern|
-        if Builtins.contains(imageset_patterns, one_installed_pattern)
-          ret = Ops.add(ret, 1)
-        end
+        ret = Ops.add(ret, 1) if Builtins.contains(imageset_patterns, one_installed_pattern)
       end
 
       ret
     end
 
     def EnoughPatternsMatching(matching_patterns, patterns_in_imagesets)
-      if matching_patterns.nil? || Ops.less_than(matching_patterns, 0)
-        return false
-      end
+      return false if matching_patterns.nil? || Ops.less_than(matching_patterns, 0)
 
-      if patterns_in_imagesets.nil? || Ops.less_than(patterns_in_imagesets, 0)
-        return false
-      end
+      return false if patterns_in_imagesets.nil? || Ops.less_than(patterns_in_imagesets, 0)
 
       # it's actually matching_patterns = patterns_in_imagesets
       Ops.greater_or_equal(matching_patterns, patterns_in_imagesets)
@@ -1214,7 +1199,7 @@ module Yast
 
       AdjustProgressLayout(id, nr_steps, _("Storing user preferences..."))
 
-      @generic_set_progress.call(id, 0) if !@generic_set_progress.nil?
+      @generic_set_progress&.call(id, 0)
 
       # Query for changed state of all knwon types
       # 'changed' means that they were 'installed' and 'not locked' before
@@ -1230,24 +1215,24 @@ module Yast
           Ops.get_symbol(one_object, "status", :unknown) == :removed
         end
         Ops.set(@objects_state, [one_type, "remove"], remove_resolvables)
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         install_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :selected
         end
         Ops.set(@objects_state, [one_type, "install"], install_resolvables)
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :available &&
             Ops.get_boolean(one_object, "locked", false) == true
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :installed &&
             Ops.get_boolean(one_object, "locked", false) == true
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
       end
 
       if ThisIsADebugMode()
@@ -1293,9 +1278,7 @@ module Yast
           Ops.get_string(one_resolvable, "arch", "") == arch
       end
 
-      if ThisIsADebugMode()
-        Builtins.y2milestone("Resolvables installed: %1", resolvable_properties)
-      end
+      Builtins.y2milestone("Resolvables installed: %1", resolvable_properties) if ThisIsADebugMode()
 
       ret = nil
 
@@ -1346,7 +1329,7 @@ module Yast
 
       AdjustProgressLayout(id, nr_steps, _("Restoring user preferences..."))
 
-      @generic_set_progress.call(id, 0) if !@generic_set_progress.nil?
+      @generic_set_progress&.call(id, 0)
 
       Builtins.foreach(@all_supported_types) do |one_type|
         resolvable_properties = Pkg.ResolvableProperties("", one_type, "")
@@ -1355,7 +1338,7 @@ module Yast
         to_install = Builtins.filter(resolvable_properties) do |one_resolvable|
           Ops.get_symbol(one_resolvable, "status", :unknown) == :selected
         end
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         # List of all packages selected for installation (just names)
         selected_for_installation_pkgnames = Builtins.maplist(
           Ops.get(@objects_state, [one_type, "install"], [])
@@ -1373,7 +1356,7 @@ module Yast
             "version" => Ops.get_string(one_resolvable, "version", "")
           }
         end
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         # Delete all packages that are installed but should not be
         one_already_installed_resolvable = {}
         Builtins.foreach(resolvable_properties) do |one_resolvable|
@@ -1382,6 +1365,7 @@ module Yast
               Ops.get_symbol(one_resolvable, "status", :unknown) != :selected
             next
           end
+
           one_already_installed_resolvable = {
             "arch"    => Ops.get_string(one_resolvable, "arch", ""),
             "name"    => Ops.get_string(one_resolvable, "name", ""),
@@ -1419,7 +1403,7 @@ module Yast
             end
           end
         end
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
         # Install all packages that aren't yet
         Builtins.foreach(to_install) do |one_to_install|
           one_to_install_ref = arg_ref(one_to_install)
@@ -1427,7 +1411,7 @@ module Yast
           ProceedWithSelected(one_to_install_ref, one_type_ref)
           one_type = one_type_ref.value
         end
-        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
+        @generic_set_progress&.call(id, nil)
       end
 
       # Free the memory

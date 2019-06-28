@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,11 +17,11 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_prepare_images.ycp
-# Package:	Installation
-# Summary:	Installation done (also) from image
-# Authors:	Jiri Srain <jsrain@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
+# File:  clients/inst_prepare_images.ycp
+# Package:  Installation
+# Summary:  Installation done (also) from image
+# Authors:  Jiri Srain <jsrain@suse.cz>
+#    Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
 module Yast
@@ -73,9 +71,7 @@ module Yast
       )
 
       # avoid useles calls
-      if Ops.greater_than(Builtins.size(@patterns_to_install), 0)
-        ImageInstallation.FindImageSet(@patterns_to_install)
-      end
+      ImageInstallation.FindImageSet(@patterns_to_install) if Ops.greater_than(Builtins.size(@patterns_to_install), 0)
 
       Builtins.y2milestone("Images for installation ready")
 

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -65,9 +63,7 @@ module Yast
 
       # properly set up initial language
       Installation.encoding = Console.SelectFont(Language.language)
-      if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
-        Installation.encoding = "UTF-8"
-      end
+      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
 
       unless Language.SwitchToEnglishIfNeeded(true)
         UI.SetLanguage(Language.language, Installation.encoding)
@@ -142,6 +138,7 @@ module Yast
       if Stage.initial
         ZYPP_DATA.each do |zypp_data_item|
           next unless FileUtils.Exists(zypp_data_item)
+
           Builtins.y2warning(
             "Directory '%1' exists, removing...",
             String.Quote(zypp_data_item)

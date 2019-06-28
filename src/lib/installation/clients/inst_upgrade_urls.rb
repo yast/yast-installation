@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -308,9 +306,7 @@ module Yast
 
       UI.ChangeWidget(Id("table_of_repos"), :Items, items)
 
-      if !currentitem.nil?
-        UI.ChangeWidget(Id("table_of_repos"), :CurrentItem, currentitem)
-      end
+      UI.ChangeWidget(Id("table_of_repos"), :CurrentItem, currentitem) if !currentitem.nil?
 
       enable_buttons = Ops.greater_than(Builtins.size(items), 0)
       UI.ChangeWidget(Id(:edit), :Enabled, enable_buttons)
@@ -458,10 +454,9 @@ module Yast
 
       # All already registered repos
       Builtins.foreach(@already_registered_repos) do |one_registered_repo|
-        if Ops.get_boolean(one_registered_repo, @REPO_ENABLED, true) == false
-          next
-        end
+        next if Ops.get_boolean(one_registered_repo, @REPO_ENABLED, true) == false
         raise Break if found == true
+
         found = true
         # if an installation repository is disabled, skip it
         if Ops.get_boolean(one_registered_repo, @REPO_ENABLED, true) == false
@@ -704,9 +699,7 @@ module Yast
         idx = Ops.add(idx, 1)
       end
 
-      if alias_orig != alias_
-        Builtins.y2milestone("Alias '%1' changed to '%2'", alias_orig, alias_)
-      end
+      Builtins.y2milestone("Alias '%1' changed to '%2'", alias_orig, alias_) if alias_orig != alias_
 
       alias_
     end
@@ -734,9 +727,7 @@ module Yast
           )
 
           Builtins.foreach(["autorefresh", "gpgcheck", "keeppackages"]) do |key|
-            if Builtins.haskey(one_url, key)
-              Ops.set(new_repo.value, key, Ops.get_boolean(one_url, key, true))
-            end
+            Ops.set(new_repo.value, key, Ops.get_boolean(one_url, key, true)) if Builtins.haskey(one_url, key)
           end
 
           if Builtins.haskey(one_url, "priority")
@@ -1003,13 +994,11 @@ module Yast
 
           AddOnProduct.add_on_products = Builtins.add(
             AddOnProduct.add_on_products,
-
             "media"            => new_id,
             "media_url"        => one_url,
             "product_dir"      => pth,
             "product"          => repo_name,
             "autoyast_product" => repo_name
-
           )
         end
       end
@@ -1052,9 +1041,7 @@ module Yast
         repoadd = repoadd_ref.value
         # do not probe! adding as disabled!
         repo_type = FindURLType(one_url)
-        if !repo_type.nil? && repo_type != ""
-          Ops.set(repoadd, "type", repo_type)
-        end
+        Ops.set(repoadd, "type", repo_type) if !repo_type.nil? && repo_type != ""
         Builtins.y2milestone("Adding repo (disabled): %1", repoadd)
         new_id = Pkg.RepositoryAdd(repoadd)
         if new_id.nil? || new_id == -1

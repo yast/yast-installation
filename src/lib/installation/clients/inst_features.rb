@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,9 +17,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-#  * Module:	inst_features.ycp
+#  * Module:  inst_features.ycp
 #  *
-#  * Authors:	Anas Nashif <nashif@suse.de>
+#  * Authors:  Anas Nashif <nashif@suse.de>
 #  *
 #  * Purpose:     Enable all the set features in the control file
 #                 before going into proposal

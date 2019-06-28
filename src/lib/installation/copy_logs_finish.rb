@@ -103,6 +103,7 @@ module Installation
 
     def copy_storage_inst_subdir
       return if dest_dir == "/"
+
       shell_cmd("/bin/rm -rf '#{dest_dir}/#{STORAGE_DUMP_DIR}'")
       shell_cmd("/bin/cp -r '#{src_dir}/#{STORAGE_DUMP_DIR}' '#{dest_dir}/#{STORAGE_DUMP_DIR}'")
     end
