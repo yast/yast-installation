@@ -68,3 +68,8 @@ Naming/VariableName:
 # Needs intensive testing
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Metrics/BlockLength:
+  Max: 125
+  Exclude:
+    - test/**/*.rb
