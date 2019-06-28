@@ -257,7 +257,7 @@ module Installation
           Yast::Wizard.SetNextButton(:next, Yast::Label.NextButton) if Yast::Stage.initial
           return :back
         end
-      end # while input loop
+      end
 
       nil
     end
