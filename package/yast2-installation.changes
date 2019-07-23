@@ -1,4 +1,30 @@
 -------------------------------------------------------------------
+Fri Mar 15 13:22:58 UTC 2019 - snwint@suse.com
+
+- revert SSH textmode patches (bsc#1129375, bsc#1047470)
+- 3.3.0.3
+
+-------------------------------------------------------------------
+Thu Mar 14 14:49:56 UTC 2019 - snwint@suse.com
+
+- ensure that installation with VNC + textmode still installs
+  via VNC (bsc#1129073)
+- 3.3.0.2
+
+-------------------------------------------------------------------
+Tue Mar  5 12:50:33 UTC 2019 - mvidner@suse.com
+
+- Respect Textmode=1 when installing over SSH with a DISPLAY (bsc#1047470)
+- 3.3.0.1
+
+-------------------------------------------------------------------
+Fri Feb  1 13:13:31 CET 2019 - schubi@suse.de
+
+- Copying SSH keys from a privious installation into the new one:
+  Set the right file permissions for the SSH deamon (bnc#1122303).
+- 3.3.0 
+
+-------------------------------------------------------------------
 Thu Aug  2 18:05:07 UTC 2018 - knut.anderssen@suse.com
 
 - Firstboot.service: Shutdown on failure preventing the service to
