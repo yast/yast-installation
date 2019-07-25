@@ -199,6 +199,10 @@ module Installation
     def input_loop
       loop do
         richtext_normal_cursor(Id(:proposal))
+
+        # Keep focus in the RichText widget (bsc#1142353)
+        Yast::UI.SetFocus(Id(:proposal))
+
         # bnc #431567
         # Some proposal module can change it while called
         assign_next_button
