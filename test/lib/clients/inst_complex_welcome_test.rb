@@ -54,6 +54,8 @@ describe Yast::InstComplexWelcomeClient do
     )
   end
 
+  let(:forced_base_product) { nil }
+
   before do
     # fake yast2-country, to avoid additional build dependencies
     stub_const("Yast::Console", double.as_null_object)
@@ -66,6 +68,7 @@ describe Yast::InstComplexWelcomeClient do
 
     allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
     allow(Y2Packager::Product).to receive(:available_base_products).and_return(products)
+    allow(Y2Packager::Product).to receive(:forced_base_product).and_return(forced_base_product)
   end
 
   describe "#main" do
@@ -268,30 +271,14 @@ describe Yast::InstComplexWelcomeClient do
         # Test the behavior when the product name is hardcoded in the control file, which solves the
         # issue with the wrong selected product during a network installation having multiples
         # products in a single repository, bsc#1124590
-        context "and the control file contains a preselected product name" do
+        context "and there is a forced base product" do
           let(:products) { [product, other_product] }
-          let(:preselected_product) { "Other Product" }
+          let(:forced_base_product) { other_product }
 
-          before do
-            allow(Yast::ProductFeatures).to receive(:GetStringFeature)
-              .with("software", "select_product")
-              .and_return(preselected_product)
-          end
-
-          it "runs the complex welcome dialog with the preselected product" do
+          it "runs the complex welcome dialog with the selected product" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
               .with([other_product], anything)
             subject.main
-          end
-
-          context "but it does not match with available products" do
-            let(:preselected_product) { "Unknown product" }
-
-            it "runs the complex welcome dialog with no products" do
-              expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
-                .with([], anything)
-              subject.main
-            end
           end
         end
       end

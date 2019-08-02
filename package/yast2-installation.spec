@@ -75,7 +75,8 @@ Requires:       yast2-proxy
 # Systemd default target and services. This version supports
 # writing settings in the first installation stage.
 Requires:       yast2-services-manager >= 3.2.1
-Requires:       yast2 >= 4.1.42
+# Y2Packager::Product.forced_base_product
+Requires:       yast2 >= 4.2.17
 Requires:       yast2-network >= 4.0.13
 # for AbortException and handle direct abort
 Requires:       yast2-ruby-bindings >= 4.0.6
