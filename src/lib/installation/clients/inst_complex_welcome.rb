@@ -141,48 +141,20 @@ module Yast
 
     # Return the list of base products available
     #
-    # In update mode, when there are more than 1 product, this method will
-    # return an empty list because the dialog will not show the license (we do
-    # not know which product we are upgrading yet) nor the product selector
-    # (as you cannot change the product during upgrade).
+    # When a base product is being forced, the list will contains only it.
     #
-    # It could return a list with pre-selected product(s), @see #preselected_base_product.
+    # In update mode, when there are more than 1 product, this method will return an empty
+    # list because the dialog will not show the license (we do not know which product we are
+    # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>] List of available base products;
-    # empty list in update mode.
+    # @return [Array<Y2Packager::Product>] List of available base products; if any, a list
+    # containing only the forced base product; empty list in update mode.
     def products
       return @products if @products
 
-      @products = preselected_base_product || available_base_products
+      @products = Array(Y2Packager::Product.forced_base_product || available_base_products)
       @products = [] if Mode.update && @products.size > 1
       @products
-    end
-
-    # Returns, if any, the preselected base product (bsc#1124590)
-    #
-    # A product can be pre-selected using the `select_product` element in the software section
-    # in the control file.
-    #
-    # @return [nil, Array<Y2Packager::Product>] nil when no preselected product in control file,
-    #                                           a list containing the preselected base product, or
-    #                                           empty list if preselected product is not available
-    def preselected_base_product
-      selected_product_name = ProductFeatures.GetStringFeature("software", "select_product")
-
-      return if selected_product_name.empty?
-
-      log.info("control.xml wants to preselect the #{selected_product_name} product")
-
-      filtered_base_products = available_base_products.select do |product|
-        product.name == selected_product_name
-      end
-      discarded_base_products = available_base_products - filtered_base_products
-
-      if !discarded_base_products.empty?
-        log.info("Ignoring the other available products: #{discarded_base_products.map(&:name)}")
-      end
-
-      filtered_base_products
     end
 
     # Returns all available base products
