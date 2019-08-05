@@ -141,30 +141,20 @@ module Yast
 
     # Return the list of base products available
     #
-    # The list of base products could be
+    # When a base product is being forced, the list will contains only it.
     #
-    #   - Fixed to a single product: which will happen when the base product is
-    #     being forced through the control.xml. Then, only its license will be
-    #     show, nor the product selector.
-    #   - Empty: in update mode, when there are more than 1 product, this method
-    #     will return an empty list because the dialog will not show the license (we
-    #     do not know which product we are upgrading yet) nor the product selector
-    #     (as you cannot change the product during upgrade).
-    #   - Complete: containing all whe available base products.
+    # In update mode, when there are more than 1 product, this method will return an empty
+    # list because the dialog will not show the license (we do not know which product we are
+    # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>] List of available base products;
-    # a list containing only the forced product if any; empty list in update mode.
+    # @return [Array<Y2Packager::Product>] List of available base products; if any, a list
+    # containing only the forced base product; empty list in update mode.
     def products
       return @products if @products
 
-      @products =
-        if Y2Packager::Product.forced_base_product
-          [Y2Packager::Product.forced_base_product]
-        elsif Mode.update && available_base_products.size > 1
-          []
-        else
-          available_base_products
-        end
+      @products = Array(Y2Packager::Product.forced_base_product || available_base_products)
+      @products = [] if Mode.update && @products.size > 1
+      @products
     end
 
     # Returns all available base products
