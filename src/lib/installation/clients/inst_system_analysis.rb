@@ -33,10 +33,12 @@ module Yast
   class InstSystemAnalysisClient < Client
     include Yast::Logger
 
+    def initialize
+      textdomain "installation"
+    end
+
     def main
       Yast.import "UI"
-
-      textdomain "installation"
 
       # Require here to break dependency cycle (bsc#1070996)
       require "autoinstall/activate_callbacks"

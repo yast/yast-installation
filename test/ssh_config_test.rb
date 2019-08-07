@@ -34,6 +34,7 @@ describe Installation::SshConfig do
     let(:root4_dir) { FIXTURES_DIR.join("root4") }
 
     before do
+      textdomain "installation"
       # The ssh_host private key file is more recent than any other file
       allow(File).to receive(:atime) do |path|
         path =~ /ssh_host_key$/ ? recent_root1_atime : old_root1_atime
@@ -54,7 +55,7 @@ describe Installation::SshConfig do
 
     it "uses name and version when PRETTY_NAME is missing in /etc/os-release" do
       root3 = described_class.from_dir(root3_dir)
-      expect(root3.system_name).to eq _("SUSE 10")
+      expect(root3.system_name).to eq "SUSE 10"
     end
 
     it "stores all the keys and files with their names" do
