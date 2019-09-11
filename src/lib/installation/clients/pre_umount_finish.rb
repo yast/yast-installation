@@ -53,11 +53,6 @@ module Installation
       # See FATE #303396
       HandleSecondStageRequired()
 
-      # Remove content of /run which has been created by the pre/post
-      # install scripts while RPM installation and not needed anymore.
-      # (bnc#1071745)
-      SCR.Execute(path(".target.bash"), "/usr/bin/rm -rf /run/*")
-
       # Release all sources, they might be still mounted
       Pkg.SourceReleaseAll
 
