@@ -19,12 +19,6 @@ describe ::Installation::PreUmountFinish do
       subject.write
     end
 
-    it "removes content in /run" do
-      expect(Yast::SCR).to receive(:Execute).with(anything, /rm .*\/run/)
-
-      subject.write
-    end
-
     it "beeps if a bootmessage is available" do
       expect(Yast::Misc).to receive(:boot_msg).and_return("bootmessage")
       expect(Yast::SCR).to receive(:Execute).with(anything, /\/bin\/echo -e /)
