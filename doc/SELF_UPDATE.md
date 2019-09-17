@@ -5,6 +5,16 @@ system installation. This feature will help to solve problems with the
 installation even after the media has been released. Check
 [FATE#319716](https://fate.suse.com/319716) for a more in-depth rationale.
 
+### :information_source: Note
+
+The self update feature is removed from the updated SLE Service Pack media
+(the updated media released after the initial SP release), these media already
+contain the updated installer and the included updates could conflict with
+the self updates.
+
+If you need to patch the installer on these updated media you have to use
+a driver update disk (DUD).
+
 ## Disabling Updates
 
 Starting in SUSE Linux Enterprise 12 SP3, self-update is enabled by default.
