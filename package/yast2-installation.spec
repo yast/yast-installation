@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.1.46
+Version:        4.1.47
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -51,7 +51,7 @@ BuildRequires:	yast2-packager >= 4.1.27
 
 # Y2Storage::Inhibitors including systemd masking
 BuildRequires: yast2-storage-ng >= 4.0.194
-Requires:      yast2-storage-ng >= 4.0.175
+Requires:      yast2-storage-ng >= 4.1.87
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
