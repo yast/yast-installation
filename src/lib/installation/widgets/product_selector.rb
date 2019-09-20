@@ -20,7 +20,7 @@ module Installation
       # @param skip_validation [Boolean] Skip value validation
       def initialize(products, skip_validation: false)
         @products = products
-        @items = products.map { |p| [product_id(p), p.label] }
+        @items = products.map { |p| [widget_id(p), p.label] }
         @skip_validation = skip_validation
         textdomain "installation"
       end
@@ -38,12 +38,12 @@ module Installation
         disable if registered?
         return unless selected
 
-        self.value = product_id(selected)
+        self.value = widget_id(selected)
       end
 
       def store
         log.info "Selected product: #{value}"
-        @product = products.find { |p| product_id(p) == value }
+        @product = products.find { |p| widget_id(p) == value }
         log.info "Found product: #{@product}"
 
         return unless @product
@@ -87,7 +87,7 @@ module Installation
         false
       end
 
-      def product_id(prod)
+      def widget_id(prod)
         "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end
