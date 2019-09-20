@@ -1,4 +1,7 @@
 require "yast"
+
+require "y2packager/product_control_product"
+
 Yast.import "Pkg"
 Yast.import "Popup"
 Yast.import "AddOnProduct"
@@ -17,7 +20,7 @@ module Installation
       # @param skip_validation [Boolean] Skip value validation
       def initialize(products, skip_validation: false)
         @products = products
-        @items = products.map { |p| [p.name, p.label] }
+        @items = products.map { |p| [item_id(p), p.label] }
         @skip_validation = skip_validation
         textdomain "installation"
       end
@@ -35,26 +38,30 @@ module Installation
         disable if registered?
         return unless selected
 
-        self.value = selected.name
+        self.value = item_id(selected)
       end
 
       def store
         log.info "Selected product: #{value}"
-        @product = products.find { |p| p.name == value }
+        @product = products.find { |p| item_id(p) == value }
         log.info "Found product: #{@product}"
 
         return unless @product
 
-        # reset both YaST and user selection (when going back or any products
-        # selected by YaST in the previous steps)
-        Yast::Pkg.PkgApplReset
-        Yast::Pkg.PkgReset
-        @product.select
+        if @product.is_a?(Y2Packager::ProductControlProduct)
+          Y2Packager::ProductControlProduct.selected = @product
+        else
+          # reset both YaST and user selection (when going back or any products
+          # selected by YaST in the previous steps)
+          Yast::Pkg.PkgApplReset
+          Yast::Pkg.PkgReset
+          @product.select
 
-        # Reselecting existing add-on-products for installation again
-        Yast::AddOnProduct.selected_installation_products.each do |product|
-          log.info "Reselecting add-on product #{product} for installation"
-          Yast::Pkg.ResolvableInstall(product, :product, "")
+          # Reselecting existing add-on-products for installation again
+          Yast::AddOnProduct.selected_installation_products.each do |product|
+            log.info "Reselecting add-on product #{product} for installation"
+            Yast::Pkg.ResolvableInstall(product, :product, "")
+          end
         end
       end
 
@@ -78,6 +85,10 @@ module Installation
         Registration::Registration.is_registered?
       rescue LoadError
         false
+      end
+
+      def item_id(prod)
+        "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end
   end
