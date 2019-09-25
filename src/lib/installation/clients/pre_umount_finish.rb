@@ -97,7 +97,6 @@ module Installation
       poolsize
     end
 
-    SERVICE_BIN = "/usr/sbin/haveged".freeze
     RANDOM_PATH = "/dev/urandom".freeze
     # Preserves the current randomness state, BNC #692799
     def preserve_randomness_state
@@ -118,10 +117,6 @@ module Installation
       else
         log.info "Cannot store #{RANDOM_PATH} state to #{store_to}"
       end
-
-      # stop the random number generator service
-      log.info "Stopping #{SERVICE_BIN} service"
-      local_command("/sbin/killproc -TERM '#{String.Quote(SERVICE_BIN)}'")
     end
   end
 end
