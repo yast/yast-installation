@@ -41,7 +41,6 @@ describe ::Installation::PreUmountFinish do
 
       it "does not preserve randomness state" do
         expect(Yast::WFM).not_to receive(:Execute).with(anything, /dd/)
-        expect(Yast::WFM).not_to receive(:Execute).with(anything, /killproc -TERM/)
 
         subject.write
       end
@@ -54,7 +53,6 @@ describe ::Installation::PreUmountFinish do
 
       it "does preserve randomness state" do
         expect(Yast::WFM).to receive(:Execute).with(anything, /dd/)
-        expect(Yast::WFM).to receive(:Execute).with(anything, /killproc -TERM/)
 
         subject.write
       end
