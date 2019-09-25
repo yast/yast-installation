@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep 25 08:02:58 UTC 2019 - Steffen Winterfeldt <snwint@suse.com>
+
+- do not stop haveged process (bsc#1140171)
+- 3.4.0
+
+-------------------------------------------------------------------
 Fri Mar 15 13:22:58 UTC 2019 - snwint@suse.com
 
 - revert SSH textmode patches (bsc#1129375, bsc#1047470)

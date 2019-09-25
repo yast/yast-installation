@@ -345,7 +345,6 @@ module Yast
 
       Builtins.y2milestone("Saving the current randomness state...")
 
-      service_bin = "/usr/sbin/haveged"
       random_path = "/dev/urandom"
       store_to = Builtins.sformat(
         "%1/var/lib/misc/random-seed",
@@ -376,10 +375,6 @@ module Yast
         )
         @ret = false
       end
-
-      # stop the random number generator service
-      Builtins.y2milestone("Stopping %1 service", service_bin)
-      LocalCommand(Builtins.sformat("killproc -TERM %1", service_bin))
 
       nil
     end
