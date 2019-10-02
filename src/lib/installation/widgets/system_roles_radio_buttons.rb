@@ -40,6 +40,7 @@ module Installation
       alias_method :store_orig, :store
 
       def initialize
+        textdomain "installation"
         # We need to handle all the events because otherwise the current
         # selection is lost when the widget is redrawn.
         # FIXME: It will not be needed once RadioButtons widget take care of it

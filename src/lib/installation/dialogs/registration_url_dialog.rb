@@ -24,6 +24,11 @@ require "installation/dialogs/url_dialog"
 
 module Installation
   class RegistrationURLDialog < ::Installation::URLDialog
+    def initialize
+      textdomain "installation"
+      super
+    end
+
     def help_text
       # TRANSLATORS: Help text alerting the user about a invalid url
       _("<p>\n" \
