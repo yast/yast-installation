@@ -41,7 +41,6 @@ module Yast
       Yast.import "Linuxrc"
       Yast.import "AutoinstConfig"
       Yast.import "Language"
-      Yast.import "Keyboard"
       Yast.import "Directory"
       Yast.import "String"
       Yast.import "Arch"
@@ -122,7 +121,6 @@ module Yast
         end
 
         Ops.set(@linuxrc, "Language", Language.language)
-        Ops.set(@linuxrc, "Keytable", Keyboard.keymap)
 
         Linuxrc.WriteYaSTInf(@linuxrc)
 
