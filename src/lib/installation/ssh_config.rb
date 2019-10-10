@@ -87,6 +87,7 @@ module Installation
           next if line.empty? || line.start_with?("#")
           (key, value) = line.split("=")
           key.rstrip!
+          value ||= "" # handle case `KEY=` (bsc#1139518)
           value.gsub!(/^\s*"/, "")
           value.gsub!(/"\s*$/, "")
           content[key] = value

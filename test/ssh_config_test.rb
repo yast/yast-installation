@@ -46,6 +46,11 @@ describe Installation::SshConfig do
       expect(root1.system_name).to eq "Operating system 1"
     end
 
+    it "does not crash if /etc/os-release contains empty value" do
+      # root1 contains empty `EMPTY=` line
+      expect{described_class.from_dir(root1_dir)}.to_not raise_error
+    end
+
     it "uses 'Linux' as name for systems without /etc/os-release file" do
       root2 = described_class.from_dir(root2_dir)
       expect(root2.system_name).to eq _("Linux")
