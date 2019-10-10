@@ -48,7 +48,7 @@ describe Installation::SshConfig do
 
     it "does not crash if /etc/os-release contains empty value" do
       # root1 contains empty `EMPTY=` line
-      expect{described_class.from_dir(root1_dir)}.to_not raise_error
+      expect { described_class.from_dir(root1_dir) }.to_not raise_error
     end
 
     it "uses 'Linux' as name for systems without /etc/os-release file" do
