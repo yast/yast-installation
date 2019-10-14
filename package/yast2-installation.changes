@@ -2,6 +2,7 @@
 Tue Oct  8 09:24:17 CEST 2019 - schubi@suse.de
 
 - Adapted to new Keyboard handling.
+- Checked also CLI suppot (bsc#1142957).
 - 4.2.17
 
 -------------------------------------------------------------------
