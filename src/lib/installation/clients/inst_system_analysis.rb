@@ -108,9 +108,13 @@ module Yast
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
 
-      actions_todo      << _("Initialize software manager")
-      actions_doing     << _("Initializing software manager...")
-      actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
+      # we cannot initialize during update software manager until we know target partition
+      # as base product is not known
+      if !Mode.update
+        actions_todo      << _("Initialize software manager")
+        actions_doing     << _("Initializing software manager...")
+        actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
+      end
 
       Progress.New(
         # TRANSLATORS: dialog caption
@@ -150,11 +154,11 @@ module Yast
       Installation.probing_done = true
 
       # the last step is hidden
-      return :abort if ProductProfile.CheckCompliance(nil) == false
+      return :abort if !Mode.update && ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
 
-      return :abort unless @packager_initialized
+      return :abort if !Mode.update && !@packager_initialized
 
       :next
     end
