@@ -53,10 +53,7 @@ module Yast
           "globals",
           "keyboard"
         )
-        Keyboard.SetConsole(
-          ProductFeatures.GetStringFeature("globals", "keyboard")
-        )
-        Keyboard.SetX11(ProductFeatures.GetStringFeature("globals", "keyboard"))
+        Keyboard.SetConsole(Keyboard.default_kbd)
       end
 
       if ProductFeatures.GetStringFeature("globals", "language") != ""
