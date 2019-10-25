@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 25 11:44:58 UTC 2019 - Josef Reidinger <jreidinger@suse.com>
+
+- implement upgrade for online medium (jsc#SLE-7214)
+- 4.2.18
+
+-------------------------------------------------------------------
 Thu Oct 10 11:19:06 UTC 2019 - Josef Reidinger <jreidinger@suse.com>
 
 - fix crash when os-release contain empty value (bsc#1139518)
