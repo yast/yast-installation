@@ -108,9 +108,11 @@ module Yast
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
 
+
+      skip_software = Mode.update && Y2Packager::MediumType.online?
       # we cannot initialize during update software manager until we know target partition
       # as base product is not known
-      if !Mode.update
+      if !skip_software
         actions_todo      << _("Initialize software manager")
         actions_doing     << _("Initializing software manager...")
         actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
@@ -154,11 +156,11 @@ module Yast
       Installation.probing_done = true
 
       # the last step is hidden
-      return :abort if !Mode.update && ProductProfile.CheckCompliance(nil) == false
+      return :abort if !skip_software && ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
 
-      return :abort if !Mode.update && !@packager_initialized
+      return :abort if !skip_software && !@packager_initialized
 
       :next
     end
