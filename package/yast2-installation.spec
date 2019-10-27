@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.22
+Version:        4.2.23
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -36,7 +36,7 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
 # Y2Packager::ProductControlProduct
-BuildRequires:  yast2 >= 4.2.22
+BuildRequires:  yast2 >= 4.2.32
 # Y2Packager::MediumType
 BuildRequires:  yast2-packager >= 4.2.27
 # Y2Storage::Inhibitors including systemd masking
@@ -76,7 +76,7 @@ Requires:       yast2-proxy
 # writing settings in the first installation stage.
 Requires:       yast2-services-manager >= 3.2.1
 # Y2Packager::ProductControlProduct
-Requires:       yast2 >= 4.2.22
+Requires:       yast2 >= 4.2.32
 Requires:       yast2-network >= 4.0.13
 # for AbortException and handle direct abort
 Requires:       yast2-ruby-bindings >= 4.0.6
