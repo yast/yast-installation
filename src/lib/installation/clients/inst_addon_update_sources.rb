@@ -27,6 +27,9 @@
 # Assumptions:
 # - the sources will be saved afterwards
 # (this means that running this client alone will not work)
+
+require "y2packager/resolvable"
+
 module Yast
   class InstAddonUpdateSourcesClient < Client
     def main
@@ -152,10 +155,10 @@ module Yast
     # @return the installation sources to be added
     def UpdateUrls
       urls = {}
-      products = Pkg.ResolvableProperties("", :product, "")
+      products = Y2Packager::Resolvable.find(kind: :product)
 
       Builtins.foreach(products) do |p|
-        Builtins.foreach(Ops.get_list(p, "update_urls", [])) do |u|
+        Builtins.foreach((p.update_urls || [])) do |u|
           # bnc #542792
           # Repository name must be generated from product details
           Ops.set(
@@ -163,16 +166,8 @@ module Yast
             u,
             Builtins.sformat(
               _("Updates for %1 %2"),
-              Ops.get_locale(
-                p,
-                "display_name",
-                Ops.get_locale(
-                  p,
-                  "name",
-                  Ops.get_locale(p, "summary", _("Unknown Product"))
-                )
-              ),
-              Ops.get_string(p, "version", "")
+              (p.display_name || p.name || p.summary || _("Unknown Product")),
+              p.version
             )
           )
           # alias should be simple (bnc#768624)
@@ -182,11 +177,7 @@ module Yast
             String.Replace(
               Ops.add(
                 "update-",
-                Ops.get_string(
-                  p,
-                  "display_name",
-                  Ops.get_string(p, "name", "repo")
-                )
+                (p.display_name || p.name || "repo")
               ),
               " ",
               "-"

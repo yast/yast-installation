@@ -1,5 +1,6 @@
 require "yast"
 require "y2packager/product"
+require "y2packager/resolvable"
 
 Yast.import "GetInstArgs"
 Yast.import "Pkg"
@@ -32,7 +33,7 @@ module Installation
 
         extension_packages.select! do |list|
           pkg_name = list.first
-          dependencies[pkg_name] = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "").first["deps"]
+          dependencies[pkg_name] = Y2Packager::Resolvable.find(kind: :package).first.deps
 
           product_provides = dependencies[pkg_name].find_all do |d|
             d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_PRODUCT)}/)
