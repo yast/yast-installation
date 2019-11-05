@@ -5,8 +5,8 @@ require "installation/clients/inst_modules_extensions"
 
 describe ::Installation::Clients::InstModulesExtensions do
   describe "#run" do
-    let(:deps_package_a) {{ "deps" => [{ "provides" => "installer_module_extension() = module_a" }] }}
-    let(:deps_package_b) {{ "deps" => [{ "provides" => "installer_module_extension() = module_b" }] }}
+    let(:deps_package_a) { { "deps" => [{ "provides" => "installer_module_extension() = module_a" }] } }
+    let(:deps_package_b) { { "deps" => [{ "provides" => "installer_module_extension() = module_b" }] } }
     let(:product) { Y2Packager::Product.new(name: "SLES") }
 
     before do
@@ -44,11 +44,11 @@ describe ::Installation::Clients::InstModulesExtensions do
     context "when all roles are specified for a different product" do
       let(:deps_package_a) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_b" },
-                      { "provides" => "extension_for_product() = SLED" }] }
+                     { "provides" => "extension_for_product() = SLED" }] }
       end
       let(:deps_package_b) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_a" },
-                      { "provides" => "extension_for_product() = SLED" }] }
+                     { "provides" => "extension_for_product() = SLED" }] }
       end
 
       it "does not merge installation workflow for the module extension packages" do
@@ -61,7 +61,7 @@ describe ::Installation::Clients::InstModulesExtensions do
     context "when only one role is specified for a different product" do
       let(:deps_package_a) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_b" },
-                      { "provides" => "extension_for_product() = SLED" }] }
+                     { "provides" => "extension_for_product() = SLED" }] }
       end
 
       it "merges installation workflow for the other module extension packages" do
@@ -74,11 +74,11 @@ describe ::Installation::Clients::InstModulesExtensions do
     context "when all roles are specified only for the current product" do
       let(:deps_package_a) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_b" },
-                      { "provides" => "extension_for_product() = SLES" }] }
+                     { "provides" => "extension_for_product() = SLES" }] }
       end
       let(:deps_package_b) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_a" },
-                      { "provides" => "extension_for_product() = SLES" }] }
+                     { "provides" => "extension_for_product() = SLES" }] }
       end
 
       it "merges installation workflow for all module extension packages" do
@@ -91,13 +91,13 @@ describe ::Installation::Clients::InstModulesExtensions do
     context "when all roles are specified for multiple products, including the current one" do
       let(:deps_package_a) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_b" },
-                      { "provides" => "extension_for_product() = SLES" },
-                      { "provides" => "extension_for_product() = SLED" }] }
+                     { "provides" => "extension_for_product() = SLES" },
+                     { "provides" => "extension_for_product() = SLED" }] }
       end
       let(:deps_package_b) do
         { "deps" => [{ "provides" => "installer_module_extension() = module_a" },
-                      { "provides" => "extension_for_product() = SLED" },
-                      { "provides" => "extension_for_product() = SLES" }] }
+                     { "provides" => "extension_for_product() = SLED" },
+                     { "provides" => "extension_for_product() = SLES" }] }
       end
 
       it "merges installation workflow for all module extension packages" do
