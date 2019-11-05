@@ -33,7 +33,12 @@ module Installation
 
         extension_packages.select! do |list|
           pkg_name = list.first
-          dependencies[pkg_name] = Y2Packager::Resolvable.find(kind: :package).first.deps
+          packages = Y2Packager::Resolvable.find(kind: :package, name: pkg_name)
+          if packages && packages.size > 0
+            dependencies[pkg_name] = packages.first.deps
+          else
+            dependencies[pkg_name] = []
+          end
 
           product_provides = dependencies[pkg_name].find_all do |d|
             d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_PRODUCT)}/)
@@ -53,9 +58,10 @@ module Installation
           extension_provide = dependencies[pkg_name].find do |d|
             d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_KEY)}/)
           end
-
-          module_name = extension_provide["provides"][/#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1]
-          log.info "extension for module #{module_name} in package #{pkg_name}"
+          if extension_provide && extension_provide["provides"] && extension_provide["provides"].size > 0
+            module_name = extension_provide["provides"][/#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1]
+            log.info "extension for module #{module_name} in package #{pkg_name}"
+          end
 
           pkg_name
         end
