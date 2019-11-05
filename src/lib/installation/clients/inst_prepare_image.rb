@@ -26,6 +26,9 @@
 #		Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
+
+require "y2packager/resolvable"
+
 module Yast
   class InstPrepareImageClient < Client
     def main
@@ -45,12 +48,12 @@ module Yast
       # set repo to get images from
       ImageInstallation.SetRepo(Ops.get(Packages.theSources, 0, 0))
 
-      @all_patterns = Pkg.ResolvableProperties("", :pattern, "")
+      @all_patterns = Y2Packager::Resolvable.find(kind: :pattern)
 
       @patterns_to_install = Builtins.maplist(@all_patterns) do |one_patern|
-        if Ops.get_symbol(one_patern, "status", :unknown) == :selected ||
-            Ops.get_symbol(one_patern, "status", :unknown) == :installed
-          next Ops.get_string(one_patern, "name", "")
+        if (one_patern.status || :unknown) == :selected ||
+            one_patern.status || :unknown) == :installed
+          next one_patern.name
         else
           next ""
         end

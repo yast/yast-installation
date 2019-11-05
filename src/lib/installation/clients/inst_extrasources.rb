@@ -20,6 +20,7 @@
 # ------------------------------------------------------------------------------
 
 require "y2packager/known_repositories"
+require "y2packager/resolvable"
 
 Yast.import "UI"
 Yast.import "Pkg"
@@ -410,16 +411,7 @@ module Yast
       ret = false
 
       # check if there is a patch available in the repository
-      Builtins.foreach(Pkg.ResolvableProperties("", :patch, "")) do |patch|
-        if Ops.get_integer(patch, "source", -1) == repo
-          Builtins.y2milestone(
-            "Found patch %1 in the repository",
-            Ops.get_string(patch, "name", "")
-          )
-          ret = true
-          raise Break
-        end
-      end
+      ret = Y2Packager::Resolvable.any?(kind: :patch, source: repo)
 
       Builtins.y2milestone("Repository %1 is update repo: %2", repo, ret)
 

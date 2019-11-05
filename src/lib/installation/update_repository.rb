@@ -19,6 +19,7 @@ require "fileutils"
 require "packages/package_downloader"
 require "packages/package_extractor"
 require "y2packager/self_update_addon_filter"
+require "y2packager/resolvable"
 
 Yast.import "Pkg"
 Yast.import "Progress"
@@ -145,17 +146,16 @@ module Installation
     #
     # @return [Array<Hash>] List of packages to install
     #
-    # @see Yast::Pkg.ResolvableProperties
+    # @see Y2Packager::Resolvable
     def packages
       return @packages unless @packages.nil?
       add_repo
-      candidates = Yast::Pkg.ResolvableProperties("", :package, "")
-      @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
-      log.info "Found #{@packages.size} packages: #{@packages}"
+      @packages = Y2Packager::Resolvable.find(kind: :package, :source repo_id).sort_by! { |a| a.name }
+      log.info "Found #{@packages.size} packages: #{@packages.map{ |a| a.name }}"
       # remove packages which are used as addons, these should not be applied to the inst-sys
       addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)
-      @packages.reject! { |p| addon_pkgs.include?(p["name"]) }
-      log.info "Using #{@packages.size} packages: #{@packages}"
+      @packages.reject! { |p| addon_pkgs.include?(p.name) }
+      log.info "Using #{@packages.size} packages: #{@packages.map{ |a| a.name }}"
       @packages
     end
 
@@ -252,8 +252,7 @@ module Installation
     #
     # @return [Boolean] true if the repository is empty; false otherwise.
     def empty?
-      candidates = Yast::Pkg.ResolvableProperties("", :package, "")
-      candidates.none? { |p| p["source"] == repo_id }
+      !Y2Packager::Resolvable.any?(kind: :package, source: repo_id)
     end
 
     # Returns whether is a user defined repository
@@ -294,10 +293,10 @@ module Installation
     #
     # @raise PackageNotFound
     def fetch_package(package, dir)
-      tempfile = Tempfile.new(package["name"])
+      tempfile = Tempfile.new(package.name)
       tempfile.close
       Dir.mktmpdir do |workdir|
-        downloader = Packages::PackageDownloader.new(repo_id, package["name"])
+        downloader = Packages::PackageDownloader.new(repo_id, package.name)
         downloader.download(tempfile.path.to_s)
 
         extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
