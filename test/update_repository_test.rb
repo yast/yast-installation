@@ -34,11 +34,11 @@ describe Installation::UpdateRepository do
     after { FileUtils.rm_rf(TEMP_DIR) }
 
     let(:package) do
-      Y2Packager::Resolvable.new({ "name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id })
+      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
     end
 
     let(:from_other_repo) do
-      Y2Packager::Resolvable.new({ "name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1 })
+      Y2Packager::Resolvable.new("name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1)
     end
 
     before do
@@ -85,7 +85,7 @@ describe Installation::UpdateRepository do
 
     context "when the source contains packages" do
       let(:other_package) do
-        Y2Packager::Resolvable.new({ "name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id })
+        Y2Packager::Resolvable.new("name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id)
       end
 
       let(:packages) { [package, from_other_repo, other_package] }
