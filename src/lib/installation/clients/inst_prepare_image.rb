@@ -52,7 +52,7 @@ module Yast
 
       @patterns_to_install = Builtins.maplist(@all_patterns) do |one_patern|
         if (one_patern.status || :unknown) == :selected ||
-            one_patern.status || :unknown) == :installed
+           (one_patern.status || :unknown) == :installed
           next one_patern.name
         else
           next ""
