@@ -199,16 +199,19 @@ module Installation
     def input_loop
       loop do
         richtext_normal_cursor(Id(:proposal))
+
         # bnc #431567
         # Some proposal module can change it while called
         assign_next_button
 
+        restore_vertical_scroll
         input = Yast::UI.UserInput
 
+        log.info "Proposal - UserInput: '#{input}'"
         return :next if input == :accept
         return :abort if input == :cancel
 
-        log.info "Proposal - UserInput: '#{input}'"
+        save_vertical_scroll
         richtext_busy_cursor(Id(:proposal))
 
         case input
@@ -259,6 +262,14 @@ module Installation
       end # while input loop
 
       nil
+    end
+
+    def save_vertical_scroll
+      @proposal_vscroll = Yast::UI.QueryWidget(Id(:proposal), :VScrollValue)
+    end
+
+    def restore_vertical_scroll
+      Yast::UI.ChangeWidget(Id(:proposal), :VScrollValue, @proposal_vscroll)
     end
 
     def switch_to_tab(input)
