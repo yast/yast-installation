@@ -81,21 +81,28 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = SystemRole.current
-      @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
+      preselected_role_id = SystemRole.current
+      preselected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
-      HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
+      VBox(
+        Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
+        VSpacing(2),
+        SingleItemSelector(
+          Id(:role_selector),
+          roles_items(preselected_role_id)
+        )
+      )
     end
 
     def create_dialog
       clear_role
       ok = super
-      Yast::UI.SetFocus(Id(:roles_richtext)) if ok
+      Yast::UI.SetFocus(Id(:role_selector)) if ok
       ok
     end
 
     def next_handler
-      result = select_role(@selected_role_id)
+      result = select_role(selected_role_id)
       # We show the main role dialog; but the additional clients have
       # drawn over it, so draw it again and go back to input loop.
       # create_dialog do not create new dialog if it already exist like in this
@@ -122,6 +129,29 @@ module Installation
     end
 
   private
+
+    # Return a collection holding items to build the role selector
+    #
+    # @param preselected_role_id [String, nil] the id of the role that should be selected
+    # @return [Array<Item>] collection of role items
+    def roles_items(preselected_role_id)
+      roles.map do |role|
+        Item(
+          Id(role.id),
+          role.label,
+          # Keep the description's line lenght short enough to avoid horizontal scroll in 80x24
+          role.description.strip.scan(/.{1,70}\W/).join("\n"),
+          role.id == preselected_role_id
+        )
+      end
+    end
+
+    # Return the current selected role id
+    #
+    # @return [String]
+    def selected_role_id
+      Yast::UI.QueryWidget(Id(:role_selector), :Value)
+    end
 
     # checks if there is only one role available
     def single_role?
