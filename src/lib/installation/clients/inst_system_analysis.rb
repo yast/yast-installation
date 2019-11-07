@@ -108,7 +108,9 @@ module Yast
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
 
-      skip_software = Mode.update && Y2Packager::MediumType.online?
+      # skip the repository initialization on both Online and Full medium,
+      # do it only on the standard medium layout (openSUSE Leap)
+      skip_software = Mode.update && !Y2Packager::MediumType.standard?
       # we cannot initialize during update software manager until we know target partition
       # as base product is not known
       if !skip_software
