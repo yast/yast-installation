@@ -94,6 +94,8 @@ Requires:       iproute2
 %endif
 
 
+# SingleItemSelector not enforcing an initial selection
+Conflicts:      libyui < 3.8.2
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
 Conflicts:      yast2-pkg-bindings < 2.17.25
