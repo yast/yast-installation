@@ -150,12 +150,12 @@ module Installation
     def packages
       return @packages unless @packages.nil?
       add_repo
-      @packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id).sort_by! { |a| a.name }
-      log.info "Found #{@packages.size} packages: #{@packages.map{ |a| a.name }}"
+      @packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id).sort_by!(&:name)
+      log.info "Found #{@packages.size} packages: #{@packages.map(&:name)}"
       # remove packages which are used as addons, these should not be applied to the inst-sys
       addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)
       @packages.reject! { |p| addon_pkgs.include?(p.name) }
-      log.info "Using #{@packages.size} packages: #{@packages.map{ |a| a.name }}"
+      log.info "Using #{@packages.size} packages: #{@packages.map(&:name)}"
       @packages
     end
 
