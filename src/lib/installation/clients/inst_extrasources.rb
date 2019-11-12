@@ -408,7 +408,6 @@ module Yast
         "Checking whether repository %1 is an update repo...",
         repo
       )
-      ret = false
 
       # check if there is a patch available in the repository
       ret = Y2Packager::Resolvable.any?(kind: :patch, source: repo)
