@@ -31,12 +31,6 @@ Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
-    NON_OVERLAY_ATTRIBUTES = [
-      "additional_dialogs",
-      "id",
-      "services"
-    ].freeze
-
     MAX_LINE_LENGTH = 110
     private_constant :MAX_LINE_LENGTH
 
