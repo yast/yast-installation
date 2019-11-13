@@ -37,6 +37,12 @@ module Installation
       "services"
     ].freeze
 
+    MAX_LINE_LENGTH = 110
+    private_constant :MAX_LINE_LENGTH
+
+    TEXT_MODE_MAX_LINE_LENGTH = 70
+    private_constant :TEXT_MODE_MAX_LINE_LENGTH
+
     def initialize
       super
 
@@ -122,11 +128,20 @@ module Installation
         Item(
           Id(role.id),
           role.label,
-          # Keep the description's line lenght short enough to avoid horizontal scroll in 80x24
-          role.description.strip.scan(/.{1,70}\W/).join("\n"),
+          adjust_text(role.description),
           role.id == preselected_role_id
         )
       end
+    end
+
+    # Split the given text into several lines if it exceeds the max length set
+    #
+    # @param text [String]
+    # @return [String]
+    def adjust_text(text)
+      max_line_length = Yast::UI.TextMode ? TEXT_MODE_MAX_LINE_LENGTH : MAX_LINE_LENGTH
+
+      text.strip.scan(/(.{1,#{max_line_length}})(?:\s|$)/).join("\n")
     end
 
     # Return the current selected role id
