@@ -134,69 +134,82 @@ describe ::Installation::SelectSystemRole do
             "software" => { "desktop" => "knome" }, "additional_dialogs" => "a,b" }
         ]
       end
+      let(:user_input) { :next }
+      let(:going_back) { false }
+      let(:selected_role_id) { nil }
+      let(:current_role_id) { nil }
 
       before do
-        allow(Yast::ProductControl).to receive(:system_roles)
-          .and_return(control_file_roles)
+        allow(Yast::GetInstArgs).to receive(:going_back).and_return(going_back)
+
+        allow(Yast::ProductControl).to receive(:system_roles).and_return(control_file_roles)
+
+        allow(Installation::SystemRole).to receive(:current).and_return(current_role_id)
+
         allow(Installation::SystemRole).to receive(:select).with("foo")
           .and_return(Installation::SystemRole.new(id: "foo", order: 100))
         allow(Installation::SystemRole).to receive(:select).with("bar")
           .and_return(Installation::SystemRole.new(id: "bar", order: 200))
-      end
 
-      it "displays dialog, and sets ProductFeatures on Next" do
         allow(Yast::Wizard).to receive(:SetContents)
-        allow(Yast::UI).to receive(:UserInput)
-          .and_return("foo", :next)
+        allow(Yast::UI).to receive(:UserInput).and_return(*user_input)
 
-        expect(Yast::ProductFeatures).to receive(:ClearOverlay)
-        expect(Yast::ProductFeatures).to receive(:SetOverlay)
-
-        expect(subject.run).to eq(:next)
+        allow(subject).to receive(:selected_role_id).and_return(selected_role_id)
       end
 
-      it "displays dialog, and leaves ProductFeatures on Back" do
-        allow(Yast::Wizard).to receive(:SetContents)
-        allow(Yast::UI).to receive(:UserInput)
-          .and_return(:back)
-        expect(Yast::ProductFeatures).to receive(:ClearOverlay)
-        expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+      context "when user goes forward" do
+        let(:selected_role_id) { "foo" }
 
-        expect(subject.run).to eq(:back)
-      end
-
-      context "when a role contains additional dialogs" do
-        it "shows the first dialog when going forward" do
-          allow(Yast::Wizard).to receive(:SetContents)
-          allow(Yast::UI).to receive(:UserInput)
-            .and_return("bar", :next)
-
-          allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
-          expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+        it "displays dialog and sets ProductFeatures" do
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to receive(:SetOverlay)
 
           expect(subject.run).to eq(:next)
         end
 
-        it "shows the last dialog when going back" do
-          allow(Installation::SystemRole).to receive(:current).and_return("bar")
-          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
-          expect(Yast::Wizard).to_not receive(:SetContents)
-          expect(Yast::UI).to_not receive(:UserInput)
-          expect(Yast::UI).to_not receive(:QueryWidget)
+        context "and the role contains additional dialogs" do
+          let(:selected_role_id) { "bar" }
 
-          expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
+          it "shows the first dialog" do
+            allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
+            expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
 
-          expect(subject.run).to eq(:next)
+            expect(subject.run).to eq(:next)
+          end
+        end
+      end
+
+      context "when user goes back" do
+        let(:current_role_id) { "bar" }
+        let(:user_input) { :back }
+
+        it "displays dialog and leaves ProductFeatures" do
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+
+          expect(subject.run).to eq(:back)
+        end
+
+        context "and the role contains additional dialogs" do
+          let(:going_back) { true }
+
+          it "shows the last dialog" do
+            expect(Yast::Wizard).to_not receive(:SetContents)
+            expect(Yast::UI).to_not receive(:UserInput)
+            expect(Yast::UI).to_not receive(:QueryWidget)
+
+            expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
+
+            expect(subject.run).to eq(:next)
+          end
         end
       end
 
       context "when re-selecting the same role" do
-        it "just proceeds without a popup" do
-          allow(Installation::SystemRole).to receive(:current).and_return("foo")
-          allow(Yast::Wizard).to receive(:SetContents)
-          allow(Yast::UI).to receive(:UserInput)
-            .and_return("foo", :next)
+        let(:current_role_id) { "foo" }
+        let(:selected_role_id) { "foo" }
 
+        it "just proceeds without a popup" do
           expect(Yast::Popup).to_not receive(:ContinueCancel)
 
           expect(Yast::ProductFeatures).to receive(:ClearOverlay)
@@ -207,12 +220,11 @@ describe ::Installation::SelectSystemRole do
       end
 
       context "when re-selecting a different role" do
-        it "displays a popup, and proceeds if Continue is answered" do
-          allow(Installation::SystemRole).to receive(:current).and_return("bar")
-          allow(Yast::Wizard).to receive(:SetContents)
-          allow(Yast::UI).to receive(:UserInput)
-            .and_return("foo", :next)
+        let(:current_role_id) { "bar" }
+        let(:selected_role_id) { "foo" }
+        let(:user_input) { [:next, :back] }
 
+        it "displays a popup, and proceeds if Continue is answered" do
           expect(Yast::Popup).to receive(:ContinueCancel)
             .and_return(true)
 
@@ -223,11 +235,6 @@ describe ::Installation::SelectSystemRole do
         end
 
         it "displays a popup, and does not proceed if Cancel is answered" do
-          allow(Installation::SystemRole).to receive(:current).and_return("bar")
-          allow(Yast::Wizard).to receive(:SetContents)
-          allow(Yast::UI).to receive(:UserInput)
-            .and_return("foo", :next, :back)
-
           expect(Yast::Popup).to receive(:ContinueCancel)
             .and_return(false)
           expect(Yast::ProductFeatures).to receive(:ClearOverlay)
@@ -238,15 +245,10 @@ describe ::Installation::SelectSystemRole do
       end
 
       context "when no roles is selected" do
-        it "shows error and does not continue" do
-          allow(Yast::Wizard).to receive(:SetContents)
-          allow(Yast::UI).to receive(:UserInput)
-            .and_return(:next, :back)
-          allow(Yast::UI).to receive(:QueryWidget)
-            .with(Id(:roles), :CurrentButton).and_return(nil)
-          allow(Installation::SystemRole).to receive(:default?)
-            .and_return(false)
+        let(:selected_role_id) { nil }
+        let(:user_input) { [:next, :back] }
 
+        it "shows error and does not continue" do
           expect(Yast::Popup).to receive(:Error)
           expect(Yast::ProductFeatures).to receive(:ClearOverlay)
           expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
