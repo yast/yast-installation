@@ -19,6 +19,7 @@
 
 require "yast"
 require "ui/installation_dialog"
+require "ui/text_helpers"
 require "installation/services"
 require "installation/system_role"
 
@@ -31,6 +32,8 @@ Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
+    include UI::TextHelpers
+
     MAX_LINE_LENGTH = 110
     private_constant :MAX_LINE_LENGTH
 
@@ -118,24 +121,16 @@ module Installation
     # @param preselected_role_id [String, nil] the id of the role that should be selected
     # @return [Array<Item>] collection of role items
     def roles_items(preselected_role_id)
+      max_line_length = Yast::UI.TextMode ? TEXT_MODE_MAX_LINE_LENGTH : MAX_LINE_LENGTH
+
       roles.map do |role|
         Item(
           Id(role.id),
           role.label,
-          adjust_text(role.description),
+          wrap_text(role.description, max_line_length),
           role.id == preselected_role_id
         )
       end
-    end
-
-    # Split the given text into several lines if it exceeds the max length set
-    #
-    # @param text [String]
-    # @return [String]
-    def adjust_text(text)
-      max_line_length = Yast::UI.TextMode ? TEXT_MODE_MAX_LINE_LENGTH : MAX_LINE_LENGTH
-
-      text.strip.scan(/(.{1,#{max_line_length}})(?:\s|$)/).join("\n")
     end
 
     # Return the current selected role id
