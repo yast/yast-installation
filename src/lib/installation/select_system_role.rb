@@ -17,12 +17,11 @@
 #  To contact SUSE about this file by physical or electronic mail,
 #  you may find current contact information at www.suse.com
 
-require "cgi"
 require "yast"
 require "ui/installation_dialog"
+require "ui/text_helpers"
 require "installation/services"
 require "installation/system_role"
-require "ui/text_helpers"
 
 Yast.import "GetInstArgs"
 Yast.import "Packages"
@@ -35,11 +34,11 @@ module Installation
   class SelectSystemRole < ::UI::InstallationDialog
     include UI::TextHelpers
 
-    NON_OVERLAY_ATTRIBUTES = [
-      "additional_dialogs",
-      "id",
-      "services"
-    ].freeze
+    MAX_LINE_LENGTH = 110
+    private_constant :MAX_LINE_LENGTH
+
+    TEXT_MODE_MAX_LINE_LENGTH = 70
+    private_constant :TEXT_MODE_MAX_LINE_LENGTH
 
     def initialize
       super
@@ -81,21 +80,28 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = SystemRole.current
-      @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
+      preselected_role_id = SystemRole.current
+      preselected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
-      HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
+      VBox(
+        Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
+        VSpacing(2),
+        SingleItemSelector(
+          Id(:role_selector),
+          roles_items(preselected_role_id)
+        )
+      )
     end
 
     def create_dialog
       clear_role
       ok = super
-      Yast::UI.SetFocus(Id(:roles_richtext)) if ok
+      Yast::UI.SetFocus(Id(:role_selector)) if ok
       ok
     end
 
     def next_handler
-      result = select_role(@selected_role_id)
+      result = select_role(selected_role_id)
       # We show the main role dialog; but the additional clients have
       # drawn over it, so draw it again and go back to input loop.
       # create_dialog do not create new dialog if it already exist like in this
@@ -108,20 +114,31 @@ module Installation
       end
     end
 
-    # called if a specific FOO_handler is not defined
-    def handle_event(id)
-      role = SystemRole.find(id)
-      if role.nil?
-        log.info "Not a role: #{id.inspect}, skipping"
-        return
-      end
+  private
 
-      @selected_role_id = id
-      Yast::UI.ReplaceWidget(Id(:rp), role_buttons(selected_role_id: id))
-      Yast::UI.SetFocus(Id(:roles_richtext))
+    # Return a collection holding items to build the role selector
+    #
+    # @param preselected_role_id [String, nil] the id of the role that should be selected
+    # @return [Array<Item>] collection of role items
+    def roles_items(preselected_role_id)
+      max_line_length = Yast::UI.TextMode ? TEXT_MODE_MAX_LINE_LENGTH : MAX_LINE_LENGTH
+
+      roles.map do |role|
+        Item(
+          Id(role.id),
+          role.label,
+          wrap_text(role.description, max_line_length),
+          role.id == preselected_role_id
+        )
+      end
     end
 
-  private
+    # Return the current selected role id
+    #
+    # @return [String]
+    def selected_role_id
+      Yast::UI.QueryWidget(Id(:role_selector), :Value)
+    end
 
     # checks if there is only one role available
     def single_role?
@@ -262,69 +279,6 @@ module Installation
       # Refresh system roles list
       SystemRole.clear if refresh
       SystemRole.all
-    end
-
-    # Returns the content for the role buttons
-    # @param selected_role_id [String] which role radiobutton gets selected
-    # @return [Yast::Term] Role buttons
-    def role_buttons(selected_role_id:)
-      role_rt_radios = roles.map do |role|
-        # FIXME: following workaround can be removed as soon as bsc#997402 is fixed:
-        # bsc#995082: System role descriptions use a character that is missing in console font
-        description = Yast::UI.TextMode ? role.description.tr("•", "*") : role.description
-
-        rb = richtext_radiobutton(id:       role.id,
-                                  label:    role.label,
-                                  selected: role.id == selected_role_id)
-
-        description = CGI.escape_html(description).gsub("\n", "<br>\n")
-        # extra empty paragraphs for better spacing
-        "<p></p>#{rb}<p></p><ul>#{description}</ul>"
-      end
-
-      intro_text = Yast::ProductControl.GetTranslatedText("roles_text")
-      VBox(
-        Left(Label(intro_text)),
-        VSpacing(2),
-        RichText(Id(:roles_richtext), div_with_direction(role_rt_radios.join("\n")))
-      )
-    end
-
-    def richtext_radiobutton(id:, label:, selected:)
-      if Yast::UI.TextMode
-        richtext_radiobutton_tui(id: id, label: label, selected: selected)
-      else
-        richtext_radiobutton_gui(id: id, label: label, selected: selected)
-      end
-    end
-
-    def richtext_radiobutton_tui(id:, label:, selected:)
-      check = selected ? "(x)" : "( )"
-      widget = "#{check} #{CGI.escape_html(label)}"
-      enabled_widget = "<a href=\"#{id}\">#{widget}</a>"
-      "#{enabled_widget}<br>"
-    end
-
-    IMAGE_DIR = "/usr/share/YaST2/theme/current/wizard".freeze
-
-    BUTTON_ON = "◉".freeze # U+25C9 Fisheye
-    BUTTON_OFF = "○".freeze # U+25CB White Circle
-
-    def richtext_radiobutton_gui(id:, label:, selected:)
-      # check for installation style, which is dark, FIXME: find better way
-      installation = ENV["Y2STYLE"] == "installation.qss"
-      if installation
-        image = selected ? "inst_radio-button-checked.png" : "inst_radio-button-unchecked.png"
-        # NOTE: due to a Qt bug, the first image does not get rendered properly. So we are
-        # rendering it twice (one with height and width set to "0").
-        bullet = "<img src=\"#{IMAGE_DIR}/#{image}\" height=\"0\" width=\"0\"></img>" \
-                 "<img src=\"#{IMAGE_DIR}/#{image}\"></img>"
-      else
-        bullet = selected ? BUTTON_ON : BUTTON_OFF
-      end
-      widget = "#{bullet} #{CGI.escape_html(label)}"
-      enabled_widget = "<a class='dontlooklikealink' href=\"#{id}\">#{widget}</a>"
-      "<p>#{enabled_widget}</p>"
     end
   end
 end
