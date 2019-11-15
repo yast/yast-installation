@@ -146,13 +146,12 @@ module Yast
 
       # Do not call any SCR, it's already closed!
       # bugzilla #245742, #160301
-      if Linuxrc.usessh && !Linuxrc.vnc ||
-          # also live installation - bzilla #297691
-          Mode.live_installation
-        # Display the message and wait for user to accept it
-        Report.DisplayMessages(true, 0)
+      if Linuxrc.reboot_timeout
+        Report.DisplayMessages(true, Linuxrc.reboot_timeout)
       else
-        Report.DisplayMessages(true, 10)
+        # Display the message and wait for user to accept it
+        # also live installation - bzilla #297691
+        Report.DisplayMessages(true, (Linuxrc.usessh && !Linuxrc.vnc || Mode.live_installation) ? 0 : 10)
       end
       Report.LongMessage(Misc.boot_msg)
       Misc.boot_msg = ""
