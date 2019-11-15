@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Sun Oct 27 19:58:40 UTC 2019 - Oliver Kurz <okurz@suse.com>
+Fri Nov 15 08:58:40 UTC 2019 - Oliver Kurz <okurz@suse.com>
 
 - Use linuxrc option "reboot_timeout" to configure the timeout
   before reboot (bsc#1122493)
