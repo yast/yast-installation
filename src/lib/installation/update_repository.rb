@@ -144,7 +144,7 @@ module Installation
     # which should be used in an add-on and not applied to the inst-sys are ignored.
     # The packages are sorted by name (alphabetical order).
     #
-    # @return [Array<Hash>] List of packages to install
+    # @return [Array<Y2Packager::Resolvable>] List of packages to install
     #
     # @see Y2Packager::Resolvable
     def packages
