@@ -1238,13 +1238,13 @@ module Yast
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           (one_object.status || :unknown) == :available &&
-          one_object.locked == true
+            one_object.locked == true
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           (one_object.status || :unknown) == :installed &&
-          one_object.locked == true
+            one_object.locked == true
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
@@ -1274,8 +1274,8 @@ module Yast
       arch = Ops.get_string(one_object.value, "arch", "")
       # Query for all packages of the same version
       resolvable_properties = Y2Packager::Resolvable.find(
-        kind: one_type.value,
-        name: one_object.value.name,
+        kind:    one_type.value,
+        name:    one_object.value.name,
         version: one_object.value.version
       )
 
@@ -1283,18 +1283,18 @@ module Yast
         Builtins.y2milestone(
           "Looking for %1 returned %2",
           one_object.value,
-          resolvable_properties.map { |r| r.name }
+          resolvable_properties.map(&:name)
         )
       end
 
       # Leave only already installed (and matching the same architecture)
       resolvable_properties = Builtins.filter(resolvable_properties) do |one_resolvable|
         (one_resolvable.status || :unknown) == :installed &&
-        one_resolvable.arch == arch
+          one_resolvable.arch == arch
       end
 
       if ThisIsADebugMode()
-        Builtins.y2milestone("Resolvables installed: %1", resolvable_properties.map { |r| r.name })
+        Builtins.y2milestone("Resolvables installed: %1", resolvable_properties.map(&:name))
       end
 
       ret = nil
@@ -1358,10 +1358,8 @@ module Yast
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         # List of all packages selected for installation (just names)
         selected_for_installation_pkgnames = Builtins.maplist(
-          Ops.get(@objects_state, [one_type, "install"], [])
-        ) do |one_resolvable|
-          one_resolvable.name
-        end
+          Ops.get(@objects_state, [one_type, "install"], []), &:name
+        )
         # All packages selected to be installed
         # [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
         selected_for_installation = Builtins.maplist(

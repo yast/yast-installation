@@ -12,7 +12,8 @@ describe Yast::InstExtrasourcesClient do
         .with(kind: :package, name: "foo")
         .and_return([Y2Packager::Resolvable.new(
           "kind" => :package, "name" => "foo", "version" => "1.0", "arch" => "x86_64",
-          "status" => :selected, "source" => source)])
+          "status" => :selected, "source" => source
+        )])
       expect(subject.UpgradesAvailable([source])).to eq("packages"     => ["foo-1.0.x86_64"],
                                                         "repositories" => [source])
     end
