@@ -296,6 +296,8 @@ module Yast
           scst_required == false ? "0" : "1"
         )
       )
+      # Is it really needed? It will enforce a read of /etc/install.inf from
+      # any step after resetting it.
       Linuxrc.ResetInstallInf
 
       nil
