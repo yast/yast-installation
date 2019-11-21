@@ -158,26 +158,29 @@ module Yast
       products = Y2Packager::Resolvable.find(kind: :product)
 
       Builtins.foreach(products) do |p|
-        Builtins.foreach((p.update_urls || [])) do |u|
+        Builtins.foreach(p.update_urls) do |u|
           # bnc #542792
           # Repository name must be generated from product details
+          p_name =
+            [p.display_name, p.name, p.summary, _("Unknown Product")].reject(&:empty?).first
           Ops.set(
             urls,
             u,
             Builtins.sformat(
               _("Updates for %1 %2"),
-              (p.display_name || p.name || p.summary || _("Unknown Product")),
+              p_name,
               p.version
             )
           )
           # alias should be simple (bnc#768624)
+          p_alias = [p.display_name, p.name, "repo"].reject(&:empty?).first
           Ops.set(
             @aliases,
             u,
             String.Replace(
               Ops.add(
                 "update-",
-                (p.display_name || p.name || "repo")
+                p_alias
               ),
               " ",
               "-"

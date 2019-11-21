@@ -34,11 +34,7 @@ module Installation
         extension_packages.select! do |list|
           pkg_name = list.first
           packages = Y2Packager::Resolvable.find(kind: :package, name: pkg_name)
-          dependencies[pkg_name] = if packages && !packages.empty?
-            packages.first.deps
-          else
-            []
-          end
+          dependencies[pkg_name] = !packages.empty? ? packages.first.deps : []
 
           product_provides = dependencies[pkg_name].find_all do |d|
             d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_PRODUCT)}/)

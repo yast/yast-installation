@@ -1227,23 +1227,23 @@ module Yast
         resolvable_properties = Y2Packager::Resolvable.find(kind: one_type)
         Ops.set(@objects_state, one_type, {})
         remove_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          (one_object.status || :unknown) == :removed
+          one_object.status == :removed
         end
         Ops.set(@objects_state, [one_type, "remove"], remove_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         install_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          (one_object.status || :unknown) == :selected
+          one_object.status == :selected
         end
         Ops.set(@objects_state, [one_type, "install"], install_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          (one_object.status || :unknown) == :available &&
+          one_object.status == :available &&
             one_object.locked == true
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          (one_object.status || :unknown) == :installed &&
+          one_object.status == :installed &&
             one_object.locked == true
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
@@ -1289,7 +1289,7 @@ module Yast
 
       # Leave only already installed (and matching the same architecture)
       resolvable_properties = Builtins.filter(resolvable_properties) do |one_resolvable|
-        (one_resolvable.status || :unknown) == :installed &&
+        one_resolvable.status == :installed &&
           one_resolvable.arch == arch
       end
 
@@ -1376,8 +1376,8 @@ module Yast
         one_already_installed_resolvable = {}
         Builtins.foreach(resolvable_properties) do |one_resolvable|
           # We are interested in the already installed resolvables only
-          if (one_resolvable.status || :unknown) != :installed &&
-              (one_resolvable.status || :unknown) != :selected
+          if one_resolvable.status != :installed &&
+             one_resolvable.status != :selected
             next
           end
           one_already_installed_resolvable = {
