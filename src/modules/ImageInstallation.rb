@@ -1377,7 +1377,7 @@ module Yast
         Builtins.foreach(resolvable_properties) do |one_resolvable|
           # We are interested in the already installed resolvables only
           if one_resolvable.status != :installed &&
-             one_resolvable.status != :selected
+              one_resolvable.status != :selected
             next
           end
           one_already_installed_resolvable = {
