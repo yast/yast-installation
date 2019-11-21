@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 21 14:32:50 UTC 2019 - Knut Anderssen <kanderssen@suse.com>
+
+- Do not remove /etc/install.inf from inst-sys (bsc#1122493,
+  bsc#1157476).
+- 4.2.24
+
+-------------------------------------------------------------------
 Fri Nov 15 08:58:40 UTC 2019 - Oliver Kurz <okurz@suse.com>
 
 - Use linuxrc option "reboot_timeout" to configure the timeout

@@ -148,14 +148,6 @@ describe Yast::CopyFilesFinishClient do
       subject.write
     end
 
-    it "deletes install.inf if second stage is not required" do
-      allow(Yast::InstFunctions).to receive(:second_stage_required?).and_return(false)
-
-      expect(::FileUtils).to receive(:rm).with("/etc/install.inf")
-
-      subject.write
-    end
-
     it "copies control.xml" do
       allow(::FileUtils).to receive(:cp)
       allow(Yast::ProductControl).to receive(:current_control_file).and_return("/control.xml")
