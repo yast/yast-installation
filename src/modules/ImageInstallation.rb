@@ -109,8 +109,6 @@ module Yast
       # Defines whether some installation images are available
       @image_installation_available = nil
 
-      @debug_mode = nil
-
       @tar_image_progress = nil
 
       @download_image_progress = nil
@@ -166,18 +164,6 @@ module Yast
       SetRepo(Ops.get(Packages.theSources, 0, 0))
 
       nil
-    end
-
-    def ThisIsADebugMode
-      if @debug_mode.nil?
-        @debug_mode = ProductFeatures.GetBooleanFeature(
-          "globals",
-          "debug_deploying"
-        ) == true
-        Builtins.y2milestone("ImageInstallation debug mode: %1", @debug_mode)
-      end
-
-      @debug_mode
     end
 
     # Order of images to be deployed
@@ -1238,29 +1224,25 @@ module Yast
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           one_object.status == :available &&
-            one_object.locked == true
+            one_object.locked
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           one_object.status == :installed &&
-            one_object.locked == true
+            one_object.locked
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
       end
 
-      if ThisIsADebugMode()
-        # map <symbol, map <string, list <map> > > objects_state = $[];
-        Builtins.foreach(@objects_state) do |object_type, objects_status|
-          Builtins.foreach(objects_status) do |one_status, list_of_objects|
-            Builtins.y2milestone(
-              "Object type: %1, New status: %2, List of objects: %3",
-              object_type,
-              one_status,
-              list_of_objects
-            )
-          end
+      # map <symbol, map <string, list <map> > > objects_state = $[];
+      Builtins.foreach(@objects_state) do |object_type, objects_status|
+        Builtins.foreach(objects_status) do |one_status, list_of_objects|
+          log.debug(
+            "Object type: #{object_type}, New status: #{one_status},"\
+            "List of objects: #{list_of_objects}"
+          )
         end
       end
 
@@ -1276,26 +1258,12 @@ module Yast
       resolvable_properties = Y2Packager::Resolvable.find(
         kind:    one_type.value,
         name:    one_object.value.name,
-        version: one_object.value.version
+        version: one_object.value.version,
+        status:  :installed,
+        arch:    arch
       )
 
-      if ThisIsADebugMode()
-        Builtins.y2milestone(
-          "Looking for %1 returned %2",
-          one_object.value,
-          resolvable_properties.map(&:name)
-        )
-      end
-
-      # Leave only already installed (and matching the same architecture)
-      resolvable_properties = Builtins.filter(resolvable_properties) do |one_resolvable|
-        one_resolvable.status == :installed &&
-          one_resolvable.arch == arch
-      end
-
-      if ThisIsADebugMode()
-        Builtins.y2milestone("Resolvables installed: %1", resolvable_properties.map(&:name))
-      end
+      log.debug("Resolvables installed: #{resolvable_properties.map(&:name)}")
 
       ret = nil
 

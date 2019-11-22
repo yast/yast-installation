@@ -284,7 +284,7 @@ module Installation
 
     # Fetch and build a squashfs filesytem for a given package
     #
-    # @param package [Hash] Package to retrieve
+    # @param package [Y2Packager::Resolvable] Package to retrieve
     # @param dir     [Pathname] Path to store the squashed filesystems
     # @return [Pathname] Path where the file is stored
     #

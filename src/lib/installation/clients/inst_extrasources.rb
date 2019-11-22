@@ -453,9 +453,11 @@ module Yast
       # only package names (without version)
       names_only = true
       Pkg.GetPackages(:selected, names_only).each do |pkg|
-        Y2Packager::Resolvable.find(kind: :package, name: pkg).each do |p|
+        Y2Packager::Resolvable.find(kind:   :package,
+                                    name:   pkg,
+                                    status: :selected).each do |p|
           source = p.source
-          next unless p.status == :selected && repos.include?(source)
+          next unless repos.include?(source)
 
           package = "#{p.name}-#{p.version}.#{p.arch}"
           log.info("Found upgrade to install: #{package}")
