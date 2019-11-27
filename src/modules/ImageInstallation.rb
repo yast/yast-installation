@@ -20,7 +20,7 @@
 # ------------------------------------------------------------------------------
 
 # File:
-#	ImageInstallation.ycp
+#	ImageInstallation.rb
 #
 # Module:
 #	ImageInstallation
@@ -33,6 +33,7 @@
 #	Lukas Ocilka <locilka@suse.cz>
 #
 require "yast"
+require "y2packager/resolvable"
 
 module Yast
   class ImageInstallationClass < Module
@@ -108,8 +109,6 @@ module Yast
       # Defines whether some installation images are available
       @image_installation_available = nil
 
-      @debug_mode = nil
-
       @tar_image_progress = nil
 
       @download_image_progress = nil
@@ -165,18 +164,6 @@ module Yast
       SetRepo(Ops.get(Packages.theSources, 0, 0))
 
       nil
-    end
-
-    def ThisIsADebugMode
-      if @debug_mode.nil?
-        @debug_mode = ProductFeatures.GetBooleanFeature(
-          "globals",
-          "debug_deploying"
-        ) == true
-        Builtins.y2milestone("ImageInstallation debug mode: %1", @debug_mode)
-      end
-
-      @debug_mode
     end
 
     # Order of images to be deployed
@@ -1223,44 +1210,39 @@ module Yast
         # status is `installed, `removed, `selected or `available, source is source ID or -1 if the resolvable is installed in the target
         # if status is `available and locked is true then the object is set to taboo
         # if status is `installed and locked is true then the object locked
-        resolvable_properties = Pkg.ResolvableProperties("", one_type, "")
-        # FIXME: Store only those keys we need (arch, name, version?)
+        resolvable_properties = Y2Packager::Resolvable.find(kind: one_type)
         Ops.set(@objects_state, one_type, {})
         remove_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          Ops.get_symbol(one_object, "status", :unknown) == :removed
+          one_object.status == :removed
         end
         Ops.set(@objects_state, [one_type, "remove"], remove_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         install_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          Ops.get_symbol(one_object, "status", :unknown) == :selected
+          one_object.status == :selected
         end
         Ops.set(@objects_state, [one_type, "install"], install_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          Ops.get_symbol(one_object, "status", :unknown) == :available &&
-            Ops.get_boolean(one_object, "locked", false) == true
+          one_object.status == :available &&
+            one_object.locked
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
-          Ops.get_symbol(one_object, "status", :unknown) == :installed &&
-            Ops.get_boolean(one_object, "locked", false) == true
+          one_object.status == :installed &&
+            one_object.locked
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
       end
 
-      if ThisIsADebugMode()
-        # map <symbol, map <string, list <map> > > objects_state = $[];
-        Builtins.foreach(@objects_state) do |object_type, objects_status|
-          Builtins.foreach(objects_status) do |one_status, list_of_objects|
-            Builtins.y2milestone(
-              "Object type: %1, New status: %2, List of objects: %3",
-              object_type,
-              one_status,
-              list_of_objects
-            )
-          end
+      # map <symbol, map <string, list <map> > > objects_state = $[];
+      Builtins.foreach(@objects_state) do |object_type, objects_status|
+        Builtins.foreach(objects_status) do |one_status, list_of_objects|
+          log.debug(
+            "Object type: #{object_type}, New status: #{one_status},"\
+            "List of objects: #{list_of_objects}"
+          )
         end
       end
 
@@ -1273,29 +1255,15 @@ module Yast
 
       arch = Ops.get_string(one_object.value, "arch", "")
       # Query for all packages of the same version
-      resolvable_properties = Pkg.ResolvableProperties(
-        Ops.get_string(one_object.value, "name", "-x-"),
-        one_type.value,
-        Ops.get_string(one_object.value, "version", "-x-")
+      resolvable_properties = Y2Packager::Resolvable.find(
+        kind:    one_type.value,
+        name:    one_object.value.name,
+        version: one_object.value.version,
+        status:  :installed,
+        arch:    arch
       )
 
-      if ThisIsADebugMode()
-        Builtins.y2milestone(
-          "Looking for %1 returned %2",
-          one_object.value,
-          resolvable_properties
-        )
-      end
-
-      # Leave only already installed (and matching the same architecture)
-      resolvable_properties = Builtins.filter(resolvable_properties) do |one_resolvable|
-        Ops.get_symbol(one_resolvable, "status", :unknown) == :installed &&
-          Ops.get_string(one_resolvable, "arch", "") == arch
-      end
-
-      if ThisIsADebugMode()
-        Builtins.y2milestone("Resolvables installed: %1", resolvable_properties)
-      end
+      log.debug("Resolvables installed: #{resolvable_properties.map(&:name)}")
 
       ret = nil
 
@@ -1349,28 +1317,26 @@ module Yast
       @generic_set_progress.call(id, 0) if !@generic_set_progress.nil?
 
       Builtins.foreach(@all_supported_types) do |one_type|
-        resolvable_properties = Pkg.ResolvableProperties("", one_type, "")
+        resolvable_properties = Y2Packager::Resolvable.find(kind: one_type)
         # All packages selected for installation
         # both `to-install and `to-upgrade (already) installed
         to_install = Builtins.filter(resolvable_properties) do |one_resolvable|
-          Ops.get_symbol(one_resolvable, "status", :unknown) == :selected
+          one_resolvable.status == :selected
         end
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         # List of all packages selected for installation (just names)
         selected_for_installation_pkgnames = Builtins.maplist(
-          Ops.get(@objects_state, [one_type, "install"], [])
-        ) do |one_resolvable|
-          Ops.get_string(one_resolvable, "name", "")
-        end
+          Ops.get(@objects_state, [one_type, "install"], []), &:name
+        )
         # All packages selected to be installed
         # [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
         selected_for_installation = Builtins.maplist(
           Ops.get(@objects_state, [one_type, "install"], [])
         ) do |one_resolvable|
           {
-            "arch"    => Ops.get_string(one_resolvable, "arch", ""),
-            "name"    => Ops.get_string(one_resolvable, "name", ""),
-            "version" => Ops.get_string(one_resolvable, "version", "")
+            "arch"    => one_resolvable.arch,
+            "name"    => one_resolvable.name,
+            "version" => one_resolvable.version
           }
         end
         @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
@@ -1378,14 +1344,14 @@ module Yast
         one_already_installed_resolvable = {}
         Builtins.foreach(resolvable_properties) do |one_resolvable|
           # We are interested in the already installed resolvables only
-          if Ops.get_symbol(one_resolvable, "status", :unknown) != :installed &&
-              Ops.get_symbol(one_resolvable, "status", :unknown) != :selected
+          if one_resolvable.status != :installed &&
+              one_resolvable.status != :selected
             next
           end
           one_already_installed_resolvable = {
-            "arch"    => Ops.get_string(one_resolvable, "arch", ""),
-            "name"    => Ops.get_string(one_resolvable, "name", ""),
-            "version" => Ops.get_string(one_resolvable, "version", "")
+            "arch"    => one_resolvable.arch,
+            "name"    => one_resolvable.name,
+            "version" => one_resolvable.version
           }
           # Already installed resolvable but not in list of resolvables to be installed
           if !Builtins.contains(
@@ -1396,24 +1362,24 @@ module Yast
             # It will be upgraded later
             if Builtins.contains(
               selected_for_installation_pkgnames,
-              Ops.get_string(one_resolvable, "name", "-x-")
+              one_resolvable.name
             )
               Builtins.y2milestone(
                 "Not Removing type: %1, name: %2 version: %3",
                 one_type,
-                Ops.get_string(one_resolvable, "name", "-x-"),
-                Ops.get_string(one_resolvable, "version", "-x-")
+                one_resolvable.name,
+                one_resolvable.version
               )
               # Package is installed or selected but should not be, remove it
             else
               Builtins.y2milestone(
                 "Removing type: %1, name: %2 version: %3",
                 one_type,
-                Ops.get_string(one_resolvable, "name", "-x-"),
-                Ops.get_string(one_resolvable, "version", "-x-")
+                one_resolvable.name,
+                one_resolvable.version
               )
               Pkg.ResolvableRemove(
-                Ops.get_string(one_resolvable, "name", "-x-"),
+                one_resolvable.name,
                 one_type
               )
             end

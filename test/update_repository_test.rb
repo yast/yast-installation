@@ -34,16 +34,22 @@ describe Installation::UpdateRepository do
     after { FileUtils.rm_rf(TEMP_DIR) }
 
     let(:package) do
-      { "name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id }
+      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
+    end
+
+    let(:other_package) do
+      Y2Packager::Resolvable.new("name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id)
     end
 
     let(:from_other_repo) do
-      { "name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1 }
+      Y2Packager::Resolvable.new("name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1)
     end
 
     before do
-      allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :package, "")
-        .and_return(packages)
+      allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id)
+        .and_return([other_package, package])
+      allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id + 1)
+        .and_return([from_other_repo])
     end
 
     context "when the repository type can't be determined" do
@@ -76,22 +82,16 @@ describe Installation::UpdateRepository do
     end
 
     context "when the repo does not have packages" do
-      let(:packages) { [from_other_repo] }
-
       it "returns an empty array" do
+        expect(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id)
+          .and_return([])
         expect(repo.packages).to eq([])
       end
     end
 
     context "when the source contains packages" do
-      let(:other_package) do
-        { "name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id }
-      end
-
-      let(:packages) { [package, from_other_repo, other_package] }
-
       it "returns update repository packages sorted by name" do
-        expect(repo.packages).to eq([other_package, package])
+        expect(repo.packages.map(&:name)).to eq([other_package.name, package.name])
       end
     end
   end
@@ -104,7 +104,7 @@ describe Installation::UpdateRepository do
     end
 
     let(:package) do
-      { "name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id }
+      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
     end
 
     let(:libzypp_package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
@@ -117,7 +117,7 @@ describe Installation::UpdateRepository do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
       allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
-      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package["name"]).and_return(downloader)
+      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package.name).and_return(downloader)
       allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s).and_return(extractor)
       allow(Tempfile).to receive(:new).and_return(tempfile)
     end

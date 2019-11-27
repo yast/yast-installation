@@ -20,6 +20,7 @@
 # ------------------------------------------------------------------------------
 
 require "y2packager/known_repositories"
+require "y2packager/resolvable"
 
 Yast.import "UI"
 Yast.import "Pkg"
@@ -407,19 +408,9 @@ module Yast
         "Checking whether repository %1 is an update repo...",
         repo
       )
-      ret = false
 
       # check if there is a patch available in the repository
-      Builtins.foreach(Pkg.ResolvableProperties("", :patch, "")) do |patch|
-        if Ops.get_integer(patch, "source", -1) == repo
-          Builtins.y2milestone(
-            "Found patch %1 in the repository",
-            Ops.get_string(patch, "name", "")
-          )
-          ret = true
-          raise Break
-        end
-      end
+      ret = Y2Packager::Resolvable.any?(kind: :patch, source: repo)
 
       Builtins.y2milestone("Repository %1 is update repo: %2", repo, ret)
 
@@ -462,11 +453,13 @@ module Yast
       # only package names (without version)
       names_only = true
       Pkg.GetPackages(:selected, names_only).each do |pkg|
-        Pkg.ResolvableProperties(pkg, :package, "").each do |p|
-          source = p["source"]
-          next unless p["status"] == :selected && repos.include?(source)
+        Y2Packager::Resolvable.find(kind:   :package,
+                                    name:   pkg,
+                                    status: :selected).each do |p|
+          source = p.source
+          next unless repos.include?(source)
 
-          package = "#{p["name"]}-#{p["version"]}.#{p["arch"]}"
+          package = "#{p.name}-#{p.version}.#{p.arch}"
           log.info("Found upgrade to install: #{package}")
           packages << package
           ret << source unless ret.include?(source)
