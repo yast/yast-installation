@@ -116,8 +116,8 @@ function prepare_for_ncurses () {
 			-e "s#brlport=.*#brlport=$Brailledevice#" /etc/sbl.conf \
 		>/tmp/suse-blinux.conf
 		mv -f /tmp/suse-blinux.conf /etc/sbl.conf
-		/etc/init.d/brld start
-		/etc/init.d/sbl start
+		/bin/start_service brld
+		/bin/start_service sbl
 	fi
 	fi
 	#=============================================
