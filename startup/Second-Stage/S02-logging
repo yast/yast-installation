@@ -3,14 +3,7 @@ log "Starting S02-logging..."
 log "======================="
 
 #=============================================
-# 3) start syslog daemon
-#---------------------------------------------
-if [ -x /etc/init.d/syslog ];then
-	/etc/init.d/syslog start
-fi
-
-#=============================================
-# 3.1) set debug and logging options
+# 3) set debug and logging options
 #---------------------------------------------
 
 # fate#302166: store y2debug messages and log them on crash
