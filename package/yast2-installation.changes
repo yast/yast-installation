@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 15 10:22:58 CET 2020 - aschnell@suse.com
+
+- use udevadm in /usr/bin instead of /sbin (bsc#1160890)
+- 4.2.27
+
+-------------------------------------------------------------------
 Tue Jan 14 11:25:19 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
 
 - drop starting of hal as it is also obsolete and no longer exist

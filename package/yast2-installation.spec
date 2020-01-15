@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.26
+Version:        4.2.27
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -39,8 +39,8 @@ BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
 BuildRequires:  yast2 >= 4.2.32
 # Y2Packager::MediumType
 BuildRequires:  yast2-packager >= 4.2.27
-# Y2Storage::Inhibitors including systemd masking
-BuildRequires:  yast2-storage-ng >= 4.0.194
+# using /usr/bin/udevadm
+BuildRequires:  yast2-storage-ng >= 4.2.71
 ## y2remote based version
 BuildRequires:  yast2-network >= 4.0.13
 # new root password cwm widget
