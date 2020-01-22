@@ -1,9 +1,8 @@
 -------------------------------------------------------------------
 Wed Jan 22 13:44:48 CET 2020 - schubi@suse.de
-
-- Using tag $os_release_version in the control.xml file which will
-  be replaced by the entry VERSION in /etc/os-release.
-  (improvement for fate#325834)
+- Using tag $os_release_version in the control.xml file
+  (entry <self_update_url>) which will be replaced by the
+  value of VERSION in /etc/os-release. (improvement for fate#325834)
 - 4.2.28
 
 -------------------------------------------------------------------
