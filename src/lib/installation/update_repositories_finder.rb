@@ -26,6 +26,7 @@ Yast.import "Mode"
 Yast.import "Profile"
 Yast.import "ProductFeatures"
 Yast.import "InstFunctions"
+Yast.import "OSReleaseClass"
 
 module Installation
   # Invalid registration URL error
@@ -150,7 +151,8 @@ module Installation
 
     # Converts the string into an URI if it's valid
     #
-    # It substitutes $arch pattern with the architecture of the current system.
+    # Substituting $arch pattern with the architecture of the current system.
+    # Substituting $os_release_version pattern with the release of the current system.
     #
     # @return [URI,nil] The string converted into a URL; nil if it's
     #                   not a valid URL.
@@ -159,6 +161,8 @@ module Installation
     def get_url_from(url)
       return nil unless url.is_a?(::String)
       real_url = url.gsub(/\$arch\b/, Yast::Pkg.GetArchitecture)
+      real_url = real_url.gsub(/\$os_release_version\b/,
+        Yast::OSRelease.ReleaseVersionHumanReadable)
       URI.regexp.match(real_url) ? URI(real_url) : nil
     end
 
