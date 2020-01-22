@@ -998,8 +998,11 @@ To enable the self update feature (FATE#319716), the location of the update
 repository should be defined in the control file.
 
 ```
-    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1-installer-update</self_update_url>
+    <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url</self_update_url>
 ```
+*$os_release_version* will be replaced by the *VERSION* entry in */etc/os-release* file. E.g. "15-SP2"
+*$arch* reflects the architecture of the current installation system.
+
 
 This is the fallback which is used if the self-update repository is not
 specified on the boot command line or if the registration module is not available.
