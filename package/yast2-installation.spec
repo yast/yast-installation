@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.28
+Version:        4.2.29
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
