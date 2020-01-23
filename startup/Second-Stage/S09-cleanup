@@ -20,7 +20,7 @@ fi
 # 13.3) stop network and sshd
 if [ "$Y2_NETWORK_ACTIVE" -ne 0 ] ; then
 	log "\tShutdown SSH daemon and network interfaces..."
-	test -z "$Y2_SSH_ACTIVE" && /bin/systemctl stop sshd
+	test -z "$Y2_SSH_ACTIVE" && /usr/bin/systemctl stop sshd
 
 #
 #	network mustn't be stopped when using systemd - systemd ignores
@@ -28,14 +28,14 @@ if [ "$Y2_NETWORK_ACTIVE" -ne 0 ] ; then
 #	restart is used to force reconfiguration of network - first stage
 #	config is used up to now.
 #
-	/bin/systemctl restart network
+	/usr/bin/systemctl restart network
 fi
 
 # 13.5) restart other services if necessary (bnc#395402)
 if [ -f /var/lib/YaST2/restart_services ] ; then
     cat /var/lib/YaST2/restart_services | while read service; do
 	log "\tRestart $service service..."
-	/bin/systemctl restart $service
+	/usr/bin/systemctl restart $service
     done
     rm -f /var/lib/YaST2/restart_services
 fi

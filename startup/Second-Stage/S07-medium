@@ -24,8 +24,8 @@ fi
 #---------------------------------------------
 if [ ! -z "$(ls /etc/sysconfig/network/ifcfg-* |grep  -v 'ifcfg-lo')" ]; then
 	log "\tnetwork configuration found -> activate network"
-	/bin/systemctl start network && Y2_NETWORK_ACTIVE=1
-	[ -f /var/lib/YaST2/network_install_rpcbind ] && /bin/systemctl start rpcbind
+	/usr/bin/systemctl start network && Y2_NETWORK_ACTIVE=1
+	[ -f /var/lib/YaST2/network_install_rpcbind ] && /usr/bin/systemctl start rpcbind
 fi
 
 #=============================================
@@ -38,7 +38,7 @@ fi
 
 if got_install_param '^UseSSH:.*1' ; then
 	log "\tGot kernel parameter UseSSH -> export UseSSH variable"
-	/bin/systemctl start sshd && Y2_SSH_ACTIVE=1
+	/usr/bin/systemctl start sshd && Y2_SSH_ACTIVE=1
 	export USE_SSH=1
 fi
 log "\tSummary for commandline checks:"
