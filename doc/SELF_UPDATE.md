@@ -147,7 +147,7 @@ The URL of the update repository is evaluated in this order:
 
    ```xml
    <globals>
-     <self_update_url>http://updates.suse.com/sle12/$arch</self_update_url>
+     <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url>
    </globals>
    ```
 
