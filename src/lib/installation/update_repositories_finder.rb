@@ -26,7 +26,7 @@ Yast.import "Mode"
 Yast.import "Profile"
 Yast.import "ProductFeatures"
 Yast.import "InstFunctions"
-Yast.import "OSReleaseClass"
+Yast.import "OSRelease"
 
 module Installation
   # Invalid registration URL error

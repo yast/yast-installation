@@ -35,7 +35,7 @@ BuildRequires:  yast2-ruby-bindings >= 4.0.6
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
-# Yast::OSReleaseClass.ReleaseVersionHumanReadable
+# Yast::OSRelease.ReleaseVersionHumanReadable
 BuildRequires:  yast2 >= 4.2.56
 # Y2Packager::MediumType
 BuildRequires:  yast2-packager >= 4.2.27
@@ -75,7 +75,7 @@ Requires:       yast2-proxy
 # Systemd default target and services. This version supports
 # writing settings in the first installation stage.
 Requires:       yast2-services-manager >= 3.2.1
-# Yast::OSReleaseClass.ReleaseVersionHumanReadable
+# Yast::OSRelease.ReleaseVersionHumanReadable
 Requires:       yast2 >= 4.2.56
 Requires:       yast2-network >= 4.0.13
 # for AbortException and handle direct abort
