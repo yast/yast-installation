@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Jan 29 13:52:29 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- Reimplemented the "Previously Used Repositories" dialog
+  (inst_upgrade_urls.rb) to properly evaluate the new and the old
+  system repositories (bsc#1159433)
+- 4.2.30
+
+-------------------------------------------------------------------
 Thu Jan 23 12:53:29 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - don't use /bin/systemctl compat symlink (bsc#1160890)
