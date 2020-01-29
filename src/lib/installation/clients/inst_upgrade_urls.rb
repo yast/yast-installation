@@ -47,8 +47,8 @@ module Yast
 
       ret = GetInstArgs.going_back ? :back : :next
 
-      if ENV["YAST_TEST"]
-        log.info("Test mode")
+      if test?
+        log.info("Test mode activated")
         init_pkg_mgr
       elsif !Stage.initial || !Mode.update
         log.info("Not in update mode or initial stage")
@@ -67,14 +67,7 @@ module Yast
       # just for testing purposes
       Wizard.CreateDialog if Mode.normal
 
-      display_dialog
-      refresh_dialog
-
-      ret = handle_dialog
-      if ret == :next
-        repo_manager.activate_changes
-        save_pkg_mgr
-      end
+      ret = run_dialog
 
       # just for testing purpose
       Wizard.CloseDialog if Mode.normal
@@ -86,6 +79,22 @@ module Yast
   private
 
     attr_reader :repo_manager
+
+    # Run the main dialog
+    #
+    # @return [Symbol] the UserInput symbol
+    def run_dialog
+      display_dialog
+      refresh_dialog
+
+      ret = handle_dialog
+      if ret == :next
+        repo_manager.activate_changes
+        save_pkg_mgr
+      end
+
+      ret
+    end
 
     def display_dialog
       Wizard.SetContents(
@@ -183,8 +192,8 @@ module Yast
 
     def edit_item(repo)
       url = repo_manager.repo_url(repo)
-      # limit the maximum width
-      min_width = [url.size, 60].min
+      # limit the minimal width
+      min_width = [url.size, 60].max
 
       UI.OpenDialog(
         VBox(
@@ -269,10 +278,17 @@ module Yast
     # this dialog again after going back.
     def save_pkg_mgr
       # do not save the changes in the test mode
-      Pkg.SourceSaveAll unless ENV["YAST_TEST"]
+      Pkg.SourceSaveAll unless test?
 
       # clear the old repositories
       Y2Packager::OriginalRepositorySetup.instance.repositories.clear
+    end
+
+    # Running in a test mode?
+    #
+    # @return [Boolean] `true` if running in the test mode, `false` otherwise
+    def test?
+      ENV["YAST_TEST"] == "1"
     end
   end
 end

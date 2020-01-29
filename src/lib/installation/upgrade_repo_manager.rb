@@ -21,7 +21,8 @@ Yast.import "Pkg"
 
 module Installation
   # This class takes care of managing the old repositories and services
-  # during upgrade.
+  # during upgrade. It takes care of modifying the old repositories
+  # and using them in the new upgraded system.
   class UpgradeRepoManager
     include Yast::Logger
 
@@ -70,10 +71,11 @@ module Installation
       status_map[repo]
     end
 
-    # Return the repository URL possibly new
+    # Return the repository URL, if it was changed by the user than the new
+    # URL is returned.
     #
     # @param repo [Y2Packager::Repository] The queried repository
-    # @return [Symbol] <description>
+    # @return [String] The URL
     def repo_url(repo)
       new_urls[repo] || repo.url.to_s
     end
