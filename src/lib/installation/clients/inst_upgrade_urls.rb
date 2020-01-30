@@ -64,13 +64,7 @@ module Yast
         return ret
       end
 
-      # just for testing purposes
-      Wizard.CreateDialog if Mode.normal
-
       ret = run_dialog
-
-      # just for testing purpose
-      Wizard.CloseDialog if Mode.normal
 
       log.info("Returning #{ret.inspect}")
       ret
@@ -84,6 +78,9 @@ module Yast
     #
     # @return [Symbol] the UserInput symbol
     def run_dialog
+      # just for testing purposes
+      Wizard.CreateDialog if Mode.normal
+
       display_dialog
       refresh_dialog
 
@@ -92,6 +89,9 @@ module Yast
         repo_manager.activate_changes
         save_pkg_mgr
       end
+
+      # just for testing purposes
+      Wizard.CloseDialog if Mode.normal
 
       ret
     end
@@ -233,12 +233,16 @@ module Yast
         ret = UI.UserInput
         ret = :abort if ret == :cancel
 
-        if ret == :toggle || ret == "table_of_repos" || ret == :edit
+        case ret
+        when :toggle, :edit, "table_of_repos"
           current_item = UI.QueryWidget(Id("table_of_repos"), :CurrentItem)
           next unless current_item
 
           selected_repo = repo_manager.repositories.find { |r| r.repo_alias == current_item }
-          next unless selected_repo
+          if !selected_repo
+            log.error("Selected repository not found???")
+            next
+          end
 
           if ret == :edit
             edit_item(selected_repo)
@@ -247,8 +251,10 @@ module Yast
           end
 
           refresh_dialog
-        elsif ret == :next || ret == :back || (ret == :abort && Popup.ConfirmAbort(:painless))
+        when :next, :back
           break
+        when :abort
+          break if Popup.ConfirmAbort(:painless)
         else
           log.warn("Unknown input: #{ret}")
         end
