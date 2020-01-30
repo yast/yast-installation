@@ -240,7 +240,7 @@ module Yast
 
           selected_repo = repo_manager.repositories.find { |r| r.repo_alias == current_item }
           if !selected_repo
-            log.error("Selected repository not found???")
+            log.error("Selected repository #{current_item.inspect} not found???")
             next
           end
 
