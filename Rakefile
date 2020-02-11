@@ -9,6 +9,7 @@ Yast::Tasks.configuration do |conf|
   # TODO: move to src/client and verify if needed
   conf.install_locations["control/*.rb"] = Packaging::Configuration::YAST_DIR + "/clients"
   conf.install_locations["startup"] = Packaging::Configuration::YAST_LIB_DIR
+  conf.install_locations["bin/*"] = File.join(Packaging::Configuration::DESTDIR, "/usr/bin/")
 end
 
 # safety check - make sure the RNG file is up to date

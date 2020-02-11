@@ -193,6 +193,8 @@ systemctl enable YaST2-Firstboot.service
 
 # systemd service files
 %{_unitdir}
+# yupdate script
+%{_bindir}/
 %{yast_clientdir}
 %{yast_moduledir}
 %{yast_desktopdir}
