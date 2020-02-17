@@ -154,7 +154,7 @@ more details.*
 
 #### Patching Multiple Packages
 
-The `yast patch` command installs the sources from all running `rake server`
+The `yupdate patch` command installs the sources from all running `rake server`
 servers. If you need to update sources from several packages you can just
 run `rake server` in all of them and install them with a single `yupdate`
 call.
@@ -226,7 +226,9 @@ state.
 3. Run a server, eg. with `ruby -run -e httpd -- -p 8888 .`
 4. Type a loooong boot line to pass them all as DUD=http://....rpm
    (or write that into a file and use the [info](
-    https://en.opensuse.org/SDB:Linuxrc#p_info) option)
+   https://en.opensuse.org/SDB:Linuxrc#p_info) option
+   or build a single DUD file from the RPMs with the [`mkdud`](
+   https://github.com/wfeldt/mkdud) script)
 
 ## Implementation Details
 

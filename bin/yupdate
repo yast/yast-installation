@@ -63,7 +63,9 @@ Commands:
                             https://github.com/yast/yast-rake/#server),
                             the default port is 8000
 
-    servers <host[:port]>   List the rake servers running on the remote machine
+    servers <host[:port]>   List the rake servers running on the remote machine,
+                            ask the specified server to report all `rake server`
+                            instances
 
     overlay create [<dir>]  Create a new writable overlay for directory <dir>,
                             if no directory is specified it creates overlays
@@ -188,6 +190,7 @@ HELP
     attr_reader :dir, :orig_dir
 
     # manage the OverlayFS for this directory
+    # @param directory [String] the directory
     def initialize(directory)
       @orig_dir = directory
       # expand symlinks
@@ -223,12 +226,12 @@ HELP
 
     # print the modified files in this directory
     def print_files
-      modified_files { |f, _modif, _orig| puts f }
+      iterate_files { |f, _modif, _orig| puts f }
     end
 
     # print the diff for the changed files in this directory
     def print_diff
-      modified_files do |f, _modif, orig|
+      iterate_files do |f, _modif, orig|
         next unless File.exist?(f) && File.exist?(orig)
         system("diff -u #{orig.shellescape} #{f.shellescape}")
       end
@@ -247,27 +250,36 @@ HELP
       yast_overlays.map { |o| new(o) }
     end
 
-  private
-
-    def dir_name
-      # escape (double) underscores for correct reverse conversion
-      dir.gsub("_", "__").tr("/", "_")
-    end
-
     def upperdir
-      File.join(OVERLAY_PREFIX, "upper", dir_name)
+      OverlayFS.escape_path("upper", dir)
     end
 
     def workdir
-      File.join(OVERLAY_PREFIX, "workdir", dir_name)
+      OverlayFS.escape_path("workdir", dir)
     end
 
     def origdir
-      File.join(OVERLAY_PREFIX, "original", dir_name)
+      OverlayFS.escape_path("original", dir)
     end
 
-    # find the modified files in this directory
-    def modified_files(&block)
+    def self.escape_path(subdir, path)
+      # escape (double) underscores for correct reverse conversion
+      File.join(OVERLAY_PREFIX, subdir, path.gsub("_", "__").tr("/", "_"))
+    end
+
+    def self.unescape_path(path)
+      Pathname.new(path).basename.to_s.gsub(/([^_])_([^_])/, "\\1/\\2")
+              .sub(/\A_/, "/").gsub("__", "_").gsub("//", "/")
+    end
+
+  private
+
+    # find the files in this directory
+    # the block is called with three parameters:
+    # - the path to the new file in the overlay directory
+    # - the original path in /
+    # - the path to the original file in the overlay directory
+    def iterate_files(&block)
       return unless block_given?
 
       Find.find(upperdir) do |f|
@@ -275,9 +287,8 @@ HELP
         upperdir_path = Pathname.new(upperdir)
         relative_path = Pathname.new(f).relative_path_from(upperdir_path)
         original_path = File.join(origdir, relative_path)
-        # unescape _
-        pth = upperdir_path.basename.to_s.gsub(/([^_])_([^_])/, "\\1/\\2")
-                           .sub(/\A_/, "/").gsub("__", "_").gsub("//", "/")
+        # unescape the path
+        pth = unescape_path(upperdir_path)
         block.call(File.join(pth, relative_path), f, original_path)
       end
     end
@@ -349,7 +360,7 @@ HELP
         # pipe the response body directly to the tar process
         IO.popen(["tar", "-C", dir, "--warning=no-timestamp", "-xz"], "wb") do |io|
           response.read_body do |chunk|
-            io.write chunk
+            io.write(chunk)
           end
         end
       end
@@ -563,9 +574,8 @@ HELP
     # the script might not work as expected in an installed system
     # and using OverlayFS is potentially dangerous
     def self.check!
-      mounts = `mount`
-      # the inst-sys uses tmpfs (RAM disk) for the root
-      return if mounts =~ /^tmpfs on \/ type tmpfs/
+      # the inst-sys contains the /.packages.initrd file with a list of packages
+      return if File.exist?("/.packages.initrd")
 
       # exit immediately if running in an installed system
       $stderr.puts "ERROR: This script can only work in the installation system (inst-sys)!"
@@ -612,8 +622,7 @@ HELP
 
     def run
       host = @argv.shift
-
-      return 1 unless host
+      raise "Missing server name argument" unless host
 
       servers = RemoteServer.find(host)
       servers.each do |s|
