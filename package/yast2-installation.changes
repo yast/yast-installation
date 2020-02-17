@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 17 17:44:48 UTC 2020 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Fixed user-visible messages (bsc#1084015)
+- 4.2.31
+
+-------------------------------------------------------------------
 Wed Jan 29 13:52:29 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
 
 - Reimplemented the "Previously Used Repositories" dialog
