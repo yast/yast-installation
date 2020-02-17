@@ -140,10 +140,10 @@ module Yast
         ) +
           # TRANSLATORS: help text 2/3
           _(
-            "<p>To enable, remove or disable an URL, click on the\n<b>Toggle Status</b> button or double-click on the respective table item.</p>"
+            "<p>To enable, remove or disable an URL, click the\n<b>Toggle Status</b> button or double-click the respective table item.</p>"
           ) +
           # TRANSLATORS: help text 3/3
-          _("<p>To change the URL, click on the <b>Change...</b> button.</p>"),
+          _("<p>To change the URL, click the <b>Change...</b> button.</p>"),
         true,
         true
       )
