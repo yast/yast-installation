@@ -36,16 +36,22 @@ describe ::Installation::Dialogs::NtpSetup do
     end
 
     context "no NTP server set in DHCP and default NTP is enabled in control.xml" do
+      let(:default_servers) do
+        [
+          Y2Network::NtpServer.new("0.opensuse.pool.ntp.org"),
+          Y2Network::NtpServer.new("1.opensuse.pool.ntp.org")
+        ]
+      end
+
       before do
         allow(Yast::ProductFeatures).to receive(:GetBooleanFeature)
           .with("globals", "default_ntp_setup").and_return(true)
-        allow(Yast::Product).to receive(:FindBaseProducts)
-          .and_return(["name" => "openSUSE-Tumbleweed-Kubic"])
+        allow(Y2Network::NtpServer).to receive(:default_servers).and_return(default_servers)
       end
 
-      it "proposes to use a random openSUSE pool server" do
+      it "proposes to use a random server from the default pool" do
         expect(::Installation::Widgets::NtpServer).to receive(:new).and_wrap_original do |original, arg|
-          expect(arg.first).to match(/\A[0-3]\.opensuse\.pool\.ntp\.org\z/)
+          expect(default_servers.map(&:hostname)).to include(arg.first)
           original.call(arg)
         end
         subject.run

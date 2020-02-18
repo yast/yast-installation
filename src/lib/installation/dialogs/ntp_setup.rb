@@ -22,6 +22,7 @@
 require "yast"
 require "cwm/dialog"
 require "installation/widgets/ntp_server"
+require "y2network/ntp_server"
 
 module Installation
   module Dialogs
@@ -68,7 +69,7 @@ module Installation
         # TODO: use Yast::NtpClient.ntp_conf if configured
         # to better handle going back
         servers = dhcp_ntp_servers
-        servers = [ntp_fallback] if servers.empty? && default_ntp_setup_enabled?
+        servers = [ntp_fallback.hostname] if servers.empty? && default_ntp_setup_enabled?
 
         servers
       end
@@ -98,23 +99,11 @@ module Installation
 
       # The fallback servers for NTP configuration
       #
-      # It propose a random pool server in range 0..3
+      # It propose a random server from the default pool
       #
-      # @return [String] the fallback servers
+      # @return [Y2Network::NtpServer] the fallback server
       def ntp_fallback
-        "#{rand(4)}.#{ntp_host}.pool.ntp.org"
-      end
-
-      def ntp_host
-        # copied from timezone/dialogs.rb:
-        base_products = Yast::Product.FindBaseProducts
-
-        if base_products.any? { |p| p["name"] =~ /openSUSE/i }
-          "opensuse"
-        else
-          # TODO: use a SUSE server when available in the future
-          "novell"
-        end
+        Y2Network::NtpServer.default_servers.sample
       end
     end
   end
