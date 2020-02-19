@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 19 09:40:45 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
+
+- don't start getty on hvc0 & ttyAMA0 before Yast2-Firstboot (bsc#1157233)
+- 4.2.32
+
+-------------------------------------------------------------------
 Mon Feb 17 17:44:48 UTC 2020 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Fixed user-visible messages (bsc#1084015)
