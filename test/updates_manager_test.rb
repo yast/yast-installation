@@ -102,8 +102,12 @@ describe Installation::UpdatesManager do
   end
 
   describe "#apply_all" do
+    let(:new_control_file?) { false }
+
     before do
       allow(manager).to receive(:repositories).and_return([repo0, repo1])
+      allow(File).to receive(:exist?).with("/usr/lib/skelcd/CD1/control.xml")
+        .and_return(new_control_file?)
     end
 
     it "applies all the updates" do
@@ -122,6 +126,30 @@ describe Installation::UpdatesManager do
       it "also re-applies the driver updates" do
         expect(dud0).to receive(:apply)
         manager.apply_all
+      end
+    end
+
+    context "when a new control file is available" do
+      let(:new_control_file?) { true }
+      let(:exit_code) { 0 }
+
+      before do
+        allow(Yast::SCR).to receive(:Execute).and_return("exit" => exit_code)
+      end
+
+      it "updates the control file if needed" do
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), "/sbin/adddir /usr/lib/skelcd/CD1 /")
+        manager.apply_all
+      end
+
+      context "and updating the control file fails" do
+        let(:exit_code) { 1 }
+
+        it "raises an exception" do
+          expect { manager.apply_all }
+            .to raise_error(Installation::UpdatesManager::CouldNotUpdateControlFile)
+        end
       end
     end
   end

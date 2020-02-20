@@ -55,6 +55,9 @@ module Installation
     # Repo is unreachable (name solving issues, etc.).
     class CouldNotProbeRepo < RepoError; end
 
+    # The control file was not updated due to some problem
+    class CouldNotUpdateControlFile < RepoError; end
+
     DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")].freeze
 
     # Constructor
@@ -110,14 +113,30 @@ module Installation
     # @see Installation::UpdateRepository#apply
     # @see Installation::DriverUpdate#apply
     # @see #repositories
+    # @raise CouldNotUpdateControlFile
     def apply_all
       (repositories + driver_updates).each(&:apply)
       repositories.each(&:cleanup)
+      replace_control_file
     end
 
     # Determines whether the manager has repositories with updates
     def repositories?
       !repositories.empty?
+    end
+
+  private
+
+    NEW_CONTROL_FILE_PATH = "/usr/lib/skelcd/CD1/control.xml"
+    APPLY_CMD = "/sbin/adddir %<source>s /".freeze
+
+    # Replaces the control file with the the updated one (if it exists)
+    def replace_control_file
+      return unless File.exist?(NEW_CONTROL_FILE_PATH)
+      cmd = format(APPLY_CMD, source: File.dirname(NEW_CONTROL_FILE_PATH))
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      log.info("Updating control.xml file in inst-sys '#{cmd}': #{out}")
+      raise CouldNotUpdateControlFile unless out["exit"].zero?
     end
   end
 end
