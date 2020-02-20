@@ -19,6 +19,7 @@ require "fileutils"
 require "find"
 require "json"
 require "net/http"
+require "open-uri"
 require "pathname"
 require "shellwords"
 require "singleton"
@@ -208,19 +209,19 @@ HELP
       FileUtils.mkdir_p(origdir)
 
       # make the original content available in a separate directory
-      system("mount --bind #{dir.shellescape} #{origdir.shellescape}")
+      system("mount", "--bind", dir, origdir)
       # mark the mount as a private otherwise the overlay would propagate
       # through the bind mount and we would see the changed content here
-      system("mount --make-private #{origdir.shellescape}")
+      system("mount", "--make-private", origdir)
 
-      system("mount -t overlay overlay -o lowerdir=#{dir.shellescape}," \
-        "upperdir=#{upperdir.shellescape},workdir=#{workdir.shellescape} #{dir.shellescape}")
+      system("mount", "-t", "overlay", "overlay", "-o", "lowerdir=#{dir},"\
+        "upperdir=#{upperdir},workdir=#{workdir}", dir)
     end
 
     # delete the OverlayFS for this directory, all changes will be reverted back
     def delete
-      system "umount #{dir.shellescape}"
-      system "umount #{origdir.shellescape}"
+      system("umount", dir)
+      system("umount", origdir)
       FileUtils.rm_rf([upperdir, workdir, origdir])
     end
 
@@ -233,7 +234,7 @@ HELP
     def print_diff
       iterate_files do |f, _modif, orig|
         next unless File.exist?(f) && File.exist?(orig)
-        system("diff -u #{orig.shellescape} #{f.shellescape}")
+        system("diff", "-u", orig, f)
       end
     end
 
@@ -317,28 +318,14 @@ HELP
     end
 
     # download the file, returns the response body or if a block is
-    # given it passes the response to it, handled HTTP redirection automatically
-    def download(redirect = 10, &block)
+    # given it passes the response to it, handles HTTP redirection automatically
+    def download(&block)
       msg "Downloading #{url}"
-      uri = URI(url)
 
-      while redirect > 0
-        Net::HTTP.start(uri.host, uri.port, use_ssl: uri.is_a?(URI::HTTPS)) do |http|
-          request = Net::HTTP::Get.new uri
-          http.request(request) do |response|
-            if response.is_a?(Net::HTTPRedirection)
-              msg "Redirected to #{response["location"]}"
-              uri = URI(response["location"])
-              redirect -= 1
-            elsif response.is_a?(Net::HTTPSuccess)
-              return block.call(response) if block_given?
-              # read the rest of the response (the body)
-              return response.read_body
-            else
-              raise "Download failed, error code: #{response.code}"
-            end
-          end
-        end
+      if block_given?
+        URI.open(url) { |f| block.call(f) }
+      else
+        URI.open(url, &:read)
       end
     end
   end
@@ -352,15 +339,15 @@ HELP
 
     # start the downloading, extract the tarball to the specified directory
     def extract_to(dir)
-      download do |response|
-        if response["content-type"] !~ /application\/(x-|)gzip/
-          raise "Unknown MIME type: #{response["content-type"]}"
+      download do |input|
+        if input.content_type !~ /application\/(x-|)gzip/
+          raise "Unknown MIME type: #{input.content_type}"
         end
 
         # pipe the response body directly to the tar process
         IO.popen(["tar", "-C", dir, "--warning=no-timestamp", "-xz"], "wb") do |io|
-          response.read_body do |chunk|
-            io.write(chunk)
+          while (buffer = input.read(4096))
+            io.write(buffer)
           end
         end
       end
@@ -402,7 +389,8 @@ HELP
 
     # find the needed gems for running "rake install"
     def required_gems
-      gems = [NEEDED_GEM]
+      gems = []
+      gems << NEEDED_GEM if !gem_installed?(NEEDED_GEM)
       # handle the rake gem specifically, it is present in the system, but
       # the /usr/bin/rake file is missing
       gems << "rake" if !File.exist?("/usr/bin/rake")
@@ -411,12 +399,9 @@ HELP
 
     # install the specified gems
     def install_gems(gem_names)
-      gem_names.each do |g|
-        next if gem_installed?(g)
-
-        add_gem_overlay
-        system("gem install --no-document --no-format-exec #{gem_names.map(&:shellescape).join(" ")}")
-      end
+      return if gem_names.empty?
+      add_gem_overlay
+      system("gem", "install", "--no-document", "--no-format-exec", *gem_names)
     end
 
     # make sure that the gem directory is writable

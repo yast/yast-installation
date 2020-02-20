@@ -13,7 +13,13 @@ describe YUpdate::GemInstaller do
     end
 
     it "installs the required gems" do
-      allow(subject).to receive(:system).with("gem install --no-document --no-format-exec yast-rake")
+      expect(subject).to receive(:system).with(
+        "gem",
+        "install",
+        "--no-document",
+        "--no-format-exec",
+        "yast-rake"
+      )
       subject.install_required_gems
     end
 
