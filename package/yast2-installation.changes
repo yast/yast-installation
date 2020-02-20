@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Feb 20 11:24:41 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Allow to modify the control file at installation time using a
+  skelcd-* package (bsc#1164468).
+- 4.2.33
+
+-------------------------------------------------------------------
 Wed Feb 19 09:40:45 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - don't start getty on hvc0 & ttyAMA0 before Yast2-Firstboot (bsc#1157233)
