@@ -131,26 +131,18 @@ describe Installation::UpdatesManager do
 
     context "when a new control file is available" do
       let(:new_control_file?) { true }
-      let(:exit_code) { 0 }
 
-      before do
-        allow(Yast::SCR).to receive(:Execute).and_return("exit" => exit_code)
-      end
-
-      it "updates the control file if needed" do
-        expect(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash_output"), "/sbin/adddir /usr/lib/skelcd/CD1 /")
+      it "updates the control file" do
+        expect(Yast::Execute).to receive(:locally!)
+          .with("/sbin/adddir", "/usr/lib/skelcd/CD1", "/")
         manager.apply_all
       end
+    end
 
-      context "and updating the control file fails" do
-        let(:exit_code) { 1 }
-
-        it "raises an exception" do
-          expect { manager.apply_all }
-            .to raise_error(Installation::UpdatesManager::CouldNotUpdateControlFile)
-        end
-      end
+    it "does not replace the control file" do
+      expect(Yast::Execute).to_not receive(:locally!)
+        .with("/sbin/adddir", /skelcd/, "/")
+      manager.apply_all
     end
   end
 
