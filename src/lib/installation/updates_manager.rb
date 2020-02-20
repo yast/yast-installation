@@ -127,7 +127,7 @@ module Installation
 
   private
 
-    NEW_CONTROL_FILE_PATH = "/usr/lib/skelcd/CD1/control.xml"
+    NEW_CONTROL_FILE_PATH = "/usr/lib/skelcd/CD1/control.xml".freeze
     APPLY_CMD = "/sbin/adddir %<source>s /".freeze
 
     # Replaces the control file with the the updated one (if it exists)
