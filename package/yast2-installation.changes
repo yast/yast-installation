@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 20 15:12:39 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Rely on the new Y2Network::NtpServer class (jsc#SLE-7188).
+- 4.2.34
+
+-------------------------------------------------------------------
 Thu Feb 20 11:24:41 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Allow to modify the control file at installation time using a

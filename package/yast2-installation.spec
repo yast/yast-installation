@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.33
+Version:        4.2.34
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -41,8 +41,8 @@ BuildRequires:  yast2 >= 4.2.56
 BuildRequires:  yast2-packager >= 4.2.27
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
-## y2remote based version
-BuildRequires:  yast2-network >= 4.0.13
+# Y2Network::NtpServer
+BuildRequires:  yast2-network >= 4.2.55
 # new root password cwm widget
 BuildRequires:  yast2-users >= 3.2.8
 # storage-ng based version
@@ -77,7 +77,8 @@ Requires:       yast2-proxy
 Requires:       yast2-services-manager >= 3.2.1
 # Yast::OSRelease.ReleaseVersionHumanReadable
 Requires:       yast2 >= 4.2.56
-Requires:       yast2-network >= 4.0.13
+# Y2Network::NtpServer
+Requires:       yast2-network >= 4.2.55
 # for AbortException and handle direct abort
 Requires:       yast2-ruby-bindings >= 4.0.6
 # for the first/second stage of installation
