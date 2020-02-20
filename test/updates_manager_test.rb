@@ -102,8 +102,12 @@ describe Installation::UpdatesManager do
   end
 
   describe "#apply_all" do
+    let(:new_control_file?) { false }
+
     before do
       allow(manager).to receive(:repositories).and_return([repo0, repo1])
+      allow(File).to receive(:exist?).with("/usr/lib/skelcd/CD1/control.xml")
+        .and_return(new_control_file?)
     end
 
     it "applies all the updates" do
@@ -123,6 +127,22 @@ describe Installation::UpdatesManager do
         expect(dud0).to receive(:apply)
         manager.apply_all
       end
+    end
+
+    context "when a new control file is available" do
+      let(:new_control_file?) { true }
+
+      it "updates the control file" do
+        expect(Yast::Execute).to receive(:locally!)
+          .with("/sbin/adddir", "/usr/lib/skelcd/CD1", "/")
+        manager.apply_all
+      end
+    end
+
+    it "does not replace the control file" do
+      expect(Yast::Execute).to_not receive(:locally!)
+        .with("/sbin/adddir", /skelcd/, "/")
+      manager.apply_all
     end
   end
 

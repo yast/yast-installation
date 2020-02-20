@@ -16,6 +16,7 @@
 require "pathname"
 require "installation/driver_update"
 require "installation/update_repository"
+require "yast2/execute"
 
 module Installation
   # This class takes care of managing installer updates
@@ -110,14 +111,27 @@ module Installation
     # @see Installation::UpdateRepository#apply
     # @see Installation::DriverUpdate#apply
     # @see #repositories
+    # @raise CouldNotUpdateControlFile
     def apply_all
       (repositories + driver_updates).each(&:apply)
       repositories.each(&:cleanup)
+      replace_control_file
     end
 
     # Determines whether the manager has repositories with updates
     def repositories?
       !repositories.empty?
+    end
+
+  private
+
+    NEW_CONTROL_FILE_PATH = "/usr/lib/skelcd/CD1/control.xml".freeze
+
+    # Replaces the control file with the updated one (if it exists)
+    def replace_control_file
+      return unless File.exist?(NEW_CONTROL_FILE_PATH)
+      log.info("Updating control.xml file in inst-sys")
+      Yast::Execute.locally!("/sbin/adddir", File.dirname(NEW_CONTROL_FILE_PATH), "/")
     end
   end
 end
