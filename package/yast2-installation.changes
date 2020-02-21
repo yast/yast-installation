@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb 21 09:45:10 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- Added "yupdate" script to simplify patching the installer
+  (bsc#1163691)
+- 4.2.35
+
+-------------------------------------------------------------------
 Thu Feb 20 15:12:39 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Rely on the new Y2Network::NtpServer class (jsc#SLE-7188).

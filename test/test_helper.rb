@@ -45,8 +45,9 @@ if ENV["COVERAGE"]
     add_filter "/test/"
   end
 
+  bindir = File.expand_path("../../bin", __FILE__)
   # For coverage we need to load all ruby files
-  SimpleCov.track_files("#{srcdir}/**/*.rb")
+  SimpleCov.track_files("{#{srcdir}/**/*.rb,#{bindir}/*}")
 
   # use coveralls for on-line code coverage reporting at Travis CI
   if ENV["TRAVIS"]
@@ -62,4 +63,15 @@ RSpec.configure do |config|
   config.extend Yast::I18n  # available in context/describe
   config.include Yast::I18n # available in it/let/before/...
   config.include Helpers    # custom helpers
+end
+
+# require the "bin/yupdate" script for testing it, unfortunately we cannot use
+# a simple require/require_relative for it, let's share the workaround in a single place
+def require_yupdate
+  # - "require"/"require_relative" do not work for files without the ".rb" extension
+  # - adding the "yupdate.rb" -> "yupdate" symlink works but then code coverage
+  #   somehow does not find the executed code and reports zero coverage there
+  # - "load" works fine but we need to ensure calling it only once
+  #   to avoid the "already initialized constant" Ruby warnings
+  load File.expand_path("../bin/yupdate", __dir__) unless defined?(YUpdate)
 end

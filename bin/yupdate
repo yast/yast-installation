@@ -1,0 +1,771 @@
+#!/usr/bin/env ruby
+
+# This script updates the YaST files in the inst-sys with the files from
+# a GitHub repository or a running tarball web server.
+#
+# See the help text below for the details or see the documentation in
+# the doc/yupdate.md file.
+#
+# Note: The reason why all classes are in a single file is that
+#       it allows to easy update the script to the latest version
+#       or add it to an older (not supported) installer with:
+#
+#   curl https://raw.githubusercontent.com/yast/yast-installation/master/bin/yupdate > /usr/bin/yupdate
+#   chmod +x /usr/bin/yupdate
+#   yupdate ...
+#
+
+require "fileutils"
+require "find"
+require "json"
+require "net/http"
+require "open-uri"
+require "pathname"
+require "shellwords"
+require "singleton"
+require "socket"
+require "tmpdir"
+require "uri"
+
+# for logging to y2log
+require "yast"
+
+module YUpdate
+  # version of the script
+  class Version
+    MAJOR = 0
+    MINOR = 1
+    PATCH = 0
+
+    STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
+  end
+
+  # handle the "help" command line option
+  class HelpCommand
+    def run
+      name = File.basename(__FILE__)
+      puts <<-HELP
+This is a helper script for updating the YaST installer in the installation system.
+
+Usage: #{name} <command> <options>
+
+Commands:
+
+    patch <github_repo> <branch>  Patch the installer with the sources from GitHub,
+                            <github_repo> is a repository name (including the organization
+                            or the user name, if missing "yast" is used by default),
+                            <branch> is the Git branch to use
+
+    patch <tarball_url>     Patch the installer with the sources provided by
+                            a generic HTTP server
+
+    patch <host[:port]>     Patch the installer with the sources provided by
+                            a "rake server" task (for details see
+                            https://github.com/yast/yast-rake/#server),
+                            the default port is 8000
+
+    servers <host[:port]>   List the rake servers running on the remote machine,
+                            ask the specified server to report all `rake server`
+                            instances
+
+    overlay create [<dir>]  Create a new writable overlay for directory <dir>,
+                            if no directory is specified it creates overlays
+                            for the default YaST directories
+
+    overlay list            Print the created writable overlays
+
+    overlay reset           Remove all overlays, restore the system to
+                            the original state
+
+    overlay files           Print the changed files (removed files are not listed)
+
+    overlay diff            Print the diff of the changed overlay files
+
+    version                 Print the script version
+
+    help                    Print this help
+
+WARNING: This script is intended only for testing and development purposes,
+        using this tool makes the installation not supported!
+
+        See more details in
+        https://github.com/yast/yast-installation/blob/master/doc/yupdate.md
+HELP
+    end
+  end
+
+  # a helper module for printing and logging
+  module Logger
+    include Yast::Logger
+
+    # print the message on STDOUT and also write it to the y2log
+    # @param message [String] the message
+    def msg(message)
+      puts message
+      log.info(message)
+    end
+  end
+
+  # a simple /etc/install.inf parser/writer,
+  # we need to disable the YaST self-update feature to avoid conflicts
+  class InstallInf
+    attr_reader :path
+
+    # read the file
+    def initialize(path = "/etc/install.inf")
+      @path = path
+      @values = File.read(path).lines.map(&:chomp)
+    end
+
+    # get value for the key
+    def [](key)
+      line = find_line(key)
+      return nil unless line
+
+      line.match(/^#{Regexp.escape(key)}:\s*(.*)/)[1]
+    end
+
+    # set value for the key
+    def []=(key, val)
+      line = find_line(key)
+
+      if line
+        # update the existing key
+        line.replace("#{key}: #{val}")
+      else
+        # add a new key
+        values << "#{key}: #{val}"
+      end
+    end
+
+    # write the file back
+    def write
+      File.write(path, values.join("\n"))
+    end
+
+  private
+
+    attr_reader :values
+
+    def find_line(key)
+      values.find { |l| l.start_with?(key + ":") }
+    end
+  end
+
+  # Class for managing the OverlayFS mounts
+  #
+  # Each OverlayFS mount these directories:
+  #  - upper and lower directories - the files in the upper directory
+  #    shadow the files in the lower directory, the result can mounted
+  #    at another 3rd place
+  #  - working directory - for storing additional metadata
+  #    (e.g. removed files)
+  #
+  # See more details in
+  # https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
+  #
+  # The yupdate script uses /var/lib/YaST2/overlayfs for managing the OverlayFS,
+  # specifically:
+  #
+  #  - /var/lib/YaST2/overlayfs/original - contains the original state
+  #  - /var/lib/YaST2/overlayfs/upper - contains the new/changed files
+  #  - /var/lib/YaST2/overlayfs/workdir - temporary metadata
+  #
+  # To avoid conflicts the original path names are converted to use the
+  # underscore (_) instead of slash (/) in the name, moreover the underscores
+  # are double-escaped to support underscores in the original names. E.g.
+  # /usr/lib/YaST2 (for which the real path is /mounts/mp_0001/usr/lib/YaST2
+  # is mounted to /var/lib/YaST2/overlayfs/original/_mounts_mp__0001_usr_lib_YaST2.
+  class OverlayFS
+    include YUpdate::Logger
+
+    OVERLAY_PREFIX = "/var/lib/YaST2/overlayfs".freeze
+
+    YAST_OVERLAYS = [
+      "/usr/lib/YaST2",
+      "/usr/lib64/YaST2",
+      "/usr/share/autoinstall",
+      "/usr/share/applications/YaST2"
+    ].freeze
+
+    attr_reader :dir, :orig_dir
+
+    # manage the OverlayFS for this directory
+    # @param directory [String] the directory
+    def initialize(directory)
+      @orig_dir = directory
+      # expand symlinks
+      @dir = File.realpath(directory)
+      raise "Path is not a directory: #{dir}" unless File.directory?(dir)
+    end
+
+    # create an OverlayFS overlay for this directory if it is not writable
+    def create
+      return if File.writable?(dir)
+      msg "Adding overlay for #{orig_dir}..."
+
+      FileUtils.mkdir_p(upperdir)
+      FileUtils.mkdir_p(workdir)
+      FileUtils.mkdir_p(origdir)
+
+      # make the original content available in a separate directory
+      system("mount", "--bind", dir, origdir)
+      # mark the mount as a private otherwise the overlay would propagate
+      # through the bind mount and we would see the changed content here
+      system("mount", "--make-private", origdir)
+
+      system("mount", "-t", "overlay", "overlay", "-o", "lowerdir=#{dir},"\
+        "upperdir=#{upperdir},workdir=#{workdir}", dir)
+    end
+
+    # delete the OverlayFS for this directory, all changes will be reverted back
+    def delete
+      system("umount", dir)
+      system("umount", origdir)
+      FileUtils.rm_rf([upperdir, workdir, origdir])
+    end
+
+    # print the modified files in this directory
+    def print_files
+      iterate_files { |f, _modif, _orig| puts f }
+    end
+
+    # print the diff for the changed files in this directory
+    def print_diff
+      iterate_files do |f, _modif, orig|
+        next unless File.exist?(f) && File.exist?(orig)
+        system("diff", "-u", orig, f)
+      end
+    end
+
+    # find all OverlayFS mounts in the system
+    def self.find_all
+      mounts = `mount`
+      mounts.lines.each_with_object([]) do |line, arr|
+        arr << new(Regexp.last_match[1]) if line =~ /^overlay on (.*) type overlay /
+      end
+    end
+
+    # return the default set of YaST overlays
+    def self.default_overlays
+      yast_overlays.map { |o| new(o) }
+    end
+
+    def upperdir
+      OverlayFS.escape_path("upper", dir)
+    end
+
+    def workdir
+      OverlayFS.escape_path("workdir", dir)
+    end
+
+    def origdir
+      OverlayFS.escape_path("original", dir)
+    end
+
+    def self.escape_path(subdir, path)
+      # escape (double) underscores for correct reverse conversion
+      File.join(OVERLAY_PREFIX, subdir, path.gsub("_", "__").tr("/", "_"))
+    end
+
+    def self.unescape_path(path)
+      Pathname.new(path).basename.to_s.gsub(/([^_])_([^_])/, "\\1/\\2")
+              .sub(/\A_/, "/").gsub("__", "_").gsub("//", "/")
+    end
+
+  private
+
+    # find the files in this directory
+    # the block is called with three parameters:
+    # - the path to the new file in the overlay directory
+    # - the original path in /
+    # - the path to the original file in the overlay directory
+    def iterate_files(&block)
+      return unless block_given?
+
+      Find.find(upperdir) do |f|
+        next unless File.file?(f)
+        upperdir_path = Pathname.new(upperdir)
+        relative_path = Pathname.new(f).relative_path_from(upperdir_path)
+        original_path = File.join(origdir, relative_path)
+        # unescape the path
+        pth = unescape_path(upperdir_path)
+        block.call(File.join(pth, relative_path), f, original_path)
+      end
+    end
+
+    def self.yast_overlays
+      # /usr/share/YaST2/ needs to be handled specially, it is writable
+      # but contains symlinks to read-only subdirectories, so let's make
+      # the subdirectories writable
+      YAST_OVERLAYS + Dir["/usr/share/YaST2/*"].each_with_object([]) do |f, arr|
+        arr << f if File.directory?(f) && !File.writable?(f)
+      end
+    end
+
+    private_class_method :yast_overlays
+  end
+
+  # a generic HTTP downloader
+  class Downloader
+    include YUpdate::Logger
+    attr_reader :url
+
+    # Create the downloader for the specified URL (only HTTP/HTTPS is supported)
+    # @param url [String] the URL for downloading
+    def initialize(url)
+      @url = url
+    end
+
+    # download the file, returns the response body or if a block is
+    # given it passes the response to it, handles HTTP redirection automatically
+    def download(&block)
+      msg "Downloading #{url}"
+
+      if block_given?
+        URI.open(url) { |f| block.call(f) }
+      else
+        URI.open(url, &:read)
+      end
+    end
+  end
+
+  # specialized tarball downloader, it can extract the downloaded
+  # tarball on the fly (without saving the actual tarball) to the target directory
+  class TarballDownloader < Downloader
+    def initialize(url)
+      super
+    end
+
+    # start the downloading, extract the tarball to the specified directory
+    def extract_to(dir)
+      download do |input|
+        if input.content_type !~ /application\/(x-|)gzip/
+          raise "Unknown MIME type: #{input.content_type}"
+        end
+
+        # pipe the response body directly to the tar process
+        IO.popen(["tar", "-C", dir, "--warning=no-timestamp", "-xz"], "wb") do |io|
+          while (buffer = input.read(4096))
+            io.write(buffer)
+          end
+        end
+      end
+    end
+  end
+
+  # specialized tarball downloader which can download the sources
+  # from GitHub (the "git" tool is missing in the inst-sys),
+  # instead of "git clone" we download the archive tarball
+  class GithubDownloader < TarballDownloader
+    attr_reader :repo, :branch
+
+    def initialize(repo, branch)
+      super("https://github.com/#{repo}/archive/#{branch}.tar.gz")
+      @repo = repo
+      @branch = branch
+    end
+  end
+
+  # installing Ruby gems using the "gem" tool
+  class GemInstaller
+    # we need this gem for running the "rake install" command
+    NEEDED_GEM = "yast-rake".freeze
+
+    # install the YaST required gems
+    def install_required_gems
+      install_gems(required_gems)
+    end
+
+  private
+
+    # is the gem installed?
+    def gem_installed?(gem_name)
+      gem(gem_name)
+      true
+    rescue Gem::LoadError
+      false
+    end
+
+    # find the needed gems for running "rake install"
+    def required_gems
+      gems = []
+      gems << NEEDED_GEM if !gem_installed?(NEEDED_GEM)
+      # handle the rake gem specifically, it is present in the system, but
+      # the /usr/bin/rake file is missing
+      gems << "rake" if !File.exist?("/usr/bin/rake")
+      gems
+    end
+
+    # install the specified gems
+    def install_gems(gem_names)
+      return if gem_names.empty?
+      add_gem_overlay
+      system("gem", "install", "--no-document", "--no-format-exec", *gem_names)
+    end
+
+    # make sure that the gem directory is writable
+    def add_gem_overlay
+      overlay = OverlayFS.new(Gem.dir)
+      overlay.create
+    end
+  end
+
+  # install the YaST sources using the "rake install" call
+  class Installer
+    include YUpdate::Logger
+
+    attr_reader :src_dir
+
+    # @param src_dir [String] the source directory with unpacked sources
+    def initialize(src_dir)
+      @src_dir = src_dir
+    end
+
+    # install the sources to the inst-sys
+    def install
+      Dir.mktmpdir do |tmp|
+        # first install the files into a temporary location
+        # using "rake install DESTDIR=..."
+        install_sources(tmp)
+        # then find the changed files and update them in the inst-sys
+        copy_to_system(tmp)
+      end
+    end
+
+  private
+
+    # globs for ignored some files
+    SKIP_FILES = [
+      # vim temporary files
+      "*/.*swp",
+      # backup files
+      "*/*.bak",
+      # skip documentation
+      "/usr/share/doc/*",
+      # skip manual pages
+      "/usr/share/man/*",
+      # skip sysconfig templates
+      "/usr/share/fillup-templates/*"
+    ].freeze
+
+    # install the sources to the specified (temporary) directory
+    def install_sources(target)
+      msg "Preparing files..."
+
+      # check for Makefile.cvs, we cannot install packages using autotools
+      makefile_cvs = Dir["#{src_dir}/**/Makefile.cvs"].first
+      if makefile_cvs
+        raise "Found Makefile.cvs, autotools based packages cannot be installed!"
+      end
+
+      rakefile = Dir["#{src_dir}/**/Rakefile"].first
+      raise "Rakefile not found, cannot install the package" unless rakefile
+
+      src_dir = File.dirname(rakefile)
+      Dir.chdir(src_dir) do
+        `rake install DESTDIR=#{target.shellescape} 2> /dev/null`
+      end
+    end
+
+    # should be the file skipped?
+    def skip_file?(file)
+      SKIP_FILES.any? { |glob| File.fnmatch?(glob, file) }
+    end
+
+    # copy the changed files to the ins-sys
+    def copy_to_system(src)
+      msg "Copying to system..."
+      src_path = Pathname.new(src)
+      cnt = 0
+      Find.find(src) do |path|
+        # TODO: what about symlinks or empty directories?
+        next unless File.file?(path)
+
+        relative_path = Pathname.new(path).relative_path_from(src_path).to_s
+        system_file = File.absolute_path(relative_path, "/")
+        system_dir = File.dirname(system_file)
+
+        next if skip_file?(system_file)
+
+        if File.exist?(system_file)
+          next if FileUtils.identical?(system_file, path)
+          add_overlay(system_dir)
+          # replace a symlink (likely pointing to a read-only location)
+          FileUtils.rm_f(system_file) if File.symlink?(system_file)
+          FileUtils.cp(path, system_file)
+          msg "Updated: #{system_file}"
+        else
+          # ensure the directory is writable
+          if File.exist?(system_dir)
+            add_overlay(system_dir)
+          else
+            # FIXME: maybe an overlay is needed for the upper directory...
+            FileUtils.mkdir_p(system_dir)
+          end
+
+          FileUtils.cp(path, system_file)
+          msg "Added: #{system_file}"
+        end
+        cnt += 1
+      end
+
+      msg "Number of modified files: #{cnt}"
+    end
+
+    # ensure that the target directory is writable
+    def add_overlay(dir)
+      o = OverlayFS.new(dir)
+      o.create
+    end
+  end
+
+  # handler for the "overlay" command option
+  class OverlayCommand
+    def initialize(argv)
+      @argv = argv
+    end
+
+    def run
+      command = @argv.shift
+
+      case command
+      when "list"
+        puts OverlayFS.find_all.map(&:dir)
+      when "create"
+        dir = @argv.shift
+
+        if dir
+          ovfs = OverlayFS.new(dir)
+          ovfs.create
+        else
+          OverlayFS.default_overlays.map(&:create)
+        end
+      when "reset"
+        OverlayFS.find_all.map(&:delete)
+      when "files"
+        OverlayFS.find_all.map(&:print_files)
+      when "diff"
+        OverlayFS.find_all.map(&:print_diff)
+      else
+        InvalidCommand.new(command)
+      end
+    end
+  end
+
+  # inst-sys test
+  class InstSys
+    # check if the script is running in the inst-sys,
+    # the script might not work as expected in an installed system
+    # and using OverlayFS is potentially dangerous
+    def self.check!
+      # the inst-sys contains the /.packages.initrd file with a list of packages
+      return if File.exist?("/.packages.initrd")
+
+      # exit immediately if running in an installed system
+      $stderr.puts "ERROR: This script can only work in the installation system (inst-sys)!"
+      exit 1
+    end
+  end
+
+  # parse the command line options
+  class Options
+    def self.parse(argv)
+      command = argv.shift
+
+      case command
+      when "version"
+        VersionCommand.new
+      when "overlay"
+        InstSys.check!
+        OverlayCommand.new(argv)
+      when "patch"
+        InstSys.check!
+        PatchCommand.new(argv)
+      when "servers"
+        ServersCommand.new(argv)
+      when "help", "--help", nil
+        HelpCommand.new
+      else
+        InvalidCommand.new(command)
+      end
+    end
+  end
+
+  # handle the "version" command line option
+  class VersionCommand
+    def run
+      puts "#{File.basename(__FILE__)} #{Version::STRING}"
+    end
+  end
+
+  # handle the "servers" command line option
+  class ServersCommand
+    def initialize(argv)
+      @argv = argv
+    end
+
+    def run
+      host = @argv.shift
+      raise "Missing server name argument" unless host
+
+      servers = RemoteServer.find(host)
+      servers.each do |s|
+        puts "URL: #{s.url}, directory: #{s.dir}"
+      end
+    end
+  end
+
+  # handle the "patch" command line option
+  class PatchCommand
+    include YUpdate::Logger
+
+    def initialize(argv)
+      @argv = argv
+    end
+
+    def run
+      arg1 = @argv.shift
+      arg2 = @argv.shift
+
+      return 1 unless arg1
+
+      prepare_system
+
+      if arg1 && arg2
+        # update from github
+        install_from_github(arg1, arg2)
+      elsif arg1.start_with?("http") && arg1.end_with?(".tar.gz")
+        # upgrade from URL
+        install_from_tar(arg1)
+      elsif !arg2
+        # otherwise treat it as a hostname providing a tarball server
+        install_from_servers(arg1)
+      else
+        raise "Invalid arguments"
+      end
+
+      # TODO: only when something has been updated?
+      disable_self_update
+    end
+
+  private
+
+    def install_from_github(repo, branch)
+      # add the default "yast" GitHub organization if missing
+      repo = "yast/#{repo}" unless repo.include?("/")
+      downloader = GithubDownloader.new(repo, branch)
+      install_tar(downloader)
+    end
+
+    def install_from_tar(url)
+      downloader = TarballDownloader.new(url)
+      install_tar(downloader)
+    end
+
+    def install_from_servers(hostname)
+      servers = RemoteServer.find(hostname)
+
+      servers.each do |s|
+        msg "Installing from #{s.url}..."
+        url = "#{s.url}/archive/current.tar.gz"
+        install_from_tar(url)
+      end
+    end
+
+    def install_sources(src_dir)
+      i = Installer.new(src_dir)
+      i.install
+    end
+
+    # prepare the inst-sys for installation:
+    # - make the YaST directories writable
+    # - install the needed Ruby gems (yast-rake)
+    def prepare_system
+      OverlayFS.default_overlays.map(&:create)
+      g = GemInstaller.new
+      g.install_required_gems
+    end
+
+    def install_tar(downloader)
+      Dir.mktmpdir do |download_dir|
+        downloader.extract_to(download_dir)
+        install_sources(download_dir)
+      end
+    end
+
+    # /etc/install.inf key
+    SELF_UPDATE_KEY = "SelfUpdate".freeze
+
+    # disable the self update in the install.inf file
+    def disable_self_update
+      inf = InstallInf.new
+      return if inf[SELF_UPDATE_KEY] == "0"
+
+      msg "Disabling the YaST SelfUpdate feature in install.inf!"
+      inf[SELF_UPDATE_KEY] = "0"
+      inf.write
+    end
+  end
+
+  # handle invalid command line options
+  class InvalidCommand
+    def initialize(cmd)
+      @cmd = cmd
+    end
+
+    def run
+      raise "Invalid command: #{cmd}"
+    end
+
+  private
+
+    attr_reader :cmd
+  end
+
+  # Query the remote server for the running servers
+  class RemoteServer
+    attr_reader :url, :dir
+
+    def initialize(url, dir)
+      @url = url
+      @dir = dir
+    end
+
+    def self.find(host)
+      host += ":8000" unless host.include?(":")
+
+      url = "http://#{host}/servers/index.json"
+      u = URI(url)
+      u.path = ""
+
+      downloader = Downloader.new(url)
+      JSON.parse(downloader.download).map do |server|
+        u.port = server["port"]
+        new(u.to_s, server["dir"])
+      end
+    end
+  end
+
+  # the main script application
+  class Application
+    include YUpdate::Logger
+
+    def run(argv = ARGV)
+      cmd = Options.parse(argv)
+      cmd.run
+    rescue StandardError => e
+      # the global exception handler
+      msg("ERROR: #{e.message}")
+      exit 1
+    end
+  end
+end
+
+# do not execute the script when the file is loaded by some other script
+# e.g. by a test, allow testing parts of the code without executing it as a whole
+if __FILE__ == $PROGRAM_NAME
+  # main
+  app = YUpdate::Application.new
+  app.run
+end
