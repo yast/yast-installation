@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 27 15:03:36 UTC 2020 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Make sure to show release notes for add-on products (bsc#1158287)
+- 4.2.36
+
+-------------------------------------------------------------------
 Fri Feb 21 09:45:10 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
 
 - Added "yupdate" script to simplify patching the installer
