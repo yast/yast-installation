@@ -107,7 +107,7 @@ module Yast
       # of online media, and that means only base products, no add-ons.
       all_products = Y2Packager::ProductReader.new.all_products(force_repos: true)
       return all_products.select { |p| p.status?(:selected, :installed) } unless Stage.initial
-      selected = all_products.select { |p| p.selected? }
+      selected = all_products.select { |p| p.status?(:selected) }
       return selected unless selected.empty?
       all_products.select { |p| p.status?(:available) }
     end
