@@ -102,7 +102,9 @@ module Yast
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
       #
-      # Don't rely on Product.with_status() here, use force_repos (bsc#1158287)
+      # Don't rely on Product.with_status() here, use force_repos (bsc#1158287):
+      # Otherwise we will only get products from the control file in the case
+      # of online media, and that means only base products, no add-ons.
       all_products = Y2Packager::ProductReader.new.all_products(force_repos: true)
       return all_products.select { |p| p.status?(:selected, :installed) } unless Stage.initial
       selected = all_products.select { |p| p.selected? }
