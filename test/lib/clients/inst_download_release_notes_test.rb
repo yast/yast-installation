@@ -9,6 +9,7 @@ describe Yast::InstDownloadReleaseNotesClient do
   describe "#main" do
     let(:sles_relnotes) { instance_double(Y2Packager::ReleaseNotes, content: "SLES RN") }
     let(:sdk_relnotes) { instance_double(Y2Packager::ReleaseNotes, content: "SDK RN") }
+    let(:products) { [sles, sdk] }
     let(:language) { double("Yast::Language", language: "en_US") }
 
     let(:sles) do
@@ -19,13 +20,24 @@ describe Yast::InstDownloadReleaseNotesClient do
       instance_double(Y2Packager::Product, short_name: "SDK", release_notes: sdk_relnotes)
     end
 
+    let(:prod_reader) do
+      instance_double(Y2Packager::ProductReader)
+    end
+
     let(:textmode) { true }
     let(:packages_init_called) { true }
+    let(:sles_selected) { true }
+    let(:sdk_selected) { true }
 
     before do
       allow(Yast::UI).to receive(:TextMode).and_return(textmode)
-      allow(Y2Packager::Product).to receive(:with_status).with(:selected)
-        .and_return([sles, sdk])
+      allow(Y2Packager::ProductReader).to receive(:new).and_return(prod_reader)
+      allow(prod_reader).to receive(:all_products)
+        .with(force_repos: true).and_return(products)
+      allow(sles).to receive(:status?).with(:selected).and_return(sles_selected)
+      allow(sdk).to receive(:status?).with(:selected).and_return(sdk_selected)
+      allow(sles).to receive(:status?).with(:available).and_return(false)
+      allow(sdk).to receive(:status?).with(:available).and_return(!sdk_selected)
       allow(Yast::Stage).to receive(:initial).and_return(true)
       allow(Yast::Packages).to receive(:init_called).and_return(packages_init_called)
       stub_const("Yast::Language", language)
@@ -102,7 +114,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
     end
 
-    context "when Packages module has not be initialized" do
+    context "when the Packages module has not been initialized" do
       let(:packages_init_called) { false }
 
       it "returns :auto" do
@@ -119,24 +131,22 @@ describe Yast::InstDownloadReleaseNotesClient do
         end
       end
 
-      context "when some package is selected" do
-        let(:products) do
-          { selected: [sles], available: [sdk] }
-        end
+      context "when some module is selected" do
+        let(:sles_selected) { true }
+        let(:sdk_selected) { false }
 
-        it "shows release notes for 'selected' packages" do
+        it "shows release notes for 'selected' modules" do
           expect(sles).to receive(:release_notes)
           expect(sdk).to_not receive(:release_notes)
           client.main
         end
       end
 
-      context "when no package is selected" do
-        let(:products) do
-          { selected: [], available: [sdk], installed: [sles] }
-        end
+      context "when no module is selected" do
+        let(:sles_selected) { false }
+        let(:sdk_selected) { false }
 
-        it "shows release notes for 'available' packages" do
+        it "shows release notes for 'available' modules" do
           expect(sles).to_not receive(:release_notes)
           expect(sdk).to receive(:release_notes)
           client.main
@@ -145,16 +155,17 @@ describe Yast::InstDownloadReleaseNotesClient do
 
       context "when not running on initial stage" do
         let(:other_product) { double("Y2Packager::Product") }
-
-        let(:products) do
-          { available: [other_product], selected: [sdk], installed: [sles] }
-        end
+        let(:products) { [other_product, sles, sdk] }
 
         before do
           allow(Yast::Stage).to receive(:initial).and_return(false)
+          allow(other_product).to receive(:status?).with(:selected).and_return(false)
+          allow(other_product).to receive(:status?).with(:selected, :installed).and_return(false)
+          allow(sles).to receive(:status?).with(:selected, :installed).and_return(true)
+          allow(sdk).to receive(:status?).with(:selected, :installed).and_return(true)
         end
 
-        it "shows release notes for 'selected' and 'available' packages" do
+        it "shows release notes for 'selected' and 'available' modules" do
           expect(sles).to receive(:release_notes)
           expect(sdk).to receive(:release_notes)
           expect(other_product).to_not receive(:release_notes)
