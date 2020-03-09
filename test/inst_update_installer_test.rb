@@ -52,6 +52,7 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:finish_packager)
     allow(subject).to receive(:fetch_profile).and_return(ay_profile)
     allow(subject).to receive(:process_profile)
+    allow(subject).to receive(:valid_repositories?).and_return(true)
     allow(finder).to receive(:add_installation_repo)
 
     # stub the Profile module to avoid dependency on autoyast2-installation

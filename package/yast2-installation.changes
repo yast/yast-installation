@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 16 08:37:11 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+ 
+- Verify the package versions before applying the self-update
+  fixes (related to bsc#1163084)
+- 4.2.38
+
+-------------------------------------------------------------------
 Fri Mar 13 09:26:49 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
 
 - Add Abort confirmation for inst_welcome client used in firstboot
