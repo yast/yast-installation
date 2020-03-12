@@ -18,6 +18,11 @@
 #
 #set -x
 #=============================================
+# 0) Stop boot animation.
+#---------------------------------------------
+plymouth quit 2>&1 >/dev/null
+
+#=============================================
 # 1) Source common script functions
 #---------------------------------------------
 . /usr/lib/YaST2/startup/common/functions.sh
