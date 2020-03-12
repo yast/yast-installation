@@ -108,7 +108,15 @@ module Yast
       )
       Wizard.SetFocusToNextButton
 
-      UI.UserInput
+      ret = nil
+      loop do
+        ret = UI.UserInput
+
+        break if ret != :abort
+        break if Popup.ReallyAbort(:painless)
+      end
+
+      return ret
     end
   end
 end
