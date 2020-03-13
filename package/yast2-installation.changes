@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 13 09:26:49 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Add Abort confirmation for inst_welcome client used in firstboot
+  (bsc#1163347)
+- 4.2.37
+
+-------------------------------------------------------------------
 Thu Feb 27 15:03:36 UTC 2020 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Make sure to show release notes for add-on products (bsc#1158287)
