@@ -116,7 +116,7 @@ module Yast
         break if Popup.ReallyAbort(:painless)
       end
 
-      return ret
+      ret
     end
   end
 end
