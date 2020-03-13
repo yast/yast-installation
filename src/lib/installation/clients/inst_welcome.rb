@@ -38,37 +38,33 @@ module Yast
       Yast.import "CustomDialogs"
       Yast.import "Language"
 
-      @argmap = GetInstArgs.argmap
+      argmap = GetInstArgs.argmap
 
-      @default_patterns = ["welcome.%1.txt", "welcome.txt"]
+      default_patterns = ["welcome.%1.txt", "welcome.txt"]
 
-      @directory = Ops.get_string(@argmap, "directory", Directory.datadir)
+      directory = argmap["directory"] || Directory.datadir
 
-      if Ops.get_string(@argmap, "directory", "") != ""
-        @directory = Ops.add(Directory.custom_workflow_dir, @directory)
+      if Ops.get_string(argmap, "directory", "") != ""
+        directory = Directory.custom_workflow_dir + directory
       end
 
-      @patterns = Convert.convert(
-        Ops.get(@argmap, "patterns", @default_patterns),
-        from: "any",
-        to:   "list <string>"
-      )
+      patterns = argmap["patterns"] || default_patterns
 
-      @welcome = CustomDialogs.load_file_locale(
-        @patterns,
-        @directory,
+      welcome = CustomDialogs.load_file_locale(
+        patterns,
+        directory,
         Language.language
       )
-      Builtins.y2debug("welcome map: %1", @welcome)
+      Builtins.y2debug("welcome map: %1", welcome)
 
-      @display = UI.GetDisplayInfo
-      @space = Ops.get_boolean(@display, "TextMode", true) ? 1 : 3
+      display = UI.GetDisplayInfo
+      space = display["TextMode"] ? 1 : 3
 
       # dialog caption
-      @caption = _("Welcome")
+      caption = _("Welcome")
 
       # welcome text 1/4
-      @text = _("<p><b>Welcome!</b></p>") +
+      text = _("<p><b>Welcome!</b></p>") +
         # welcome text 2/4
         _(
           "<p>There are a few more steps to take before your system is ready to\n" \
@@ -78,47 +74,49 @@ module Yast
         )
 
       # welcome text
-      @welcome_text = @welcome["text"]
-      @welcome_text = @text if !@welcome_text || @welcome_text.empty?
+      welcome_text = welcome["text"]
+      welcome_text = text if !welcome_text || welcome_text.empty?
 
       # help ttext
-      @help = _(
+      help = _(
         "<p>Click <b>Next</b> to perform the\nbasic configuration of the system.</p>\n"
       )
 
-      @rt = Empty()
-
-      if Builtins.regexpmatch(@welcome_text, "</.*>")
-        @rt = RichText(Id(:welcome_text), @welcome_text)
+      if Builtins.regexpmatch(welcome_text, "</.*>")
+        rt = RichText(Id(:welcome_text), welcome_text)
       else
         Builtins.y2debug("plain text")
-        @rt = RichText(Id(:welcome_text), Opt(:plainText), @welcome_text)
+        rt = RichText(Id(:welcome_text), Opt(:plainText), welcome_text)
       end
 
-      @contents = VBox(
-        VSpacing(@space),
+      contents = VBox(
+        VSpacing(space),
         HBox(
-          HSpacing(Ops.multiply(2, @space)),
-          @rt,
-          HSpacing(Ops.multiply(2, @space))
+          HSpacing(2 * space),
+          rt,
+          HSpacing(2 * space)
         ),
         VSpacing(2)
       )
 
       Wizard.SetContents(
-        @caption,
-        @contents,
-        @help,
+        caption,
+        contents,
+        help,
         GetInstArgs.enable_back,
         GetInstArgs.enable_next
       )
       Wizard.SetFocusToNextButton
 
-      @ret = UI.UserInput
+      ret = nil
+      loop do
+        ret = UI.UserInput
 
-      deep_copy(@ret)
+        break if ret != :abort
+        break if Popup.ReallyAbort(:painless)
+      end
 
-      # EOF
+      ret
     end
   end
 end
