@@ -88,26 +88,6 @@ module Installation
       packages
     end
 
-    # Check for too new packages, e.g. using the SP3 updates in the SP2 installer.
-    #
-    # As we use fixed versioning schema for the YaST packages which is bound to
-    # a specific product version (e.g. 4.1.x in SP1, 4.2.x in SP2) and we always
-    # bump only the patch version we can also possibly check for "too new" packages.
-    #
-    # @return [Array<Y2Packager::Resolvable>] List of too new packages
-    def too_new_packages
-      packages = filter_self_updates do |inst_sys_pkg, update_pkg|
-        inst_major, inst_minor = parse_version(inst_sys_pkg.version)
-        update_major, update_minor = parse_version(update_pkg.version)
-
-        # check major/minor version update
-        update_major > inst_major || update_minor > inst_minor
-      end
-
-      log.warn("Found too new self-update packages: #{packages} ") unless packages.empty?
-      packages
-    end
-
   private
 
     # filter the self update packages using a block
@@ -119,14 +99,6 @@ module Installation
 
         block.call(pkg, s)
       end
-    end
-
-    # extract the major and minor version number from version string,
-    # it also converts the string versions to integers
-    # @return [Array<Integer>] A pair of major and minor version
-    def parse_version(version)
-      major, minor = /^(\d+)\.(\d+)\./.match(version)[1, 2]
-      [major.to_i, minor.to_i]
     end
 
     # find the installed package in the inst-sys

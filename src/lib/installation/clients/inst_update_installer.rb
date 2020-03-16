@@ -449,8 +449,8 @@ module Yast
       instsys_packages = ::Installation::InstsysPackages.read("/.packages.root")
       verifier = ::Installation::SelfupdateVerifier.new(updates_manager.repositories, instsys_packages)
 
-      # no downgraded or too new packages => OK
-      return true if verifier.downgraded_packages.empty? && verifier.too_new_packages.empty?
+      # no downgraded packages => OK
+      return true if verifier.downgraded_packages.empty?
 
       if ENV["Y2_FORCE_SELF_UPDATE"] == "1"
         log.warn("Self update forced by user despite of a package version mismatch!")
