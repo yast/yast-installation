@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar 17 12:59:50 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Drop few not needed recommends to have identical package on
+  opensuse and SLE (jsc#SLE-11936, jsc#SLE-11851)
+- 4.2.38
+
+-------------------------------------------------------------------
 Fri Mar 13 09:26:49 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
 
 - Add Abort confirmation for inst_welcome client used in firstboot
