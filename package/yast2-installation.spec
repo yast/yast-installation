@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.2.37
+Version:        4.2.38
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -58,8 +58,6 @@ Requires:       coreutils
 # Augeas lenses
 Requires:       augeas-lenses
 # Only in inst-sys
-# Requires:     yast2-add-on
-# Requires:     yast2-update
 Requires:       yast2-storage-ng >= 4.0.175
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -115,15 +113,8 @@ Conflicts:      yast2-mouse < 2.18.0
 
 Obsoletes:      yast2-installation-devel-doc
 
-# install the registration module only in SLE (bsc#1043122)
-%if !0%{?is_opensuse}
-Recommends:     yast2-registration
-%endif
 Recommends:     yast2-online-update
 Recommends:     yast2-firewall
-Recommends:     release-notes
-Recommends:     curl
-Recommends:     yast2-update
 Recommends:     yast2-add-on
 
 BuildArch:      noarch
