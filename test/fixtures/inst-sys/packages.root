@@ -1,0 +1,527 @@
+Mesa-libEGL1 [19.3.4-44.4.x86_64]
+Mesa-libGL1 [19.3.4-44.4.x86_64]
+Mesa-libglapi0 [19.3.4-44.4.x86_64] < Mesa-libGL1
+SUSEConnect [0.3.25-1.3.x86_64] < yast2-registration < skelcd-control-leanos
+aaa_base [84.87+git20180409.04c9dae-3.33.1.x86_64]
+augeas [1.10.1-1.11.x86_64] < ruby2.5-rubygem-ruby-augeas < ruby2.5-rubygem-cfa < yast2
+augeas-lenses [1.10.1-1.11.x86_64] < yast2-installation
+autoyast2 [4.2.28-1.3.noarch] < skelcd-control-leanos
+autoyast2-installation [4.2.28-1.3.noarch] < yast2-add-on < skelcd-control-leanos
+bash [4.4-9.10.1.x86_64]
+blog [2.18-4.11.x86_64] < sysvinit-tools
+boost-license1_66_0 [1.66.0-3.10.noarch] < libboost_thread1_66_0 < snapper
+btrfsprogs [4.19.1-6.8.x86_64]
+btrfsprogs-udev-rules [4.19.1-6.8.noarch] < btrfsprogs
+bzip2 [1.0.6-5.9.1.x86_64]
+checkmedia [5.3-1.46.x86_64]
+chrony [3.2-9.9.1.x86_64]
+coreutils [8.29-2.12.x86_64]
+cpio [2.12-3.3.1.x86_64]
+cracklib [2.9.6-2.21.x86_64]
+cracklib-dict-full [2.8.12-1.22.x86_64] < libpwquality1 < cryptsetup
+cryptsetup [2.0.5-2.1.x86_64]
+dbus-1 [1.12.2-8.3.1.x86_64] < systemd
+dejavu-fonts [2.37-1.21.noarch]
+device-mapper [1.02.163-3.23.x86_64]
+diffutils [3.6-2.11.x86_64]
+dmidecode [3.2-9.3.2.x86_64] < SUSEConnect < yast2-registration < skelcd-control-leanos
+dmz-icon-theme-cursors [11.3.0-1.22.noarch]
+dosfstools [4.1-1.39.x86_64]
+e2fsprogs [1.43.8-4.17.1.x86_64]
+efibootmgr [14-2.8.x86_64]
+efont-unicode-bitmap-fonts [0.4.2-1.21.noarch]
+elilo [3.16-4.30.x86_64]
+fbiterm [0.5.20040304-3.38.x86_64]
+fcoe-utils [1.0.32-1.41.x86_64] < yast2-fcoe-client < skelcd-control-leanos
+fdupes [1.61-1.452.x86_64] < ruby-common < ruby2.5 < ruby
+file [5.32-7.5.1.x86_64]
+file-magic [5.32-7.5.1.noarch] < libmagic1 < rpm
+fillup [1.42-2.18.x86_64]
+findutils [4.6.0-2.21.x86_64]
+firewall-macros [0.5.5-4.24.9.noarch] < xorg-x11-Xvnc
+fontconfig [2.12.6-2.19.x86_64] < xterm-bin
+fonts-config [20160921-2.16.noarch]
+gawk [4.2.1-1.41.x86_64]
+glib2-tools [2.62.5-1.2.x86_64] < libgio-2_0-0 < polkit
+glibc [2.26-13.36.1.x86_64] < perl-XML-Bare
+glibc-locale-base [2.26-13.36.1.x86_64]
+google-noto-fonts-doc [20170919-2.13.noarch] < noto-naskharabic-fonts
+google-roboto-fonts [20161103.2.135-1.22.noarch]
+gpart [0.3-1.30.x86_64]
+gpg2 [2.2.5-4.14.4.x86_64]
+gpm [1.20.7-5.14.x86_64]
+graphviz [2.40.1-6.3.2.x86_64]
+graphviz-gnome [2.40.1-6.3.2.x86_64]
+graphviz-plugins-core [2.40.1-6.3.2.x86_64]
+grep [3.1-2.20.x86_64]
+grub2 [2.04-3.3.x86_64]
+gzip [1.10-1.46.x86_64]
+hdparm [9.52-1.22.x86_64]
+hex [1.4-2.18.x86_64]
+hicolor-icon-theme [0.17-1.21.noarch] < dmz-icon-theme-cursors
+hostname [3.16-2.22.x86_64] < yast2
+hwinfo [21.66-6.17.x86_64]
+hyper-v [7-12.2.x86_64]
+icewm-lite [1.4.2-7.6.1.x86_64]
+indic-fonts [20160512-1.93.noarch]
+initviocons [0.5-1.27.x86_64]
+insserv-compat [0.1-4.3.1.noarch]
+iproute2 [5.3-2.10.x86_64] < yast2-installation
+iptables [1.8.3-1.20.x86_64]
+iputils [s20161105-6.10.x86_64]
+iscsiuio [0.7.8.2-13.32.1.x86_64] < yast2-iscsi-client < skelcd-control-leanos
+jfsutils [1.1.15-1.27.x86_64]
+joe [4.4-1.32.x86_64]
+kbd [2.0.4-14.20.x86_64]
+kbd-legacy [2.0.4-14.20.noarch] < kbd
+kdump [0.9.0-8.15.x86_64] < yast2-kdump < skelcd-control-leanos
+kexec-tools [2.0.20-1.10.x86_64] < kdump < yast2-kdump < skelcd-control-leanos
+keyutils [1.5.10-3.42.x86_64] < nfs-client
+khmeros-fonts [5.0-1.22.noarch]
+klogd [1.4.1-2.23.x86_64]
+kpartx [0.8.2+18.9ff73e7-1.49.x86_64] < multipath-tools
+krb5 [1.16.3-3.6.1.x86_64]
+less [530-1.6.x86_64]
+libICE6 [1.0.9-1.25.x86_64] < icewm-lite
+libQt5Core5 [5.12.7-1.19.x86_64] < libyui-qt-graph11
+libQt5DBus5 [5.12.7-1.19.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libQt5Gui5 [5.12.7-1.19.x86_64] < libyui-qt-graph11
+libQt5Network5 [5.12.7-1.19.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libQt5Svg5 [5.12.7-1.19.x86_64] < libyui-qt-pkg11
+libQt5Widgets5 [5.12.7-1.19.x86_64] < libyui-qt-graph11
+libQt5X11Extras5 [5.12.7-1.19.x86_64] < libyui-qt11 < libyui-qt-graph11
+libSM6 [1.2.2-1.23.x86_64] < icewm-lite
+libX11-6 [1.6.5-3.3.1.x86_64] < icewm-lite
+libX11-data [1.6.5-3.3.1.noarch] < libX11-6 < icewm-lite
+libX11-xcb1 [1.6.5-3.3.1.x86_64] < Mesa-libGL1
+libXau6 [1.0.8-1.26.x86_64] < xorg-x11-Xvnc
+libXaw7 [1.0.13-3.3.8.x86_64] < xterm-bin
+libXcomposite1 [0.4.4-1.23.x86_64] < xdpyinfo
+libXcursor1 [1.1.15-1.18.x86_64] < xsetroot < xdm
+libXdamage1 [1.1.4-1.23.x86_64] < xorg-x11-Xvnc
+libXdmcp6 [1.1.2-1.23.x86_64] < xorg-x11-Xvnc
+libXext6 [1.3.3-1.30.x86_64] < icewm-lite
+libXfixes3 [5.0.3-1.24.x86_64] < xorg-x11-Xvnc
+libXfont1 [1.5.4-1.17.x86_64] < fbiterm
+libXfont2-2 [2.0.3-1.17.x86_64] < xorg-x11-Xvnc
+libXfontcache1 [1.0.5-1.22.x86_64] < xset
+libXft2 [2.3.2-1.33.x86_64] < icewm-lite
+libXi6 [1.7.9-3.2.1.x86_64] < xf86-input-wacom
+libXinerama1 [1.1.3-1.22.x86_64] < icewm-lite
+libXmu6 [1.1.2-1.30.x86_64] < xterm-bin
+libXmuu1 [1.1.2-1.30.x86_64] < xset
+libXpm4 [3.5.12-1.33.x86_64] < xterm-bin
+libXrandr2 [1.5.1-2.17.x86_64] < icewm-lite
+libXrender1 [0.9.10-1.30.x86_64] < xdpyinfo
+libXt6 [1.1.5-2.24.x86_64] < xterm-bin
+libXtst6 [1.2.3-1.24.x86_64] < xorg-x11-Xvnc
+libXvnc1 [1.9.0-19.3.1.x86_64] < xorg-x11-Xvnc
+libXxf86dga1 [1.1.4-1.24.x86_64] < xdpyinfo
+libXxf86misc1 [1.0.3-1.23.x86_64] < xset
+libXxf86vm1 [1.1.4-1.23.x86_64] < Mesa-libGL1
+libacl1 [2.2.52-4.3.1.x86_64] < sed
+libaio1 [0.3.109-1.25.x86_64] < multipath-tools
+libapparmor1 [2.13.3-1.13.x86_64] < systemd
+libargon2-1 [0.0+git20171227.670229c-2.14.x86_64] < libcryptsetup12 < cryptsetup
+libassuan0 [2.5.1-2.14.x86_64] < gpg2
+libattr1 [2.4.47-2.19.x86_64] < shadow
+libaudit1 [2.8.1-3.30.x86_64] < nscd
+libaugeas0 [1.10.1-1.11.x86_64] < augeas-lenses < yast2-installation
+libblkid1 [2.33.1-4.5.1.x86_64] < cryptsetup
+libboost_system1_66_0 [1.66.0-3.10.x86_64] < snapper
+libboost_thread1_66_0 [1.66.0-3.10.x86_64] < snapper
+libbtrfs0 [4.19.1-6.8.x86_64] < libsnapper5 < snapper
+libbz2-1 [1.0.6-5.9.1.x86_64] < bzip2
+libcairo2 [1.16.0-1.29.x86_64] < pango-tools
+libcap-ng0 [0.7.9-4.37.x86_64] < util-linux
+libcap2 [2.25-2.41.x86_64] < chrony
+libcares2 [1.15.0+20200117-3.5.1.x86_64] < wget
+libcom_err2 [1.43.8-4.17.1.x86_64] < openssh
+libconfig11 [1.7-2.12.x86_64] < open-lldp < fcoe-utils < yast2-fcoe-client < skelcd-control-leanos
+libcrack2 [2.9.6-2.21.x86_64] < pam
+libcryptsetup12 [2.0.5-2.1.x86_64] < cryptsetup
+libcryptsetup12-hmac [2.0.5-2.1.x86_64]
+libcurl4 [7.66.0-2.31.x86_64] < libzypp < libyui-ncurses-pkg11
+libdatrie1 [0.2.9-1.25.x86_64] < libthai0 < libpango-1_0-0 < pango-tools
+libdb-4_8 [4.8.30-7.3.1.x86_64] < pam
+libdbus-1-3 [1.12.2-8.3.1.x86_64] < snapper
+libdevmapper-event1_03 [1.02.163-3.23.x86_64] < device-mapper
+libdevmapper1_03 [1.02.163-3.23.x86_64] < multipath-tools
+libdmx1 [1.1.3-1.23.x86_64] < xdpyinfo
+libdouble-conversion3 [3.1.5-1.3.x86_64] < libQt5Core5 < libyui-qt-graph11
+libdrm2 [2.4.100-1.23.x86_64] < Mesa-libGL1
+libdrm_amdgpu1 [2.4.100-1.23.x86_64] < xf86-video-amdgpu
+libdw1 [0.168-4.5.3.x86_64] < ltrace
+libebl-plugins [0.168-4.5.3.x86_64] < libelf1 < ltrace
+libedit0 [3.1.snap20150325-2.12.x86_64] < chrony
+libefivar1 [35-4.17.x86_64] < efibootmgr
+libelf1 [0.168-4.5.3.x86_64] < ltrace
+libepoxy0 [1.4.3-2.25.x86_64] < xorg-x11-server
+libesmtp [1.0.6-1.27.x86_64] < kdump < yast2-kdump < skelcd-control-leanos
+libevdev2 [1.4.5-1.27.x86_64] < libinput10 < xf86-input-libinput
+libevent-2_1-8 [2.1.8-2.23.x86_64] < nfs-client
+libexpat1 [2.2.5-3.6.1.x86_64] < Mesa-libGL1
+libext2fs2 [1.43.8-4.17.1.x86_64] < btrfsprogs
+libfdisk1 [2.33.1-4.5.1.x86_64] < util-linux
+libffi7 [3.2.1.git259-3.16.x86_64] < libgobject-2_0-0 < icewm-lite
+libfontenc1 [1.1.3-1.22.x86_64] < mkfontscale
+libfreebl3 [3.47.1-3.22.1.x86_64] < chrony
+libfreetype6 [2.9-2.13.x86_64] < mkfontscale
+libfribidi0 [1.0.5-1.14.x86_64] < libpango-1_0-0 < pango-tools
+libgbm1 [19.3.4-44.4.x86_64]
+libgcc_s1 [9.2.1+r275327-1.3.7.x86_64] < icewm-lite
+libgcrypt20 [1.8.2-8.15.1.x86_64] < rpm
+libgdbm4 [1.12-1.418.x86_64] < perl
+libgdk_pixbuf-2_0-0 [2.36.11-3.19.x86_64] < icewm-lite
+libgio-2_0-0 [2.62.5-1.2.x86_64] < polkit
+libglib-2_0-0 [2.62.5-1.2.x86_64] < pango-tools
+libglvnd [1.2.0-1.21.x86_64] < xorg-x11-Xvnc
+libgmodule-2_0-0 [2.62.5-1.2.x86_64] < libgdk_pixbuf-2_0-0 < icewm-lite
+libgmp10 [6.1.2-2.41.x86_64] < coreutils
+libgnutls30 [3.6.7-6.11.1.x86_64] < xorg-x11-Xvnc
+libgobject-2_0-0 [2.62.5-1.2.x86_64] < icewm-lite
+libgpg-error0 [1.29-1.8.x86_64] < gpg2
+libgpgme11 [1.13.1-2.31.x86_64] < wget
+libgpm2 [1.20.7-5.14.x86_64] < gpm
+libgraphite2-3 [1.3.11-2.12.x86_64] < libharfbuzz0 < libQt5Gui5 < libyui-qt-graph11
+libgraphviz6 [2.40.1-6.3.2.x86_64] < libyui-qt-graph11
+libgudev-1_0-0 [232-1.33.x86_64] < libwacom2 < libinput10 < xf86-input-libinput
+libharfbuzz0 [2.6.4-1.28.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libhogweed4 [3.4.1-4.9.1.x86_64] < libgnutls30 < xorg-x11-Xvnc
+libicu-suse65_1 [65.1-1.17.x86_64] < libQt5Core5 < libyui-qt-graph11
+libicu65_1-ledata [65.1-1.17.noarch] < libicu-suse65_1 < libQt5Core5 < libyui-qt-graph11
+libidn11 [1.34-3.2.2.x86_64] < iputils
+libidn2-0 [2.2.0-3.3.1.x86_64] < wget
+libinput10 [1.10.5-1.21.x86_64] < xf86-input-libinput
+libip4tc2 [1.8.3-1.20.x86_64] < iptables
+libip6tc2 [1.8.3-1.20.x86_64] < iptables
+libiterm1 [0.5.20040304-3.38.x86_64] < fbiterm
+libjbig2 [2.1-1.31.x86_64] < libtiff5 < libgdk_pixbuf-2_0-0 < icewm-lite
+libjemalloc2 [5.0.1-1.25.x86_64] < yast2-core < yast2
+libjpeg8 [8.1.2-5.12.1.x86_64] < xorg-x11-Xvnc
+libjson-c3 [0.13-1.19.x86_64] < libcryptsetup12 < cryptsetup
+libkeyutils1 [1.5.10-3.42.x86_64] < nfs-client
+libkmod2 [25-6.7.1.x86_64] < open-iscsi
+libksba8 [1.3.5-2.14.x86_64] < gpg2
+libldap-2_4-2 [2.4.46-9.25.1.x86_64] < gpg2
+libldap-data [2.4.46-9.25.1.noarch] < libldap-2_4-2 < gpg2
+libldapcpp1 [0.3.1-1.33.x86_64] < yast2-ldap < yast2-users < skelcd-control-leanos
+liblldp_clif1 [1.0.1+56.cb81e95-1.27.x86_64] < open-lldp < fcoe-utils < yast2-fcoe-client < skelcd-control-leanos
+libltdl7 [2.4.6-1.406.x86_64] < libgraphviz6 < libyui-qt-graph11
+liblua5_3-5 [5.3.4-3.3.2.x86_64] < rpm
+liblvm2cmd2_03 [2.03.05-3.26.x86_64] < lvm2
+liblz4-1 [1.8.0-3.5.1.x86_64] < systemd
+liblzma5 [5.2.3-4.3.1.x86_64] < rpm
+liblzo2-2 [2.10-2.22.x86_64] < btrfsprogs
+libmagic1 [5.32-7.5.1.x86_64] < rpm
+libmediacheck5 [5.3-1.46.x86_64] < checkmedia
+libmetalink3 [0.1.3-1.24.x86_64] < wget
+libmnl0 [1.0.4-1.25.x86_64] < iptables
+libmodman1 [2.0.1-1.27.x86_64] < libproxy1 < wget
+libmount1 [2.33.1-4.5.1.x86_64] < snapper
+libmozjs-60 [60.9.0-4.18.x86_64] < polkit
+libmtdev1 [1.1.5-1.26.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libncurses6 [6.1-5.6.2.x86_64] < libyui-ncurses-pkg11
+libnetfilter_conntrack3 [1.0.7-1.22.x86_64] < xtables-plugins < iptables
+libnettle6 [3.4.1-4.9.1.x86_64] < xorg-x11-Xvnc
+libnfnetlink0 [1.0.1-2.11.x86_64] < xtables-plugins < iptables
+libnftnl11 [1.1.4-1.23.x86_64] < iptables
+libnghttp2-14 [1.39.2-8.31.x86_64] < libcurl4 < libzypp < libyui-ncurses-pkg11
+libnl-config [3.3.0-1.29.noarch] < libnl3-200 < open-lldp < fcoe-utils < yast2-fcoe-client < skelcd-control-leanos
+libnl3-200 [3.3.0-1.29.x86_64] < open-lldp < fcoe-utils < yast2-fcoe-client < skelcd-control-leanos
+libnpth0 [1.5-2.11.x86_64] < gpg2
+libnsl2 [1.2.0-2.44.x86_64] < pam
+libntfs-3g87 [2016.2.22-3.3.2.x86_64] < ntfsprogs
+libopeniscsiusr0_2_0 [2.0.876-13.32.1.x86_64] < open-iscsi
+libopenssl1_1 [1.1.1d-6.3.x86_64] < openssh
+libp11-kit0 [0.23.2-4.8.3.x86_64] < p11-kit
+libpango-1_0-0 [1.43.0-1.33.x86_64] < pango-tools
+libparted0 [3.2-11.3.1.x86_64] < parted
+libpci3 [3.5.6-1.18.x86_64] < pciutils
+libpciaccess0 [0.14-1.16.x86_64] < xorg-x11-server
+libpcre1 [8.41-4.20.x86_64] < wget
+libpcre2-16-0 [10.31-1.14.x86_64] < libQt5Core5 < libyui-qt-graph11
+libpixman-1-0 [0.34.0-1.27.x86_64] < xorg-x11-Xvnc
+libpng16-16 [1.6.34-3.9.1.x86_64] < libgdk_pixbuf-2_0-0 < icewm-lite
+libpolkit0 [0.116-1.26.x86_64] < polkit
+libpopt0 [1.16-3.22.x86_64] < cryptsetup
+libprocps7 [3.3.15-7.10.2.x86_64] < procps
+libproxy1 [0.4.15-2.15.x86_64] < wget
+libpsl5 [0.20.1-1.20.x86_64] < wget
+libpwquality1 [1.4.0-1.18.x86_64] < cryptsetup
+libpython3_6m1_0 [3.6.10-3.47.2.x86_64] < python3-base < python3-websockify
+libqrencode4 [4.0.0-1.17.x86_64] < systemd
+libreadline7 [7.0-9.10.1.x86_64] < multipath-tools
+libreiserfscore0 [3.6.27-2.24.x86_64] < btrfsprogs
+libruby2_5-2_5 [2.5.5-4.3.1.x86_64] < ruby2.5-rubygem-byebug < skelcd-control-leanos
+libsasl2-3 [2.1.26-5.3.1.x86_64] < libldap-2_4-2 < gpg2
+libseccomp2 [2.4.1-3.3.1.x86_64] < systemd
+libselinux1 [2.8-6.35.x86_64] < psmisc
+libsemanage1 [2.8-4.35.x86_64] < shadow
+libsepol1 [2.8-4.37.x86_64] < libsemanage1 < shadow
+libsgutils2-1_43-2 [1.44~763+19.1ed0757-9.3.1.x86_64] < sg3_utils
+libsigc-2_0-0 [2.10.2-1.2.x86_64] < libzypp < libyui-ncurses-pkg11
+libsmartcols1 [2.33.1-4.5.1.x86_64] < util-linux
+libsnapper5 [0.8.9-1.20.x86_64] < snapper
+libsnappy1 [1.1.3-1.24.x86_64] < makedumpfile < kdump < yast2-kdump < skelcd-control-leanos
+libsolv-tools [0.7.11-1.13.x86_64]
+libsqlite3-0 [3.28.0-3.9.2.x86_64] < gpg2
+libssh4 [0.8.7-10.9.1.x86_64] < libcurl4 < libzypp < libyui-ncurses-pkg11
+libstdc++6 [9.2.1+r275327-1.3.7.x86_64] < icewm-lite
+libstorage-ng-lang [4.2.65-1.2.noarch]
+libstorage-ng-ruby [4.2.65-1.2.x86_64] < yast2-storage-ng
+libstorage-ng1 [4.2.65-1.2.x86_64] < libstorage-ng-ruby < yast2-storage-ng
+libsystemd0 [234-31.10.x86_64] < rpcbind
+libtasn1 [4.13-4.5.1.x86_64] < libtasn1-6 < p11-kit
+libtasn1-6 [4.13-4.5.1.x86_64] < p11-kit
+libthai-data [0.1.27-1.16.x86_64] < libthai0 < libpango-1_0-0 < pango-tools
+libthai0 [0.1.27-1.16.x86_64] < libpango-1_0-0 < pango-tools
+libtiff5 [4.0.9-5.27.5.x86_64] < libgdk_pixbuf-2_0-0 < icewm-lite
+libtirpc-netconfig [1.0.2-3.8.1.x86_64] < libtirpc3 < rpcbind
+libtirpc3 [1.0.2-3.8.1.x86_64] < rpcbind
+libts0 [1.13-1.18.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libudev1 [234-31.10.x86_64]
+libunistring2 [0.9.9-1.15.x86_64] < libgnutls30 < xorg-x11-Xvnc
+liburcu6 [0.10.0-2.20.x86_64] < multipath-tools
+libusb-1_0-0 [1.0.21-1.29.x86_64] < usbutils
+libutempter0 [1.1.6-3.42.x86_64] < xterm-bin
+libuuid1 [2.33.1-4.5.1.x86_64] < cryptsetup
+libverto1 [0.2.6-3.20.x86_64] < krb5
+libwacom-data [1.1-2.33.x86_64] < libwacom2 < libinput10 < xf86-input-libinput
+libwacom2 [1.1-2.33.x86_64] < libinput10 < xf86-input-libinput
+libwayland-client0 [1.18.0-1.2.x86_64] < Mesa-libEGL1
+libwayland-server0 [1.18.0-1.2.x86_64] < Mesa-libEGL1
+libwrap0 [7.6-1.433.x86_64] < rpcbind
+libx86emu3 [3.1-1.7.x86_64] < hwinfo
+libxcb-dri2-0 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxcb-dri3-0 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxcb-glx0 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxcb-icccm4 [0.4.1-1.24.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-image0 [0.4.0-1.23.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-keysyms1 [0.4.0-1.23.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-present0 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxcb-randr0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-render-util0 [0.3.9-1.23.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-render0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-shape0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-shm0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-sync1 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxcb-util1 [0.4.0-1.23.x86_64] < libxcb-image0 < libQt5Gui5 < libyui-qt-graph11
+libxcb-xfixes0 [1.13-3.3.1.x86_64] < Mesa-libEGL1
+libxcb-xinerama0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-xinput0 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb-xkb1 [1.13-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxcb1 [1.13-3.3.1.x86_64] < Mesa-libGL1
+libxkbcommon-x11-0 [0.8.2-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxkbcommon0 [0.8.2-3.3.1.x86_64] < libQt5Gui5 < libyui-qt-graph11
+libxkbfile1 [1.0.9-1.26.x86_64] < setxkbmap
+libxml2-2 [2.9.7-3.12.1.x86_64] < libsolv-tools
+libxshmfence1 [1.2-1.23.x86_64] < Mesa-libGL1
+libxslt-tools [1.1.32-3.3.1.x86_64] < autoyast2 < skelcd-control-leanos
+libxslt1 [1.1.32-3.3.1.x86_64] < libxslt-tools < autoyast2 < skelcd-control-leanos
+libxtables12 [1.8.3-1.20.x86_64] < iptables
+libyajl2 [2.1.0-2.12.x86_64] < xen-libs < kexec-tools < kdump < yast2-kdump < skelcd-control-leanos
+libyaml-0-2 [0.1.7-1.17.x86_64] < ruby2.5-stdlib < ruby2.5 < ruby
+libyui-ncurses-pkg11 [2.50.6-1.11.x86_64]
+libyui-ncurses11 [2.54.5-1.13.x86_64] < libyui-ncurses-pkg11
+libyui-qt-graph11 [2.46.0-1.37.x86_64]
+libyui-qt-pkg11 [2.47.3-1.13.x86_64]
+libyui-qt11 [2.52.2-1.11.x86_64] < libyui-qt-graph11
+libyui11 [3.9.3-1.5.x86_64] < libyui-ncurses-pkg11
+libz1 [1.2.11-3.9.1.x86_64] < openssh
+libzstd1 [1.4.4-1.11.x86_64] < rpm
+libzypp [17.23.0-1.4.x86_64] < libyui-ncurses-pkg11
+lklug-fonts [0.6-1.24.noarch]
+lsscsi [0.28-1.24.x86_64] < libstorage-ng1 < libstorage-ng-ruby < yast2-storage-ng
+ltrace [0.7.91-4.3.x86_64]
+lvm2 [2.03.05-3.26.x86_64]
+makedumpfile [1.6.7-1.6.x86_64] < kdump < yast2-kdump < skelcd-control-leanos
+mkfontdir [1.0.7-1.20.x86_64]
+mkfontscale [1.1.2-1.23.x86_64]
+multipath-tools [0.8.2+18.9ff73e7-1.49.x86_64]
+ncurses-utils [6.1-5.6.2.x86_64]
+net-tools [2.0+git20170221.479bb4a-3.11.x86_64] < SUSEConnect < yast2-registration < skelcd-control-leanos
+nfs-client [2.1.1-10.4.1.x86_64]
+noto-naskharabic-fonts [20170919-2.13.noarch]
+noto-sans-fonts [20170919-2.13.noarch]
+novnc [1.0.0-1.17.noarch]
+nscd [2.26-13.36.1.x86_64]
+ntfsprogs [2016.2.22-3.3.2.x86_64]
+open-iscsi [2.0.876-13.32.1.x86_64]
+open-lldp [1.0.1+56.cb81e95-1.27.x86_64] < fcoe-utils < yast2-fcoe-client < skelcd-control-leanos
+openslp [2.0.0-6.9.1.x86_64]
+openslp-server [2.0.0-6.9.1.x86_64]
+openssh [8.1p1-2.2.x86_64]
+openssh-fips [8.1p1-2.2.x86_64]
+openssl-1_1 [1.1.1d-6.3.x86_64] < xorg-x11-Xvnc
+p11-kit [0.23.2-4.8.3.x86_64]
+p11-kit-tools [0.23.2-4.8.3.x86_64]
+pam [1.3.0-6.9.2.x86_64]
+pam-modules [12.1-3.17.x86_64]
+pango-tools [1.43.0-1.33.x86_64]
+parted [3.2-11.3.1.x86_64]
+pciutils [3.5.6-1.18.x86_64]
+pciutils-ids [20190830-3.3.2.noarch]
+perl [5.26.1-7.9.1.x86_64]
+perl-Digest-SHA1 [2.13-1.27.x86_64] < yast2-users < skelcd-control-leanos
+perl-Parse-RecDescent [1.967015-1.22.x86_64] < perl-X500-DN < yast2-users < skelcd-control-leanos
+perl-X500-DN [0.29-1.22.x86_64] < yast2-users < skelcd-control-leanos
+perl-XML-Bare [0.53-1.28.x86_64]
+perl-XML-NamespaceSupport [1.12-1.24.noarch]
+perl-XML-Parser [2.44-1.443.x86_64] < perl-XML-SAX-Expat < perl-XML-Simple < yast2
+perl-XML-SAX [0.99-1.22.x86_64] < perl-XML-Simple < yast2
+perl-XML-SAX-Base [1.09-1.25.noarch] < perl-XML-SAX < perl-XML-Simple < yast2
+perl-XML-SAX-Expat [0.51-1.22.noarch] < perl-XML-Simple < yast2
+perl-XML-Simple [2.24-1.22.noarch] < yast2
+perl-base [5.26.1-7.9.1.x86_64]
+perl-gettext [1.07-1.442.x86_64]
+pigz [2.3.3-1.28.x86_64] < yast2-update < skelcd-control-leanos
+polkit [0.116-1.26.x86_64]
+procinfo [18-1.30.x86_64]
+procps [3.3.15-7.10.2.x86_64]
+psmisc [23.0-6.7.1.x86_64]
+python-rpm-macros [20200117.8e39013-3.8.1.noarch] < python3-base < python3-websockify
+python-websockify-common [0.8.0-7.14.noarch] < python3-websockify
+python3-base [3.6.10-3.47.2.x86_64] < python3-websockify
+python3-websockify [0.8.0-7.14.noarch]
+raleway-fonts [3.0-1.22.noarch]
+reiserfs [3.6.27-2.24.x86_64]
+rgb [1.0.6-1.22.x86_64]
+rpcbind [0.2.3-5.9.2.x86_64]
+rpm [4.14.1-17.10.x86_64]
+ruby [2.5-1.21.x86_64]
+ruby-common [2.1-3.15.noarch] < ruby2.5 < ruby
+ruby-solv [0.7.11-1.13.x86_64] < yast2-packager < skelcd-control-leanos
+ruby2.5 [2.5.5-4.3.1.x86_64] < ruby
+ruby2.5-rubygem-abstract_method [1.2.1-1.28.x86_64] < yast2
+ruby2.5-rubygem-byebug [9.1.0-1.28.x86_64] < skelcd-control-leanos
+ruby2.5-rubygem-cfa [1.0.2-1.13.x86_64] < yast2
+ruby2.5-rubygem-cfa_grub2 [2.0.0-1.35.x86_64] < yast2-bootloader < yast2-tune < skelcd-control-leanos
+ruby2.5-rubygem-cheetah [0.5.2-1.13.x86_64] < yast2
+ruby2.5-rubygem-fast_gettext [1.6.0-1.18.x86_64] < yast2-ruby-bindings < yast2-storage-ng
+ruby2.5-rubygem-gem2rpm [0.10.1-3.45.x86_64] < ruby-common < ruby2.5 < ruby
+ruby2.5-rubygem-ruby-augeas [0.5.0-1.31.x86_64] < ruby2.5-rubygem-cfa < yast2
+ruby2.5-rubygem-ruby-dbus [0.14.0-1.27.x86_64] < yast2-storage-ng
+ruby2.5-rubygem-simpleidn [0.0.9-1.17.x86_64] < yast2
+ruby2.5-stdlib [2.5.5-4.3.1.x86_64] < ruby2.5 < ruby
+sap-installation-wizard [4.1.16-3.6.1.x86_64]
+screen [4.6.2-3.14.x86_64]
+sed [4.4-2.11.x86_64]
+setxkbmap [1.3.1-1.24.x86_64]
+sg3_utils [1.44~763+19.1ed0757-9.3.1.x86_64]
+shadow [4.6-3.5.6.x86_64]
+skelcd-control-leanos [15.2.10-1.2.x86_64]
+skelcd-fallbackrepo-SLED [1.1-2.97.x86_64]
+skelcd-fallbackrepo-SLES [1.1-2.115.x86_64]
+skelcd-fallbackrepo-SLES_SAP [1.1-2.88.x86_64]
+skelcd-fallbackrepo-SLE_HPC [1.1-2.100.x86_64]
+skelcd-fallbackrepo-SLE_RT [1.1-2.100.x86_64]
+smartmontools [7.0-1.33.x86_64]
+snapper [0.8.9-1.20.x86_64]
+strace [5.3-1.26.x86_64]
+suse-module-tools [15.2.10-1.9.x86_64]
+sysconfig [0.85.3-3.3.1.x86_64] < yast2
+sysconfig-netconfig [0.85.3-3.3.1.x86_64] < wicked < wicked-service < sysconfig < yast2
+syslinux [4.04-8.14.x86_64]
+system-group-hardware [20170617-4.155.noarch] < util-linux
+system-user-nobody [20170617-4.155.noarch] < rpcbind
+system-user-root [20190513-3.3.1.noarch] < pam
+systemd [234-31.10.x86_64]
+systemd-presets-branding-SLE [15.1-18.10.noarch]
+systemd-presets-common-SUSE [15-6.10.noarch] < systemd-presets-branding-SLE
+systemd-sysvinit [234-31.10.x86_64]
+sysuser-shadow [2.0-2.151.noarch] < system-user-nobody < rpcbind
+sysvinit-tools [2.88+-1.26.x86_64]
+tar [1.30-3.3.2.x86_64] < yast2-installation
+terminfo-base [6.1-5.6.2.x86_64] < screen
+thai-fonts [0.6.1-2.39.noarch]
+thin-provisioning-tools [0.7.5-1.24.x86_64] < device-mapper
+timezone [2019c-3.23.1.x86_64]
+udftools [1.3-1.21.x86_64]
+unified-installer-release [15.2-1.28.noarch]
+usbutils [008-1.30.x86_64]
+util-linux [2.33.1-4.5.1.x86_64]
+util-linux-systemd [2.33.1-4.5.1.x86_64] < wicked < wicked-service < sysconfig < yast2
+vim [8.0.1568-5.3.1.x86_64]
+vim-data-common [8.0.1568-5.3.1.noarch] < vim
+wget [1.19.5-3.6.2.x86_64]
+wicked [0.6.62-1.2.x86_64] < wicked-service < sysconfig < yast2
+wicked-service [0.6.62-1.2.x86_64] < sysconfig < yast2
+xauth [1.0.10-1.24.x86_64]
+xbitmaps [1.1.1-1.20.noarch] < libXmu6 < xterm-bin
+xconsole [1.0.7-1.24.x86_64] < xdm
+xdm [1.1.11-13.6.1.x86_64]
+xdpyinfo [1.3.2-1.24.x86_64]
+xen-libs [4.13.0_08-1.2.x86_64] < kexec-tools < kdump < yast2-kdump < skelcd-control-leanos
+xf86-input-libinput [0.28.1-4.32.x86_64]
+xf86-input-wacom [0.34.2-3.3.4.x86_64]
+xf86-video-amdgpu [18.1.0-4.31.x86_64]
+xf86-video-fbdev [0.5.0-4.31.x86_64]
+xf86-video-intel [2.99.917+git8674.25c9a2fcc-5.19.x86_64]
+xf86-video-qxl [0.1.5-3.38.x86_64]
+xf86-video-vesa [2.4.0-3.31.x86_64]
+xfsdump [3.1.6-1.30.x86_64]
+xfsprogs [4.15.0-4.24.3.x86_64]
+xhost [1.0.7-1.29.x86_64]
+xinit [1.4.0-6.17.x86_64] < xorg-x11-Xvnc
+xkbcomp [1.4.1-1.9.x86_64]
+xkeyboard-config [2.23.1-3.6.1.noarch]
+xli [1.17+git20170726.0bb4fb4-1.26.x86_64] < xdm
+xmessage [1.0.4-1.25.x86_64] < xdm
+xmodmap [1.0.9-1.24.x86_64]
+xorg-x11-Xvnc [1.9.0-19.3.1.x86_64]
+xorg-x11-fonts [7.6-3.9.noarch]
+xorg-x11-fonts-core [7.6-3.9.noarch]
+xorg-x11-server [1.20.3-18.27.x86_64]
+xrandr [1.5.0-2.19.x86_64]
+xrefresh [1.0.5-1.23.x86_64]
+xset [1.2.3-2.17.x86_64]
+xsetroot [1.1.1-1.24.x86_64] < xdm
+xtables-plugins [1.8.3-1.20.x86_64] < iptables
+xterm-bin [330-2.22.x86_64]
+xz [5.2.3-4.3.1.x86_64]
+yast2 [4.2.67-1.7.x86_64]
+yast2-add-on [4.2.15-1.30.noarch] < skelcd-control-leanos
+yast2-bootloader [4.2.16-1.3.x86_64] < yast2-tune < skelcd-control-leanos
+yast2-buildtools [4.2.5-1.29.noarch]
+yast2-configuration-management [4.2.3-1.55.noarch] < skelcd-control-leanos
+yast2-core [4.1.0-5.18.x86_64] < yast2
+yast2-country [4.2.18-1.7.x86_64] < yast2-installation
+yast2-country-data [4.2.18-1.7.x86_64] < yast2-installation
+yast2-devtools [4.2.5-1.29.noarch]
+yast2-fcoe-client [4.2.2-1.7.noarch] < skelcd-control-leanos
+yast2-firewall [4.2.3-1.3.noarch] < skelcd-control-leanos
+yast2-hardware-detection [4.1.1-1.47.x86_64] < yast2
+yast2-installation [4.2.35-1.8.noarch]
+yast2-iscsi-client [4.2.4-1.31.noarch] < skelcd-control-leanos
+yast2-kdump [4.2.9-1.14.x86_64] < skelcd-control-leanos
+yast2-ldap [4.1.0-1.28.x86_64] < yast2-users < skelcd-control-leanos
+yast2-logs [4.2.67-1.7.x86_64] < yast2
+yast2-multipath [4.2.1-1.31.noarch] < skelcd-control-leanos
+yast2-network [4.2.57-1.3.noarch] < skelcd-control-leanos
+yast2-nfs-client [4.2.7-1.23.noarch] < skelcd-control-leanos
+yast2-nfs-common [4.2.4-1.25.noarch] < yast2-nfs-client < skelcd-control-leanos
+yast2-ntp-client [4.2.8-1.8.noarch] < skelcd-control-leanos
+yast2-packager [4.2.52-1.3.x86_64] < skelcd-control-leanos
+yast2-pam [4.2.4-1.34.noarch] < yast2-users < skelcd-control-leanos
+yast2-perl-bindings [4.1.0-1.18.x86_64] < yast2
+yast2-pkg-bindings [4.2.7-1.4.x86_64] < yast2-installation
+yast2-proxy [4.2.2-1.100.noarch] < skelcd-control-leanos
+yast2-rdp [4.2.1-1.109.noarch] < skelcd-control-leanos
+yast2-registration [4.2.35-1.6.noarch] < skelcd-control-leanos
+yast2-ruby-bindings [4.2.8-1.14.x86_64] < yast2-storage-ng
+yast2-schema [4.2.8-1.32.x86_64] < autoyast2 < skelcd-control-leanos
+yast2-security [4.2.11-1.7.noarch] < yast2-users < skelcd-control-leanos
+yast2-services-manager [4.2.5-1.93.noarch] < skelcd-control-leanos
+yast2-slp [4.1.1-1.100.x86_64] < skelcd-control-leanos
+yast2-storage-ng [4.2.90-1.7.x86_64]
+yast2-theme [4.2.8-1.22.noarch] < skelcd-control-leanos
+yast2-trans-stats [2.19.0-1.28.noarch] < skelcd-control-leanos
+yast2-transfer [4.1.0-1.28.x86_64] < yast2-packager < skelcd-control-leanos
+yast2-tune [4.2.2-1.52.x86_64] < skelcd-control-leanos
+yast2-update [4.2.17-1.5.x86_64] < skelcd-control-leanos
+yast2-users [4.2.9-1.19.x86_64] < skelcd-control-leanos
+yast2-vm [4.2.3-1.123.x86_64] < skelcd-control-leanos
+yast2-x11 [4.1.0-5.18.x86_64] < skelcd-control-leanos
+yast2-xml [4.1.1-1.17.x86_64] < yast2
+yast2-ycp-ui-bindings [4.2.9-1.13.x86_64] < yast2-storage-ng

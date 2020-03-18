@@ -216,6 +216,22 @@ under https://updates.suse.com/
 - /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/s390x/update
 - /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/x86_64/update
 
+## Update Repository Validation
+
+Using an incompatible self-update repository might result in a crash or
+unexpected behavior. Since SLE15-SP2/Leap15.2 the installer compares the
+versions of some specific packages in the self-update repository and in the inst-sys.
+If any unexpected version is found then an error is displayed and the self-update
+step is completely skipped.
+
+Is is possible to skip this validation is special cases and force applying the
+updates despite the version mismatch by setting environment variable
+`Y2_FORCE_SELF_UPDATE=1`. *This should be done only in special cases (testing)
+when you know what you are doing!*
+
+See the [Installation::SelfupdateVerifier](../src/lib/installation/selfupdate_verifier.rb)
+class for more details.
+
 ## Security
 
 ### Package Integrity

@@ -26,7 +26,7 @@ describe Yast::InstUpdateInstaller do
   let(:all_signed?) { true }
   let(:network_running) { true }
   let(:has_repos) { true }
-  let(:repo) { double("repo", repo_id: 42) }
+  let(:repo) { double("repo", repo_id: 42, packages: []) }
   let(:repos) { [repo] }
   let(:restarting) { false }
   let(:profile) { {} }
@@ -52,6 +52,7 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:finish_packager)
     allow(subject).to receive(:fetch_profile).and_return(ay_profile)
     allow(subject).to receive(:process_profile)
+    allow(subject).to receive(:valid_repositories?).and_return(true)
     allow(finder).to receive(:add_installation_repo)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
@@ -324,6 +325,24 @@ describe Yast::InstUpdateInstaller do
       it "returns false" do
         allow(manager).to receive(:add_repository).and_return(false)
         expect(subject.update_installer).to eq(false)
+      end
+    end
+
+    context "when the repository contains old packages" do
+      it "does not update the installer" do
+        allow(manager).to receive(:add_repository).and_return(true)
+        # expect(subject).to receive(:valid_repositories?).and_return(false)
+        expect(manager).to_not receive(:apply_all)
+        allow(Yast::Report).to receive(:Error)
+        # remove the global mock
+        allow(subject).to receive(:valid_repositories?).and_call_original
+
+        downgraded_pkg = double
+        allow(Installation::InstsysPackages).to receive(:read).and_return([])
+        allow_any_instance_of(Installation::SelfupdateVerifier).to receive(:downgraded_packages)
+          .and_return([downgraded_pkg])
+
+        subject.update_installer
       end
     end
   end
