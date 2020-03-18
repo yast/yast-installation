@@ -327,5 +327,20 @@ describe Yast::InstUpdateInstaller do
         expect(subject.update_installer).to eq(false)
       end
     end
+
+    context "when the repository contains old packages" do
+      it "does not update the installer" do
+        allow(manager).to receive(:add_repository).and_return(true)
+        # expect(subject).to receive(:valid_repositories?).and_return(false)
+        expect(manager).to_not receive(:apply_all)
+        allow(Yast::Report).to receive(:Error)
+
+        allow(Installation::InstsysPackages).to receive(:read).and_return([])
+        allow_any_instance_of(Installation::SelfupdateVerifier).to receive(:downgraded_packages)
+          .and_return([])
+
+        subject.update_installer
+      end
+    end
   end
 end

@@ -226,7 +226,8 @@ step is completely skipped.
 
 Is is possible to skip this validation is special cases and force applying the
 updates despite the version mismatch by setting environment variable
-`Y2_FORCE_SELF_UPDATE=1`.
+`Y2_FORCE_SELF_UPDATE=1`. *This should be done only in special cases (testing)
+when you know what you are doing!*
 
 See the [Installation::SelfupdateVerifier](../src/lib/installation/selfupdate_verifier.rb)
 class for more details.

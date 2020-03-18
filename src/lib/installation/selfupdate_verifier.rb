@@ -26,7 +26,7 @@ module Installation
     #
     # We do not care about the other packages, in theory there might be
     # valid reasons for downgrading them. With these YaST packages we can
-    # go back to the previous state but but still increase the version number.
+    # go back to the previous state but still increase the version number.
     #
     # We can also check the "too new" packages because the YaST package versions
     # are bound to specific SP release (e.g. 4.1.x in SP1, 4.2.x in SP2).

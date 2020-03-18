@@ -192,18 +192,6 @@ module Yast
       @update_repositories = []
     end
 
-    # Return the custom self-update URL
-    #
-    # A custom URL can be specified via Linuxrc or in an AutoYaST profile.
-    # Only 1 custom self-update URL can be specified.
-    #
-    # @return [URI] self-update URL
-    # @see #self_update_url_from_linuxrc
-    # @see #self_update_url_from_profile
-    def custom_self_update_url
-      @custom_self_update_url ||= self_update_url_from_linuxrc || self_update_url_from_profile
-    end
-
     # Check if installer was updated
     #
     # It checks if a file UPDATED_FLAG_FILENAME exists in Directory.vardir
