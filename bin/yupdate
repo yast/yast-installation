@@ -140,7 +140,9 @@ HELP
 
     # write the file back
     def write
-      File.write(path, values.join("\n"))
+      # ensure there is a trailing newline so the new values
+      # can be properly added to the file
+      File.write(path, values.join("\n") + "\n")
     end
 
   private
@@ -289,7 +291,7 @@ HELP
         relative_path = Pathname.new(f).relative_path_from(upperdir_path)
         original_path = File.join(origdir, relative_path)
         # unescape the path
-        pth = unescape_path(upperdir_path)
+        pth = OverlayFS.unescape_path(upperdir_path)
         block.call(File.join(pth, relative_path), f, original_path)
       end
     end
