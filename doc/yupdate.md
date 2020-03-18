@@ -51,7 +51,7 @@ on production systems!
 ## Installation
 
 The `yupdate` script should run in the inst-sys. Since SLE15-SP2/openSUSE
-Leap 15.2, openSUSE Tumbleweed 2020xxxx, it ~~is~~ will be preinstalled.
+Leap 15.2, openSUSE Tumbleweed 20200314, it is preinstalled.
 
 For older releases, run:
 

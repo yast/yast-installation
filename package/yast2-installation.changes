@@ -1,8 +1,15 @@
 -------------------------------------------------------------------
-Mon Mar 16 08:37:11 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
- 
+Wed Mar 18 16:52:30 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
 - Verify the package versions before applying the self-update
   fixes (related to bsc#1163084)
+- 4.2.39
+
+-------------------------------------------------------------------
+Tue Mar 17 12:59:50 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Drop few not needed recommends to have identical package on
+  opensuse and SLE (jsc#SLE-11936, jsc#SLE-11851)
 - 4.2.38
 
 -------------------------------------------------------------------
