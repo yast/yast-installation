@@ -51,9 +51,11 @@ module Yast
     Yast.import "AutoinstConfig"
     Yast.import "AutoinstGeneral"
 
-    def main
+    def initialize
       textdomain "installation"
+    end
 
+    def main
       return :back if GetInstArgs.going_back
 
       require_registration_libraries
