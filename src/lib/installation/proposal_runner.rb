@@ -268,7 +268,10 @@ module Installation
       @proposal_vscroll = Yast::UI.QueryWidget(Id(:proposal), :VScrollValue)
     end
 
+    # Restores the vertical scroll if previously saved
     def restore_vertical_scroll
+      return unless @proposal_vscroll
+
       Yast::UI.ChangeWidget(Id(:proposal), :VScrollValue, @proposal_vscroll)
     end
 
