@@ -218,6 +218,10 @@ state.
 - Works only with the packages which use `Rakefile` for installation,
   it does not work with autotools based packages (again, autoconf/automake
   are also missing in the inst-sys)
+- It patches only the files in the inst-sys, the target installed system will
+  contain the original files from the installation medium. That also means the
+  AutoYaST second stage cannot be fixed by `yupdate`, you need to build
+  a DUD, see below.
 
 ## Alternative
 
