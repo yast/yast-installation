@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Apr 17 16:10:19 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
+
+- Force the use of en_US.UTF-8 when running firstboot or the
+  AutoYaST Second Stage with 'POSIX' or 'C as RC_LANG (bsc#1169017)
+- 3.3.0.4
+
+-------------------------------------------------------------------
 Fri Mar 15 13:22:58 UTC 2019 - snwint@suse.com
 
 - revert SSH textmode patches (bsc#1129375, bsc#1047470)
