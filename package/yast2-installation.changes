@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 20 12:10:19 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
+
+- Force the use of en_US.UTF-8 when running firstboot or the
+  AutoYaST Second Stage with 'POSIX' or 'C as RC_LANG (bsc#1169017)
+- 4.0.76
+
+-------------------------------------------------------------------
 Fri May 10 15:07:17 CEST 2019 - schubi@suse.de
 
 - Downloading files: Remounting CD with bind option correctly if
