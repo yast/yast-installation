@@ -73,8 +73,13 @@ function set_language_cont () {
                 export RC_LANG=en_US
         fi
 
-        # get rid of encoding and/or modifier
-        export LANG=${RC_LANG%%[.@]*}.UTF-8
+        if [ "$RC_LANG" == "POSIX" ] ; then
+                log "\tRC_LANG is POSIX, using LANG en_US.UTF-8 as default..."
+                export LANG=en_US.UTF-8
+        else
+                # get rid of encoding and/or modifier
+                export LANG=${RC_LANG%%[.@]*}.UTF-8
+        fi
 }
 
 #----[ start_unicode ]-----#
