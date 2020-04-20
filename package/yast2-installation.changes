@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 20 12:10:19 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
+
+- Force the use of en_US.UTF-8 when running firstboot or the
+  AutoYaST Second Stage with 'POSIX' or 'C as RC_LANG (bsc#1169017)
+- 4.1.49
+
+-------------------------------------------------------------------
 Thu Jan 30 12:07:42 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - don't start getty on hvc0 & ttyAMA0 before Yast2-Firstboot (bsc#1157233)
