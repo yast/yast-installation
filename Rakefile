@@ -1,6 +1,4 @@
 require "yast/rake"
-
-Yast::Tasks.submit_to :sle15sp2
 require "find"
 require "English"
 
