@@ -819,12 +819,6 @@ is done by specifying *service* with its *name* as seen in the example.
 > the `<partitioning>` section. That new format is currently documented [in this
 > file](https://github.com/yast/yast-storage-ng/blob/master/doc/old_and_new_proposal.md).
 
-*proposal_settings_editable* (boolean, default _true_) specifies if the user
-should be able to change the configuration of the storage proposal in the
-installer: What filesystem to use for the root partition, if there should be a
-separate /home partition, if LVM or encryption should be used. For some
-products this is not desired.
-
 *expert_partitioner_warning* (boolean, default _false_) specifies if there
 should be an extra warning pop-up dialog when the user enters the expert
 partitioner dialog during installation, for example because the product has
