@@ -62,7 +62,7 @@ module Yast
     end
 
     def dialog_content
-      label = _("I would like to import SSH keys from a previous installation")
+      label = _("I would like to import SSH host keys from a previous installation")
       HSquash(
         VBox(
           # For some reason the CheckBoxFrame Label is cut if the label size
