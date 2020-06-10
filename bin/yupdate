@@ -403,7 +403,10 @@ HELP
     def install_gems(gem_names)
       return if gem_names.empty?
       add_gem_overlay
-      system("gem", "install", "--no-document", "--no-format-exec", *gem_names)
+      # explicitly set the bindir, the /mounts/mp_0001/usr/.... prefix
+      # confuses gem and it does not create the bin file
+      system("gem", "install", "--bindir", "/usr/bin", "--no-document",
+        "--no-format-exec", *gem_names)
     end
 
     # make sure that the gem directory is writable
@@ -453,6 +456,8 @@ HELP
 
     # install the sources to the specified (temporary) directory
     def install_sources(target)
+      raise "/usr/bin/rake does not exist!" unless File.exist?("/usr/bin/rake")
+
       msg "Preparing files..."
 
       # check for Makefile.cvs, we cannot install packages using autotools
