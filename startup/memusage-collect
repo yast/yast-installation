@@ -1,0 +1,28 @@
+#!/bin/bash
+# Collect data about memory usage of all processes
+
+case "$1" in
+    --logdir=*)
+        LOGDIR=${1#--logdir=}
+        ;;
+esac
+# default value
+: ${LOGDIR=./memusage}
+mkdir -p $LOGDIR
+
+# FIXME: actual description
+echo >"$LOGDIR"/README "To interpret this data see https://github.com/yast/yast-installation/blob/master/FIXME"
+
+memusage_ps() {
+    ps -e -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,args
+}
+
+I=0
+while true; do
+  I=$((I + 1))
+  ZI=$(printf %04d $I)
+  LOG=$LOGDIR/ps-$ZI-$(date -Iseconds)
+  memusage_ps > "$LOG"
+
+  sleep 5
+done
