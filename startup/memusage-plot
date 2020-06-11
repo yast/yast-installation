@@ -1,0 +1,38 @@
+#!/bin/bash
+# memusage-plot
+# Plot the memory usage data collected by memusage-collect
+# FIXME: this does not need to live in yast-installation, move it to devtools
+#
+# Requirements:
+#   zypper install gnuplot
+#
+# Usage:
+# (cd /tmp; tar xvf $HOME/Downloads/yast-installation-logs.tar.xz YaST2/memusage)
+# cd /tmp/YaST2/memusage
+# memusage-plot
+
+# Bug: the simple "grep /y2start" will catch also unwanted y2start children,
+# producing "earthquakes" on the graph. Fix by finding the lowest PID.
+grep /y2start ps-* | ruby -r date -e '
+$stdin.each_line do |l|
+  #                                              pid   tty   m1     m2   m3    rss
+  l =~ /ps-\d*-(....-..-..T..:..:..[+-]..:..):\s*\d*\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+).*/
+  dt = DateTime.parse($1)
+  # normalize time zone switches
+  puts "#{dt.new_offset(0)},#{$2}"
+end
+' > data-time-rss
+
+cat <<EOS | gnuplot > memusage-y2start-rss.png
+set title "YaST instaler memory (y2start RSS)"
+set datafile separator comma
+set timefmt "%Y-%m-%dT%H:%M:%S+00:00"
+set xdata time
+set xtics rotate
+set terminal png
+set xlabel "wall clock"
+set ylabel "RSS [KiB]"
+set grid
+set key off # no legend for single data set
+plot "data-time-rss" using 1:2 with lines
+EOS
