@@ -115,7 +115,7 @@ module Yast
             Opt(:notify, :keepSorting),
             Header(
               # TRANSLATORS: Table header item
-              _("Current Status"),
+              _("Action"),
               # TRANSLATORS: Table header item
               _("Repository"),
               # TRANSLATORS: Table header item
@@ -129,7 +129,7 @@ module Yast
               PushButton(Id(:edit), _("&Change...")),
               HSpacing(1),
               # TRANSLATORS: Push button
-              PushButton(Id(:toggle), _("&Toggle Status")),
+              PushButton(Id(:toggle), _("&Toggle Action")),
               HStretch()
             )
           )
@@ -140,7 +140,7 @@ module Yast
         ) +
           # TRANSLATORS: help text 2/3
           _(
-            "<p>To enable, remove or disable an URL, click the\n<b>Toggle Status</b> button or double-click the respective table item.</p>"
+            "<p>To enable, remove or disable an URL, click the\n<b>Toggle Action</b> button or double-click the respective table item.</p>"
           ) +
           # TRANSLATORS: help text 3/3
           _("<p>To change the URL, click the <b>Change...</b> button.</p>"),
@@ -151,20 +151,24 @@ module Yast
       nil
     end
 
-    def translated_repo_status(status)
+    # Translated repository action, based on its status
+    #
+    # @param status [Symbol] the repository status
+    # @return [String] the action to perform with a repository
+    def repo_action(status)
       case status
       when :removed
-        # TRANSLATORS: The repository status
-        _("Removed")
-      when :disabled
-        # TRANSLATORS: The repository status
-        _("Disabled")
-      when :enabled
-        # TRANSLATORS: The repository status
-        _("Enabled")
+        # TRANSLATORS: The action to perform with a repository
+        _("Remove")
+      when :disable
+        # TRANSLATORS: The action to perform with a repository
+        _("Disable")
+      when :enable
+        # TRANSLATORS: The action to perform with a repository
+        _("Enable")
       else
-        # TRANSLATORS: The repository status is unknown
-        _("Unknown")
+        # TRANSLATORS: The repository status is unknown, none action will be taken
+        _("None")
       end
     end
 
@@ -174,7 +178,7 @@ module Yast
       items = repo_manager.repositories.map do |r|
         Item(
           Id(r.repo_alias),
-          translated_repo_status(repo_manager.repo_status(r)),
+          repo_action(repo_manager.repo_status(r)),
           r.name,
           repo_manager.repo_url(r)
         )
