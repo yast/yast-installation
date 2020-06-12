@@ -167,8 +167,8 @@ module Yast
         # TRANSLATORS: The action to perform with a repository
         _("Enable")
       else
-        # TRANSLATORS: The repository status is unknown, none action will be taken
-        _("None")
+        # TRANSLATORS: The action to perform with a repository
+        _("Keep")
       end
     end
 
