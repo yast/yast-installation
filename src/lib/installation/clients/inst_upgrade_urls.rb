@@ -31,6 +31,7 @@ Yast.import "Popup"
 Yast.import "Stage"
 Yast.import "UI"
 Yast.import "Wizard"
+Yast.import "String"
 
 module Yast
   # This client allows reusing the old repositories during system upgrade.
@@ -126,10 +127,10 @@ module Yast
           Left(
             HBox(
               # TRANSLATORS: Push button
-              PushButton(Id(:edit), _("&Change URL...")),
+              PushButton(Id(:edit), edit_button_label),
               HSpacing(1),
               # TRANSLATORS: Push button
-              PushButton(Id(:toggle), _("&Toggle Action")),
+              PushButton(Id(:toggle), toggle_button_label),
               HStretch()
             )
           )
@@ -161,6 +162,22 @@ module Yast
         # TRANSLATORS: The action to perform with a repository
         _("Keep")
       end
+    end
+
+    # Returns the label for the toggle button
+    #
+    # @return [String]
+    def toggle_button_label
+      # TRANSLATORS: the "Toggle Action" button label
+      _("&Toggle Action")
+    end
+
+    # Returns the label for the change url button
+    #
+    # @return [String]
+    def edit_button_label
+      # TRANSLATORS: the "Change URL" button label
+      _("&Change URL...")
     end
 
     def refresh_dialog
@@ -300,18 +317,16 @@ module Yast
         # TRANSLATORS: help text 1/3
         _("<p>Here you see all software repositories found on the system you are upgrading. " \
           "Enable the ones you want to include in the upgrade process.</p>"),
-        # TRANSLATORS: help text 2/3, %{change_action} is replaced by the button label
+        # TRANSLATORS: help text 2/3, %{toggle_action} is replaced by the button label
         format(
-          _("<p>To enable, remove or disable an URL, click the <b>%{change_action}</b> button " \
+          _("<p>To enable, remove or disable an URL, click the <b>%{toggle_action}</b> button " \
             "or double-click the respective table item.</p>"),
-          # TRANSLATORS: the "Toggle Action" button label
-          change_action: _("Toggle Action")
+          toggle_action: Yast::String.RemoveShortcut(toggle_button_label)
         ),
         # TRANSLATORS: help text 3/3, %{change_url} is replaced by the button label
         format(
           _("<p>To change the URL, click the <b>%{change_url}</b> button.</p>"),
-          # TRANSLATORS: the "Change URL" button label
-          change_url: _("Change URL...")
+          change_url: Yast::String.RemoveShortcut(edit_button_label)
         )
       ].join
     end
