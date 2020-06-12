@@ -20,9 +20,10 @@ memusage_ps() {
 I=0
 while true; do
   I=$((I + 1))
-  ZI=$(printf %04d $I)
-  LOG=$LOGDIR/ps-$ZI-$(date -Iseconds)
-  memusage_ps > "$LOG"
+  I_TIME=$(printf %04d $I)-$(date -Iseconds)
+  free -k     > "$LOGDIR/free-$I_TIME"
+  df -k /     > "$LOGDIR/df-$I_TIME"
+  memusage_ps > "$LOGDIR/ps-$I_TIME"
 
   sleep 5
 done
