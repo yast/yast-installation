@@ -126,7 +126,7 @@ module Yast
           Left(
             HBox(
               # TRANSLATORS: Push button
-              PushButton(Id(:edit), _("&Change...")),
+              PushButton(Id(:edit), _("&Change URL...")),
               HSpacing(1),
               # TRANSLATORS: Push button
               PushButton(Id(:toggle), _("&Toggle Action")),
@@ -143,7 +143,7 @@ module Yast
             "<p>To enable, remove or disable an URL, click the\n<b>Toggle Action</b> button or double-click the respective table item.</p>"
           ) +
           # TRANSLATORS: help text 3/3
-          _("<p>To change the URL, click the <b>Change...</b> button.</p>"),
+          _("<p>To change the URL, click the <b>Change URL...</b> button.</p>"),
         true,
         true
       )
