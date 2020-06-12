@@ -134,16 +134,7 @@ module Yast
             )
           )
         ),
-        # TRANSLATORS: help text 1/3
-        _(
-          "<p>Here you see all software repositories found\non the system you are upgrading. Enable the ones you want to include in the upgrade process.</p>"
-        ) +
-          # TRANSLATORS: help text 2/3
-          _(
-            "<p>To enable, remove or disable an URL, click the\n<b>Toggle Action</b> button or double-click the respective table item.</p>"
-          ) +
-          # TRANSLATORS: help text 3/3
-          _("<p>To change the URL, click the <b>Change URL...</b> button.</p>"),
+        help_text,
         true,
         true
       )
@@ -299,6 +290,30 @@ module Yast
     # @return [Boolean] `true` if running in the test mode, `false` otherwise
     def test?
       ENV["YAST_TEST"] == "1"
+    end
+
+    # Returns the help text for the dialog
+    #
+    # @return [String]
+    def help_text
+      [
+        # TRANSLATORS: help text 1/3
+        _("<p>Here you see all software repositories found on the system you are upgrading. " \
+          "Enable the ones you want to include in the upgrade process.</p>"),
+        # TRANSLATORS: help text 2/3, %{change_action} is replaced by the button label
+        format(
+          _("<p>To enable, remove or disable an URL, click the <b>%{change_action}</b> button " \
+            "or double-click the respective table item.</p>"),
+          # TRANSLATORS: the "Toggle Action" button label
+          change_action: _("Toggle Action")
+        ),
+        # TRANSLATORS: help text 3/3, %{change_url} is replaced by the button label
+        format(
+          _("<p>To change the URL, click the <b>%{change_url}</b> button.</p>"),
+          # TRANSLATORS: the "Change URL" button label
+          change_url: _("Change URL...")
+        )
+      ].join
     end
   end
 end
