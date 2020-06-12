@@ -14,7 +14,7 @@ mkdir -p $LOGDIR
 echo >"$LOGDIR"/README "To interpret this data see https://github.com/yast/yast-installation/blob/master/FIXME"
 
 memusage_ps() {
-    ps -e -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,args
+    ps -e -H -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,ppid,args
 }
 
 I=0
