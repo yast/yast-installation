@@ -32,8 +32,8 @@ describe ::Installation::SSHImportAutoClient do
           importer.add_config(fixtures_dir("root1"), "dev")
           expect(subject.run).to eq(
             "copy_config" => false,
-            "device" => "dev",
-            "import" => true
+            "device"      => "dev",
+            "import"      => true
           )
         end
       end
