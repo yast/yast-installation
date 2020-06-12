@@ -107,8 +107,8 @@ module Installation
     # That's are default entries.
     def export
       ret = {}
+      # Taking values from AutoYast configuration module, otherwise do not export (bsc#1172749)
       if Mode.config
-        # Taking values from AutoYast configuration module
         if ssh_importer.device && !ssh_importer.device.empty?
           ret["import"] = true
           ret["copy_config"] = ssh_importer.copy_config
@@ -119,13 +119,6 @@ module Installation
           ret["import"] = false
           ret["copy_config"] = false
         end
-      else
-        # Taking default values
-        ret = { "import" => true, "copy_config" => false }
-        # Device will not be set because it is optional and the
-        # most-recently-accessed device (biggest keys_atime)
-        # will be used for.
-        # ret["device"] = device
       end
       ret
     end
