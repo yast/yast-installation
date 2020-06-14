@@ -7,8 +7,8 @@ case "$1" in
         ;;
 esac
 # default value
-: ${LOGDIR=./memusage}
-mkdir -p $LOGDIR
+: "${LOGDIR=./memusage}"
+mkdir -p "$LOGDIR"
 
 # FIXME: actual description
 echo >"$LOGDIR"/README "To interpret this data see https://github.com/yast/yast-installation/blob/master/FIXME"
@@ -21,9 +21,19 @@ I=0
 while true; do
   I=$((I + 1))
   I_TIME=$(printf %04d $I)-$(date -Iseconds)
-  free -k     > "$LOGDIR/free-$I_TIME"
-  df -k /     > "$LOGDIR/df-$I_TIME"
-  memusage_ps > "$LOGDIR/ps-$I_TIME"
+
+  {
+      echo "### df-$I_TIME"
+      df -k /
+  } | gzip -c >> "$LOGDIR/archive.gzgz"
+  {
+      echo "### free-$I_TIME"
+      free -k
+  } | gzip -c >> "$LOGDIR/archive.gzgz"
+  {
+      echo "### ps-$I_TIME"
+      memusage_ps
+  } | gzip -c >> "$LOGDIR/archive.gzgz"
 
   sleep 5
 done

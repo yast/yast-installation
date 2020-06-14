@@ -1,0 +1,117 @@
+#!/usr/bin/ruby
+# memusage-archive-parse
+# FIXME: this does not need to live in yast-installation, move it to devtools
+#
+# memusage/archive.gzgz is a bundle of raw data optimized to minimize
+# 1. effort collecting
+# 2. space on (RAM)disk
+# 3. time/space compressing for (2)
+#
+# The resulting design is
+# - A time series of records in varying line-oriented formats
+# - The records are individually gziped, then concatenated
+#   (thus the .gzgz extension)
+# - Each record starts with a "### HEADER\n" header where
+#   HEADER is TAG-COUNTER-ISOTIMESTAMP, eg. df-0001-2020-06-13T22:46:58+02:00
+
+require "csv"
+require "date"
+require "shellwords"
+
+class GzgzArchive
+  def initialize(filename)
+    @filename = filename
+  end
+
+  def each(&block)
+    IO.popen("zcat #{@filename.shellescape}") do |gz|
+      header = nil
+      data = ""
+
+      loop do
+        l = gz.eof? ? "" : gz.readline
+        if l.empty?
+          raise "No header found before gzgz data" if header.nil?
+          block.call(header, data)
+          break
+        elsif l =~ /\A### (.*)\n\z/
+          block.call(header, data) unless header.nil?
+          header = $1
+          data = ""
+        else
+          data << l
+        end
+      end
+    end
+  end
+end
+
+class MemusageArchive
+  def initialize(filename)
+    @filename = filename
+  end
+  
+  def parse
+    g = GzgzArchive.new(@filename)
+    g.each do |header, data|
+      tag, counter_s, dt_s = header.split("-", 3)
+      counter = counter_s.to_i
+      # normalize time zone switches
+      dt = DateTime.parse(dt_s).new_offset(0)
+
+      public_send("handle_#{tag}", counter, dt, data)
+    end
+  end
+end
+
+class MemusageCsv < MemusageArchive
+  def write_csv(csv_filename)
+    CSV.open(csv_filename, "w") do |csv|
+      @csv = csv
+      csv << [
+        "disk_total_k", "disk_used_k", "disk_free_k",
+        "mem_total_k", "mem_used_k", "mem_free_k",
+        "swap_total_k", "swap_used_k", "swap_free_k",
+        "rss",
+        "datetime"
+      ]
+      @row = []
+      parse
+    end
+  end
+
+  #HACK: assuming "df", "free", "ps" order!
+
+  # "df" and "free" happen to produce similar output
+  def parse_total_used_free(line)
+    _label, total_k_s, used_k_s, free_k_s, *_rest = line.split
+    [total_k_s, used_k_s, free_k_s].map(&:to_i)
+  end
+
+  def handle_df(counter, dt, data)
+    @row.concat parse_total_used_free(data.lines[1])
+  end
+
+  def handle_free(counter, dt, data)
+    # mem, swap
+    @row.concat parse_total_used_free(data.lines[1])
+    @row.concat parse_total_used_free(data.lines[2])
+  end
+
+  def handle_ps(counter, dt, data)
+    data.each_line do |l|
+      cols = l.split(" ", 9)
+      if cols[8].include? "y2start"
+        @row << cols[5].to_i # RSS
+        break
+      end
+    end
+
+    @row << dt
+    @csv << @row
+    @row = []
+  end
+end
+
+m = MemusageCsv.new("archive.gzgz")
+m.write_csv("memusage.csv")

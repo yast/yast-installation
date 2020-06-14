@@ -1,6 +1,7 @@
 #!/bin/bash
 # memusage-plot
 # Plot the memory usage data collected by memusage-collect
+# FIXME: does not parse archive.gzgz, amend this!
 # FIXME: this does not need to live in yast-installation, move it to devtools
 #
 # Requirements:
