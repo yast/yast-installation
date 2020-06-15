@@ -72,7 +72,7 @@ class MemusageCsv < MemusageArchive
         "disk_total_k", "disk_used_k", "disk_free_k",
         "mem_total_k", "mem_used_k", "mem_free_k",
         "swap_total_k", "swap_used_k", "swap_free_k",
-        "rss",
+        "rss", "rss_all",
         "datetime"
       ]
       @row = []
@@ -98,13 +98,41 @@ class MemusageCsv < MemusageArchive
     @row.concat parse_total_used_free(data.lines[2])
   end
 
+  def direct_children_of(processes, parent)
+    r = processes.find_all { |p| p[:PPID] == parent[:PID] }
+    # puts parent[:PID] + "=>" + r.map { |p| p[:PID] }.join(" ")
+    r
+  end
+
+  def descendants_of(processes, parent)
+    result = [parent]
+    direct_children_of(processes, parent).map do |ch|
+      ch_descendants = descendants_of(processes, ch)
+      result.concat(ch_descendants)
+    end
+    result
+  end
+
   def handle_ps(counter, dt, data)
-    data.each_line do |l|
-      cols = l.split(" ", 9)
-      if cols[8].include? "y2start"
-        @row << cols[5].to_i # RSS
-        break
+    processes = data.lines.map { |l| l.chomp.split(" ", 9) }
+    headings = processes.shift
+    processes.map! do |cols|
+      headings.zip(cols).each_with_object({}) do |(key, value), hash|
+        hash[key.to_sym] = value
       end
+    end
+
+    y = processes.find { |p| p[:COMMAND].include? "y2start" }
+    if !y
+      @row << 0
+      @row << 0
+    else
+      @row << y[:RSS]
+
+      # array of processes that are y2start or its descendants
+      yy = descendants_of(processes, y)
+      sizes = yy.map { |p| p[:RSS].to_i}
+      @row << sizes.reduce(0, &:+)
     end
 
     @row << dt

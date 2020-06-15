@@ -3,37 +3,24 @@
 # Plot the memory usage data collected by memusage-collect
 # FIXME: does not parse archive.gzgz, amend this!
 # FIXME: this does not need to live in yast-installation, move it to devtools
-#
-# Requirements:
-#   zypper install gnuplot
-#
-# Usage:
-# (cd /tmp; tar xvf $HOME/Downloads/yast-installation-logs.tar.xz YaST2/memusage)
-# cd /tmp/YaST2/memusage
-# memusage-plot
-
-# Bug: the simple "grep /y2start" will catch also unwanted y2start children,
-# producing "earthquakes" on the graph. Fix by finding the lowest PID.
-grep /y2start ps-* | ruby -r date -e '
-$stdin.each_line do |l|
-  #                                              pid   tty   m1     m2   m3    rss
-  l =~ /ps-\d*-(....-..-..T..:..:..[+-]..:..):\s*\d*\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+).*/
-  dt = DateTime.parse($1)
-  # normalize time zone switches
-  puts "#{dt.new_offset(0)},#{$2}"
-end
-' > data-time-rss
-
-cat <<EOS | gnuplot > memusage-y2start-rss.png
-set title "YaST instaler memory (y2start RSS)"
+cat <<'EOS' | gnuplot > memusage-y2start-rss.png
+set title "YaST instaler memory usage\nSLED15-SP2 GMC"
 set datafile separator comma
 set timefmt "%Y-%m-%dT%H:%M:%S+00:00"
 set xdata time
 set xtics rotate
-set terminal png
-set xlabel "wall clock"
-set ylabel "RSS [KiB]"
+set terminal png size 800, 600
+set xlabel "wall clock (UTC)"
+set ylabel "used [KiB]"
 set grid
-set key off # no legend for single data set
-plot "data-time-rss" using 1:2 with lines
+#set key outside
+set rmargin 16
+set key rmargin
+# disk_total_k,disk_used_k,disk_free_k,mem_total_k,mem_used_k,mem_free_k,swap_total_k,swap_used_k,swap_free_k,rss,rss_all,datetime
+plot "memusage.csv" using 12:10 title "y2start RSS" with lines,\
+                 "" using 12:11 title "y2start+children RSS" with lines,\
+                 "" using 12:2 title "disk" with lines,\
+                 "" using 12:5 title "mem" with lines,\
+                 "" using 12:($2+$5) title "mem+disk" with lines,\
+                 "" using 12:8 title "swap" with lines
 EOS
