@@ -53,8 +53,8 @@ log "\tMaximum log size:  $Y2MAXLOGSIZE kB"
 log "\tMaximum log count: $Y2MAXLOGNUM"
 
 #=============================================
-# 8.3) Start collecting memory usage data
+# 8.3) Start sampling memory usage data
 #---------------------------------------------
-log "\tStart collecting memory usage data..."
-/usr/lib/YaST2/startup/memusage-collect --logdir=/var/log/YaST2/memusage &
+log "\tStart sampling memory usage data..."
+memsample --archive=/var/log/YaST2/memsample.zcat &
 log "\tPID: $!"

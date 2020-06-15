@@ -1,10 +1,11 @@
-#!/bin/bash
-# memusage-plot
-# Plot the memory usage data collected by memusage-collect
-# FIXME: does not parse archive.gzgz, amend this!
-# FIXME: this does not need to live in yast-installation, move it to devtools
-cat <<'EOS' | gnuplot > memusage-y2start-rss.png
-set title "YaST instaler memory usage\nSLED15-SP2 GMC"
+#!/bin/sh
+# memsample-csv-plot
+# Plot the memory usage data collected by memsample
+CSV="${1-memsample.csv}"
+PNG="${2-memsample.png}"
+echo >&2 "Plotting from $CSV to $PNG"
+cat <<EOS | gnuplot > "$PNG"
+set title "YaST instaler memory usage"
 set datafile separator comma
 set timefmt "%Y-%m-%dT%H:%M:%S+00:00"
 set xdata time
@@ -16,11 +17,14 @@ set grid
 #set key outside
 set rmargin 16
 set key rmargin
-# disk_total_k,disk_used_k,disk_free_k,mem_total_k,mem_used_k,mem_free_k,swap_total_k,swap_used_k,swap_free_k,rss,rss_all,datetime
-plot "memusage.csv" using 12:10 title "y2start RSS" with lines,\
+# 1 disk_total_k, 2 disk_used_k, 3 disk_free_k,
+# 4 mem_total_k, 4 mem_used_k, 6 mem_free_k,
+# 7 swap_total_k, 8 swap_used_k, 9 swap_free_k,
+# 10 rss, 11 rss_all, 12 datetime
+plot "${CSV}" using 12:10 title "y2start RSS" with lines,\
                  "" using 12:11 title "y2start+children RSS" with lines,\
                  "" using 12:2 title "disk" with lines,\
                  "" using 12:5 title "mem" with lines,\
-                 "" using 12:($2+$5) title "mem+disk" with lines,\
+                 "" using 12:(\$2+\$5) title "mem+disk" with lines,\
                  "" using 12:8 title "swap" with lines
 EOS

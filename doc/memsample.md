@@ -31,8 +31,8 @@ miss short timed peaks. To detect those, an in-process alternative is needed.
 
 ### Implementation
 
-At installation time, samples are taken by running the commands `free`, `df
-/`, and `ps ...`.
+At installation time, samples are taken by running the commands `free`,
+`df /`, and `ps ...`.
 
 Parsing the significant data from the output of these commands is not done
 yet. Instead, the output is compressed (with gzip) in a crude archive format.
@@ -52,9 +52,8 @@ a successful installation this file will be packaged inside
 `/var/log/YaST2/yast-installation-logs.tar.xz`
 
 1. produce a `memsample.csv`, a CSV version of the collected data with
-`memsample-archive-to-csv memsample.zcat`
+`memsample-archive-to-csv`
 or
 `memsample-archive-to-csv -y yast-installation-logs.tar.xz`
 2. produce `memsample.png` with
-`memsample-csv-plot memsample.csv`
-
+`memsample-csv-plot`

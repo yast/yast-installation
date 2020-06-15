@@ -1,8 +1,7 @@
 #!/usr/bin/ruby
-# memusage-archive-parse
-# FIXME: this does not need to live in yast-installation, move it to devtools
+# memsample-archive-to-csv
 #
-# memusage/archive.gzgz is a bundle of raw data optimized to minimize
+# memsample.zcat is a bundle of raw data optimized to minimize
 # 1. effort collecting
 # 2. space on (RAM)disk
 # 3. time/space compressing for (2)
@@ -10,7 +9,7 @@
 # The resulting design is
 # - A time series of records in varying line-oriented formats
 # - The records are individually gziped, then concatenated
-#   (thus the .gzgz extension)
+#   (thus the .zcat extension)
 # - Each record starts with a "### HEADER\n" header where
 #   HEADER is TAG-COUNTER-ISOTIMESTAMP, eg. df-0001-2020-06-13T22:46:58+02:00
 
@@ -18,7 +17,7 @@ require "csv"
 require "date"
 require "shellwords"
 
-class GzgzArchive
+class ZcatArchive
   def initialize(filename)
     @filename = filename
   end
@@ -31,12 +30,12 @@ class GzgzArchive
       loop do
         l = gz.eof? ? "" : gz.readline
         if l.empty?
-          raise "No header found before gzgz data" if header.nil?
+          raise "No '### ...\\n' header found before data" if header.nil?
           block.call(header, data)
           break
         elsif l =~ /\A### (.*)\n\z/
           block.call(header, data) unless header.nil?
-          header = $1
+          header = Regexp.last_match(1)
           data = ""
         else
           data << l
@@ -46,25 +45,25 @@ class GzgzArchive
   end
 end
 
-class MemusageArchive
+class MemsampleArchive
   def initialize(filename)
     @filename = filename
   end
-  
+
   def parse
-    g = GzgzArchive.new(@filename)
+    g = ZcatArchive.new(@filename)
     g.each do |header, data|
       tag, counter_s, dt_s = header.split("-", 3)
       counter = counter_s.to_i
       # normalize time zone switches
       dt = DateTime.parse(dt_s).new_offset(0)
 
-      public_send("handle_#{tag}", counter, dt, data)
+      public_send("handle_#{tag}", counter, dt, data) if respond_to?("handle_#{tag}")
     end
   end
 end
 
-class MemusageCsv < MemusageArchive
+class MemsampleCsv < MemsampleArchive
   def write_csv(csv_filename)
     CSV.open(csv_filename, "w") do |csv|
       @csv = csv
@@ -80,7 +79,7 @@ class MemusageCsv < MemusageArchive
     end
   end
 
-  #HACK: assuming "df", "free", "ps" order!
+  # HACK: assuming "df", "free", "ps" order!
 
   # "df" and "free" happen to produce similar output
   def parse_total_used_free(line)
@@ -88,11 +87,11 @@ class MemusageCsv < MemusageArchive
     [total_k_s, used_k_s, free_k_s].map(&:to_i)
   end
 
-  def handle_df(counter, dt, data)
+  def handle_df(_counter, _dt, data)
     @row.concat parse_total_used_free(data.lines[1])
   end
 
-  def handle_free(counter, dt, data)
+  def handle_free(_counter, _dt, data)
     # mem, swap
     @row.concat parse_total_used_free(data.lines[1])
     @row.concat parse_total_used_free(data.lines[2])
@@ -113,7 +112,7 @@ class MemusageCsv < MemusageArchive
     result
   end
 
-  def handle_ps(counter, dt, data)
+  def handle_ps(_counter, dt, data)
     processes = data.lines.map { |l| l.chomp.split(" ", 9) }
     headings = processes.shift
     processes.map! do |cols|
@@ -131,7 +130,7 @@ class MemusageCsv < MemusageArchive
 
       # array of processes that are y2start or its descendants
       yy = descendants_of(processes, y)
-      sizes = yy.map { |p| p[:RSS].to_i}
+      sizes = yy.map { |p| p[:RSS].to_i }
       @row << sizes.reduce(0, &:+)
     end
 
@@ -141,5 +140,14 @@ class MemusageCsv < MemusageArchive
   end
 end
 
-m = MemusageCsv.new("archive.gzgz")
-m.write_csv("memusage.csv")
+if ARGV[0] == "-y"
+  puts "Sorry, not implemented"
+  exit 1
+end
+
+zcat = ARGV[0] || "memsample.zcat"
+csv = ARGV[1] || "memsample.csv"
+$stderr.puts "Converting #{zcat} to #{csv}"
+
+m = MemsampleCsv.new(zcat)
+m.write_csv(csv)

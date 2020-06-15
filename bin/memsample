@@ -1,19 +1,35 @@
-#!/bin/bash
+#!/bin/sh
 # Collect data about memory usage of all processes
+DOCS="https://github.com/yast/yast-installation/blob/master/doc/memsample.md"
 
-case "$1" in
-    --logdir=*)
-        LOGDIR=${1#--logdir=}
-        ;;
-esac
-# default value
-: "${LOGDIR=./memusage}"
-mkdir -p "$LOGDIR"
+# save memory by switching to a smaller shell
+if [ -n "$BASH_VERSION" ] && [ -x /bin/dash ]; then
+    exec /bin/dash "$0" "$@"
+fi
 
-# FIXME: actual description
-echo >"$LOGDIR"/README "To interpret this data see https://github.com/yast/yast-installation/blob/master/FIXME"
+while [ -n "$1" ]; do
+    case "$1" in
+        --archive=*)
+            ARCHIVE=${1#--archive=}
+            shift
+            ;;
+        --sleep=*)
+            SLEEP=${1#--sleep=}
+            shift
+    esac
+done
+# default values
+: "${ARCHIVE=./memsample.zcat}"
+: "${SLEEP=5}"
 
-memusage_ps() {
+echo >&2 "Sampling every $SLEEP s to $ARCHIVE"
+
+{
+    echo "### comment-0000-$(date -Iseconds)"
+    echo "See $DOCS"
+} | gzip -c >> "$ARCHIVE"
+
+memsample_ps() {
     ps -e -H -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,ppid,args
 }
 
@@ -25,15 +41,13 @@ while true; do
   {
       echo "### df-$I_TIME"
       df -k /
-  } | gzip -c >> "$LOGDIR/archive.gzgz"
-  {
+
       echo "### free-$I_TIME"
       free -k
-  } | gzip -c >> "$LOGDIR/archive.gzgz"
-  {
-      echo "### ps-$I_TIME"
-      memusage_ps
-  } | gzip -c >> "$LOGDIR/archive.gzgz"
 
-  sleep 5
+      echo "### ps-$I_TIME"
+      memsample_ps
+  } | gzip -c >> "$ARCHIVE"
+
+  sleep "$SLEEP"
 done
