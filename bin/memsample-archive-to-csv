@@ -18,40 +18,38 @@ require "date"
 require "shellwords"
 
 class ZcatArchive
-  def initialize(filename)
-    @filename = filename
+  def initialize(plain_io)
+    @plain_io = plain_io
   end
 
   def each(&block)
-    IO.popen("zcat #{@filename.shellescape}") do |gz|
-      header = nil
-      data = ""
+    header = nil
+    data = ""
 
-      loop do
-        l = gz.eof? ? "" : gz.readline
-        if l.empty?
-          raise "No '### ...\\n' header found before data" if header.nil?
-          block.call(header, data)
-          break
-        elsif l =~ /\A### (.*)\n\z/
-          block.call(header, data) unless header.nil?
-          header = Regexp.last_match(1)
-          data = ""
-        else
-          data << l
-        end
+    loop do
+      l = @plain_io.eof? ? "" : @plain_io.readline
+      if l.empty?
+        raise "No '### ...\\n' header found before data" if header.nil?
+        block.call(header, data)
+        break
+      elsif l =~ /\A### (.*)\n\z/
+        block.call(header, data) unless header.nil?
+        header = Regexp.last_match(1)
+        data = ""
+      else
+        data << l
       end
     end
   end
 end
 
 class MemsampleArchive
-  def initialize(filename)
-    @filename = filename
+  def initialize(plain_io)
+    @plain_io = plain_io
   end
 
   def parse
-    g = ZcatArchive.new(@filename)
+    g = ZcatArchive.new(@plain_io)
     g.each do |header, data|
       tag, counter_s, dt_s = header.split("-", 3)
       counter = counter_s.to_i
@@ -141,13 +139,20 @@ class MemsampleCsv < MemsampleArchive
 end
 
 if ARGV[0] == "-y"
-  puts "Sorry, not implemented"
-  exit 1
+  y2logs_tar = ARGV[1]
+  csv = ARGV[2] || "memsample.csv"
+  $stderr.puts "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
+  cmd = "tar xvf #{y2logs_tar.shellescape} -O YaST2/memsample.zcat | zcat"
+else
+  zcat = ARGV[0] || "memsample.zcat"
+  csv = ARGV[1] || "memsample.csv"
+  $stderr.puts "Converting #{zcat} to #{csv}"
+  cmd = "zcat #{zcat.shellescape}"
 end
 
-zcat = ARGV[0] || "memsample.zcat"
-csv = ARGV[1] || "memsample.csv"
-$stderr.puts "Converting #{zcat} to #{csv}"
-
-m = MemsampleCsv.new(zcat)
-m.write_csv(csv)
+# BTW, Zlib::GzipReader will not work because it ignores concatenated gz files,
+# see also https://github.com/ruby/zlib/pull/13
+IO.popen(cmd) do |plain_io|
+  m = MemsampleCsv.new(plain_io)
+  m.write_csv(csv)
+end
