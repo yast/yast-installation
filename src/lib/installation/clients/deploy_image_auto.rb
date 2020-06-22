@@ -94,11 +94,11 @@ module Yast
       # did configuration changed
       # return boolean
       elsif @func == "GetModified"
-        @ret = true
+        !!self.class.modified
       # set configuration as changed
       # return boolean
       elsif @func == "SetModified"
-        @ret = true
+        self.class.modified = true
       # Reset configuration
       # return map or list
       elsif @func == "Reset"
@@ -422,6 +422,10 @@ module Yast
       deep_copy(@ret)
 
       # EOF
+    end
+
+    class << self
+      attr_accessor :modified
     end
   end
 end
