@@ -57,3 +57,20 @@ or
 `memsample-archive-to-csv -y yast-installation-logs.tar.xz`
 2. produce `memsample.png` with
 `memsample-csv-plot`
+
+### Overhead
+
+Measuring memory takes up more memory.
+
+Process:
+```
+1768 dash
+ 160 +- dash
+3780 |  `- ps
+ 920 `- gzip
+----
+6628 KiB total
+```
+
+Logs: A quick next-next installation of SLES took about 13 minutes,
+that was 150 samples totaling 392 KiB of memsample.zcat

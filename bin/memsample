@@ -3,6 +3,7 @@
 DOCS="https://github.com/yast/yast-installation/blob/master/doc/memsample.md"
 
 # save memory by switching to a smaller shell
+# bash RSS is at least 3 MB per process, dash RSS is around 1 MB
 if [ -n "$BASH_VERSION" ] && [ -x /bin/dash ]; then
     exec /bin/dash "$0" "$@"
 fi
