@@ -381,10 +381,10 @@ module Yast
       # Return configuration data
       # return map or list
       elsif @func == "Export"
-        if Installation.image_installation
-          @ret = { "image_installation" => true }
+        @ret = if Installation.image_installation
+          { "image_installation" => true }
         else
-          @ret = {}
+          {}
         end
       # Write the configuration (prepare images, deploy images)
       elsif @func == "Write"
