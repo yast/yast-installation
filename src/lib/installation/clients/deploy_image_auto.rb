@@ -76,11 +76,6 @@ module Yast
           @ret = true
         else
           @ret = false
-          Installation.image_installation = true
-          Builtins.y2warning(
-            "Key image_installation not defined, using image_installation: %1",
-            Installation.image_installation
-          )
         end
       # Create a summary
       # return string
