@@ -76,11 +76,6 @@ module Yast
           @ret = true
         else
           @ret = false
-          Installation.image_installation = true
-          Builtins.y2warning(
-            "Key image_installation not defined, using image_installation: %1",
-            Installation.image_installation
-          )
         end
       # Create a summary
       # return string
@@ -94,11 +89,11 @@ module Yast
       # did configuration changed
       # return boolean
       elsif @func == "GetModified"
-        @ret = true
+        !!self.class.modified
       # set configuration as changed
       # return boolean
       elsif @func == "SetModified"
-        @ret = true
+        self.class.modified = true
       # Reset configuration
       # return map or list
       elsif @func == "Reset"
@@ -386,7 +381,11 @@ module Yast
       # Return configuration data
       # return map or list
       elsif @func == "Export"
-        @ret = { "image_installation" => Installation.image_installation }
+        @ret = if Installation.image_installation
+          { "image_installation" => true }
+        else
+          {}
+        end
       # Write the configuration (prepare images, deploy images)
       elsif @func == "Write"
         Builtins.y2milestone(
@@ -422,6 +421,10 @@ module Yast
       deep_copy(@ret)
 
       # EOF
+    end
+
+    class << self
+      attr_accessor :modified
     end
   end
 end

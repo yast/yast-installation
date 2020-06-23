@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun 23 10:53:54 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Do not export to autoyast profile image deployment unless
+  requested (bsc#1172552)
+- 4.3.4
+
+-------------------------------------------------------------------
 Fri Jun 12 16:09:32 UTC 2020 - David Diaz <dgonzalez@suse.com>
 
 - Improve the UX of the Previously Used Repositories dialog by
