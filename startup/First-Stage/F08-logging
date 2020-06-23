@@ -55,6 +55,10 @@ log "\tMaximum log count: $Y2MAXLOGNUM"
 #=============================================
 # 8.3) Start sampling memory usage data
 #---------------------------------------------
-log "\tStart sampling memory usage data..."
-memsample --archive=/var/log/YaST2/memsample.zcat &
-log "\tPID: $!"
+log "\tStart sampling memory usage data:"
+if [ "$MEMSAMPLE" = 0 ]; then
+    log "\tdisabled"
+else
+    memsample --sleep="${MEMSAMPLE-5}" --archive=/var/log/YaST2/memsample.zcat &
+    log "\tPID: $!"
+fi

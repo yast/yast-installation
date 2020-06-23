@@ -47,6 +47,10 @@ Gnuplot.
 
 YaST the installer will start `memsample` automatically.
 
+The environment variable `MEMSAMPLE` (set on the boot command line) means the
+interval in seconds between samples. Zero means no sampling at all. The
+default is 5.
+
 Memsample will log to a compressed file `/var/log/YaST2/memsample.zcat`. After
 a successful installation this file will be packaged inside
 `/var/log/YaST2/yast-installation-logs.tar.xz`
