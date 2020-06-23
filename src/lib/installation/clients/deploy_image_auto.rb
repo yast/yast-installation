@@ -381,7 +381,11 @@ module Yast
       # Return configuration data
       # return map or list
       elsif @func == "Export"
-        @ret = { "image_installation" => Installation.image_installation }
+        if Installation.image_installation
+          @ret = { "image_installation" => true }
+        else
+          @ret = {}
+        end
       # Write the configuration (prepare images, deploy images)
       elsif @func == "Write"
         Builtins.y2milestone(
