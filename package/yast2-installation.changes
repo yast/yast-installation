@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Jun 24 09:18:28 UTC 2020 - Martin Vidner <mvidner@suse.com>
+
+- memsample: at install time sample memory consumption each 5s,
+  enabling CSV and PNG reports (bsc#1172139)
+- startup/common/network.sh: remove bashisms to enable
+  switching inst_setup to dash
+- 4.3.5
+
+-------------------------------------------------------------------
 Tue Jun 23 10:53:54 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
 
 - Do not export to autoyast profile image deployment unless
