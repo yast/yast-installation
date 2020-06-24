@@ -1,0 +1,162 @@
+#!/usr/bin/ruby
+# memsample-archive-to-csv
+#
+# memsample.zcat is a bundle of raw data optimized to minimize
+# 1. effort collecting
+# 2. space on (RAM)disk
+# 3. time/space compressing for (2)
+#
+# The resulting design is
+# - A time series of records in varying line-oriented formats
+# - The records are individually gziped, then concatenated
+#   (thus the .zcat extension)
+# - Each record starts with a "### HEADER\n" header where
+#   HEADER is TAG-COUNTER-ISOTIMESTAMP, eg. df-0001-2020-06-13T22:46:58+02:00
+
+require "csv"
+require "date"
+require "shellwords"
+
+class ZcatArchive
+  def initialize(plain_io)
+    @plain_io = plain_io
+  end
+
+  def each(&block)
+    header = nil
+    data = ""
+
+    loop do
+      l = @plain_io.eof? ? "" : @plain_io.readline
+      if l.empty?
+        raise "No '### ...\\n' header found before data" if header.nil?
+        block.call(header, data)
+        break
+      elsif l =~ /\A### (.*)\n\z/
+        block.call(header, data) unless header.nil?
+        header = Regexp.last_match(1)
+        data = ""
+      else
+        data << l
+      end
+    end
+  end
+end
+
+class MemsampleArchive
+  def initialize(plain_io)
+    @plain_io = plain_io
+  end
+
+  def parse
+    g = ZcatArchive.new(@plain_io)
+    g.each do |header, data|
+      tag, counter_s, dt_s = header.split("-", 3)
+      counter = counter_s.to_i
+      # normalize time zone switches
+      dt = DateTime.parse(dt_s).new_offset(0)
+
+      public_send("handle_#{tag}", counter, dt, data) if respond_to?("handle_#{tag}")
+    end
+  end
+end
+
+class MemsampleCsv < MemsampleArchive
+  def write_csv(csv_io)
+    @csv = CSV.new(csv_io)
+    @csv << [
+      "disk_total_k", "disk_used_k", "disk_free_k",
+      "mem_total_k", "mem_used_k", "mem_free_k",
+      "swap_total_k", "swap_used_k", "swap_free_k",
+      "rss", "rss_all",
+      "datetime"
+    ]
+    @row = []
+    parse
+  end
+
+  # HACK: assuming "df", "free", "ps" order!
+
+  # "df" and "free" happen to produce similar output
+  def parse_total_used_free(line)
+    _label, total_k_s, used_k_s, free_k_s, *_rest = line.split
+    [total_k_s, used_k_s, free_k_s].map(&:to_i)
+  end
+
+  def handle_df(_counter, _dt, data)
+    @row.concat parse_total_used_free(data.lines[1])
+  end
+
+  def handle_free(_counter, _dt, data)
+    # mem, swap
+    @row.concat parse_total_used_free(data.lines[1])
+    @row.concat parse_total_used_free(data.lines[2])
+  end
+
+  def direct_children_of(processes, parent)
+    r = processes.find_all { |p| p[:PPID] == parent[:PID] }
+    # puts parent[:PID] + "=>" + r.map { |p| p[:PID] }.join(" ")
+    r
+  end
+
+  def descendants_of(processes, parent)
+    result = [parent]
+    direct_children_of(processes, parent).map do |ch|
+      ch_descendants = descendants_of(processes, ch)
+      result.concat(ch_descendants)
+    end
+    result
+  end
+
+  def handle_ps(_counter, dt, data)
+    processes = data.lines.map { |l| l.chomp.split(" ", 9) }
+    headings = processes.shift
+    processes.map! do |cols|
+      headings.zip(cols).each_with_object({}) do |(key, value), hash|
+        hash[key.to_sym] = value
+      end
+    end
+
+    y = processes.find { |p| p[:COMMAND].include? "y2start" }
+    if !y
+      @row << 0
+      @row << 0
+    else
+      @row << y[:RSS]
+
+      # array of processes that are y2start or its descendants
+      yy = descendants_of(processes, y)
+      sizes = yy.map { |p| p[:RSS].to_i }
+      @row << sizes.reduce(0, &:+)
+    end
+
+    @row << dt
+    @csv << @row
+    @row = []
+  end
+end
+
+# do not execute the script when the file is loaded by some other script
+# e.g. by a test, allow testing parts of the code without executing it as a whole
+if __FILE__ == $PROGRAM_NAME
+  if ARGV[0] == "-y"
+    y2logs_tar = ARGV[1]
+    csv = ARGV[2] || "memsample.csv"
+    $stderr.puts "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
+    cmd = "tar xvf #{y2logs_tar.shellescape} -O YaST2/memsample.zcat | zcat"
+  else
+    zcat = ARGV[0] || "memsample.zcat"
+    csv = ARGV[1] || "memsample.csv"
+    $stderr.puts "Converting #{zcat} to #{csv}"
+    cmd = "zcat #{zcat.shellescape}"
+  end
+
+  # BTW, Zlib::GzipReader will not work because it ignores concatenated gz files,
+  # see also https://github.com/ruby/zlib/pull/13
+  IO.popen(cmd) do |plain_io|
+    File.open(csv, "w") do |csv_io|
+      m = MemsampleCsv.new(plain_io)
+      m.write_csv(csv_io)
+    end
+  end
+end

@@ -48,7 +48,7 @@ if ENV["COVERAGE"]
 
   bindir = File.expand_path("../../bin", __FILE__)
   # For coverage we need to load all ruby files
-  SimpleCov.track_files("{#{srcdir}/**/*.rb,#{bindir}/*}")
+  SimpleCov.track_files("{#{srcdir}/**/*.rb,#{bindir}/{yupdate,memsample-archive-to-csv}}")
 
   # use coveralls for on-line code coverage reporting at Travis CI
   if ENV["TRAVIS"]

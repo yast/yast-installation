@@ -1,0 +1,54 @@
+#!/bin/sh
+# Collect data about memory usage of all processes
+DOCS="https://github.com/yast/yast-installation/blob/master/doc/memsample.md"
+
+# save memory by switching to a smaller shell
+# bash RSS is at least 3 MB per process, dash RSS is around 1 MB
+if [ -n "$BASH_VERSION" ] && [ -x /bin/dash ]; then
+    exec /bin/dash "$0" "$@"
+fi
+
+while [ -n "$1" ]; do
+    case "$1" in
+        --archive=*)
+            ARCHIVE=${1#--archive=}
+            shift
+            ;;
+        --sleep=*)
+            SLEEP=${1#--sleep=}
+            shift
+    esac
+done
+# default values
+: "${ARCHIVE=./memsample.zcat}"
+: "${SLEEP=5}"
+
+echo >&2 "Sampling every $SLEEP s to $ARCHIVE"
+
+{
+    echo "### comment-0000-$(date -Iseconds)"
+    echo "See $DOCS"
+} | gzip -c >> "$ARCHIVE"
+
+memsample_ps() {
+    ps -e -H -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,ppid,args
+}
+
+I=0
+while true; do
+  I=$((I + 1))
+  I_TIME=$(printf %04d $I)-$(date -Iseconds)
+
+  {
+      echo "### df-$I_TIME"
+      df -k /
+
+      echo "### free-$I_TIME"
+      free -k
+
+      echo "### ps-$I_TIME"
+      memsample_ps
+  } | gzip -c >> "$ARCHIVE"
+
+  sleep "$SLEEP"
+done
