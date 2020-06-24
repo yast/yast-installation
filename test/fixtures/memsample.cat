@@ -1,0 +1,232 @@
+### comment-0000-2020-06-23T09:07:09+00:00
+See https://github.com/yast/yast-installation/blob/master/doc/memsample.md
+### df-0001-2020-06-23T09:07:09+00:00
+Filesystem     1K-blocks   Used Available Use% Mounted on
+tmpfs             993988 271400    722588  28% /
+### free-0001-2020-06-23T09:07:09+00:00
+              total        used        free      shared  buff/cache   available
+Mem:         993988      112980      236960      353168      644048      384900
+Swap:             0           0           0
+### ps-0001-2020-06-23T09:07:09+00:00
+  PID TTY           VSZ      DRS      TRS      RSS     SIZE  PPID COMMAND
+    2 ?               0        0        0        0        0     0 [kthreadd]
+    3 ?               0        0        0        0        0     2   [rcu_gp]
+    4 ?               0        0        0        0        0     2   [rcu_par_gp]
+    6 ?               0        0        0        0        0     2   [kworker/0:0H-kblockd]
+    7 ?               0        0        0        0        0     2   [kworker/u2:0-events_unbound]
+    8 ?               0        0        0        0        0     2   [mm_percpu_wq]
+    9 ?               0        0        0        0        0     2   [ksoftirqd/0]
+   10 ?               0        0        0        0        0     2   [rcu_sched]
+   11 ?               0        0        0        0        0     2   [migration/0]
+   12 ?               0        0        0        0        0     2   [idle_inject/0]
+   14 ?               0        0        0        0        0     2   [cpuhp/0]
+   16 ?               0        0        0        0        0     2   [kdevtmpfs]
+   17 ?               0        0        0        0        0     2   [netns]
+   18 ?               0        0        0        0        0     2   [rcu_tasks_kthre]
+   19 ?               0        0        0        0        0     2   [kauditd]
+   20 ?               0        0        0        0        0     2   [khungtaskd]
+   21 ?               0        0        0        0        0     2   [oom_reaper]
+   22 ?               0        0        0        0        0     2   [writeback]
+   23 ?               0        0        0        0        0     2   [kcompactd0]
+   24 ?               0        0        0        0        0     2   [ksmd]
+   25 ?               0        0        0        0        0     2   [khugepaged]
+   27 ?               0        0        0        0        0     2   [kworker/u2:1-events_unbound]
+  123 ?               0        0        0        0        0     2   [kintegrityd]
+  124 ?               0        0        0        0        0     2   [kblockd]
+  125 ?               0        0        0        0        0     2   [blkcg_punt_bio]
+  126 ?               0        0        0        0        0     2   [tpm_dev_wq]
+  127 ?               0        0        0        0        0     2   [edac-poller]
+  128 ?               0        0        0        0        0     2   [devfreq_wq]
+  129 ?               0        0        0        0        0     2   [watchdogd]
+  131 ?               0        0        0        0        0     2   [kworker/0:2-ata_sff]
+  132 ?               0        0        0        0        0     2   [kswapd0]
+  133 ?               0        0        0        0        0     2   [kworker/u3:0]
+  136 ?               0        0        0        0        0     2   [kthrotld]
+  137 ?               0        0        0        0        0     2   [ipv6_addrconf]
+  143 ?               0        0        0        0        0     2   [kstrp]
+  149 ?               0        0        0        0        0     2   [charger_manager]
+  213 ?               0        0        0        0        0     2   [loop0]
+  214 ?               0        0        0        0        0     2   [kworker/0:1H-kblockd]
+  215 ?               0        0        0        0        0     2   [loop1]
+  220 ?               0        0        0        0        0     2   [kaluad]
+  223 ?               0        0        0        0        0     2   [kmpath_rdacd]
+  250 ?               0        0        0        0        0     2   [ata_sff]
+  271 ?               0        0        0        0        0     2   [scsi_eh_0]
+  278 ?               0        0        0        0        0     2   [scsi_tmf_0]
+  279 ?               0        0        0        0        0     2   [scsi_eh_1]
+  286 ?               0        0        0        0        0     2   [scsi_tmf_1]
+  301 ?               0        0        0        0        0     2   [ttm_swap]
+  377 ?               0        0        0        0        0     2   [rpciod]
+  378 ?               0        0        0        0        0     2   [xprtiod]
+  684 ?               0        0        0        0        0     2   [nfsiod]
+  727 ?               0        0        0        0        0     2   [acpi_thermal_pm]
+ 1188 ?               0        0        0        0        0     2   [kmpathd]
+ 1189 ?               0        0        0        0        0     2   [kmpath_handlerd]
+ 2526 ?               0        0        0        0        0     2   [loop2]
+ 2528 ?               0        0        0        0        0     2   [loop3]
+ 2542 ?               0        0        0        0        0     2   [loop4]
+ 2544 ?               0        0        0        0        0     2   [loop5]
+ 2558 ?               0        0        0        0        0     2   [loop6]
+ 2560 ?               0        0        0        0        0     2   [loop7]
+ 2562 ?               0        0        0        0        0     2   [loop8]
+ 2564 ?               0        0        0        0        0     2   [loop9]
+ 3083 ?               0        0        0        0        0     2   [kworker/0:0-ata_sff]
+ 3474 ?               0        0        0        0        0     2   [kworker/0:1-events]
+    1 ?           91656    91327      328    17352    12608     0 /init showopts
+  226 ?           35672    35174      497     4376     1608     1   udevd --daemon
+  362 ?           12148    12133       14     4068     6016     1   /usr/sbin/haveged -w 1024 -v 0
+  383 ?           41416    41201      214     2892      772     1   /bin/dbus-daemon --system
+  385 ?           46420    44385     2034      764      644     1   /usr/sbin/wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -u -B -f /var/log/wpa_supplicant.log
+  388 ?           43808    43793       14     5008     1548     1   /usr/sbin/wickedd --debug mini --log-target stderr:time,pid,ident
+  391 ?           43556    43526       29     3696     1280     1   /usr/lib/wicked/bin/wickedd-auto4 --debug mini --log-target stderr:time,pid,ident
+  393 ?           43560    43531       28     4708     1284     1   /usr/lib/wicked/bin/wickedd-dhcp4 --debug mini --log-target stderr:time,pid,ident
+  395 ?           43560    43531       28     4616     1284     1   /usr/lib/wicked/bin/wickedd-dhcp6 --debug mini --log-target stderr:time,pid,ident
+  397 ?           43584    43530       53     4164     1284     1   /usr/sbin/wickedd-nanny --debug mini --log-target stderr:time,pid,ident
+ 1389 tty9        14996    14033      962     3924     1384     1   sh -l
+ 2568 tty2        16604    15641      962     4340     1384     1   bash -l
+ 2569 tty5        16604    15641      962     4384     1384     1   bash -l
+ 2570 tty6        16604    15641      962     4472     1384     1   bash -l
+ 2571 ?           91656    91327      328    10076    12608     1   /init showopts
+ 2572 tty1         8924     8813      110     1788      388  2571     /bin/dash /sbin/inst_setup yast
+ 4529 tty1         4312     4284       27      884      312  2572       sleep 3
+ 2681 ?          337192   336549      642     2784    22800     1   /usr/sbin/rsyslogd
+ 2688 ?            4572     4546       25     1628      572     1   /sbin/klogd -c 1
+ 2691 ?          337952   337806      145     2300    17804     1   /usr/sbin/nscd
+ 2719 ?           64940    64122      817     3784      940     1   /usr/sbin/sshd
+ 2748 ?          124148   123330      817     9560     1268  2719     sshd: root@pts/0
+ 2752 pts/0       18332    17369      962     6168     3112  2748       -bash
+ 3527 pts/0       13596    12633      962     2876      456  2752         /bin/bash /sbin/yast.ssh
+ 3528 pts/0       15680    14717      962     4168      960  3527           /bin/bash /usr/lib/YaST2/startup/YaST2.First-Stage
+ 4625 pts/0        8924     8813      110      928      388  3528             /bin/dash /usr/bin/memsample --archive=/var/log/YaST2/memsample.zcat
+ 4640 pts/0        8924     8813      110      160      388  4625               /bin/dash /usr/bin/memsample --archive=/var/log/YaST2/memsample.zcat
+ 4657 pts/0       34588    34480      107     3720     1220  4640                 ps -e -H -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,ppid,args
+ 4641 pts/0        4552     4477       74      792      504  4625               gzip -c
+ 4655 pts/0       39536    39532        3    17240    14624  3528             /usr/bin/ruby.ruby2.5 /usr/sbin/SUSEConnect --cleanup
+### df-0021-2020-06-23T05:08:52-04:00
+Filesystem     1K-blocks   Used Available Use% Mounted on
+tmpfs             993988 216440    777548  22% /
+### free-0021-2020-06-23T05:08:52-04:00
+              total        used        free      shared  buff/cache   available
+Mem:         993988      247556      285220      298216      461212      305740
+Swap:       1334248           0     1334248
+### ps-0021-2020-06-23T05:08:52-04:00
+  PID TTY           VSZ      DRS      TRS      RSS     SIZE  PPID COMMAND
+    2 ?               0        0        0        0        0     0 [kthreadd]
+    3 ?               0        0        0        0        0     2   [rcu_gp]
+    4 ?               0        0        0        0        0     2   [rcu_par_gp]
+    6 ?               0        0        0        0        0     2   [kworker/0:0H-kblockd]
+    7 ?               0        0        0        0        0     2   [kworker/u2:0-events_unbound]
+    8 ?               0        0        0        0        0     2   [mm_percpu_wq]
+    9 ?               0        0        0        0        0     2   [ksoftirqd/0]
+   10 ?               0        0        0        0        0     2   [rcu_sched]
+   11 ?               0        0        0        0        0     2   [migration/0]
+   12 ?               0        0        0        0        0     2   [idle_inject/0]
+   14 ?               0        0        0        0        0     2   [cpuhp/0]
+   16 ?               0        0        0        0        0     2   [kdevtmpfs]
+   17 ?               0        0        0        0        0     2   [netns]
+   18 ?               0        0        0        0        0     2   [rcu_tasks_kthre]
+   19 ?               0        0        0        0        0     2   [kauditd]
+   20 ?               0        0        0        0        0     2   [khungtaskd]
+   21 ?               0        0        0        0        0     2   [oom_reaper]
+   22 ?               0        0        0        0        0     2   [writeback]
+   23 ?               0        0        0        0        0     2   [kcompactd0]
+   24 ?               0        0        0        0        0     2   [ksmd]
+   25 ?               0        0        0        0        0     2   [khugepaged]
+   27 ?               0        0        0        0        0     2   [kworker/u2:1-btrfs-endio-write]
+  123 ?               0        0        0        0        0     2   [kintegrityd]
+  124 ?               0        0        0        0        0     2   [kblockd]
+  125 ?               0        0        0        0        0     2   [blkcg_punt_bio]
+  126 ?               0        0        0        0        0     2   [tpm_dev_wq]
+  127 ?               0        0        0        0        0     2   [edac-poller]
+  128 ?               0        0        0        0        0     2   [devfreq_wq]
+  129 ?               0        0        0        0        0     2   [watchdogd]
+  131 ?               0        0        0        0        0     2   [kworker/0:2-ata_sff]
+  132 ?               0        0        0        0        0     2   [kswapd0]
+  133 ?               0        0        0        0        0     2   [kworker/u3:0-btrfs-worker-high]
+  136 ?               0        0        0        0        0     2   [kthrotld]
+  137 ?               0        0        0        0        0     2   [ipv6_addrconf]
+  143 ?               0        0        0        0        0     2   [kstrp]
+  149 ?               0        0        0        0        0     2   [charger_manager]
+  214 ?               0        0        0        0        0     2   [kworker/0:1H-kblockd]
+  215 ?               0        0        0        0        0     2   [loop1]
+  220 ?               0        0        0        0        0     2   [kaluad]
+  223 ?               0        0        0        0        0     2   [kmpath_rdacd]
+  250 ?               0        0        0        0        0     2   [ata_sff]
+  271 ?               0        0        0        0        0     2   [scsi_eh_0]
+  278 ?               0        0        0        0        0     2   [scsi_tmf_0]
+  279 ?               0        0        0        0        0     2   [scsi_eh_1]
+  286 ?               0        0        0        0        0     2   [scsi_tmf_1]
+  301 ?               0        0        0        0        0     2   [ttm_swap]
+  377 ?               0        0        0        0        0     2   [rpciod]
+  378 ?               0        0        0        0        0     2   [xprtiod]
+  684 ?               0        0        0        0        0     2   [nfsiod]
+  727 ?               0        0        0        0        0     2   [acpi_thermal_pm]
+ 1188 ?               0        0        0        0        0     2   [kmpathd]
+ 1189 ?               0        0        0        0        0     2   [kmpath_handlerd]
+ 2526 ?               0        0        0        0        0     2   [loop2]
+ 2528 ?               0        0        0        0        0     2   [loop3]
+ 2544 ?               0        0        0        0        0     2   [loop5]
+ 2558 ?               0        0        0        0        0     2   [loop6]
+ 2560 ?               0        0        0        0        0     2   [loop7]
+ 2562 ?               0        0        0        0        0     2   [loop8]
+ 2564 ?               0        0        0        0        0     2   [loop9]
+ 3083 ?               0        0        0        0        0     2   [kworker/0:0-ata_sff]
+ 3474 ?               0        0        0        0        0     2   [kworker/0:1-events]
+ 5163 ?               0        0        0        0        0     2   [kworker/u2:2-events_unbound]
+ 6970 ?               0        0        0        0        0     2   [kworker/u3:1-btrfs-worker-high]
+ 7266 ?               0        0        0        0        0     2   [btrfs-worker]
+ 7268 ?               0        0        0        0        0     2   [btrfs-worker-hi]
+ 7269 ?               0        0        0        0        0     2   [btrfs-delalloc]
+ 7270 ?               0        0        0        0        0     2   [btrfs-flush_del]
+ 7271 ?               0        0        0        0        0     2   [btrfs-cache]
+ 7272 ?               0        0        0        0        0     2   [btrfs-submit]
+ 7273 ?               0        0        0        0        0     2   [btrfs-fixup]
+ 7274 ?               0        0        0        0        0     2   [btrfs-endio]
+ 7275 ?               0        0        0        0        0     2   [btrfs-endio-met]
+ 7276 ?               0        0        0        0        0     2   [btrfs-endio-met]
+ 7277 ?               0        0        0        0        0     2   [btrfs-endio-rai]
+ 7278 ?               0        0        0        0        0     2   [btrfs-endio-rep]
+ 7279 ?               0        0        0        0        0     2   [btrfs-rmw]
+ 7280 ?               0        0        0        0        0     2   [btrfs-endio-wri]
+ 7281 ?               0        0        0        0        0     2   [btrfs-freespace]
+ 7282 ?               0        0        0        0        0     2   [btrfs-delayed-m]
+ 7283 ?               0        0        0        0        0     2   [btrfs-readahead]
+ 7284 ?               0        0        0        0        0     2   [btrfs-qgroup-re]
+ 7285 ?               0        0        0        0        0     2   [btrfs-cleaner]
+ 7286 ?               0        0        0        0        0     2   [btrfs-transacti]
+    1 ?           91656    91327      328    17352    12608     0 /init showopts
+  226 ?           35672    35174      497     4440     1608     1   udevd --daemon
+  362 ?           12148    12133       14     4068     6016     1   /usr/sbin/haveged -w 1024 -v 0
+  383 ?           41416    41201      214     2892      772     1   /bin/dbus-daemon --system
+  385 ?           46420    44385     2034      764      644     1   /usr/sbin/wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -u -B -f /var/log/wpa_supplicant.log
+  388 ?           43808    43793       14     5008     1548     1   /usr/sbin/wickedd --debug mini --log-target stderr:time,pid,ident
+  391 ?           43556    43526       29     3696     1280     1   /usr/lib/wicked/bin/wickedd-auto4 --debug mini --log-target stderr:time,pid,ident
+  393 ?           43560    43531       28     4708     1284     1   /usr/lib/wicked/bin/wickedd-dhcp4 --debug mini --log-target stderr:time,pid,ident
+  395 ?           43560    43531       28     4616     1284     1   /usr/lib/wicked/bin/wickedd-dhcp6 --debug mini --log-target stderr:time,pid,ident
+  397 ?           43584    43530       53     4164     1284     1   /usr/sbin/wickedd-nanny --debug mini --log-target stderr:time,pid,ident
+ 1389 tty9        14996    14033      962     3924     1384     1   sh -l
+ 2568 tty2        16604    15641      962     4340     1384     1   bash -l
+ 2569 tty5        16604    15641      962     4384     1384     1   bash -l
+ 2570 tty6        16604    15641      962     4472     1384     1   bash -l
+ 2571 ?           91656    91327      328    10076    12608     1   /init showopts
+ 2572 tty1         8924     8813      110     1788      388  2571     /bin/dash /sbin/inst_setup yast
+ 7441 tty1         4312     4284       27      816      312  2572       sleep 3
+ 2681 ?          337192   336549      642     2784    22800     1   /usr/sbin/rsyslogd
+ 2688 ?            4572     4546       25     1628      572     1   /sbin/klogd -c 1
+ 2691 ?          403488   403342      145     2300    17936     1   /usr/sbin/nscd
+ 2719 ?           64940    64122      817     3784      940     1   /usr/sbin/sshd
+ 2748 ?          124148   123330      817     9560     1268  2719     sshd: root@pts/0
+ 2752 pts/0       18332    17369      962     6168     3112  2748       -bash
+ 3527 pts/0       13596    12633      962     2876      456  2752         /bin/bash /sbin/yast.ssh
+ 3528 pts/0       15680    14717      962     4168      960  3527           /bin/bash /usr/lib/YaST2/startup/YaST2.First-Stage
+ 4625 pts/0        8924     8813      110     1656      388  3528             /bin/dash /usr/bin/memsample --archive=/var/log/YaST2/memsample.zcat
+ 7444 pts/0        8924     8813      110      160      388  4625               /bin/dash /usr/bin/memsample --archive=/var/log/YaST2/memsample.zcat
+ 7448 pts/0       34588    34480      107     3800     1220  7444                 ps -e -H -o pid,tname,vsize:8,drs:8,trs:8,rss:8,size:8,ppid,args
+ 7445 pts/0        4552     4477       74      920      504  4625               gzip -c
+ 4670 pts/0       14124    13161      962     4024      984  3528             /bin/bash /usr/lib/YaST2/startup/YaST2.call installation initial
+ 5143 pts/0      528116   528112        3   179772   149492  4670               /usr/bin/ruby.ruby2.5 --encoding=utf-8 /usr/lib/YaST2/bin/y2start installation --arg initial ncurses
+ 7435 pts/0           0        0        0        0        0  5143                 [systemd-inhibit] <defunct>
+ 7450 pts/0       45516    45504       11     2280      488  5143                 rpm --root /mnt --dbpath /var/lib/rpm -U --percent --noglob --force --nodeps -- /mnt/var/cache/zypp/packages/Basesystem-Module_15.2-0/Module-Basesystem/noarch/boost-license1_66_0-1.66.0-10.1.noarch.rpm
+ 5301 ?          167624   167244      379      744    17108     1   gpg-agent --homedir /var/tmp/zypp.H3ltOz/zypp-trusted-krbAc7e4 --use-standard-socket --daemon
+ 5355 ?          167624   167244      379     2680    17108     1   gpg-agent --homedir /var/tmp/zypp.H3ltOz/zypp-general-krCGfLFy --use-standard-socket --daemon
+ 6013 ?           93892    93512      379      792     8784     1   gpg-agent --homedir /var/tmp/zypp.H3ltOz/PublicKey --use-standard-socket --daemon

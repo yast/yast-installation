@@ -62,19 +62,17 @@ class MemsampleArchive
 end
 
 class MemsampleCsv < MemsampleArchive
-  def write_csv(csv_filename)
-    CSV.open(csv_filename, "w") do |csv|
-      @csv = csv
-      csv << [
-        "disk_total_k", "disk_used_k", "disk_free_k",
-        "mem_total_k", "mem_used_k", "mem_free_k",
-        "swap_total_k", "swap_used_k", "swap_free_k",
-        "rss", "rss_all",
-        "datetime"
-      ]
-      @row = []
-      parse
-    end
+  def write_csv(csv_io)
+    @csv = CSV.new(csv_io)
+    @csv << [
+      "disk_total_k", "disk_used_k", "disk_free_k",
+      "mem_total_k", "mem_used_k", "mem_free_k",
+      "swap_total_k", "swap_used_k", "swap_free_k",
+      "rss", "rss_all",
+      "datetime"
+    ]
+    @row = []
+    parse
   end
 
   # HACK: assuming "df", "free", "ps" order!
@@ -138,21 +136,27 @@ class MemsampleCsv < MemsampleArchive
   end
 end
 
-if ARGV[0] == "-y"
-  y2logs_tar = ARGV[1]
-  csv = ARGV[2] || "memsample.csv"
-  $stderr.puts "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
-  cmd = "tar xvf #{y2logs_tar.shellescape} -O YaST2/memsample.zcat | zcat"
-else
-  zcat = ARGV[0] || "memsample.zcat"
-  csv = ARGV[1] || "memsample.csv"
-  $stderr.puts "Converting #{zcat} to #{csv}"
-  cmd = "zcat #{zcat.shellescape}"
-end
+# do not execute the script when the file is loaded by some other script
+# e.g. by a test, allow testing parts of the code without executing it as a whole
+if __FILE__ == $PROGRAM_NAME
+  if ARGV[0] == "-y"
+    y2logs_tar = ARGV[1]
+    csv = ARGV[2] || "memsample.csv"
+    $stderr.puts "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
+    cmd = "tar xvf #{y2logs_tar.shellescape} -O YaST2/memsample.zcat | zcat"
+  else
+    zcat = ARGV[0] || "memsample.zcat"
+    csv = ARGV[1] || "memsample.csv"
+    $stderr.puts "Converting #{zcat} to #{csv}"
+    cmd = "zcat #{zcat.shellescape}"
+  end
 
-# BTW, Zlib::GzipReader will not work because it ignores concatenated gz files,
-# see also https://github.com/ruby/zlib/pull/13
-IO.popen(cmd) do |plain_io|
-  m = MemsampleCsv.new(plain_io)
-  m.write_csv(csv)
+  # BTW, Zlib::GzipReader will not work because it ignores concatenated gz files,
+  # see also https://github.com/ruby/zlib/pull/13
+  IO.popen(cmd) do |plain_io|
+    File.open(csv, "w") do |csv_io|
+      m = MemsampleCsv.new(plain_io)
+      m.write_csv(csv_io)
+    end
+  end
 end
