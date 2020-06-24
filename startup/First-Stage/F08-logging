@@ -56,6 +56,9 @@ log "\tMaximum log count: $Y2MAXLOGNUM"
 # 8.3) Start sampling memory usage data
 #---------------------------------------------
 log "\tStart sampling memory usage data:"
+for WORD in ${Cmdline?}; do
+    case $WORD in MEMSAMPLE=*) MEMSAMPLE=${WORD#MEMSAMPLE=};; esac
+done
 if [ "$MEMSAMPLE" = 0 ]; then
     log "\tdisabled"
 else
