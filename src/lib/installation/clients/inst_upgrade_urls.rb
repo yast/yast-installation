@@ -31,6 +31,7 @@ Yast.import "Popup"
 Yast.import "Stage"
 Yast.import "UI"
 Yast.import "Wizard"
+Yast.import "String"
 
 module Yast
   # This client allows reusing the old repositories during system upgrade.
@@ -115,7 +116,7 @@ module Yast
             Opt(:notify, :keepSorting),
             Header(
               # TRANSLATORS: Table header item
-              _("Current Status"),
+              _("Action"),
               # TRANSLATORS: Table header item
               _("Repository"),
               # TRANSLATORS: Table header item
@@ -126,24 +127,15 @@ module Yast
           Left(
             HBox(
               # TRANSLATORS: Push button
-              PushButton(Id(:edit), _("&Change...")),
+              PushButton(Id(:edit), edit_button_label),
               HSpacing(1),
               # TRANSLATORS: Push button
-              PushButton(Id(:toggle), _("&Toggle Status")),
+              PushButton(Id(:toggle), toggle_button_label),
               HStretch()
             )
           )
         ),
-        # TRANSLATORS: help text 1/3
-        _(
-          "<p>Here you see all software repositories found\non the system you are upgrading. Enable the ones you want to include in the upgrade process.</p>"
-        ) +
-          # TRANSLATORS: help text 2/3
-          _(
-            "<p>To enable, remove or disable an URL, click the\n<b>Toggle Status</b> button or double-click the respective table item.</p>"
-          ) +
-          # TRANSLATORS: help text 3/3
-          _("<p>To change the URL, click the <b>Change...</b> button.</p>"),
+        help_text,
         true,
         true
       )
@@ -151,21 +143,41 @@ module Yast
       nil
     end
 
-    def translated_repo_status(status)
+    # Translated repository action, based on its status
+    #
+    # @param status [Symbol] the repository status
+    # @return [String] the action to perform with a repository
+    def repo_action(status)
       case status
       when :removed
-        # TRANSLATORS: The repository status
-        _("Removed")
-      when :disabled
-        # TRANSLATORS: The repository status
-        _("Disabled")
-      when :enabled
-        # TRANSLATORS: The repository status
-        _("Enabled")
+        # TRANSLATORS: The action to perform with a repository
+        _("Remove")
+      when :disable
+        # TRANSLATORS: The action to perform with a repository
+        _("Disable")
+      when :enable
+        # TRANSLATORS: The action to perform with a repository
+        _("Enable")
       else
-        # TRANSLATORS: The repository status is unknown
-        _("Unknown")
+        # TRANSLATORS: The action to perform with a repository
+        _("Keep")
       end
+    end
+
+    # Returns the label for the toggle button
+    #
+    # @return [String]
+    def toggle_button_label
+      # TRANSLATORS: the "Toggle Action" button label
+      _("&Toggle Action")
+    end
+
+    # Returns the label for the change url button
+    #
+    # @return [String]
+    def edit_button_label
+      # TRANSLATORS: the "Change URL" button label
+      _("&Change URL...")
     end
 
     def refresh_dialog
@@ -174,7 +186,7 @@ module Yast
       items = repo_manager.repositories.map do |r|
         Item(
           Id(r.repo_alias),
-          translated_repo_status(repo_manager.repo_status(r)),
+          repo_action(repo_manager.repo_status(r)),
           r.name,
           repo_manager.repo_url(r)
         )
@@ -295,6 +307,28 @@ module Yast
     # @return [Boolean] `true` if running in the test mode, `false` otherwise
     def test?
       ENV["YAST_TEST"] == "1"
+    end
+
+    # Returns the help text for the dialog
+    #
+    # @return [String]
+    def help_text
+      [
+        # TRANSLATORS: help text 1/3
+        _("<p>Here you see all software repositories found on the system you are upgrading. " \
+          "Enable the ones you want to include in the upgrade process.</p>"),
+        # TRANSLATORS: help text 2/3, %{toggle_action} is replaced by the button label
+        format(
+          _("<p>To enable, remove or disable an URL, click the <b>%{toggle_action}</b> button " \
+            "or double-click the respective table item.</p>"),
+          toggle_action: Yast::String.RemoveShortcut(toggle_button_label)
+        ),
+        # TRANSLATORS: help text 3/3, %{change_url} is replaced by the button label
+        format(
+          _("<p>To change the URL, click the <b>%{change_url}</b> button.</p>"),
+          change_url: Yast::String.RemoveShortcut(edit_button_label)
+        )
+      ].join
     end
   end
 end

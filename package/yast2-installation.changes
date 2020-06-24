@@ -1,4 +1,31 @@
 -------------------------------------------------------------------
+Tue Jun 23 10:53:54 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Do not export to autoyast profile image deployment unless
+  requested (bsc#1172552)
+- 4.3.4
+
+-------------------------------------------------------------------
+Fri Jun 12 16:09:32 UTC 2020 - David Diaz <dgonzalez@suse.com>
+
+- Improve the UX of the Previously Used Repositories dialog by
+  using more accurate labels.
+
+-------------------------------------------------------------------
+
+Fri Jun 12 15:03:11 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Remove ssh_import section from AY when cloning (bsc#1172749)
+- 4.3.3
+
+-------------------------------------------------------------------
+Wed Jun 10 12:43:33 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- Fixed yupdate script to correctly install the needed Ruby gems
+  (bsc#1172793)
+- 4.3.2
+
+-------------------------------------------------------------------
 Tue May 12 08:39:02 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
 
 - Autoyast schema: Allow optional types for string and map objects

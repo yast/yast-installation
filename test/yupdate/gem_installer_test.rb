@@ -16,6 +16,8 @@ describe YUpdate::GemInstaller do
       expect(subject).to receive(:system).with(
         "gem",
         "install",
+        "--bindir",
+        "/usr/bin",
         "--no-document",
         "--no-format-exec",
         "yast-rake"

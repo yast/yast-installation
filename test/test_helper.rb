@@ -28,6 +28,7 @@ end
 stub_module("AddOnProduct")
 stub_module("AutoinstConfig")
 stub_module("AutoinstGeneral")
+stub_module("AutoinstSoftware")
 stub_module("Console")
 stub_module("InstURL")
 stub_module("Keyboard")

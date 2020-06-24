@@ -25,8 +25,23 @@ describe ::Installation::SSHImportAutoClient do
     context "Export" do
       let(:func) { "Export" }
 
-      it "returns a hash with default configuration" do
-        expect(subject.run).to eq("copy_config" => false, "import" => true)
+      context "config mode" do
+        let(:mode) { "autoinst_config" }
+
+        it "returns a hash with configuration" do
+          importer.add_config(fixtures_dir("root1"), "dev")
+          expect(subject.run).to eq(
+            "copy_config" => false,
+            "device"      => "dev",
+            "import"      => true
+          )
+        end
+      end
+
+      context "other modes" do
+        it "returns an empty hash" do
+          expect(subject.run).to eq({})
+        end
       end
     end
 
