@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 # encoding: utf-8
 
-# Copyright (c) [2018-2019] SUSE LLC
+# Copyright (c) [2018-2020] SUSE LLC
 #
 # All Rights Reserved.
 #
@@ -123,6 +123,18 @@ describe Yast::CopyFilesFinishClient do
       expect(::FileUtils).to receive(:cp).with("/etc/multipath.conf", "/mnt/etc/multipath.conf")
       expect(::FileUtils).to receive(:cp).with("/etc/multipath/bindings", "/mnt/etc/multipath/bindings")
       expect(::FileUtils).to receive(:cp).with("/etc/multipath/wwids", "/mnt/etc/multipath/wwids")
+
+      subject.write
+    end
+
+    it "copies NVMe config files in installation only" do
+      allow(Yast::Mode).to receive(:installation).and_return(true)
+      allow(::File).to receive(:exist?).with(/^\/etc\/nvme/).and_return(true)
+      allow(::File).to receive(:exist?).with(/^\/mnt\/etc\/nvme/).and_return(false)
+
+      expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/nvme")
+      expect(::FileUtils).to receive(:cp).with("/etc/nvme/hostnqn", "/mnt/etc/nvme/hostnqn")
+      expect(::FileUtils).to receive(:cp).with("/etc/nvme/hostid", "/mnt/etc/nvme/hostid")
 
       subject.write
     end

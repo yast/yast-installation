@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# Copyright (c) [2006-2019] SUSE LLC
+# Copyright (c) [2006-2020] SUSE LLC
 #
 # All Rights Reserved.
 #
@@ -73,6 +73,7 @@ module Yast
       copy_hardware_status
       copy_vnc
       copy_multipath
+      copy_nvme
       # Copy cio_ignore whitelist (bsc#1095033)
       copy_active_devices
 
@@ -269,6 +270,29 @@ module Yast
         next unless File.exist?(config_file)
 
         log.info "Copying multipath config file: '#{config_file}'"
+        target_path = File.join(Installation.destdir, config_file)
+        target_dir = File.dirname(target_path)
+        ::FileUtils.mkdir_p(target_dir) unless File.exist?(target_dir)
+        ::FileUtils.cp(config_file, target_path)
+      end
+    end
+
+    NVME_CONFIG_FILES = [
+      "/etc/nvme/hostnqn",
+      "/etc/nvme/hostid"
+    ].freeze
+
+    private_constant :NVME_CONFIG_FILES
+
+    def copy_nvme
+      # Only in install, as update should keep its config
+      return unless Mode.installation
+
+      # Copy NVMe config files (bsc #1172853)
+      NVME_CONFIG_FILES.each do |config_file|
+        next unless File.exist?(config_file)
+
+        log.info "Copying NVMe config file: '#{config_file}'"
         target_path = File.join(Installation.destdir, config_file)
         target_dir = File.dirname(target_path)
         ::FileUtils.mkdir_p(target_dir) unless File.exist?(target_dir)
