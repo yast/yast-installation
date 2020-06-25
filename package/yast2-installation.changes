@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 25 13:24:45 UTC 2020 - Martin Vidner <mvidner@suse.com>
+
+- Fix "Cmdline: parameter not set" for virt-install (bsc#1172139)
+- 4.3.7
+
+-------------------------------------------------------------------
 Thu Jun 25 11:07:53 CEST 2020 - aschnell@suse.com
 
 - copy NVMe hostnqn and hostid from installation system to target
