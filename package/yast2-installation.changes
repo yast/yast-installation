@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 25 11:07:53 CEST 2020 - aschnell@suse.com
+
+- copy NVMe hostnqn and hostid from installation system to target
+  system during installation (bsc#1172853)
+- 4.3.6
+
+-------------------------------------------------------------------
 Wed Jun 24 09:18:28 UTC 2020 - Martin Vidner <mvidner@suse.com>
 
 - memsample: at install time sample memory consumption each 5s,
