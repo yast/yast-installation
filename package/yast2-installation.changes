@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 25 11:07:53 CEST 2020 - aschnell@suse.com
+
+- copy NVMe hostnqn and hostid from installation system to target
+  system during installation (bsc#1172853)
+- 4.2.43
+
+-------------------------------------------------------------------
 Tue May  5 15:54:11 UTC 2020 - David Diaz <dgonzalez@suse.com>
 
 - Restore missing icons for ssh import and image deployment
