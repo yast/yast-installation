@@ -105,8 +105,8 @@ module Installation
     def update_url_from_profile
       return nil unless Yast::Mode.auto
 
-      profile = Yast::Profile.current
-      profile_url = profile.fetch("general", {})["self_update_url"]
+      Yast.import "AutoinstGeneral"
+      profile_url = Yast::AutoinstGeneral.self_update_url
 
       get_url_from(profile_url)
     end
