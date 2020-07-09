@@ -34,12 +34,12 @@ module Yast
     def main
       textdomain "installation"
 
+      Yast.import "AutoinstGeneral"
       Yast.import "Linuxrc"
       Yast.import "AutoinstConfig"
       Yast.import "Stage"
       Yast.import "Mode"
       Yast.import "ProductControl"
-      Yast.import "Profile"
       Yast.import "SCR"
     end
 
@@ -149,8 +149,7 @@ module Yast
 
       return false unless Mode.auto
 
-      profile = Profile.current
-      in_profile = profile.fetch("general", {}).fetch("self_update", false)
+      in_profile = AutoinstGeneral.self_update?
       log.info("Self update was enabled explicitly by the AY profile") if in_profile
       in_profile
     end
