@@ -149,7 +149,7 @@ module Yast
 
       return false unless Mode.auto
 
-      in_profile = !!AutoinstGeneral.self_update?
+      in_profile = !!AutoinstGeneral.self_update
       log.info("Self update was enabled explicitly by the AY profile") if in_profile
       in_profile
     end

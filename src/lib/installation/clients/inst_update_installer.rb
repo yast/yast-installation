@@ -172,7 +172,7 @@ module Yast
     #
     # @return [Boolean] true if self update has been disabled by AutoYaST profile
     def disabled_in_profile?
-      !(AutoinstGeneral.self_update?.nil? || AutoinstGeneral.self_update?)
+      AutoinstGeneral.self_update == false
     end
 
     # Return the self-update URLs
