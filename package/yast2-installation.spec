@@ -110,8 +110,8 @@ Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Conflicts:      yast2-registration < 3.2.3
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:      yast2-mouse < 2.18.0
-# new calls in AutoinstGeneral
-Conflicts:      autoyast2 < 4.3.23
+# new autoinst_files_finish call
+Conflicts:      autoyast2 < 4.3.26
 
 Obsoletes:      yast2-installation-devel-doc
 
