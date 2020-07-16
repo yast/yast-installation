@@ -37,6 +37,7 @@ describe Yast::InstUpdateInstaller do
   before do
     allow(::Installation::UpdateRepositoriesFinder).to receive(:new).and_return(finder)
     allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
+    allow(Yast::AutoinstGeneral).to receive(:self_update).and_return(nil)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
     allow(Yast::Installation).to receive(:restarting?).and_return(restarting)

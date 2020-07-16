@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.3.8
+Version:        4.3.9
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -110,6 +110,8 @@ Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Conflicts:      yast2-registration < 3.2.3
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:      yast2-mouse < 2.18.0
+# new calls in AutoinstGeneral
+Conflicts:      autoyast2 < 4.3.23
 
 Obsoletes:      yast2-installation-devel-doc
 
