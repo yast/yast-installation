@@ -29,6 +29,7 @@ describe Installation::UpdateRepositoriesFinder do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
       allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
+      allow(Yast::AutoinstGeneral).to receive(:self_update_url).and_return(nil)
     end
 
     context "when URL was specified via Linuxrc" do
@@ -43,13 +44,14 @@ describe Installation::UpdateRepositoriesFinder do
 
     context "when URL was specified via an AutoYaST profile" do
       let(:profile_url) { "http://ay.test.example.com/update" }
-      let(:profile) { { "general" => { "self_update_url" => profile_url } } }
 
       before do
         allow(Yast::Mode).to receive(:auto).and_return(true)
       end
 
       it "returns the updates repository using the custom URL from the profile" do
+        allow(Yast::AutoinstGeneral).to receive(:self_update_url).and_return(profile_url)
+
         expect(Installation::UpdateRepository).to receive(:new)
           .with(URI(profile_url), :user).and_return(repo)
         expect(finder.updates).to eq([repo])
@@ -199,9 +201,8 @@ describe Installation::UpdateRepositoriesFinder do
           end
 
           context "and enables the installer update explicitly by an AutoYaST profile" do
-            let(:profile) { { "general" => { "self_update" => true } } }
-
             it "handles registration errors" do
+              allow(Yast::AutoinstGeneral).to receive(:self_update).and_return(true)
               allow(Yast::Mode).to receive(:auto).and_return(true)
               allow(finder).to receive(:import_registration_ayconfig)
               expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)

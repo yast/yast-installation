@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 15 15:09:07 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Do not use Profile.current unless necessary (bsc#1174173)
+- 4.3.8
+
+-------------------------------------------------------------------
 Thu Jun 25 13:24:45 UTC 2020 - Martin Vidner <mvidner@suse.com>
 
 - Fix "Cmdline: parameter not set" for virt-install (bsc#1172139)

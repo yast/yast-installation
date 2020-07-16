@@ -14,9 +14,8 @@ module Installation
 
       Yast.import "Mode"
       if Yast::Mode.autoinst
-        Yast.import "Profile"
-        profile = Yast::Profile.current
-        @enabled = if profile["general"] && profile["general"]["minimal-configuration"]
+        Yast.import "AutoinstGeneral"
+        @enabled = if Yast::AutoinstGeneral.minimal_configuration?
           true
         else
           false
