@@ -270,7 +270,7 @@ describe Yast::InstFunctions do
         .and_return(self_update_in_cmdline)
       allow(subject).to receive(:self_update_in_cmdline?)
         .and_return(self_update_in_cmdline)
-      allow(Yast::AutoinstGeneral).to receive(:self_update?).and_return(nil)
+      allow(Yast::AutoinstGeneral).to receive(:self_update).and_return(nil)
     end
 
     context "when self_update=1 is provided by linuxrc" do
@@ -290,7 +290,7 @@ describe Yast::InstFunctions do
     context "when self_update is explicitly enabled in an AutoYaST profile" do
       it "returns true" do
         allow(Yast::Mode).to receive("auto").and_return(true)
-        allow(Yast::AutoinstGeneral).to receive(:self_update?).and_return(true)
+        allow(Yast::AutoinstGeneral).to receive(:self_update).and_return(true)
 
         expect(subject.self_update_explicitly_enabled?).to eq true
       end

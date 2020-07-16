@@ -202,7 +202,7 @@ describe Installation::UpdateRepositoriesFinder do
 
           context "and enables the installer update explicitly by an AutoYaST profile" do
             it "handles registration errors" do
-              allow(Yast::AutoinstGeneral).to receive(:self_update?).and_return(true)
+              allow(Yast::AutoinstGeneral).to receive(:self_update).and_return(true)
               allow(Yast::Mode).to receive(:auto).and_return(true)
               allow(finder).to receive(:import_registration_ayconfig)
               expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
