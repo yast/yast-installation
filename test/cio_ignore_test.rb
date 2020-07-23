@@ -5,12 +5,12 @@ require_relative "./test_helper"
 require "installation/cio_ignore"
 
 describe ::Installation::CIOIgnore do
-  describe "enable/disable" do
+  describe "cio_ignore enable/disable" do
     it "take AutoYaST cio_ignore setting" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
       allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return(false)
       ::Installation::CIOIgnore.instance.reset
-      expect(::Installation::CIOIgnore.instance.enabled).to eq(false)
+      expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(false)
     end
 
     it "take default cio_ignore entry if it is in the normal workflow" do
@@ -18,7 +18,7 @@ describe ::Installation::CIOIgnore do
       expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
       expect(File).to receive(:exist?).with("/proc/sysinfo").exactly(2).times.and_return(false)
       ::Installation::CIOIgnore.instance.reset
-      expect(::Installation::CIOIgnore.instance.enabled).to eq(true)
+      expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
     end
   end
 end
@@ -40,14 +40,44 @@ describe ::Installation::CIOIgnoreProposal do
         expect(result).to have_key("preformatted_proposal")
       end
 
-      it "change its content based on cio ignore proposal value" do
-        ::Installation::CIOIgnore.instance.enabled = false
+      it "the proposal text is correct if cio_ignore is disabled" do
+        ::Installation::CIOIgnore.instance.cio_enabled = false
 
         result = subject.run("MakeProposal")
 
         expect(result).to have_key("links")
         expect(result).to have_key("help")
-        expect(result["preformatted_proposal"]).to include("disabled")
+        expect(result["preformatted_proposal"]).to match(/Blacklist devices: disabled/)
+      end
+
+      it "the proposal text is correct if cio_ignore is enabled" do
+        ::Installation::CIOIgnore.instance.cio_enabled = true
+
+        result = subject.run("MakeProposal")
+
+        expect(result).to have_key("links")
+        expect(result).to have_key("help")
+        expect(result["preformatted_proposal"]).to match(/Blacklist devices: enabled/)
+      end
+
+      it "the proposal text is correct if device autoconf is disabled" do
+        ::Installation::CIOIgnore.instance.autoconf_enabled = false
+
+        result = subject.run("MakeProposal")
+
+        expect(result).to have_key("links")
+        expect(result).to have_key("help")
+        expect(result["preformatted_proposal"]).to match(/auto-configuration: disabled/)
+      end
+
+      it "the proposal text is correct if device autoconf is enabled" do
+        ::Installation::CIOIgnore.instance.autoconf_enabled = true
+
+        result = subject.run("MakeProposal")
+
+        expect(result).to have_key("links")
+        expect(result).to have_key("help")
+        expect(result["preformatted_proposal"]).to match(/auto-configuration: enabled/)
       end
     end
 
@@ -70,7 +100,7 @@ describe ::Installation::CIOIgnoreProposal do
         result = subject.run(*params)
 
         expect(result["workflow_sequence"]).to eq :next
-        expect(::Installation::CIOIgnore.instance.enabled).to be false
+        expect(::Installation::CIOIgnore.instance.cio_enabled).to be false
       end
 
       it "raises RuntimeError if passed without chosen_id in second param hash" do
@@ -138,7 +168,7 @@ describe ::Installation::CIOIgnoreFinish do
 
       describe "Device blacklisting is disabled" do
         it "does nothing" do
-          ::Installation::CIOIgnore.instance.enabled = false
+          ::Installation::CIOIgnore.instance.cio_enabled = false
 
           expect(Yast::SCR).to_not receive(:Execute)
           expect(Yast::Bootloader).to_not receive(:Read)
@@ -149,7 +179,7 @@ describe ::Installation::CIOIgnoreFinish do
 
       describe "Device blacklisting is enabled" do
         it "calls `cio_ignore --unused --purge`" do
-          ::Installation::CIOIgnore.instance.enabled = true
+          ::Installation::CIOIgnore.instance.cio_enabled = true
 
           expect(Yast::SCR).to receive(:Execute)
             .with(
@@ -163,7 +193,7 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "raises RuntimeError if cio_ignore call failed" do
-          ::Installation::CIOIgnore.instance.enabled = true
+          ::Installation::CIOIgnore.instance.cio_enabled = true
           stderr = "HORRIBLE ERROR!!!"
 
           expect(Yast::SCR).to receive(:Execute)
@@ -178,7 +208,8 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
-          expect(Yast::Bootloader).to receive(:modify_kernel_params).once
+          expect(Yast::Bootloader).to receive(:modify_kernel_params)
+            .with("cio_ignore" => "all,!ipldev,!condev").once
             .and_return(true)
 
           subject.run("Write")
@@ -220,6 +251,30 @@ Devices that are not ignored:
             .and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
 
           expect { subject.run("Write") }.to raise_error(RuntimeError, /cio_ignore -L failed/)
+        end
+      end
+
+      describe "I/O device autoconf is disabled" do
+        it "adds kernel parameter rd.zdev=no-auto" do
+          ::Installation::CIOIgnore.instance.autoconf_enabled = false
+
+          expect(Yast::Bootloader).to receive(:modify_kernel_params)
+            .with("rd.zdev" => "no-auto").once
+            .and_return(true)
+
+          subject.run("Write")
+        end
+      end
+
+      describe "I/O device autoconf is enabled" do
+        it "removes kernel parameter rd.zdev" do
+          ::Installation::CIOIgnore.instance.autoconf_enabled = true
+
+          expect(Yast::Bootloader).to receive(:modify_kernel_params)
+            .with("rd.zdev" => :missing).once
+            .and_return(true)
+
+          subject.run("Write")
         end
       end
     end
