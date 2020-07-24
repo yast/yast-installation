@@ -28,6 +28,9 @@
 #		and calls the real installation.
 #
 # $Id$
+
+require "ui/wizards/layout"
+
 module Yast
   class InstallationClient < Client
     include Yast::Logger
@@ -50,68 +53,60 @@ module Yast
 
       Hooks.search_path.join!("installation")
 
-      # Initialize the UI
-      if ProductFeatures.GetStringFeature("globals", "installation_ui") == "sidebar"
-        UI.SetProductLogo(false)
-        Wizard.OpenNextBackStepsDialog
-      else
-        UI.SetProductLogo(true)
-        Wizard.OpenLeftTitleNextBackDialog
-      end
+      layout = ::UI::Wizards::Layout.from_product_features
 
-      Wizard.SetContents(
-        # title
-        "",
-        # contents
-        Empty(),
-        # help
-        "",
-        # has back
-        false,
-        # has next
-        false
-      )
-      if Mode.update
-        Wizard.SetDesktopTitleAndIcon("upgrade")
-      else
-        Wizard.SetDesktopTitleAndIcon("installation")
-      end
-      Wizard.DisableAbortButton
-
-      @ret = nil
-
-      # Call the real installation
-      Builtins.y2milestone("=== installation ===")
-
-      Hooks.run "installation_start"
-
-      # First-stage (initial installation)
-      if Stage.initial
-        Builtins.y2milestone(
-          "Stage::initial -> running inst_worker_initial client"
+      layout.open_wizard do
+        Wizard.SetContents(
+          # title
+          "",
+          # contents
+          Empty(),
+          # help
+          "",
+          # has back
+          false,
+          # has next
+          false
         )
-        @ret = WFM.CallFunction("inst_worker_initial", WFM.Args)
+        if Mode.update
+          Wizard.SetDesktopTitleAndIcon("upgrade")
+        else
+          Wizard.SetDesktopTitleAndIcon("installation")
+        end
+        Wizard.DisableAbortButton
 
-        # Second-stage (initial installation)
-      elsif Stage.cont
-        Builtins.y2milestone(
-          "Stage::cont -> running inst_worker_continue client"
-        )
-        @ret = WFM.CallFunction("inst_worker_continue", WFM.Args)
-      else
-        # TRANSLATORS: error message
-        Report.Error(_("No workflow defined for this kind of installation."))
+        @ret = nil
+
+        # Call the real installation
+        Builtins.y2milestone("=== installation ===")
+
+        Hooks.run "installation_start"
+
+        # First-stage (initial installation)
+        if Stage.initial
+          Builtins.y2milestone(
+            "Stage::initial -> running inst_worker_initial client"
+          )
+          @ret = WFM.CallFunction("inst_worker_initial", WFM.Args)
+
+          # Second-stage (initial installation)
+        elsif Stage.cont
+          Builtins.y2milestone(
+            "Stage::cont -> running inst_worker_continue client"
+          )
+          @ret = WFM.CallFunction("inst_worker_continue", WFM.Args)
+        else
+          # TRANSLATORS: error message
+          Report.Error(_("No workflow defined for this kind of installation."))
+        end
+
+        Hooks.run "installation_failure" if @ret == false
+
+        Builtins.y2milestone("Installation ret: %1", @ret)
+        Builtins.y2milestone("=== installation ===")
+
+        Hooks.run "installation_finish"
       end
-
-      Hooks.run "installation_failure" if @ret == false
-
-      Builtins.y2milestone("Installation ret: %1", @ret)
-      Builtins.y2milestone("=== installation ===")
-
-      Hooks.run "installation_finish"
-
-      # Shutdown the UI
-      Wizard.CloseDialog
 
       WFM.CallFunction("disintegrate_all_extensions") if Stage.initial
 
