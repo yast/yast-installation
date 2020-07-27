@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jul 27 17:04:26 CEST 2020 - schubi@suse.de
+
+-  AY: Removed "image" section from "software" section
+   (bsc#1140711).
+- 4.3.12
+
+-------------------------------------------------------------------
 Mon Jul 27 08:14:24 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - handle device autoconfig setting in summary screen (bsc#1168036)
