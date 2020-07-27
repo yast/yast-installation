@@ -4,10 +4,9 @@ Product Installation Control
 Functionality
 -------------
 
-The product control enables customization of the installation makes it
-possible to enable and disable features during installation in the final
-installed product. It controls the workflow and what is really shown to
-the user during installation.
+The product control file is used to customize the installation process.
+It allows to enable and disable features and it defines the workflow,
+that is, what is really shown to the user during the installation.
 
 Besides workflow configuration, other system variables are configurable
 and can be predefined by the system administrator. To name a few: the
@@ -475,6 +474,56 @@ installation and debugging:
     write more debug logs and some more debugging features in the
     workflow. The default is *false*. This feature should be off in the
     production phase.
+
+### Look & Feel
+
+The *globals* section also offers some settings to configure the layout of the
+installer. There are three possible layouts:
+
+* With a left sidebar including the list of installation steps.
+* Without a sidebar and placing the title of the dialogs on the left side.
+* Without a sidebar and placing the title of the dialogs on top.
+
+These settings can be used for configuring the layout:
+
+-   (string) *installation_ui* - only accepts *sidebar* value. When used, the
+    layout is configured to include a left sidebar with the installation steps.
+    This setting is deprecated in favor of *installation_layout*.
+
+-   *installation_layout*: this section includes a set of individual settings
+    to configure the layout.
+
+In the *installation_layout* section, these settings are available:
+
+-   (string) *mode* - configures the layout mode and accepts these values:
+    *steps*, *title-on-left* and *title-on-top*.
+-   (boolean) *banner* - indicates whether a top banner should be included.
+    The banner is typically used for placing a logo.
+
+Note that *installation_layout* takes precedence over *installation_ui*. When
+nothing is configured, the default layout is rendered with title on the left and
+with the top banner (SLE flavor).
+
+Some examples of layout configuration:
+
+```xml
+<globals>
+    <!-- installation_ui is ignored because installation_layout is used -->
+    <installation_ui>sidebar</installation_ui>
+    <installation_layout>
+        <mode>title-on-top</mode>
+        <banner config:type="boolean">true</banner>
+    </installation_layout>
+</globals>
+```
+
+```xml
+<globals>
+    <!-- installation_ui is used because nothing is defined by installation_layout -->
+    <installation_ui>sidebar</installation_ui>
+    <installation_layout></installation_layout>
+</globals>
+```
 
 ### Software
 

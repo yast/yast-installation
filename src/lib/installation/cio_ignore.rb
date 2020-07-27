@@ -2,28 +2,24 @@ require "yast"
 
 module Installation
   class CIOIgnore
+    # FIXME
+    # The class name is a bit outdated now that it handles both cio_ignore
+    # and rd.zdev kernel parameters.
     include Singleton
+    include Yast::Logger
     Yast.import "Mode"
     Yast.import "AutoinstConfig"
 
-    attr_accessor :enabled
+    attr_accessor :cio_enabled
+    attr_accessor :autoconf_enabled
 
     def initialize
       reset
     end
 
     def reset
-      @enabled = if Yast::Mode.autoinst
-        Yast::AutoinstConfig.cio_ignore
-      else
-        @enabled = if kvm? || zvm?
-          # cio_ignore does not make sense for KVM or z/VM (fate#317861)
-          false
-        else
-          # default value requested in FATE#315586
-          true
-        end
-      end
+      @autoconf_enabled = autoconf_setting
+      @cio_enabled = cio_setting
     end
 
   private
@@ -37,6 +33,33 @@ module Installation
       File.exist?("/proc/sysinfo") &&
         File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
     end
+
+    # Get current I/O device autoconf setting (rd.zdev kernel option)
+    #
+    # @return [Boolean]
+    def autoconf_setting
+      Yast.import "Bootloader"
+
+      rd_zdev = Yast::Bootloader.kernel_param(:common, "rd.zdev")
+      log.info "current rd.zdev setting: rd.zdev=#{rd_zdev.inspect}"
+
+      rd_zdev != "no-auto"
+    end
+
+    # Get current device blacklist setting (cio_ignore kernel option)
+    #
+    # @return [Boolean]
+    def cio_setting
+      if Yast::Mode.autoinst
+        Yast::AutoinstConfig.cio_ignore
+      elsif kvm? || zvm?
+        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+        false
+      else
+        # default value requested in FATE#315586
+        true
+      end
+    end
   end
 
   class CIOIgnoreProposal
@@ -45,7 +68,9 @@ module Installation
 
     CIO_ENABLE_LINK = "cio_enable".freeze
     CIO_DISABLE_LINK = "cio_disable".freeze
-    CIO_ACTION_ID = "cio".freeze
+    AUTOCONF_ENABLE_LINK = "autoconf_enable".freeze
+    AUTOCONF_DISABLE_LINK = "autoconf_disable".freeze
+    ACTION_ID = "cio".freeze
 
     def initialize
       textdomain "installation"
@@ -63,44 +88,57 @@ module Installation
       when "Description"
         {
           # this is a heading
-          "rich_text_title" => _("Blacklist Devices"),
+          "rich_text_title" => _("Device Settings"),
           # this is a menu entry
-          "menu_title"      => _("B&lacklist Devices"),
-          "id"              => CIO_ACTION_ID
+          "menu_title"      => _("Device Settings"),
+          "id"              => ACTION_ID
         }
       when "AskUser"
         edit param["chosen_id"]
       else
-        raise "Uknown action passed as first parameter"
+        raise "Unknown action passed as first parameter"
       end
     end
 
   private
 
+    # Build HTML text with clickable on/off-link.
+    #
+    # @param what [String] short text describing what to toggle
+    # @param state [Boolean] current state
+    # @param link_on [String] HTML ref for turning state to 'on'
+    # @param link_off [String] HTML ref for turning state to 'off'
+    #
+    # @return [String] HTML fragment
+    #
+    # @example
+    #   msg = toggle_text("Foobar state", true, "foobar_enable", "foobar_disable")
+    #
+    def toggle_text(what, state, link_on, link_off)
+      format "%s: %s (<a href=\"%s\">%s</a>).",
+        what,
+        (state ? _("enabled") : _("disabled")),
+        (state ? link_off : link_on),
+        (state ? _("disable") : _("enable"))
+    end
+
     def proposal_entry
       Yast.import "HTML"
-      enabled = CIOIgnore.instance.enabled
+      cio_enabled = CIOIgnore.instance.cio_enabled
+      autoconf_enabled = CIOIgnore.instance.autoconf_enabled
 
-      text = if enabled
-        # TRANSLATORS: Installation overview
-        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        (_(
-          "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
-        ) % CIO_DISABLE_LINK)
-      else
-        # TRANSLATORS: Installation overview
-        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        (_(
-          "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
-        ) % CIO_ENABLE_LINK)
-      end
+      cio_text = toggle_text(_("Blacklist devices"), cio_enabled, CIO_ENABLE_LINK, CIO_DISABLE_LINK)
+      autoconf_text = toggle_text(_("I/O device auto-configuration"), autoconf_enabled, AUTOCONF_ENABLE_LINK, AUTOCONF_DISABLE_LINK)
 
       {
-        "preformatted_proposal" => Yast::HTML.List([text]),
-        "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK],
+        "preformatted_proposal" => Yast::HTML.List([cio_text, autoconf_text]),
+        "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK, AUTOCONF_ENABLE_LINK, AUTOCONF_DISABLE_LINK],
         # TRANSLATORS: help text
         "help"                  => _(
-          "<p>Use <b>Blacklist devices</b> if you want to create blacklist channels to such devices which will reduce kernel memory footprint.</p>"
+          "<p>Use <b>Blacklist devices</b> " \
+          "if you want to create blacklist channels to such devices which will reduce kernel memory footprint.</p>" \
+          "<p>Disable <b>I/O device auto-configuration</b> " \
+          "if you don't want any existing I/O auto-configuration data to be applied.</p>"
         )
       }
     end
@@ -112,10 +150,17 @@ module Installation
 
       cio_ignore = CIOIgnore.instance
 
-      cio_ignore.enabled = case edit_id
-      when CIO_DISABLE_LINK then false
-      when CIO_ENABLE_LINK  then true
-      when CIO_ACTION_ID    then !cio_ignore.enabled
+      case edit_id
+      when CIO_DISABLE_LINK
+        cio_ignore.cio_enabled = false
+      when CIO_ENABLE_LINK
+        cio_ignore.cio_enabled = true
+      when AUTOCONF_DISABLE_LINK
+        cio_ignore.autoconf_enabled = false
+      when AUTOCONF_ENABLE_LINK
+        cio_ignore.autoconf_enabled = true
+      when ACTION_ID
+        # do nothing - when there is a dialog for this, connect it here
       else
         raise "INTERNAL ERROR: Unexpected value #{edit_id}"
       end
@@ -161,32 +206,53 @@ module Installation
         }
 
       when "Write"
-        return nil unless CIOIgnore.instance.enabled
-
-        res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore --unused --purge")
-
-        log.info "result of cio_ignore call: #{res.inspect}"
-
-        if res["exit"] != 0
-          raise "cio_ignore command failed with stderr: #{res["stderr"]}"
-        end
-
-        # add kernel parameters that ensure that ipl and console device is never
-        # blacklisted (fate#315318)
-        add_boot_kernel_parameters
-
-        # store activelly used devices to not be blocked
-        store_active_devices
+        write_cio_setting
+        write_autoconf_setting
 
         nil
       else
-        raise "Uknown action #{func} passed as first parameter"
+        raise "Unknown action #{func} passed as first parameter"
       end
     end
 
   private
 
-    def add_boot_kernel_parameters
+    # Update kernel options according to blacklist device setting
+    #
+    def write_cio_setting
+      return unless CIOIgnore.instance.cio_enabled
+
+      res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore --unused --purge")
+
+      log.info "result of cio_ignore call: #{res.inspect}"
+
+      if res["exit"] != 0
+        raise "cio_ignore command failed with stderr: #{res["stderr"]}"
+      end
+
+      # add kernel parameters that ensure that ipl and console device is never
+      # blacklisted (fate#315318)
+      add_cio_boot_kernel_parameters
+
+      # store activelly used devices to not be blocked
+      store_active_devices
+    end
+
+    # Update kernel options according to I/O device autoconf setting
+    #
+    def write_autoconf_setting
+      Yast.import "Bootloader"
+
+      if CIOIgnore.instance.autoconf_enabled
+        log.info "removing rd.zdev kernel parameter"
+        Yast::Bootloader.modify_kernel_params("rd.zdev" => :missing)
+      else
+        log.info "adding rd.zdev=no-auto kernel parameter"
+        Yast::Bootloader.modify_kernel_params("rd.zdev" => "no-auto")
+      end
+    end
+
+    def add_cio_boot_kernel_parameters
       Yast.import "Bootloader"
 
       # boot code is already proposed and will be written in next step, so just modify
