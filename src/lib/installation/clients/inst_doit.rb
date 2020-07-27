@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "installation/old_package_check"
+
 module Yast
   # Asks user to really do the installation/update.
   class InstDoitClient < Client
@@ -40,6 +42,9 @@ module Yast
       # old functionality replaced with this function-call
       # bugzilla #256627
       PackagesUI.ConfirmLicenses
+
+      # warn about installing old packages
+      ::Installation::OldPackageCheck.run
 
       # function in installation/misc.ycp
       # bugzilla #219097
