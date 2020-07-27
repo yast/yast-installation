@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul 27 13:43:29 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- Handle exceptions when parsing xml file (related to bsc#1170886)
+- 4.3.12
+
+-------------------------------------------------------------------
 Mon Jul 27 08:14:24 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - handle device autoconfig setting in summary screen (bsc#1168036)

@@ -678,9 +678,10 @@ module Yast
         return false
       end
 
-      read_details = XML.XMLToYCPFile(filename)
-      if read_details.nil?
-        Builtins.y2error("Cannot parse imagesets details")
+      begin
+        read_details = XML.XMLToYCPFile(filename)
+      rescue XMLDeserializationError => e
+        Builtins.y2error("Cannot parse imagesets details. #{e.inspect}")
         return false
       end
 
@@ -820,12 +821,14 @@ module Yast
         return true
       end
 
-      image_descr = XML.XMLToYCPFile(filename)
-      if image_descr.nil?
+      begin
+        image_descr = XML.XMLToYCPFile(filename)
+      rescue RuntimeError => e
         @image_installation_available = false
         Installation.image_installation = false
         Installation.image_only = false
         Report.Error(_("Failed to read information about installation images"))
+        log.error "xml failed to read #{e.inspect}"
         return false
       end
 
