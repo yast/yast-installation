@@ -37,7 +37,6 @@ module Yast
       Yast.import "Progress"
       Yast.import "Installation"
       Yast.import "ImageInstallation"
-      Yast.import "AutoinstSoftware"
       Yast.import "Popup"
 
       Builtins.y2milestone("----------------------------------------")
@@ -114,7 +113,7 @@ module Yast
                 VBox(
                   Label(
                     _(
-                      "Here you can choose to use Novell pre-defined images to speed up RPM installation."
+                      "Here you can choose to use pre-defined images to speed up RPM installation."
                     )
                   ),
                   RadioButtonGroup(
@@ -144,78 +143,6 @@ module Yast
                     )
                   )
                 )
-              ),
-              VSpacing(0.5),
-              Frame(
-                _(
-                  "Custom images deployment - this needs a URL to be configured as installation source"
-                ),
-                # Image name, Image location
-                MarginBox(
-                  2,
-                  1,
-                  VBox(
-                    Label(
-                      _("Here you can create custom images.\n") +
-                        _(
-                          "You have to configure the software selection first before you can create an image here"
-                        )
-                    ),
-                    RadioButtonGroup(
-                      Id(:own_images_rbg),
-                      MarginBox(
-                        2,
-                        1,
-                        VBox(
-                          Frame(
-                            _(
-                              "Create an image file (AutoYaST will fetch it from the given location during installation)"
-                            ),
-                            VBox(
-                              RadioButton(
-                                Id(:create_image),
-                                Opt(:notify, :default, :hstretch),
-                                _("Create Image")
-                              ),
-                              TextEntry(
-                                Id(:image_location),
-                                Opt(:notify),
-                                _(
-                                  "Where will AutoYaST find the image? (e.g. http://host/)"
-                                ),
-                                Ops.get_string(
-                                  AutoinstSoftware.image,
-                                  "image_location",
-                                  ""
-                                )
-                              ),
-                              TextEntry(
-                                Id(:image_name),
-                                Opt(:notify),
-                                _(
-                                  "What is the name of the image? (e.g. my_image)"
-                                ),
-                                Ops.get_string(
-                                  AutoinstSoftware.image,
-                                  "image_name",
-                                  ""
-                                )
-                              ),
-                              VSpacing(0.5),
-                              RadioButton(
-                                Id(:create_iso),
-                                Opt(:notify, :default, :hstretch),
-                                _(
-                                  "Create ISO (image and autoinst.xml will be on the media)"
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
               )
             ),
             HStretch()
@@ -226,152 +153,28 @@ module Yast
               "Images contain compressed snapshots of an installed system matching your\n" \
               "selection of patterns. The rest of the packages which are not contained in the\n" \
               "images will be installed from packages the standard way.</p>\n"
-          ) +
-            _(
-              "<p><b>Creating own Images</b> is used if you\n" \
-                "want to skip the complete step of RPM installation. Instead AutoYaST will dump an\n" \
-                "image on the harddisk which is a lot faster and can be pre-configured already.\n" \
-                "Everything else than RPM installation is done like during a normal auto-installation.</p>"
-            ),
+          ),
           Label.BackButton,
           Label.OKButton
         )
         Wizard.SetAbortButton(:abort, Label.CancelButton)
         Wizard.DisableBackButton
         @selected = UI.QueryWidget(:images_rbg, :CurrentButton)
-        UI.ChangeWidget(
-          Id(:create_image),
-          :Enabled,
-          @selected == :dont_inst_from_images
-        )
-        UI.ChangeWidget(
-          Id(:create_iso),
-          :Enabled,
-          @selected == :dont_inst_from_images
-        )
-        UI.ChangeWidget(
-          Id(:image_location),
-          :Enabled,
-          @selected == :dont_inst_from_images
-        )
-        UI.ChangeWidget(
-          Id(:image_name),
-          :Enabled,
-          @selected == :dont_inst_from_images
-        )
         loop do
-          if Ops.greater_than(
-            Builtins.size(
-              Convert.to_string(UI.QueryWidget(:image_location, :Value))
-            ),
-            0
-          ) ||
-              Ops.greater_than(
-                Builtins.size(
-                  Convert.to_string(UI.QueryWidget(:image_name, :Value))
-                ),
-                0
-              )
-            UI.ChangeWidget(Id(:inst_from_images), :Enabled, false)
-          else
-            UI.ChangeWidget(Id(:inst_from_images), :Enabled, true)
-          end
-
-          if AutoinstSoftware.instsource == ""
-            UI.ChangeWidget(Id(:create_image), :Enabled, false)
-            UI.ChangeWidget(Id(:create_iso), :Enabled, false)
-          end
-
           @ret = UI.UserInput
           Builtins.y2milestone("ret=%1", @ret)
 
           if @ret == :ok || @ret == :next
             @selected2 = UI.QueryWidget(:images_rbg, :CurrentButton)
-            @image_type = UI.QueryWidget(:own_images_rbg, :CurrentButton)
-            Ops.set(AutoinstSoftware.image, "run_kickoff", true)
             if @selected2 == :inst_from_images
               Installation.image_installation = true
-              AutoinstSoftware.image = {}
             elsif @selected2 == :dont_inst_from_images
               Installation.image_installation = false
-              if @image_type == :create_image
-                Ops.set(
-                  AutoinstSoftware.image,
-                  "image_location",
-                  Convert.to_string(UI.QueryWidget(:image_location, :Value))
-                )
-                Ops.set(
-                  AutoinstSoftware.image,
-                  "image_name",
-                  Convert.to_string(UI.QueryWidget(:image_name, :Value))
-                )
-                AutoinstSoftware.createImage("")
-              elsif @image_type == :create_iso
-                AutoinstSoftware.createISO
-              end
             end
             Builtins.y2milestone(
               "Changed by user, Installation from images will be used: %1",
               Installation.image_installation
             )
-          elsif @ret == :create_image
-            UI.ChangeWidget(Id(:image_location), :Enabled, true)
-            UI.ChangeWidget(Id(:image_name), :Enabled, true)
-            if Ops.greater_than(Builtins.size(AutoinstSoftware.patterns), 0)
-              Ops.set(
-                AutoinstSoftware.image,
-                "image_location",
-                Convert.to_string(UI.QueryWidget(:image_location, :Value))
-              )
-              Ops.set(
-                AutoinstSoftware.image,
-                "image_name",
-                Convert.to_string(UI.QueryWidget(:image_name, :Value))
-              )
-            else
-              Popup.Warning(
-                _(
-                  "you need to do the software selection before creating an image"
-                )
-              )
-            end
-          elsif @ret == :create_iso
-            UI.ChangeWidget(Id(:image_location), :Enabled, false)
-            UI.ChangeWidget(Id(:image_name), :Enabled, false)
-            Ops.set(AutoinstSoftware.image, "image_name", "image")
-            if Ops.less_or_equal(Builtins.size(AutoinstSoftware.patterns), 0)
-              Popup.Warning(
-                _(
-                  "you need to do the software selection before creating an image"
-                )
-              )
-            end
-          elsif @ret == :inst_from_images || @ret == :dont_inst_from_images
-            @selected2 = UI.QueryWidget(:images_rbg, :CurrentButton)
-            UI.ChangeWidget(
-              Id(:create_image),
-              :Enabled,
-              @selected2 == :dont_inst_from_images
-            )
-            UI.ChangeWidget(
-              Id(:create_iso),
-              :Enabled,
-              @selected2 == :dont_inst_from_images
-            )
-            UI.ChangeWidget(
-              Id(:image_location),
-              :Enabled,
-              @selected2 == :dont_inst_from_images
-            )
-            UI.ChangeWidget(
-              Id(:image_name),
-              :Enabled,
-              @selected2 == :dont_inst_from_images
-            )
-            if @ret == :inst_from_images
-              UI.ChangeWidget(Id(:create_image), :Value, false)
-              UI.ChangeWidget(Id(:create_iso), :Value, false)
-            end
           end
           break if [:ok, :next, :abort].include?(@ret)
         end
@@ -397,9 +200,6 @@ module Yast
         # Calling image_installation only if set to do so...
         if Installation.image_installation == true
           WFM.call("inst_prepare_image")
-
-          # moved to control.xml
-          #	WFM::call ("inst_deploy_image");
         end
 
         @ret = true
