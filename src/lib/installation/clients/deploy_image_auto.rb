@@ -88,11 +88,12 @@ module Yast
       # did configuration changed
       # return boolean
       elsif @func == "GetModified"
-        !!self.class.modified
+        @ret = self.class.modified
       # set configuration as changed
       # return boolean
       elsif @func == "SetModified"
         self.class.modified = true
+        @ret = true
       # Reset configuration
       # return map or list
       elsif @func == "Reset"
