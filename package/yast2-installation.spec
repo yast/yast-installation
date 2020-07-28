@@ -113,7 +113,7 @@ Conflicts:      yast2-mouse < 2.18.0
 # new autoinst_files_finish call
 Conflicts:      autoyast2 < 4.3.26
 
-Obsoletes:      yast2-installation-devel-doc
+Obsoletes:      yast2-installation-devel-doc < 4.2.5
 
 Recommends:     yast2-online-update
 Recommends:     yast2-firewall
