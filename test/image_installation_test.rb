@@ -24,6 +24,8 @@ NON_MATCHING_ARCH = "unsupported".freeze
 ARCHS = ["i386", "x86_64", "ppc"].freeze
 
 describe Yast::ImageInstallation do
+  subject { described_class }
+
   before do
     stub_const("Yast::Packages", double(theSources: [0]))
   end
@@ -69,6 +71,18 @@ describe Yast::ImageInstallation do
           expect(Yast::ImageInstallation.selected_images).to be_empty
         end
       end
+    end
+
+    it "returns true if no xml is provided" do
+      allow(Yast::Pkg).to receive(:SourceProvideDigestedFile).and_return(nil)
+
+      expect(subject.FindImageSet([])).to eq true
+    end
+
+    it "returns false if xml is not valid" do
+      allow(Yast::XML).to receive(:XMLToYCPFile).and_raise(Yast::XMLDeserializationError)
+
+      expect(subject.FindImageSet([])).to eq false
     end
   end
 end
