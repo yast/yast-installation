@@ -6,31 +6,24 @@ require "installation/clients/deploy_image_auto"
 Yast.import "Installation"
 
 describe Yast::DeployImageAutoClient do
-  describe "#main" do
-    before do
-      allow(Yast::WFM).to receive(:Args) do |*params|
-        if params.empty?
-          args
-        else
-          args[params.first]
-        end
+  subject(:client) { Yast::DeployImageAutoClient.new }
+
+  describe "#export" do
+    context "image deployment is disabled" do
+      it "return empty hash" do
+        allow(Yast::Installation).to receive(:image_installation).and_return(false)
+
+        expect(subject.export).to eq({})
       end
     end
 
-    context "Export argument passed" do
-      let(:args) { ["Export"] }
-
-      it "return empty hash if image deployment is disabled" do
-        allow(Yast::Installation).to receive(:image_installation).and_return(false)
-
-        expect(subject.main).to eq({})
-      end
-
-      it "return hash with image_installation if image deployment is enabled" do
+    context "image deployment is enabled" do
+      it "return hash with image_installation" do
         allow(Yast::Installation).to receive(:image_installation).and_return(true)
 
-        expect(subject.main).to eq("image_installation" => true)
+        expect(subject.export).to eq("image_installation" => true)
       end
     end
   end
+
 end
