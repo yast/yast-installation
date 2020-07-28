@@ -20,7 +20,7 @@ describe Installation::OldPackage do
 
     context "no package is selected" do
       before do
-        expect(Y2Packager::Resolvable).to receive(:find).and_return([])
+        expect(Yast::Pkg).to receive(:ResolvableProperties).and_return([])
       end
 
       it "returns nil" do
@@ -29,22 +29,26 @@ describe Installation::OldPackage do
     end
 
     context "an old package is selected" do
-      let(:old_package) { Y2Packager::Resolvable.new("name" => "yast2", "version" => "4.1.69-1.2") }
+      let(:old_package) do
+        { "name" => "yast2", "version" => "4.1.69-1.2", "arch" => "x86_64", "status" => :selected }
+      end
 
       before do
-        expect(Y2Packager::Resolvable).to receive(:find).and_return([old_package])
+        expect(Yast::Pkg).to receive(:ResolvableProperties).and_return([old_package])
       end
 
       it "returns the old package Resolvable" do
-        expect(subject.selected_old).to be(old_package)
+        expect(subject.selected_old).to eq(old_package)
       end
     end
 
     context "a new package is selected" do
-      let(:new_package) { Y2Packager::Resolvable.new("name" => "yast2", "version" => "4.1.99-1.2") }
+      let(:new_package) do
+        { "name" => "yast2", "version" => "4.1.99-1.2", "arch" => "x86_64", "status" => :selected }
+      end
 
       before do
-        expect(Y2Packager::Resolvable).to receive(:find).and_return([new_package])
+        expect(Yast::Pkg).to receive(:ResolvableProperties).and_return([new_package])
       end
 
       it "returns nil" do

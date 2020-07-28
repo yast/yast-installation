@@ -47,11 +47,11 @@ describe Installation::OldPackageReport do
 
     context "An old package is selected" do
       let(:selected_package1) do
-        Y2Packager::Resolvable.new(
+        {
           "name"    => "yast2",
           "version" => "4.1.77-1.1",
           "arch"    => "x86_64"
-        )
+        }
       end
       let(:selected_package2) { nil }
 
@@ -63,18 +63,18 @@ describe Installation::OldPackageReport do
 
     context "More old packages are selected" do
       let(:selected_package1) do
-        Y2Packager::Resolvable.new(
+        {
           "name"    => "yast2",
           "version" => "4.1.77-1.1",
           "arch"    => "x86_64"
-        )
+        }
       end
       let(:selected_package2) do
-        Y2Packager::Resolvable.new(
+        {
           "name"    => "yast2-pkg-bindings",
           "version" => "4.1.2-3.5.9",
           "arch"    => "x86_64"
-        )
+        }
       end
 
       it "reports an error for all packages" do

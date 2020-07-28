@@ -13,9 +13,6 @@
 require "yaml"
 require "yast"
 
-## not present in SP1 :-(
-## require "y2packager/resolvable"
-
 Yast.import "Pkg"
 Yast.import "Report"
 
@@ -33,10 +30,8 @@ module Installation
       @message = message
     end
 
-    # @return [Y2Packager::Resolvable,nil] The selected old package or nil.
+    # @return [Hash,nil] The selected old package or nil.
     def selected_old
-      ## cannot be used in SP1, was added in SP2
-      ## selected_packages = Resolvable.find(kind: :package, status: :selected, name: name, arch: arch)
       packages = Yast::Pkg.ResolvableProperties(name, :package, "")
 
       # 1 = the selected is newer, the opposite is older or the same
