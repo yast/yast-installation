@@ -64,7 +64,7 @@ describe Yast::DeployImageAutoClient do
   describe "#write" do
     context "image installation enabled" do
       it "writes keyboard information" do
-        expect(Yast::WFM).to receive(:CallFunction).with("inst_prepare_image")
+        expect(Yast::WFM).to receive(:call).with("inst_prepare_image")
         Yast::Installation.image_installation = true
 
         client.write
