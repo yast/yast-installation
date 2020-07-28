@@ -12,6 +12,18 @@ module Yast
   class DeployImageAutoClient < ::Installation::AutoClient
     include Yast::Logger
 
+    def initialize
+      textdomain "installation"
+    end
+
+    def run
+      progress_orig = Yast::Progress.set(false)
+      ret = super
+      Yast::Progress.set(progress_orig)
+
+      ret
+    end
+
     def import(data)
       ret = false
       if data.key?("image_installation")
