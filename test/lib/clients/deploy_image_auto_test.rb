@@ -26,4 +26,50 @@ describe Yast::DeployImageAutoClient do
     end
   end
 
+  describe "#import" do
+    let(:profile) { { "image_installation" => true } }
+
+    it "imports the profile" do
+      client.import(profile)
+      expect(Yast::Installation.image_installation).to eq(true)
+      expect(Yast::ImageInstallation.changed_by_user).to eq(true)
+    end
+  end
+
+  describe "#summary" do
+    before do
+      Yast::Installation.image_installation = true
+    end
+
+    it "returns the AutoYaST summary" do
+      expect(client.summary).to match(/enabled/)
+    end
+  end
+
+  describe "#modified?" do
+    it "settings are modified ?" do
+      client.modified
+      expect(client.modified?).to eq(true)
+    end
+  end
+
+  describe "#reset" do
+    it "resets settings" do
+      expect(Yast::ImageInstallation).to receive(:FreeInternalVariables)
+      client.reset
+      expect(Yast::Installation.image_installation).to eq(false)
+    end
+  end
+
+  describe "#write" do
+    context "image installation enabled" do
+      it "writes keyboard information" do
+        expect(Yast::WFM).to receive(:CallFunction).with("inst_prepare_image")
+        Yast::Installation.image_installation = true
+
+        client.write
+      end
+    end
+  end
+
 end
