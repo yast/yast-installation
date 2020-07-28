@@ -19,6 +19,8 @@ module Installation
   # This class checks whether some old packages are selected
   # and displays a warning to the user.
   class OldPackageCheck
+    # Read the old package configurations and display warning for the old selected
+    # packages.
     def self.run
       old_packages = OldPackage.read
       reporter = OldPackageReport.new(old_packages)

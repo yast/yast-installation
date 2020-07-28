@@ -24,11 +24,13 @@ module Installation
 
     attr_reader :old_packages
 
+    # @param old_packages [Array<Installation::OldPackage>] old package configurations
     def initialize(old_packages)
       textdomain "installation"
       @old_packages = old_packages
     end
 
+    # report the selected old packages to the user
     def report
       report_packages = old_packages.select(&:selected_old)
       if report_packages.empty?

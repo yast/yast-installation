@@ -23,6 +23,11 @@ module Installation
 
     attr_reader :name, :version, :arch, :message
 
+    # @param name [String] name of the package
+    # @param version [String] version of the package
+    # @param arch [String] architecture, e.g. "x86_64"
+    # @param message [String] the error message displayed to the user
+    #  when an old package is selected
     def initialize(name:, version:, arch:, message:)
       @name = name
       @version = version
@@ -30,6 +35,8 @@ module Installation
       @message = message
     end
 
+    # Finds the currently selected old package, if none or newer is selected then
+    # it returns `nil`.
     # @return [Hash,nil] The selected old package or nil.
     def selected_old
       packages = Yast::Pkg.ResolvableProperties(name, :package, "")
@@ -43,6 +50,8 @@ module Installation
 
     # Reads the old package configuration files and creates the respective
     # OldPackage objects.
+    # @return [Array] Configured old packages, empty list if no configuration
+    #  is specified
     def self.read(paths = nil)
       # unfortunately we cannot use Yast::Directory.find_data_file
       # here because it needs an exact file name, it does not accept a glob,
