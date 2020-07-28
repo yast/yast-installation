@@ -180,7 +180,8 @@ systemctl enable YaST2-Firstboot.service
 %postun
 %service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
-%endif #suse_version
+#suse_version
+%endif
 
 %files
 
