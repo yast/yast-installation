@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Mon Jul 27 17:04:26 CEST 2020 - schubi@suse.de
 
--  AY: Removed "image" section from "software" section
-   (bsc#1140711).
+- AY: Removed "image" section from "software" section
+  (bsc#1140711).
 - 4.3.13
 
 -------------------------------------------------------------------
