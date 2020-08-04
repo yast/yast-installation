@@ -37,14 +37,14 @@ module Yast
 
       Yast.include self, "installation/misc.rb"
 
+      # warn about installing old packages (also in the AutoYaST mode)
+      ::Installation::OldPackageChecker.run
+
       return :next if Mode.autoinst && !AutoinstConfig.Confirm
 
       # old functionality replaced with this function-call
       # bugzilla #256627
       PackagesUI.ConfirmLicenses
-
-      # warn about installing old packages
-      ::Installation::OldPackageChecker.run
 
       # function in installation/misc.ycp
       # bugzilla #219097
