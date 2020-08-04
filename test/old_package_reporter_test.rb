@@ -3,9 +3,9 @@
 require_relative "test_helper"
 
 require "installation/old_package"
-require "installation/old_package_report"
+require "installation/old_package_reporter"
 
-describe Installation::OldPackageReport do
+describe Installation::OldPackageReporter do
   let(:message1) { "These packages are too old, install new ones." }
   let(:message2) { "This package contains a bug." }
   let(:old_package1) do
@@ -25,7 +25,7 @@ describe Installation::OldPackageReport do
     )
   end
 
-  subject { Installation::OldPackageReport.new([old_package1, old_package2]) }
+  subject { Installation::OldPackageReporter.new([old_package1, old_package2]) }
 
   describe "#report" do
     before do

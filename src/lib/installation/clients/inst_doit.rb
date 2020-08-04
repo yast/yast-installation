@@ -19,7 +19,7 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-require "installation/old_package_check"
+require "installation/old_package_checker"
 
 module Yast
   # Asks user to really do the installation/update.
@@ -44,7 +44,7 @@ module Yast
       PackagesUI.ConfirmLicenses
 
       # warn about installing old packages
-      ::Installation::OldPackageCheck.run
+      ::Installation::OldPackageChecker.run
 
       # function in installation/misc.ycp
       # bugzilla #219097

@@ -12,18 +12,18 @@
 
 require "yast"
 
-require "installation/old_package_report"
+require "installation/old_package_reporter"
 require "installation/old_package"
 
 module Installation
   # This class checks whether some old packages are selected
   # and displays a warning to the user.
-  class OldPackageCheck
+  class OldPackageChecker
     # Read the old package configurations and display warning for the old selected
     # packages.
     def self.run
       old_packages = OldPackage.read
-      reporter = OldPackageReport.new(old_packages)
+      reporter = OldPackageReporter.new(old_packages)
       reporter.report
     end
   end

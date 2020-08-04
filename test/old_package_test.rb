@@ -55,5 +55,19 @@ describe Installation::OldPackage do
         expect(subject.selected_old).to be_nil
       end
     end
+
+    context "a package with the same version is selected" do
+      let(:old_package) do
+        { "name" => "yast2", "version" => subject.version, "arch" => "x86_64", "status" => :selected }
+      end
+
+      before do
+        expect(Yast::Pkg).to receive(:ResolvableProperties).and_return([old_package])
+      end
+
+      it "returns the package Resolvable" do
+        expect(subject.selected_old).to eq(old_package)
+      end
+    end
   end
 end

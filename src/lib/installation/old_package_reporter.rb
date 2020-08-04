@@ -18,7 +18,7 @@ Yast.import "HTML"
 module Installation
   # This class checks whether some old packages are selected
   # and displays a warning to the user.
-  class OldPackageReport
+  class OldPackageReporter
     include Yast::Logger
     include Yast::I18n
 
@@ -55,7 +55,7 @@ module Installation
       end
 
       message = format(_("The installer detected old package versions selected " \
-        "for installation: \n\n%{list}"), list: pkg_summary)
+        "for installation: %{list}"), list: pkg_summary)
 
       Yast::Report.LongWarning(message)
     end

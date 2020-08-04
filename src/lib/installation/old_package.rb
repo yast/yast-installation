@@ -41,17 +41,21 @@ module Installation
     def selected_old
       packages = Yast::Pkg.ResolvableProperties(name, :package, "")
 
-      # 1 = the selected is newer, the opposite is older or the same
+      # -1 = the second version (the selected package) is newer
       packages.find do |p|
         p["status"] == :selected && p["arch"] == arch &&
-          Yast::Pkg.CompareVersions(version, p["version"]) == 1
+          Yast::Pkg.CompareVersions(version, p["version"]) != -1
       end
     end
 
     # Reads the old package configuration files and creates the respective
-    # OldPackage objects.
-    # @return [Array] Configured old packages, empty list if no configuration
-    #  is specified
+    # OldPackage objects. It reads all YAML files from the subdirectories.
+    # @param paths [Array<String>,nil] The list of directories which are scanned
+    #  for the YAML configuration files. If `nil` then the default YaST paths
+    #  are used.
+    # @return [Array<Installation::OldPackage>] Configured old packages,
+    #  empty list if no configuration is specified
+    # @see See the data/old_packages/*.yml example file.
     def self.read(paths = nil)
       # unfortunately we cannot use Yast::Directory.find_data_file
       # here because it needs an exact file name, it does not accept a glob,
