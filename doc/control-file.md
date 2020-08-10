@@ -504,7 +504,11 @@ Note that *installation_layout* takes precedence over *installation_ui*. When
 nothing is configured, the default layout is rendered with title on the left and
 with the top banner (SLE flavor).
 
-Some examples of layout configuration:
+#### Examples
+
+Some examples of different configurations and its visual result are shown below:
+
+##### Example 1
 
 ```xml
 <globals>
@@ -517,6 +521,10 @@ Some examples of layout configuration:
 </globals>
 ```
 
+![](screenshots/sle_tt_banner.png)
+
+##### Example 2
+
 ```xml
 <globals>
     <!-- installation_ui is used because nothing is defined by installation_layout -->
@@ -524,6 +532,48 @@ Some examples of layout configuration:
     <installation_layout></installation_layout>
 </globals>
 ```
+
+![](screenshots/tw_sd.png)
+
+##### Example 3
+
+```xml
+<globals>
+    <installation_layout>
+        <mode>steps</mode>
+        <banner config:type="boolean">true</banner>
+    </installation_layout>
+</globals>
+```
+
+![](screenshots/sle_sd_banner.png)
+
+##### Example 4
+
+```xml
+<globals>
+    <installation_layout>
+        <mode>title-on-top</mode>
+        <banner config:type="boolean">true</banner>
+    </installation_layout>
+</globals>
+```
+
+![](screenshots/sle_tt_banner.png)
+
+##### Example 5
+
+```xml
+<globals>
+    <installation_layout>
+        <mode>title-on-left</mode>
+        <banner config:type="boolean">false</banner>
+    </installation_layout>
+</globals>
+```
+
+![](screenshots/sle_tl.png)
+
 
 ### Software
 
