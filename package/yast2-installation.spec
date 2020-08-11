@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.3.13
+Version:        4.3.14
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -122,6 +122,8 @@ Obsoletes:      yast2-installation-devel-doc
 Recommends:     yast2-online-update
 Recommends:     yast2-firewall
 Recommends:     yast2-add-on
+
+Supplements:    autoyast(deploy_image,ssh_import)
 
 BuildArch:      noarch
 
