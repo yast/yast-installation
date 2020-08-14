@@ -47,6 +47,7 @@ BuildRequires:  yast2-network >= 4.2.55
 BuildRequires:  yast2-users >= 3.2.8
 # storage-ng based version
 BuildRequires:  yast2-country >= 3.3.1
+BuildRequires:  yast2-bootloader
 
 PreReq:         %fillup_prereq
 Requires:       yast2-users >= 3.2.8
