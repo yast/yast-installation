@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 14 10:55:53 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
+
+- handle device autoconfig setting in summary screen (bsc#1168036)
+- 4.2.44
+
+-------------------------------------------------------------------
 Thu Jun 25 11:07:53 CEST 2020 - aschnell@suse.com
 
 - copy NVMe hostnqn and hostid from installation system to target
