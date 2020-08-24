@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.3.14
+Version:        4.3.15
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -49,6 +49,7 @@ BuildRequires:  yast2-network >= 4.2.55
 BuildRequires:  yast2-users >= 3.2.8
 # storage-ng based version
 BuildRequires:  yast2-country >= 3.3.1
+BuildRequires:  yast2-bootloader
 
 PreReq:         %fillup_prereq
 Requires:       yast2-users >= 3.2.8
