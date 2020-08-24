@@ -107,7 +107,7 @@ module Installation
 
       log.info "Saving the current randomness state..."
 
-      store_to = "#{Installation.destdir}/var/lib/misc/random-seed"
+      store_to = "#{Installation.destdir}/var/lib/systemd/random-seed"
 
       # Copy the current state of random number generator to the installed system
       if local_command(
