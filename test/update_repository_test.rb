@@ -5,6 +5,7 @@ require_relative "test_helper"
 require "installation/update_repository"
 require "uri"
 require "pathname"
+require "stringio"
 
 describe Installation::UpdateRepository do
   TEMP_DIR = Pathname.new(__FILE__).dirname.join("tmp")
@@ -28,6 +29,8 @@ describe Installation::UpdateRepository do
       .and_return(repo_id)
     allow(Yast::Pkg).to receive(:SourceRefreshNow).with(repo_id).and_return(true)
     allow(Yast::Pkg).to receive(:SourceLoad).and_return(true)
+    allow(subject).to receive(:write_package_index)
+    allow(repo).to receive(:write_package_index)
   end
 
   describe "#packages" do
@@ -187,11 +190,17 @@ describe Installation::UpdateRepository do
     let(:update_path) { Pathname("/download/yast_000") }
     let(:mount_point) { updates_path.join("yast_0000") }
     let(:file) { double("file") }
+    let(:package) do
+      Y2Packager::Resolvable.new("name" => "pkg1", "version" => "1.42-1.2", "arch" => "noarch")
+    end
 
     before do
       allow(repo).to receive(:update_files).and_return([update_path])
       allow(Installation::UpdateRepository::INSTSYS_PARTS_PATH).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir_p).with(mount_point)
+      allow(repo).to receive(:packages).and_return([package])
+      allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
+      allow(file).to receive(:puts)
     end
 
     it "mounts and adds files/dir" do
@@ -206,6 +215,17 @@ describe Installation::UpdateRepository do
 
       expect(file).to receive(:puts)
       repo.apply(updates_path)
+    end
+
+    it "writes the list of updated packages to the #{Installation::UpdateRepository::PACKAGE_INDEX} file" do
+      # deactivate the global mock
+      expect(repo).to receive(:write_package_index).and_call_original
+
+      io = StringIO.new
+      expect(File).to receive(:open).with(Installation::UpdateRepository::PACKAGE_INDEX, "a").and_yield(io)
+      repo.apply(updates_path)
+      # check the written content
+      expect(io.string).to eq("pkg1 [1.42-1.2.noarch]\n")
     end
 
     it "adds mounted filesystem to instsys.parts file" do

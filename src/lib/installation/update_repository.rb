@@ -57,6 +57,8 @@ module Installation
     ORIGINS = [:default, :user].freeze
     # Path to instsys.parts registry
     INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts")
+    # a file with list of applied packages
+    PACKAGE_INDEX = "/.packages.self_update".freeze
 
     # @return [URI] URI of the repository
     attr_reader :uri
@@ -236,6 +238,8 @@ module Installation
         adddir(mountpoint)
         update_instsys_parts(path, mountpoint)
       end
+
+      write_package_index
     end
 
     # Clean-up
@@ -456,6 +460,22 @@ module Installation
     # @see Yast::URL.HidePassword
     def safe_uri
       @safe_uri ||= Yast::URL.HidePassword(uri.to_s)
+    end
+
+    # Write the list of self-update packages into a file.
+    # The inst-sys contains the list of included packages in the /.packages.*
+    # files. After applying a self-update YaST writes the list of the updated
+    # packages to the /.packages.self_update file to keep the files in sync and
+    # to make debugging easier.
+    def write_package_index(file = PACKAGE_INDEX)
+      # use the same format as the installation-images, one package per line in this format:
+      #   package_name [version.arch]
+      # because we cannot evaluate the dependencies the dependency part is not written
+      File.open(file, "a") do |f|
+        packages.each do |p|
+          f.puts "#{p.name} [#{p.version}.#{p.arch}]"
+        end
+      end
     end
   end
 end
