@@ -49,6 +49,10 @@ These are the basic steps performed by YaST in order to perform the update:
 5. The selected meta-packages copied to the inst-sys are added as an add-on
    installation repository to allow updating the `skelcd-*` or `*-release`
    packages via the self-update repository.
+6. For debugging purposes the list of installed/updated packages is written
+   to the `/.packages.self_update` file in the inst-sys (since
+   yast2-installation-4.3.16, SLE15-SP3/openSUSE Leap 15.3/openSUSE
+   Tumbleweed 20200905).
 
 ### Language Selection
 
