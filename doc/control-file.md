@@ -649,6 +649,30 @@ performed. The following options are available:
 
     List of known products supported for upgrade (SuSE-release). Old
     releases or other distributions will report a warning.
+    All products (regular expressions) are matching the string which can be
+    found in */etc/\*-release* file.
+    
+    Regular expressions in \<regexp\_item\>s can contain standard regular
+    expressions, such as
+    
+    -   The circumflex *\^* and the dollar sign *\$* as boundary characters
+        for strings
+    
+    -   asterisk *\**, plus *+* and question mark *?* for repeating or
+        existence.
+    
+    -   dot *.* as a wild-card character
+    
+    -   square brackets *[]* for a list of possible characters
+    
+    -   circle brackets *()* for listing possibilities
+    
+    -   special all-locale class-expressions *[:alnum:]*, *[:alpha:]*,
+        *[:blank:]*, *[:cntrl:]*, *[:digit:]*, *[:graph:]*, *[:lower:]*,
+        *[:print:]*, *[:punct:]*, *[:space:]*, *[:upper:]*, *[:xdigit:]*
+    
+    These regular expressions are evaluated as [POSIX regex]
+    (www.regular-expressions.info/posix.html).
 ```xml
     <software>
         <products_supported_for_upgrade config:type="list">
@@ -660,35 +684,32 @@ performed. The following options are available:
     </software>
 ```
 
-All products (regular expressions) are matching the string which can be
-found in */etc/\*-release* file.
-
-Regular expressions in \<regexp\_item\>s can contain standard regular
-expressions, such as
-
--   The circumflex *\^* and the dollar sign *\$* as boundary characters
-    for strings
-
--   asterisk *\**, plus *+* and question mark *?* for repeating or
-    existence.
-
--   dot *.* as a wild-card character
-
--   square brackets *[]* for a list of possible characters
-
--   circle brackets *()* for listing possibilities
-
--   special all-locale class-expressions *[:alnum:]*, *[:alpha:]*,
-    *[:blank:]*, *[:cntrl:]*, *[:digit:]*, *[:graph:]*, *[:lower:]*,
-    *[:print:]*, *[:punct:]*, *[:space:]*, *[:upper:]*, *[:xdigit:]*
-
-These regular expressions are evaluated as [POSIX regex]
-(www.regular-expressions.info/posix.html).
-
 -   *online\_repos\_preselected*
 
     Online Repositories are pre-selected by default to be used. This
     item can change the default behavior.
+
+-   *upgrade\/product\_upgrades*
+
+    List of product upgrades where defined vendor changes are possible
+    without asking the user for confirmation.
+```xml
+    <software>
+        <upgrade>
+            <!-- Do not ask for vendor change during this defined upgrades -->
+            <product_upgrades config:type="list">
+                <product_upgrade>
+                    <from>openSUSE Leap</from>
+                    <to>openSUSE Jump</to>
+                    <compatible_vendors config:type="list">
+                      <compatible_vendor>openSUSE</compatible_vendor>
+                      <compatible_vendor>SUSE LLC</compatible_vendor>
+                    </compatible_vendors>
+                </product_upgrade>
+	    </product_upgrades>
+        </upgrade>
+    </software>
+```
 
 ### Supported Desktops
 
