@@ -691,7 +691,7 @@ performed. The following options are available:
 
 -   *upgrade\/product\_upgrades*
 
-    List of product upgrades where defined vendors changes are possible
+    List of product upgrades where defined vendor changes are possible
     without asking the user for confirmation.
 ```xml
     <software>
