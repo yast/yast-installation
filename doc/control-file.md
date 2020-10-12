@@ -659,7 +659,6 @@ performed. The following options are available:
         </products_supported_for_upgrade>
     </software>
 ```
-
     All products (regular expressions) are matching the string which can be
     found in */etc/\*-release* file.
     
