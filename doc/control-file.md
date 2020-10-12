@@ -649,16 +649,6 @@ performed. The following options are available:
 
     List of known products supported for upgrade (SuSE-release). Old
     releases or other distributions will report a warning.
-```xml
-    <software>
-        <products_supported_for_upgrade config:type="list">
-            <regexp_item>^Novell LINUX Desktop 9.*</regexp_item>
-            <regexp_item>^SUSE LINUX Enterprise Server 10.*</regexp_item>
-            <regexp_item>^SUSE LINUX Enterprise Desktop 10.*</regexp_item>
-            <regexp_item>^openSUSE .*</regexp_item>
-        </products_supported_for_upgrade>
-    </software>
-```
     All products (regular expressions) are matching the string which can be
     found in */etc/\*-release* file.
     
@@ -683,6 +673,16 @@ performed. The following options are available:
     
     These regular expressions are evaluated as [POSIX regex]
     (www.regular-expressions.info/posix.html).
+```xml
+    <software>
+        <products_supported_for_upgrade config:type="list">
+            <regexp_item>^Novell LINUX Desktop 9.*</regexp_item>
+            <regexp_item>^SUSE LINUX Enterprise Server 10.*</regexp_item>
+            <regexp_item>^SUSE LINUX Enterprise Desktop 10.*</regexp_item>
+            <regexp_item>^openSUSE .*</regexp_item>
+        </products_supported_for_upgrade>
+    </software>
+```
 
 -   *online\_repos\_preselected*
 
