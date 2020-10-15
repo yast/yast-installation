@@ -388,8 +388,8 @@ module Yast
         "roles",
         "services",
         "services-manager",
-        "configuration_management",
-        "pkg" # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
+        "pkg", # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
+        "configuration_management" # *.repo files must be written to the installed system (bsc#1177522)
       ].freeze
 
     def save_settings_steps
