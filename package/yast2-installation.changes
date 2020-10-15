@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct  9 15:04:33 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Run configuration_management_finish client after *.repo files
+  are available in the installed system (bsc#1177522).
+- 4.2.46
+
+-------------------------------------------------------------------
 Mon Aug 24 09:23:09 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - save random pool to /var/lib/systemd/random-seed (bsc#1174964)
