@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Oct 27 15:36:13 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- yupdate - also make /usr/share/icons writable by default
+  (needed for updating yast2-theme)
+
+-------------------------------------------------------------------
 Fri Oct 16 06:28:53 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Run configuration_management_finish client after *.repo files

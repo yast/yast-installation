@@ -35,7 +35,7 @@ module YUpdate
   class Version
     MAJOR = 0
     MINOR = 1
-    PATCH = 1
+    PATCH = 2
 
     STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
   end
@@ -187,7 +187,8 @@ HELP
       "/usr/lib/YaST2",
       "/usr/lib64/YaST2",
       "/usr/share/autoinstall",
-      "/usr/share/applications/YaST2"
+      "/usr/share/applications/YaST2",
+      "/usr/share/icons"
     ].freeze
 
     attr_reader :dir, :orig_dir
