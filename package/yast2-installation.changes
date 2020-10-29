@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Oct 27 22:30:43 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
+
+- Write hostname and proxy configuration to the inst-sys when
+  configured through linuxrc not only during an installation but
+  also when running an autoinstallation (bsc#1177768)
+- 4.2.47
+
+-------------------------------------------------------------------
 Fri Oct  9 15:04:33 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Run configuration_management_finish client after *.repo files
