@@ -16,7 +16,9 @@ module Yast
     def main
       textdomain "installation"
 
-      InstallInfConvertor.instance.write_netconfig unless Mode.auto
+      InstallInfConvertor.instance.write_netconfig
+
+      return :next if Mode.auto
 
       Yast::Wizard.CreateDialog if separate_wizard_needed?
 
