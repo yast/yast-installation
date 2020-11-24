@@ -158,7 +158,7 @@ module Yast
     # list because the dialog will not show the license (we do not know which product we are
     # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>,Array<Y2Packager::ProductControlProduct] List of
+    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct, Array<Y2Packager::ProductLocation>] List of
     #    available base products; if any, a list containing only the forced base product;
     #    empty list in update mode.
     def products
@@ -171,7 +171,8 @@ module Yast
 
     # Returns all available base products
     #
-    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct>] List of available base products
+    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct>, Array<Y2Packager::ProductLocation>] List of
+    #   available base products
     def available_base_products
       return @available_base_products if @available_base_products
 
@@ -224,13 +225,24 @@ module Yast
       end
     end
 
+    # Show product selection screen even when only a single product is available.
+    #
+    # This serves mainly to delay the license confirmation to a later point
+    # (when the license has been read).
+    #
+    # @return [Boolean] true if product selection is preferred over license
+    #   confirmation
+    def allow_single_product_selection?
+      products.size == 1 && !products.first.respond_to?(:license)
+    end
+
     # Determine whether selected product license should be confirmed
     #
     # If more than 1 product exists, it is supposed to be accepted later.
     #
     # @return [Boolean] true if it should be accepted; false otherwise.
     def license_confirmation_required?
-      return false if products.size > 1
+      return false if products.size > 1 || allow_single_product_selection?
       selected_product.license_confirmation_required?
     end
 
@@ -241,7 +253,7 @@ module Yast
     # agreement confirmed when required; false otherwise
     def product_selection_finished?
       if selected_product.nil?
-        return true if products.size <= 1
+        return true if products.size <= 1 && !allow_single_product_selection?
         Yast::Popup.Error(_("Please select a product to install."))
         return false
       elsif license_confirmation_required? && !selected_product.license_confirmed?

@@ -133,11 +133,11 @@ module Installation
 
       # Determine whether the license must be shown
       #
-      # The license will be shown when only one product is available.
+      # The license will be shown when only one product with license information is available.
       #
       # @return [Boolean] true if the license must be shown; false otherwise
       def show_license?
-        products.size == 1
+        products.size == 1 && products.first.respond_to?(:license)
       end
 
       # Determine whether some product is available or not
