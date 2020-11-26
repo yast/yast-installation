@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 26 19:13:34 UTC 2020 - Josef Reidinger <jreidinger@suse.com>
+
+- correct add-on spelling (jsc#SLE-14772)
+- 4.3.22
+
+-------------------------------------------------------------------
 Thu Nov 26 14:06:30 UTC 2020 - Steffen Winterfeldt <snwint@suse.com>
 
 - fix full media product selection (bsc#1179094, bsc#1176424)
