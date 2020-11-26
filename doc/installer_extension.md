@@ -141,7 +141,7 @@ module Yast
 
     def main
       # TRANSLATORS: A popup message
-      Popup.Message(_("This is an inserted step from the testing-extension addon."\
+      Popup.Message(_("This is an inserted step from the testing-extension add-on."\
         "\n\nPress OK to continue."))
       return :auto
     end
