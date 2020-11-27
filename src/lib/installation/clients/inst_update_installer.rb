@@ -385,7 +385,7 @@ module Yast
         # TRANSLATORS: progress label
         _("Add Update Repository"),
         _("Download the Packages"),
-        _("Copy the Addon Packages"),
+        _("Copy the Add-on Packages"),
         _("Apply the Packages"),
         _("Restart")
       ]
