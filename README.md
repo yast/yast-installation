@@ -1,8 +1,10 @@
 YaST Installation Framework
 ===========================
 
-[![Travis Build](https://travis-ci.org/yast/yast-installation.svg?branch=master)](https://travis-ci.org/yast/yast-installation)
-[![Jenkins Build](http://img.shields.io/jenkins/s/https/ci.opensuse.org/yast-installation-master.svg)](https://ci.opensuse.org/view/Yast/job/yast-installation-master/)
+[![Workflow Status](https://github.com/yast/yast-installation/workflows/CI/badge.svg?branch=master)](
+https://github.com/yast/yast-installation/actions?query=branch%3Amaster)
+[![Jenkins Status](https://ci.opensuse.org/buildStatus/icon?job=yast-yast-installation-master)](
+https://ci.opensuse.org/view/Yast/job/yast-yast-installation-master/)
 [![Coverage Status](https://coveralls.io/repos/github/yast/yast-installation/badge.svg?branch=master)](https://coveralls.io/github/yast/yast-installation?branch=master)
 
 Description
