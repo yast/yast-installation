@@ -397,6 +397,12 @@ function start_yast () {
 	fi
 	log "\tReset memory allocation: overcommit_memory=$overcommit"
 	echo $overcommit > /proc/sys/vm/overcommit_memory
+
+	# Starting YAST2 control center if it has been set in yast2-firstboot
+	if [ -f /var/lib/YaST2/start_y2cc ] ; then
+	        rm /var/lib/YaST2/start_y2cc
+		/sbin/yast2
+	fi
 }
 
 #----[ start_yast_and_reboot ]----#
