@@ -42,9 +42,9 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Yast::Execute.stdout
-BuildRequires:  yast2 >= 4.1.42
-Requires:       yast2 >= 4.1.42
+# Yast2::FsSnapshotStore::IOError
+BuildRequires:  yast2 >= 4.1.80
+Requires:       yast2 >= 4.1.80
 
 # Y2Packager::KnownRepositories
 BuildRequires:	yast2-packager >= 4.1.27
