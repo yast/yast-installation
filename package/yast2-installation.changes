@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec 21 10:44:22 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not crash when it is not possible to create a snapshot after
+  installing or upgrading the system (bsc#1180142).
+- 4.1.51
+
+-------------------------------------------------------------------
 Tue May  5 15:54:11 UTC 2020 - David Diaz <dgonzalez@suse.com>
 
 - Restore missing icons for ssh import and image deployment
