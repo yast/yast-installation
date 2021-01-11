@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Dec  7 09:27:38 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not cleanup the libzypp cache when the system has low memory,
+  incomplete cache confuses libzypp later (bsc#1179415)
+- 4.0.77
+
+-------------------------------------------------------------------
+
 Mon Apr 20 12:10:19 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
 
 - Force the use of en_US.UTF-8 when running firstboot or the
