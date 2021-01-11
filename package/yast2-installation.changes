@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec  7 09:27:38 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not cleanup the libzypp cache when the system has low memory,
+  incomplete cache confuses libzypp later (bsc#1179415)
+- 4.2.48
+
+-------------------------------------------------------------------
 Tue Oct 27 22:30:43 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
 
 - Write hostname and proxy configuration to the inst-sys when
