@@ -16,10 +16,9 @@ describe Installation::InstsysCleaner do
         allow(Yast::Execute).to receive(:locally).with("free", "-m")
         allow(File).to receive(:size).and_return(0)
         allow(Dir).to receive(:[]).and_return([])
-        allow(Yast::UI).to receive(:TextMode).and_return(true)
       end
 
-      context "a bit less than 640MB memory in text mode" do
+      context "a bit less than 640MB memory" do
         before do
           # 512MB - 1B
           expect(Yast2::HwDetection).to receive(:memory).and_return((512 << 20) - 1)
@@ -30,50 +29,11 @@ describe Installation::InstsysCleaner do
           expect(FileUtils).to_not receive(:rm)
           described_class.make_clean
         end
-
-        it "removes the known files from the libzypp cache" do
-          file = "/var/cache/zypp/raw/SLES15-15-0/repodata/1234567890abcdef-appdata.xml.gz"
-          expect(Dir).to receive(:[]).with("/var/cache/zypp/raw/**/*-appdata.xml.gz")
-            .and_return([file])
-          expect(FileUtils).to receive(:rm).with(file)
-          described_class.make_clean
-        end
-      end
-
-      context "a bit less than 1GB memory in graphical mode" do
-        before do
-          # 1GB - 1B
-          expect(Yast2::HwDetection).to receive(:memory).and_return((1 << 30) - 1)
-          allow(described_class).to receive(:unmount_kernel_modules)
-          allow(Yast::UI).to receive(:TextMode).and_return(false)
-        end
-
-        it "removes the known files from the libzypp cache" do
-          file = "/var/cache/zypp/raw/SLES15-15-0/repodata/1234567890abcdef-appdata.xml.gz"
-          expect(Dir).to receive(:[]).with("/var/cache/zypp/raw/**/*-appdata.xml.gz")
-            .and_return([file])
-          expect(FileUtils).to receive(:rm).with(file)
-          described_class.make_clean
-        end
-      end
-
-      context "a bit less than 1GB memory in text mode" do
-        before do
-          # 1GB - 1B
-          expect(Yast2::HwDetection).to receive(:memory).and_return((1 << 30) - 1)
-          allow(described_class).to receive(:unmount_kernel_modules)
-        end
-
-        fit "does not remove the libzypp cache" do
-          expect(described_class).to_not receive(:cleanup_zypp_cache)
-          described_class.make_clean
-        end
       end
 
       it "removes the kernel modules if the memory is less than 1GB" do
         # 1GB - 1B
         expect(Yast2::HwDetection).to receive(:memory).and_return((1 << 30) - 1)
-        allow(described_class).to receive(:cleanup_zypp_cache)
 
         # the order of the executed commands is important, check it explicitly
         expect(File).to receive(:exist?).with("/parts/mp_0000/lib/modules").and_return(true).ordered
@@ -91,7 +51,6 @@ describe Installation::InstsysCleaner do
         # 2GB RAM
         expect(Yast2::HwDetection).to receive(:memory).and_return(2 << 30)
 
-        expect(described_class).to_not receive(:cleanup_zypp_cache)
         expect(described_class).to_not receive(:unmount_kernel_modules)
 
         described_class.make_clean
@@ -104,7 +63,6 @@ describe Installation::InstsysCleaner do
       end
 
       it "does not do anything" do
-        expect(described_class).to_not receive(:cleanup_zypp_cache)
         expect(described_class).to_not receive(:unmount_kernel_modules)
 
         described_class.make_clean
