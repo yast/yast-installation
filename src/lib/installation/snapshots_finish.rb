@@ -53,7 +53,7 @@ module Installation
       Yast2::FsSnapshot.create_post("after update", pre_number, cleanup: :number, important: true)
       Yast2::FsSnapshotStore.clean("update")
       true
-    rescue Yast2::SnapshotCreationFailed, Yast2::FsSnapshotsStore::IOError => error
+    rescue Yast2::SnapshotCreationFailed, Yast2::FsSnapshotStore::IOError => error
       log.error("Error creating a post-update snapshot: #{error}")
       Yast::Report.Error(_("Could not create a post-update snapshot."))
       false
