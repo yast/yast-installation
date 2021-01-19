@@ -173,8 +173,8 @@ function set_splash () {
 #--------------------------------------------------
 # set splash progressbar to a value given in $1
 # ---
-	[ -f /proc/splash ] && echo "show $(($1*65535/100))" > /proc/splash
-	[ "$1" = 100 -a -x /sbin/splash ] && /sbin/splash -q
+	[ -x /usr/bin/plymouth ] && /usr/bin/plymouth system-update --progress=$1
+	[ "$1" = 100 -a -x /usr/bin/plymouth ] && /usr/bin/plymouth quit
 }
 
 #----[ disable_splash ]-----#
@@ -183,7 +183,7 @@ function disable_splash () {
 # disable splash screen. This means be verbose and
 # show the kernel messages
 # ---
-	[ -f /proc/splash ] && echo "verbose" > /proc/splash
+	[ -x /usr/bin/plymouth ] && /usr/bin/plymouth hide-splash
 }
 
 #----[ stop_xvnc]-----#

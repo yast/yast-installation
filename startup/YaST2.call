@@ -333,8 +333,8 @@ function start_yast () {
 	echo "*** Starting YaST2 ***"
 	log "\tAllow big memory allocation: overcommit_memory=1"
 	echo 1 > /proc/sys/vm/overcommit_memory
-	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
-		/sbin/splash -t "YaST running"
+	if [ -x /usr/bin/plymouth ];then
+		/usr/bin/plymouth display-message --text="Starting YaST"
 	fi
 	export QT_IM_MODULE=xim
 
