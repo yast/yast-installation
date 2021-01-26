@@ -13,7 +13,7 @@ jobs:
     steps:
 
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Install Dependencies
       run: rake build_dependencies:install
@@ -41,7 +41,7 @@ jobs:
     steps:
 
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Rubocop
       run: rake check:rubocop
@@ -53,7 +53,7 @@ jobs:
     steps:
 
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Install Dependencies
       run: rake build_dependencies:install
@@ -68,7 +68,7 @@ jobs:
     steps:
 
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Yardoc
       run: rake check:doc
@@ -82,7 +82,7 @@ jobs:
     steps:
 
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Perl Syntax
       run: yast-ci-ruby -o perl_syntax

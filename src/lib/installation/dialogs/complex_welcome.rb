@@ -21,6 +21,7 @@ require "y2packager/widgets/product_license"
 
 Yast.import "UI"
 Yast.import "Wizard"
+Yast.import "OSRelease"
 Yast.import "ProductControl"
 
 module Installation
@@ -48,6 +49,7 @@ module Installation
 
         @products = products
         @disable_buttons = disable_buttons.map { |b| "#{b}_button" }
+        @language_selection = Y2Country::Widgets::LanguageSelection.new(emit_event: true)
       end
 
       # Returns the dialog title
@@ -68,6 +70,7 @@ module Installation
       def contents
         VBox(
           filling,
+          console_button,
           locale_settings,
           license_or_product_content,
           filling
@@ -93,12 +96,25 @@ module Installation
 
     private
 
+      def display_console_button?
+        # for now display the configuration button only in openSUSE Tumbleweed
+        # TODO: later enable it also for SLE15-SP4 and Leap 15.4
+        Yast::OSRelease.id.match?(/tumbleweed/i)
+      end
+
+      def console_button
+        return Empty() unless display_console_button?
+
+        require "installation/widgets/console_button"
+        Right(Widgets::ConsoleButton.new(@language_selection))
+      end
+
       def locale_settings
         Left(
           VBox(
             Left(
               HBox(
-                HWeight(1, Left(Y2Country::Widgets::LanguageSelection.new(emit_event: true))),
+                HWeight(1, Left(@language_selection)),
                 HSpacing(3),
                 HWeight(1, Left(Y2Country::Widgets::KeyboardSelectionCombo.new))
               )
