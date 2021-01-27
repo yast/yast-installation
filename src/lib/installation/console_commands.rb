@@ -16,6 +16,11 @@ require "yast"
 
 module Installation
   class ConsoleCommands
+    def initialize
+      Yast.import "Pkg"
+      Yast.import "Wizard"
+    end
+
     def commands(command = nil)
       case command
       when :welcome
@@ -45,6 +50,16 @@ module Installation
       when nil
         commands
       when :network
+        # we cannot run the module if there is a popup displayed, the module
+        # would be displayed *below* the popup making it inaccessible :-(
+        return unless wizard_dialog?
+
+        puts "Starting the network configuration module..."
+        puts
+        puts "After it is finished (by pressing [Next]/[Back]/[Abort])"
+        puts "press Alt+Tab to get back to the console, the installer"
+        puts "is blocked by the console and cannot continue."
+
         Yast::WFM.call("inst_lan", [{ "skip_detection" => true }])
       else
         puts "Error: Unknown option #{what}"
@@ -56,8 +71,6 @@ module Installation
     end
 
     def repositories
-      Yast.import "Pkg"
-
       repos = Yast::Pkg.SourceGetCurrent(false).map do |repo|
         Yast::Pkg.SourceGeneralData(repo)
       end
@@ -69,6 +82,18 @@ module Installation
       puts "Error: Unknown command"
       puts
       commands
+    end
+
+  private
+
+    def wizard_dialog?
+      return true if Yast::Wizard.IsWizardDialog
+
+      puts "Error: An YaST module cannot be started if there is a popup dialog"
+      puts "displayed. First close this console then close the popup in the installer"
+      puts "and then start the console again."
+
+      false
     end
   end
 end
