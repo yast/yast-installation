@@ -31,6 +31,9 @@ module Installation
         puts
         puts "This is a Ruby shell, you can also type any Ruby command here"
         puts "and inspect or change the YaST installer"
+        puts
+        puts "Hints: <Tab> completion is enabled, the command history is kept,"
+        puts "you can use the usual \"readline\" features..."
       when nil
         puts "Available commands:"
         puts
@@ -57,8 +60,10 @@ module Installation
         puts "Starting the network configuration module..."
         puts
         puts "After it is finished (by pressing [Next]/[Back]/[Abort])"
-        puts "press Alt+Tab to get back to the console, the installer"
-        puts "is blocked by the console and cannot continue."
+        puts "press Alt+Tab to get back to this console."
+
+        # wait a bit so the user can read the message above
+        sleep(5)
 
         Yast::WFM.call("inst_lan", [{ "skip_detection" => true }])
       else
