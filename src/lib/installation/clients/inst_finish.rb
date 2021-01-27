@@ -377,7 +377,7 @@ module Yast
       [
         "yast_inf",
         "network",
-        "firewall",
+        "security",
         "ntp-client",
         "ssh_settings",
         "remote",
