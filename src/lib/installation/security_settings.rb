@@ -21,7 +21,7 @@ require "yast"
 
 Yast.import "UsersSimple"
 
-module ::Installation
+module Installation
   # Class that stores the security proposal settings during installation.
   class SecuritySettings
     include Yast::Logger
@@ -143,12 +143,12 @@ module ::Installation
 
     def human_polkit_priviledges
       {
-        "default" => _("Default"),
+        "default"     => _("Default"),
         # TRANSLATORS: restrictive in sense the most restrictive policy
         "restrictive" => _("Restrictive"),
-        "standard" => _("Standard"),
+        "standard"    => _("Standard"),
         # TRANSLATORS: easy in sense the least restrictive policy
-        "easy" => _("Easy")
+        "easy"        => _("Easy")
       }
     end
 

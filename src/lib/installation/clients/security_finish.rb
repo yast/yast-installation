@@ -81,10 +81,10 @@ module Installation
         # Do not write polkit privs during update (bsc#1120720)
         if !polkit_default_privs.nil? && polkit_default_privs != "" && !Yast::Mode.update
           log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
-          Yast::SCR.Write(
-            Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
-            polkit_default_privs
-          )
+            Yast::SCR.Write(
+              Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
+              polkit_default_privs
+            )
           # BNC #440182
           # Flush the SCR cache before calling the script
           Yast::SCR.Write(Yast::Path.new(".sysconfig.security"), nil)
@@ -116,11 +116,8 @@ module Installation
           "/usr/bin/chkstat --system --set")
         log.info("updating capabilities: #{res}")
 
-
         # in autoinstallation write security profile here
-        if Yast::Mode.autoinst
-          Yast::Security.Write
-        end
+        Yast::Security.Write if Yast::Mode.autoinst
 
         true
       end

@@ -53,7 +53,7 @@ module Installation
                 )
               )
             )
-          )
+          ),
           Frame(
             _("PolicyKit"),
             MarginBox(
@@ -100,7 +100,6 @@ module Installation
     end
 
     class PolkitDefaultPriv < CWM::ComboBox
-
       def initialize(settings)
         textdomain "installation"
 
@@ -117,23 +116,23 @@ module Installation
 
       def help
         _(
-           "<p>SUSE ships with three sets of default privilege " \
-           "settings. These are as follows:<br><ul>" \
-           "<li>\"restrictive\": conservative settings that " \
-           "require the root user password for a lot of actions" \
-           " and disable certain actions completely for remote " \
-           "users.</li>" \
-           "<li>\"standard\": balanced settings that restrict " \
-           "sensitive actions to require root authentication " \
-           "but allow less dangerous operations for regular " \
-           "logged in users.</li>" \
-           "<li>\"easy\": settings that are focused on ease " \
-           "of use. This sacrifices security to some degree " \
-           "to allow a more seamless user experience without" \
-           " interruptions in the workflow due to password " \
-           "prompts.</li></ul><br>" \
-           "The \"default\" is to keep value empty and it will be" \
-           "assigned automatically.</p>"
+          "<p>SUSE ships with three sets of default privilege " \
+          "settings. These are as follows:<br><ul>" \
+          "<li>\"restrictive\": conservative settings that " \
+          "require the root user password for a lot of actions" \
+          " and disable certain actions completely for remote " \
+          "users.</li>" \
+          "<li>\"standard\": balanced settings that restrict " \
+          "sensitive actions to require root authentication " \
+          "but allow less dangerous operations for regular " \
+          "logged in users.</li>" \
+          "<li>\"easy\": settings that are focused on ease " \
+          "of use. This sacrifices security to some degree " \
+          "to allow a more seamless user experience without" \
+          " interruptions in the workflow due to password " \
+          "prompts.</li></ul><br>" \
+          "The \"default\" is to keep value empty and it will be" \
+          "assigned automatically.</p>"
         )
       end
 
