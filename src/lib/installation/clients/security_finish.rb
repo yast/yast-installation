@@ -62,11 +62,42 @@ module Installation
         if Yast::Mode.auto && Y2Firewall::Clients::Auto.profile
           log.info("Firewall: running configuration according to the AY profile")
 
-          return Y2Firewall::Clients::Auto.new.write
+          return false unless Y2Firewall::Clients::Auto.new.write
+        else
+          Service.Enable("sshd") if @settings.enable_sshd
+          configure_firewall if @firewalld.installed?
         end
 
-        Service.Enable("sshd") if @settings.enable_sshd
-        configure_firewall if @firewalld.installed?
+        # Do not write polkit privs during update (bsc#1120720)
+        polkit_default_privs = @settings.polkit_default_priviledges
+        if !polkit_default_privs.nil? && polkit_default_privs != "" && !Yast::Mode.update
+          log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
+          Yast::SCR.Write(
+            Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
+            polkit_default_privs
+          )
+          # BNC #440182
+          # Flush the SCR cache before calling the script
+          Yast::SCR.Write(Yast::Path.new(".sysconfig.security"), nil)
+
+          ret2 = Yast::SCR.Execute(
+            Yast::Path.new(".target.bash_output"),
+            # check whether it exists
+            # give some feedback
+            # It's dozens of lines...
+            "test -x /sbin/set_polkit_default_privs && " \
+              "echo /sbin/set_polkit_default_privs && " \
+              "/sbin/set_polkit_default_privs | wc -l && " \
+              "echo 'Done'"
+          )
+          log.info "Command returned: #{ret2}"
+        end
+
+        # in autoinstallation write security profile here
+        if Yast::Mode.autoinst
+          Yast::Security.Write
+        end
+
         true
       end
 

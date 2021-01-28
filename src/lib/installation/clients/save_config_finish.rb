@@ -188,41 +188,7 @@ module Yast
             SignatureCheckDialogs.CheckSignatures
           )
 
-          flush_needed = true
-          # bnc #431158, patch done by lnussel
-          polkit_default_privs = ProductFeatures.GetStringFeature(
-            "globals",
-            "polkit_default_privs"
-          )
-          # Do not write polkit privs during update (bsc#1120720)
-          if !polkit_default_privs.nil? && polkit_default_privs != "" && !Mode.update
-            Builtins.y2milestone(
-              "Writing %1 to POLKIT_DEFAULT_PRIVS",
-              polkit_default_privs
-            )
-            SCR.Write(
-              path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
-              polkit_default_privs
-            )
-            # BNC #440182
-            # Flush the SCR cache before calling the script
-            SCR.Write(path(".sysconfig.security"), nil)
-            flush_needed = false
-
-            ret2 = SCR.Execute(
-              path(".target.bash_output"),
-              # check whether it exists
-              # give some feedback
-              # It's dozens of lines...
-              "test -x /sbin/set_polkit_default_privs && " \
-                "echo /sbin/set_polkit_default_privs && " \
-                "/sbin/set_polkit_default_privs | wc -l && " \
-                "echo 'Done'"
-            )
-            log.info "Command returned: #{ret2}"
-          end
-
-          SCR.Write(path(".sysconfig.security"), nil) if flush_needed
+          SCR.Write(path(".sysconfig.security"), nil)
 
           # ensure we have correct ca certificates
           if Mode.update
