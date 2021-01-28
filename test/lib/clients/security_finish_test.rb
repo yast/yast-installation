@@ -20,8 +20,8 @@ describe Installation::Clients::SecurityFinish do
   end
 
   describe "#modes" do
-    it "runs on installation and autoinstallation" do
-      expect(subject.modes).to eq([:installation, :autoinst])
+    it "runs on installation, update and autoinstallation" do
+      expect(subject.modes).to contain_exactly(:installation, :autoinst, :update)
     end
   end
 
