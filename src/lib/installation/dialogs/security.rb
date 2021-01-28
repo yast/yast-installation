@@ -49,7 +49,7 @@ module Installation
                 0.5,
                 0.5,
                 VBox(
-                  Widgets::FirewallSSHProposal.new(@settings)
+                  Y2Firewall::Widgets::FirewallSSHProposal.new(@settings)
                 )
               )
             )
