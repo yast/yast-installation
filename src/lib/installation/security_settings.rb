@@ -43,6 +43,7 @@ module ::Installation
 
     # Constructor
     def initialize
+      textdomain "installation"
       Yast.import "PackagesProposal"
       Yast.import "ProductFeatures"
       Yast.import "Linuxrc"
@@ -138,6 +139,17 @@ module ::Installation
 
       # firewall is up and port for ssh is not open
       @enable_firewall && !@open_ssh
+    end
+
+    def human_polkit_priviledges
+      {
+        "default" => _("Default"),
+        # TRANSLATORS: restrictive in sense the most restrictive policy
+        "restrictive" => _("Restrictive"),
+        "standard" => _("Standard"),
+        # TRANSLATORS: easy in sense the least restrictive policy
+        "easy" => _("Easy")
+      }
     end
 
   private
