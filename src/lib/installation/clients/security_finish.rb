@@ -23,6 +23,7 @@ require "installation/security_settings"
 require "installation/finish_client"
 
 Yast.import "Mode"
+Yast.import "SignatureCheckDialogs"
 
 module Installation
   module Clients
@@ -50,26 +51,34 @@ module Installation
       end
 
       def modes
-        [:installation, :autoinst]
+        [:installation, :autoinst, :update]
       end
 
       def write
         # lazy load to avoid build dependency on firewall module
         require "y2firewall/clients/auto"
 
-        # If the profile is missing then firewall section is not present at all.
-        # The firewall will be configured according to product proposals then.
-        if Yast::Mode.auto && Y2Firewall::Clients::Auto.profile
-          log.info("Firewall: running configuration according to the AY profile")
+        # write firewall and ssh only during fresh install
+        if !Yast::Mode.Update
+          # If the profile is missing then firewall section is not present at all.
+          # The firewall will be configured according to product proposals then.
+          if Yast::Mode.auto && Y2Firewall::Clients::Auto.profile
+            log.info("Firewall: running configuration according to the AY profile")
 
-          return false unless Y2Firewall::Clients::Auto.new.write
-        else
-          Service.Enable("sshd") if @settings.enable_sshd
-          configure_firewall if @firewalld.installed?
+            return false unless Y2Firewall::Clients::Auto.new.write
+          else
+            Service.Enable("sshd") if @settings.enable_sshd
+            configure_firewall if @firewalld.installed?
+          end
         end
 
-        # Do not write polkit privs during update (bsc#1120720)
+        Yast::SCR.Write(
+          Yast::Path.new(".sysconfig.security.CHECK_SIGNATURES"),
+          Yast::SignatureCheckDialogs.CheckSignatures
+        )
+
         polkit_default_privs = @settings.polkit_default_priviledges
+        # Do not write polkit privs during update (bsc#1120720)
         if !polkit_default_privs.nil? && polkit_default_privs != "" && !Yast::Mode.update
           log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
           Yast::SCR.Write(
@@ -92,6 +101,21 @@ module Installation
           )
           log.info "Command returned: #{ret2}"
         end
+
+        # ensure we have correct ca certificates
+        if Yast::Mode.update
+          res = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"),
+            "/usr/sbin/update-ca-certificates")
+          log.info("updating ca certificates result: #{res}")
+        end
+
+        # workaround missing capabilities if we use deployment from images
+        # as tarballs which is used for images for not support it (bnc#889489)
+        # do nothing if capabilities are properly set
+        res = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"),
+          "/usr/bin/chkstat --system --set")
+        log.info("updating capabilities: #{res}")
+
 
         # in autoinstallation write security profile here
         if Yast::Mode.autoinst

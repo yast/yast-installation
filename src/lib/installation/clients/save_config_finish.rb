@@ -180,31 +180,6 @@ module Yast
           AutoInstall.Save
         end
         Progress.NextStep
-        # progress step title
-        if !minimal_inst
-          Progress.Title(_("Saving security settings..."))
-          SCR.Write(
-            path(".sysconfig.security.CHECK_SIGNATURES"),
-            SignatureCheckDialogs.CheckSignatures
-          )
-
-          SCR.Write(path(".sysconfig.security"), nil)
-
-          # ensure we have correct ca certificates
-          if Mode.update
-            res = SCR.Execute(path(".target.bash_output"),
-              "/usr/sbin/update-ca-certificates")
-            log.info("updating ca certificates result: #{res}")
-          end
-
-          # workaround missing capabilities if we use deployment from images
-          # as tarballs which is used for images for not support it (bnc#889489)
-          # do nothing if capabilities are properly set
-          res = SCR.Execute(path(".target.bash_output"),
-            "/usr/bin/chkstat --system --set")
-          log.info("updating capabilities: #{res}")
-        end
-
         # save supportconfig
         if Ops.greater_than(
           SCR.Read(path(".target.size"), "/etc/install.inf"),
