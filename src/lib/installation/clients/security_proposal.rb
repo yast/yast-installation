@@ -131,7 +131,8 @@ module Installation
       def proposals
         # Filter proposals with content
         [cpu_mitigations_proposal, firewall_proposal, sshd_proposal,
-         ssh_port_proposal, vnc_fw_proposal].compact
+         ssh_port_proposal, vnc_fw_proposal,
+         polkit_default_priv_proposal].compact
       end
 
       # Returns the cpu mitigation part of the bootloader proposal description
@@ -227,12 +228,12 @@ module Installation
           ) % LINK_ENABLE_SSHD
         end
       end
-    end
 
-    def polkit_default_priv_proposal
-      value = @settings.polkit_default_proviledges || _("Default")
+      def polkit_default_priv_proposal
+        value = @settings.polkit_default_proviledges || _("Default")
 
-      format(_("PolicyKit Default Priviledges: %s"), value)
+        format(_("PolicyKit Default Priviledges: %s"), value)
+      end
     end
   end
 end
