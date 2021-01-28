@@ -228,5 +228,11 @@ module Installation
         end
       end
     end
+
+    def polkit_default_priv_proposal
+      value = @settings.polkit_default_proviledges || _("Default")
+
+      format(_("PolicyKit Default Priviledges: %s"), value)
+    end
   end
 end
