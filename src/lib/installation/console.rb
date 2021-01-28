@@ -11,13 +11,18 @@
 #
 # ------------------------------------------------------------------------------
 
+require "yast"
 require "installation/console_commands"
+require "installation/console_gui"
+require "installation/console_tui"
+
+Yast.import "UI"
 
 module Installation
   class Console
     def run
-      start
-      redirect do
+      console = Yast::UI.TextMode ? ConsoleTui.new : ConsoleGui.new
+      console.run do
         commands = ConsoleCommands.new
         # print the basic help text
         commands.commands(:welcome)
@@ -25,8 +30,6 @@ module Installation
         # start an IRB session in the context of the "commands" object
         irb(commands)
       end
-    ensure
-      stop
     end
 
   private
@@ -45,55 +48,6 @@ module Installation
       IRB.conf[:PROMPT_MODE] = :YAST
       workspace = IRB::WorkSpace.new(context)
       IRB::Irb.new(workspace).run(IRB.conf)
-    end
-
-    def start
-      @read, @write = IO.pipe
-      read_path = fd_path(Process.pid, @read.fileno)
-
-      command = "xterm -e bash -c \"exec {CLOSEFD}<> <(:);
-                  echo \\$\\$ \\$CLOSEFD \\$(tty) > #{read_path};
-                  read -u \\$CLOSEFD\" &"
-
-      system(command)
-
-      @pid, @close_fd, @tty = @read.readline.split
-    end
-
-    def stop
-      File.write(fd_path(@pid, @close_fd), "\n") if @pid && @close_fd
-      @read.close if @read
-      @write.close if @write
-    end
-
-    def redirect(&block)
-      # remember the initial IO channels
-      stdout_orig = $stdout.dup
-      stderr_orig = $stderr.dup
-      stdin_orig = $stdin.dup
-
-      # redirect all IO to the X terminal
-      $stdout.reopen(@tty)
-      $stderr.reopen(@tty)
-      $stdin.reopen(@tty)
-
-      begin
-        if block_given?
-          block.call
-        else
-          require "irb"
-          binding.irb
-        end
-      ensure
-        # restore the original IO channels
-        $stdout.reopen(stdout_orig)
-        $stderr.reopen(stderr_orig)
-        $stdin.reopen(stdin_orig)
-      end
-    end
-
-    def fd_path(pid, fd)
-      "/proc/#{pid}/fd/#{fd}"
     end
   end
 end
