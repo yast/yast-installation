@@ -28,6 +28,8 @@ module Installation
 
     def start
       Yast::UI.CloseUI
+      # clear the terminal
+      system("clear")
     end
 
     def stop
