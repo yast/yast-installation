@@ -35,6 +35,7 @@ module Installation
 
       def items
         # TODO:
+        []
       end
 
       def init
