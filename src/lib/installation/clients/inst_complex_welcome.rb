@@ -106,6 +106,11 @@ module Yast
         return if available_products? && !product_selection_finished?
 
         setup_final_choice
+
+        # FIXME: just for testing...
+        require "installation/console"
+        ::Installation::Console.new.run
+
         :next
 
       else
