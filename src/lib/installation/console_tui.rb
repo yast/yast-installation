@@ -12,6 +12,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "shellwords"
 
 Yast.import "UI"
 
@@ -27,13 +28,15 @@ module Installation
   private
 
     def start
+      @stty = `stty --save`.chomp
       Yast::UI.CloseUI
-      # clear the terminal
-      system("clear")
     end
 
     def stop
+      system("stty #{Shellwords.escape(@stty)}")
       Yast::UI.OpenUI
+
+      at_exit { system("stty onlcr echo") }
     end
   end
 end

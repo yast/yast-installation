@@ -57,15 +57,21 @@ module Installation
         # would be displayed *below* the popup making it inaccessible :-(
         return unless wizard_dialog?
 
-        puts "Starting the network configuration module..."
-        puts
-        puts "After it is finished (by pressing [Next]/[Back]/[Abort])"
-        puts "press Alt+Tab to get back to this console."
+        if Yast::UI.TextMode
+          Yast::UI.OpenUI
+        else
+          puts "Starting the network configuration module..."
+          puts
+          puts "After it is finished (by pressing [Next]/[Back]/[Abort])"
+          puts "press Alt+Tab to get back to this console."
 
-        # wait a bit so the user can read the message above
-        sleep(5)
+          # wait a bit so the user can read the message above
+          sleep(5)
+        end
 
         Yast::WFM.call("inst_lan", [{ "skip_detection" => true }])
+
+        Yast::UI.CloseUI if Yast::UI.TextMode
       else
         puts "Error: Unknown option #{what}"
       end
