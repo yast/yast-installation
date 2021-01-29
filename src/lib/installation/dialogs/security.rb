@@ -19,6 +19,7 @@
 
 require "yast"
 require "cwm/dialog"
+require "installation/widgets/selinux_policy"
 
 Yast.import "Hostname"
 Yast.import "Mode"
@@ -38,8 +39,10 @@ module Installation
       end
 
       def contents
-        # lazy require to avoid circular dependency on firewall
+        # lazy require to avoid build dependency on firewall
         require "y2firewall/widgets/proposal"
+        # lazy require to avoid build dependency on bootloader
+        require "bootloader/grub2_widgets"
 
         VBox(
           Frame(
@@ -60,6 +63,22 @@ module Installation
               0.5,
               0.5,
               PolkitDefaultPriv.new(@settings)
+            )
+          ),
+          Frame(
+            _("CPU"),
+            MarginBox(
+              0.5,
+              0.5,
+              ::Bootloader::Grub2Widget::CpuMitigationsWidget.new
+            )
+          ),
+          Frame(
+            _("SELinux"),
+            MarginBox(
+              0.5,
+              0.5,
+              Widgets::SelinuxPolicy.new(@settings)
             )
           )
         )
