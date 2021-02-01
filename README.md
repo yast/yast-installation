@@ -26,6 +26,20 @@ workflow described in a particular control file for:
 More subject-specific pieces of information can be found in the [doc](doc)
 directory.
 
+Live Installation
+-----------------
+
+The standard and supported way for openSUSE/SLE installation is
+to boot directly into the installation program, without anything else running.
+
+An *unsupported* alternative is to boot a Live CD/Live USB and start the
+installation from its desktop.
+
+(add links to relevant Fate/Bugzilla/Jira tickets)
+
+(if this section becomes too long, split off the details
+into `doc/live_installation.md`)
+
 Development
 ===========
 
