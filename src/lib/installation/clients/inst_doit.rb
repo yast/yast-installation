@@ -68,7 +68,8 @@ module Yast
 
         # Logging all information about the product evaluation
         ProductEvaluation.write(
-          Mode.update ? "update_start" : "installation_start")
+          Mode.update ? "update_start" : "installation_start"
+        )
       end
 
       @confirmed ? :next : :back
