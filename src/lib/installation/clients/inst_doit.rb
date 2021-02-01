@@ -30,6 +30,7 @@ module Yast
       Yast.import "Mode"
       Yast.import "AutoinstConfig"
       Yast.import "PackagesUI"
+      Yast.import "ProductEvaluation"
 
       Yast.import "Label"
 
@@ -64,6 +65,10 @@ module Yast
           false,
           false
         )
+
+        # Logging all information about the product evaluation
+        ProductEvaluation.write(
+          Mode.update ? "update_start" : "installation_start")
       end
 
       @confirmed ? :next : :back
