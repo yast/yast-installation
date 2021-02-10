@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb 10 08:01:33 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not crash when it is not possible to create a snapshot after
+  installing or upgrading the system (bsc#1180142).
+- 4.3.25
+
+-------------------------------------------------------------------
 Mon Dec  7 09:27:38 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
 
 - Do not cleanup the libzypp cache when the system has low memory,
