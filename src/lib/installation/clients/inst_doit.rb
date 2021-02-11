@@ -32,7 +32,6 @@ module Yast
       Yast.import "Mode"
       Yast.import "AutoinstConfig"
       Yast.import "PackagesUI"
-      Yast.import "ProductEvaluation"
 
       Yast.import "Label"
 
