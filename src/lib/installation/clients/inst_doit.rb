@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "installation/installation_info"
+
 module Yast
   # Asks user to really do the installation/update.
   class InstDoitClient < Client
@@ -30,7 +32,6 @@ module Yast
       Yast.import "Mode"
       Yast.import "AutoinstConfig"
       Yast.import "PackagesUI"
-      Yast.import "ProductEvaluation"
 
       Yast.import "Label"
 
@@ -66,8 +67,8 @@ module Yast
           false
         )
 
-        # Logging all information about the product evaluation
-        ProductEvaluation.write(
+        # Log all information about the installation/update
+        ::Installation::InstallationInfo.instance.write(
           Mode.update ? "update_start" : "installation_start"
         )
       end
