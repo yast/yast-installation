@@ -4,7 +4,13 @@ require_relative "./test_helper"
 
 require "installation/cio_ignore"
 
+Yast.import "Bootloader"
+
 describe ::Installation::CIOIgnore do
+  before do
+    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
+  end
+
   describe "cio_ignore enable/disable" do
     it "take AutoYaST cio_ignore setting" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
@@ -27,6 +33,7 @@ describe ::Installation::CIOIgnoreProposal do
   subject { ::Installation::CIOIgnoreProposal.new }
 
   before(:each) do
+    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
     ::Installation::CIOIgnore.instance.reset
   end
 
