@@ -110,6 +110,7 @@ describe ::Installation::SnapshotsFinish do
           context "and could not create the snapshot" do
             before do
               allow(Yast2::FsSnapshot).to receive(:create_post).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast::Report).to receive(:Error)
             end
 
             it "returns false" do
@@ -136,6 +137,7 @@ describe ::Installation::SnapshotsFinish do
           context "and could not create the snapshot" do
             before do
               allow(Yast2::FsSnapshot).to receive(:create_single).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast::Report).to receive(:Error)
             end
 
             it "returns false" do
