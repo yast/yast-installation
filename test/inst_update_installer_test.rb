@@ -147,7 +147,7 @@ describe Yast::InstUpdateInstaller do
 
       context "when the update cannot be fetched from a user defined repository" do
         it "shows an error and returns :next" do
-          expect(Yast::Popup).to receive(:Error)
+          expect(Yast::Report).to receive(:Error)
           expect(manager).to receive(:add_repository)
             .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
           expect(subject.main).to eq(:next)

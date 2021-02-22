@@ -104,23 +104,23 @@ module Installation
 
       def firewall_frame
         frame(
-            _("Firewall and SSH service"),
-            Y2Firewall::Widgets::FirewallSSHProposal.new(@settings)
-          )
+          _("Firewall and SSH service"),
+          Y2Firewall::Widgets::FirewallSSHProposal.new(@settings)
+        )
       end
 
       def polkit_frame
         frame(
-            _("PolicyKit),
-            PolkitDefaultPriv.new(@settings)
-          )
+          _("PolicyKit"),
+          PolkitDefaultPriv.new(@settings)
+        )
       end
 
       def cpu_frame
         frame(
-            _("CPU),
-::Bootloader::Grub2Widget::CpuMitigationsWidget.new)
-          )
+          _("CPU"),
+          ::Bootloader::CpuMitigationsWidget.new
+        )
       end
 
       def selinux_frame
@@ -131,7 +131,8 @@ module Installation
       end
 
       def frame(label, widget)
-Left(Frame(
+        Left(
+          Frame(
             label,
             HSquash(
               MarginBox(
@@ -140,7 +141,8 @@ Left(Frame(
                 widget
               )
             )
-          ))
+          )
+        )
       end
     end
 

@@ -79,8 +79,9 @@ describe Yast::ImageInstallation do
       expect(subject.FindImageSet([])).to eq true
     end
 
-    it "returns false if xml is not valid" do
+    it "returns false and reports error if xml is not valid" do
       allow(Yast::XML).to receive(:XMLToYCPFile).and_raise(Yast::XMLDeserializationError)
+      expect(Yast::Report).to receive(:Error)
 
       expect(subject.FindImageSet([])).to eq false
     end

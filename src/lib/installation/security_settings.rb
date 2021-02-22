@@ -40,6 +40,8 @@ module Installation
     # [String, nil] Setting for policy kit default priviledges
     # For more info see /etc/sysconfig/security#POLKIT_DEFAULT_PRIVS
     attr_accessor :polkit_default_proviledges
+    # [Y2Security::Selinux] selinux configuration
+    attr_accessor :selinux_config
 
     # Constructor
     def initialize
@@ -150,6 +152,15 @@ module Installation
         # TRANSLATORS: easy in sense the least restrictive policy
         "easy"        => _("Easy")
       }
+    end
+
+    # Returns a SELinux configuration handler
+    #
+    # @return [Y2Security::Selinux] the SELinux config handler
+    def selinux_config
+      require "y2security/selinux"
+
+      @selinux_config ||= Y2Security::Selinux.new
     end
 
   private

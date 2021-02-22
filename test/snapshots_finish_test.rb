@@ -98,13 +98,29 @@ describe ::Installation::SnapshotsFinish do
         context "when updating" do
           before do
             allow(Yast::Mode).to receive(:update).and_return(true)
+            allow(Yast2::FsSnapshotStore).to receive(:load).with("update").and_return(1)
+            allow(Yast2::FsSnapshotStore).to receive(:clean).with("update")
           end
 
           it "creates a snapshot of type 'post' with 'after update' as description and paired with 'pre' snapshot" do
-            expect(Yast2::FsSnapshotStore).to receive(:load).with("update").and_return(1)
-            expect(Yast2::FsSnapshotStore).to receive(:clean).with("update")
             expect(Yast2::FsSnapshot).to receive(:create_post).with("after update", 1, cleanup: :number, important: true).and_return(true)
             expect(subject.write).to eq(true)
+          end
+
+          context "and could not create the snapshot" do
+            before do
+              allow(Yast2::FsSnapshot).to receive(:create_post).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast::Report).to receive(:Error)
+            end
+
+            it "returns false" do
+              expect(subject.write).to eq(false)
+            end
+
+            it "reports the problem to the user" do
+              expect(Yast::Report).to receive(:Error).with(/snapshot/)
+              subject.write
+            end
           end
         end
 
@@ -116,6 +132,22 @@ describe ::Installation::SnapshotsFinish do
           it "creates a snapshot of type 'single' with 'after installation' as description" do
             expect(Yast2::FsSnapshot).to receive(:create_single).with("after installation", cleanup: :number, important: true).and_return(true)
             expect(subject.write).to eq(true)
+          end
+
+          context "and could not create the snapshot" do
+            before do
+              allow(Yast2::FsSnapshot).to receive(:create_single).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast::Report).to receive(:Error)
+            end
+
+            it "returns false" do
+              expect(subject.write).to eq(false)
+            end
+
+            it "reports the problem to the user" do
+              expect(Yast::Report).to receive(:Error).with(/snapshot/)
+              subject.write
+            end
           end
         end
       end
