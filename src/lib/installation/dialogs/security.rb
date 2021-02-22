@@ -44,43 +44,24 @@ module Installation
         # lazy require to avoid build dependency on bootloader
         require "bootloader/grub2_widgets"
 
-        VBox(
-          Frame(
-            _("Firewall and SSH service"),
-            HSquash(
-              MarginBox(
-                0.5,
-                0.5,
-                VBox(
-                  Y2Firewall::Widgets::FirewallSSHProposal.new(@settings)
-                )
-              )
-            )
+        left_col = [firewall_frame, polkit_frame]
+        right_col = [cpu_frame]
+        right_col << selinux_frame if selinux_configurable?
+
+        HBox(
+          HStretch(),
+          VBox(
+            VStretch(),
+            *left_col,
+            VStretch()
           ),
-          Frame(
-            _("PolicyKit"),
-            MarginBox(
-              0.5,
-              0.5,
-              PolkitDefaultPriv.new(@settings)
-            )
+          HStretch(),
+          VBox(
+            VStretch(),
+            *right_col,
+            VStretch()
           ),
-          Frame(
-            _("CPU"),
-            MarginBox(
-              0.5,
-              0.5,
-              ::Bootloader::Grub2Widget::CpuMitigationsWidget.new
-            )
-          ),
-          Frame(
-            _("SELinux"),
-            MarginBox(
-              0.5,
-              0.5,
-              Widgets::SelinuxPolicy.new(@settings)
-            )
-          )
+          HStretch()
         )
       end
 
@@ -115,6 +96,51 @@ module Installation
 
       def should_open_dialog?
         true
+      end
+
+      def selinux_configurable?
+        @settings.selinux_config.configurable?
+      end
+
+      def firewall_frame
+        frame(
+            _("Firewall and SSH service"),
+            Y2Firewall::Widgets::FirewallSSHProposal.new(@settings)
+          )
+      end
+
+      def polkit_frame
+        frame(
+            _("PolicyKit),
+            PolkitDefaultPriv.new(@settings)
+          )
+      end
+
+      def cpu_frame
+        frame(
+            _("CPU),
+::Bootloader::Grub2Widget::CpuMitigationsWidget.new)
+          )
+      end
+
+      def selinux_frame
+        frame(
+          _("SELinux"),
+          Widgets::SelinuxPolicy.new(@settings)
+        )
+      end
+
+      def frame(label, widget)
+Left(Frame(
+            label,
+            HSquash(
+              MarginBox(
+                0.5,
+                0.5,
+                widget
+              )
+            )
+          ))
       end
     end
 
