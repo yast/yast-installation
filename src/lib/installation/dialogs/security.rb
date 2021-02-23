@@ -113,7 +113,7 @@ module Installation
       def polkit_frame
         frame(
           _("PolicyKit"),
-          PolkitDefaultPriv.new(@settings)
+          Widgets::PolkitDefaultPriv.new(@settings)
         )
       end
 
