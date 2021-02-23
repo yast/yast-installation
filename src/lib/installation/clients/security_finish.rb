@@ -47,7 +47,7 @@ module Installation
       end
 
       def title
-        _("Writing Firewall Configuration...")
+        _("Writing Security Configuration...")
       end
 
       def modes
@@ -118,6 +118,9 @@ module Installation
 
         # in autoinstallation write security profile here
         Yast::Security.Write if Yast::Mode.autoinst
+
+        # Write down selinux configuration
+        settings.selinux_config.save
 
         true
       end
