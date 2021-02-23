@@ -57,12 +57,12 @@ module Installation
       end
 
       def init
-        self.value = @settings.polkit_default_proviledges || "default"
+        self.value = @settings.polkit_default_priviledges || "default"
       end
 
       def store
         res = value == "default" ? nil : value
-        @settings.polkit_default_proviledges = res
+        @settings.polkit_default_priviledges = res
       end
     end
   end

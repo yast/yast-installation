@@ -230,7 +230,7 @@ module Installation
       end
 
       def polkit_default_priv_proposal
-        value = @settings.polkit_default_proviledges || "default"
+        value = @settings.polkit_default_priviledges || "default"
         human_value = @settings.human_polkit_priviledges[value]
 
         format(_("PolicyKit Default Priviledges: %s"), human_value)

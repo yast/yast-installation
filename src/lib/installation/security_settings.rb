@@ -39,7 +39,7 @@ module Installation
     attr_accessor :default_zone
     # [String, nil] Setting for policy kit default priviledges
     # For more info see /etc/sysconfig/security#POLKIT_DEFAULT_PRIVS
-    attr_accessor :polkit_default_proviledges
+    attr_accessor :polkit_default_priviledges
     # [Y2Security::Selinux] selinux configuration
     attr_accessor :selinux_config
 
@@ -65,7 +65,7 @@ module Installation
       load_feature(:enable_firewall, :enable_firewall)
       load_feature(:firewall_enable_ssh, :open_ssh)
       load_feature(:enable_sshd, :enable_sshd)
-      load_feature(:polkit_default_privs, :polkit_default_proviledges)
+      load_feature(:polkit_default_privs, :polkit_default_priviledges)
     end
 
     # Services
