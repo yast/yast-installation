@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Feb 24 20:56:30 UTC 2021 - Josef Reidinger <jreidinger@suse.com>
+
+- Add new security proposal and finish clients to replace firewall
+  one as the new clients contain also configuration for cpu
+  mitigation, policy kit default priviledges (jsc#SLE-15840)
+  and selinux policy (jsc#SLE-17307)
+- 4.3.27
+
+-------------------------------------------------------------------
 Thu Feb 18 21:34:23 UTC 2021 - Josef Reidinger <jreidinger@suse.com>
 
 - Adapted unit test to recent changes in Yast::Report (related to
