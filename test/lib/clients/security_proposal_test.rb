@@ -20,15 +20,11 @@
 
 require_relative "../../test_helper.rb"
 require "installation/clients/security_proposal"
+require "bootloader/config_dialog"
 
 describe Installation::Clients::SecurityProposal do
   subject(:client) { described_class.new }
   let(:proposal_settings) { Installation::SecuritySettings.instance }
-
-  before do
-    # skip bootloader proposal to avoid build dependency on it
-    allow(subject).to receive(:cpu_mitigations_proposal)
-  end
 
   describe "#initialize" do
     it "instantiates a new proposal settings" do
@@ -87,6 +83,22 @@ describe Installation::Clients::SecurityProposal do
         expect(result["workflow_sequence"]).to eq :next
       end
     end
+
+    context "when 'chosen_id' corresponds to cpu_mitigations" do
+      let(:action) { "security--cpu_mitigations" }
+
+      it "opens bootloader dialog" do
+        allow(dialog = ::Bootloader::ConfigDialog).to receive(:new).with(initial_tab: :kernel)
+          .and_return(double(run: :next))
+        allow(Yast::Wizard).to receive(:CreateDialog)
+        allow(Yast::Wizard).to receive(:CloseDialog)
+        expect(client).to receive("call_proposal_action_for").with(action)
+
+        client.ask_user(param)
+      end
+    end
+
+
   end
 
   describe "#make_proposal" do
