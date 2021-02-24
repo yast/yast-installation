@@ -88,7 +88,7 @@ describe Installation::Clients::SecurityProposal do
       let(:action) { "security--cpu_mitigations" }
 
       it "opens bootloader dialog" do
-        allow(dialog = ::Bootloader::ConfigDialog).to receive(:new).with(initial_tab: :kernel)
+        allow(::Bootloader::ConfigDialog).to receive(:new).with(initial_tab: :kernel)
           .and_return(double(run: :next))
         allow(Yast::Wizard).to receive(:CreateDialog)
         allow(Yast::Wizard).to receive(:CloseDialog)
@@ -97,7 +97,6 @@ describe Installation::Clients::SecurityProposal do
         client.ask_user(param)
       end
     end
-
 
   end
 
