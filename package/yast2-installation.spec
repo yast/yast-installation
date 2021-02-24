@@ -41,6 +41,10 @@ BuildRequires:  yast2 >= 4.3.53
 BuildRequires:  yast2-packager >= 4.2.27
 # CIOIgnore
 BuildRequires:  yast2-bootloader
+# For selinux classes
+BuildRequires:  yast2-security
+# For firewall widgets
+BuildRequires:  yast2-firewall
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
 # Y2Network::NtpServer
