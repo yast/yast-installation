@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 
-require_relative "../test_helper"
+require_relative "../../test_helper"
 require "installation/dialogs/complex_welcome"
 
 describe Installation::Dialogs::ComplexWelcome do

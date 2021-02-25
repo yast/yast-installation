@@ -1,6 +1,6 @@
 #! /usr/bin/env rspec
 
-require_relative "../test_helper.rb"
+require_relative "../../test_helper.rb"
 require "cwm/rspec"
 
 require "installation/dialogs/ntp_setup"
