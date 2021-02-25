@@ -62,7 +62,6 @@ module Installation
           Yast::SignatureCheckDialogs.CheckSignatures
         )
 
-
         # ensure we have correct ca certificates
         if Yast::Mode.update
           res = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"),
@@ -161,7 +160,6 @@ module Installation
       def write_firewall
         # write firewall and ssh only during fresh install
         return if Yast::Mode.update
-
 
         if Yast::Mode.auto
           # Lazy load of firewall auto client as it depends on auto installation
