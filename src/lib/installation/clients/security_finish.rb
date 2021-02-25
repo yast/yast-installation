@@ -69,6 +69,8 @@ module Installation
           log.info("updating ca certificates result: #{res}")
         end
 
+        write_polkit
+
         # workaround missing capabilities if we use deployment from images
         # as tarballs which is used for images for not support it (bnc#889489)
         # do nothing if capabilities are properly set
@@ -95,11 +97,11 @@ module Installation
         # exit if there is no config to write
         return if [nil, ""].include?(polkit_default_privs)
 
-        log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
-          Yast::SCR.Write(
-            Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
-            polkit_default_privs
-          )
+        log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS"
+        Yast::SCR.Write(
+          Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
+          polkit_default_privs
+        )
         # BNC #440182
         # Flush the SCR cache before calling the script
         Yast::SCR.Write(Yast::Path.new(".sysconfig.security"), nil)
@@ -173,7 +175,7 @@ module Installation
           end
         end
 
-        Service.Enable("sshd") if @settings.enable_sshd
+        Yast::Service.Enable("sshd") if @settings.enable_sshd
         configure_firewall if @firewalld.installed?
       end
     end

@@ -10,7 +10,7 @@ describe Installation::Clients::SecurityFinish do
     allow_any_instance_of(Y2Firewall::Firewalld::Api).to receive(:running?).and_return(false)
   end
 
-  let(:proposal_settings) { Installation::SecuritySettings.instance }
+  let(:proposal_settings) { Installation::SecuritySettings.create_instance }
   let(:firewalld) { Y2Firewall::Firewalld.instance }
 
   describe "#title" do
@@ -93,6 +93,50 @@ describe Installation::Clients::SecurityFinish do
           subject.write
         end
       end
+    end
+
+    context "in upgrade" do
+      before do
+        allow(Yast::Mode).to receive(:update).and_return true
+      end
+
+      it "skips writting firewall" do
+        allow(proposal_settings).to receive(:enable_sshd).and_return(true)
+        expect(Yast::Service).to_not receive(:Enable).with("sshd")
+
+        subject.write
+      end
+
+      it "skips writting policy kit default privileges" do
+        allow(proposal_settings).to receive(:polkit_default_privs).and_return("easy")
+        expect(Yast::SCR).to_not receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything)
+      end
+    end
+
+    context "when policy kit default priviges is defined" do
+      before do
+        allow(proposal_settings).to receive(:polkit_default_priviledges).and_return("easy")
+        allow(Yast::SCR).to receive(:Write)
+        allow(Yast::SCR).to receive(:Execute)
+      end
+
+      it "writes sysconfig" do
+        expect(Yast::SCR).to receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), "easy")
+
+        subject.write
+      end
+
+      it "calls set_polkt_default_privs" do
+        expect(Yast::SCR).to receive(:Execute).with(path(".target.bash_output"), /set_polkit_default_privs/)
+
+        subject.write
+      end
+    end
+
+    it "saves selinux configuration" do
+      expect(proposal_settings.selinux_config).to receive(:save)
+
+      subject.write
     end
   end
 
