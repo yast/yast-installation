@@ -28,6 +28,8 @@ require "installation/security_settings"
 require "installation/dialogs/security"
 require "installation/proposal_client"
 
+Yast.import "PackagesProposal"
+
 module Installation
   module Clients
     # Firewall and SSH installation proposal client
@@ -131,7 +133,7 @@ module Installation
       def proposals
         # Filter proposals with content
         [cpu_mitigations_proposal, firewall_proposal, sshd_proposal,
-         ssh_port_proposal, vnc_fw_proposal,
+         ssh_port_proposal, vnc_fw_proposal, selinux_proposal,
          polkit_default_priv_proposal].compact
       end
 
@@ -234,6 +236,18 @@ module Installation
         human_value = @settings.human_polkit_priviledges[value]
 
         format(_("PolicyKit Default Priviledges: %s"), human_value)
+      end
+
+      def selinux_proposal
+        return nil unless @settings.selinux_config.configurable?
+
+        # add required patterns
+        Yast::PackagesProposal.SetResolvables("SELinux", :pattern,
+          @settings.selinux_config.needed_patterns)
+
+        _(
+          "Selinux Default Mode is %s"
+        ) % @settings.selinux_config.mode.to_human_string
       end
     end
   end

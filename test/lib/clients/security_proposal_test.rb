@@ -24,7 +24,7 @@ require "bootloader/config_dialog"
 
 describe Installation::Clients::SecurityProposal do
   subject(:client) { described_class.new }
-  let(:proposal_settings) { Installation::SecuritySettings.instance }
+  let(:proposal_settings) { Installation::SecuritySettings.create_instance }
 
   describe "#initialize" do
     it "instantiates a new proposal settings" do
@@ -105,6 +105,9 @@ describe Installation::Clients::SecurityProposal do
 
     before do
       allow(proposal_settings).to receive("enable_firewall").and_return(firewall_enabled)
+
+      allow(proposal_settings.selinux_config).to receive(:configurable?)
+        .and_return(false)
     end
 
     it "returns a hash with 'preformatted_proposal', 'links', 'warning_level' and 'warning'" do
@@ -130,6 +133,18 @@ describe Installation::Clients::SecurityProposal do
         proposal = client.make_proposal({})
 
         expect(proposal["preformatted_proposal"]).to include("port")
+      end
+    end
+
+    context "when selinux is configurable" do
+      it "contains in proposal selinux configuration" do
+        allow(proposal_settings.selinux_config).to receive(:configurable?)
+          .and_return(true)
+        allow(Yast::Bootloader).to receive(:kernel_param).and_return(:missing)
+
+        proposal = client.make_proposal({})
+
+        expect(proposal["preformatted_proposal"]).to include("Selinux Default Mode")
       end
     end
 
