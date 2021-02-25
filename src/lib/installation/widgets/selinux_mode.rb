@@ -31,7 +31,7 @@ module Installation
       end
 
       def label
-        # TRANSLATORS: SELinu Mode just SELinux is already content of frame.
+        # TRANSLATORS: SELinux Mode just SELinux is already content of frame.
         _("Mode")
       end
 
