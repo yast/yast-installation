@@ -55,52 +55,13 @@ module Installation
       end
 
       def write
-        # lazy load to avoid build dependency on firewall module
-        require "y2firewall/clients/auto"
-
-        # write firewall and ssh only during fresh install
-        if !Yast::Mode.Update
-          # If the profile is missing then firewall section is not present at all.
-          # The firewall will be configured according to product proposals then.
-          if Yast::Mode.auto && Y2Firewall::Clients::Auto.profile
-            log.info("Firewall: running configuration according to the AY profile")
-
-            return false unless Y2Firewall::Clients::Auto.new.write
-          else
-            Service.Enable("sshd") if @settings.enable_sshd
-            configure_firewall if @firewalld.installed?
-          end
-        end
+        write_firewall
 
         Yast::SCR.Write(
           Yast::Path.new(".sysconfig.security.CHECK_SIGNATURES"),
           Yast::SignatureCheckDialogs.CheckSignatures
         )
 
-        polkit_default_privs = @settings.polkit_default_priviledges
-        # Do not write polkit privs during update (bsc#1120720)
-        if !polkit_default_privs.nil? && polkit_default_privs != "" && !Yast::Mode.update
-          log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
-            Yast::SCR.Write(
-              Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
-              polkit_default_privs
-            )
-          # BNC #440182
-          # Flush the SCR cache before calling the script
-          Yast::SCR.Write(Yast::Path.new(".sysconfig.security"), nil)
-
-          ret2 = Yast::SCR.Execute(
-            Yast::Path.new(".target.bash_output"),
-            # check whether it exists
-            # give some feedback
-            # It's dozens of lines...
-            "test -x /sbin/set_polkit_default_privs && " \
-              "echo /sbin/set_polkit_default_privs && " \
-              "/sbin/set_polkit_default_privs | wc -l && " \
-              "echo 'Done'"
-          )
-          log.info "Command returned: #{ret2}"
-        end
 
         # ensure we have correct ca certificates
         if Yast::Mode.update
@@ -126,6 +87,36 @@ module Installation
       end
 
     private
+
+      def write_polkit
+        # Do not write polkit privs during update (bsc#1120720)
+        return if Yast::Mode.update
+
+        polkit_default_privs = @settings.polkit_default_priviledges
+        # exit if there is no config to write
+        return if [nil, ""].include?(polkit_default_privs)
+
+        log.info "Writing #{polkit_default_privs} to POLKIT_DEFAULT_PRIVS",
+          Yast::SCR.Write(
+            Yast::Path.new(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
+            polkit_default_privs
+          )
+        # BNC #440182
+        # Flush the SCR cache before calling the script
+        Yast::SCR.Write(Yast::Path.new(".sysconfig.security"), nil)
+
+        ret2 = Yast::SCR.Execute(
+          Yast::Path.new(".target.bash_output"),
+          # check whether it exists
+          # give some feedback
+          # It's dozens of lines...
+          "test -x /sbin/set_polkit_default_privs && " \
+            "echo /sbin/set_polkit_default_privs && " \
+            "/sbin/set_polkit_default_privs | wc -l && " \
+            "echo 'Done'"
+        )
+        log.info "Command returned: #{ret2}"
+      end
 
       # Modifies the configuration of the firewall according to the current
       # settings
@@ -165,6 +156,27 @@ module Installation
         else
           log.error "tigervnc service definition is not available"
         end
+      end
+
+      def write_firewall
+        # write firewall and ssh only during fresh install
+        return if Yast::Mode.update
+
+
+        if Yast::Mode.auto
+          # Lazy load of firewall auto client as it depends on auto installation
+          require "y2firewall/clients/auto"
+
+          # If the profile is missing then firewall section is not present at all.
+          # The firewall will be configured according to product proposals then.
+          if Y2Firewall::Clients::Auto.profile
+            log.info("Firewall: running configuration according to the AY profile")
+            return Y2Firewall::Clients::Auto.new.write
+          end
+        end
+
+        Service.Enable("sshd") if @settings.enable_sshd
+        configure_firewall if @firewalld.installed?
       end
     end
   end

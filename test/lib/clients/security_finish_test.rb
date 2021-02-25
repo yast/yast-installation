@@ -25,15 +25,18 @@ describe Installation::Clients::SecurityFinish do
     end
   end
 
-  # commented out to avoid build time dependency on firewall
-  xdescribe "#write" do
+  describe "#write" do
     let(:enable_sshd) { false }
     let(:installed) { true }
 
     before do
       allow(proposal_settings).to receive(:enable_sshd).and_return(enable_sshd)
       allow(firewalld).to receive(:installed?).and_return(installed)
+      allow(firewalld).to receive(:api).and_return(double(add_service: true, remove_service: true))
       allow(proposal_settings).to receive(:open_ssh).and_return(false)
+      allow(Yast::Bootloader).to receive(:Write)
+      allow(Yast::Bootloader).to receive(:kernel_param).and_return(:missing)
+      allow(Yast::Bootloader).to receive(:modify_kernel_params)
     end
 
     it "enables the sshd service if enabled in the proposal" do
@@ -64,7 +67,8 @@ describe Installation::Clients::SecurityFinish do
       end
     end
 
-    context "when running in AutoYaST" do
+    # disable test as it needs AutoInstallation and yast2-installatio cannot build depends on it
+    xcontext "when running in AutoYaST" do
       before(:each) do
         allow(Y2Firewall::Clients::Auto).to receive(:profile).and_return(profile)
         allow(Yast::Mode).to receive(:auto).and_return(true)

@@ -19,7 +19,7 @@
 
 require "yast"
 require "cwm/dialog"
-require "installation/widgets/selinux_policy"
+require "installation/widgets/selinux_mode"
 require "installation/widgets/polkit_default_priv"
 
 Yast.import "Hostname"
@@ -127,7 +127,7 @@ module Installation
       def selinux_frame
         frame(
           _("SELinux"),
-          Widgets::SelinuxPolicy.new(@settings)
+          Widgets::SelinuxMode.new(@settings)
         )
       end
 

@@ -18,6 +18,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "y2security/selinux"
 
 Yast.import "UsersSimple"
 
@@ -158,8 +159,6 @@ module Installation
     #
     # @return [Y2Security::Selinux] the SELinux config handler
     def selinux_config
-      require "y2security/selinux"
-
       @selinux_config ||= Y2Security::Selinux.new
     end
 

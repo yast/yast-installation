@@ -23,7 +23,7 @@ require "cwm/common_widgets"
 module Installation
   module Widgets
     # Widget to set SELinux mode
-    class SelinuxPolicy < CWM::ComboBox
+    class SelinuxMode < CWM::ComboBox
       def initialize(settings)
         textdomain "installation"
 
