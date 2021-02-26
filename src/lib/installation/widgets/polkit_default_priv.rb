@@ -17,6 +17,8 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
+require "cwm/common_widgets"
+
 module Installation
   module Widgets
     class PolkitDefaultPriv < CWM::ComboBox
