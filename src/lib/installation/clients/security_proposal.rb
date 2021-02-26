@@ -235,7 +235,7 @@ module Installation
         value = @settings.polkit_default_privileges || "default"
         human_value = @settings.human_polkit_privileges[value]
 
-        format(_("PolicyKit Default Priviledges: %s"), human_value)
+        format(_("PolicyKit Default Privileges: %s"), human_value)
       end
 
       def selinux_proposal

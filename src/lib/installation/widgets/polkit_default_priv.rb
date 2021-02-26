@@ -27,7 +27,7 @@ module Installation
       end
 
       def label
-        _("PolicyKit Default Priviledges")
+        _("PolicyKit Default Privileges")
       end
 
       def items
