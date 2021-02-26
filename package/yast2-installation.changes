@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb 24 16:59:53 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not cleanup the libzypp cache when the system has low memory,
+  incomplete cache confuses libzypp later (bsc#1179415)
+- 4.1.52
+
+-------------------------------------------------------------------
 Mon Dec 21 10:44:22 UTC 2020 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Do not crash when it is not possible to create a snapshot after
