@@ -115,7 +115,7 @@ describe Installation::Clients::SecurityFinish do
 
     context "when policy kit default priviges is defined" do
       before do
-        allow(proposal_settings).to receive(:polkit_default_priviledges).and_return("easy")
+        allow(proposal_settings).to receive(:polkit_default_privileges).and_return("easy")
         allow(Yast::SCR).to receive(:Write)
         allow(Yast::SCR).to receive(:Execute)
       end
