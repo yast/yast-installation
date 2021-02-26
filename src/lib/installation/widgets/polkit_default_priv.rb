@@ -31,7 +31,7 @@ module Installation
       end
 
       def items
-        @settings.human_polkit_priviledges.to_a
+        @settings.human_polkit_privileges.to_a
       end
 
       def help
@@ -57,12 +57,12 @@ module Installation
       end
 
       def init
-        self.value = @settings.polkit_default_priviledges || "default"
+        self.value = @settings.polkit_default_privileges || "default"
       end
 
       def store
         res = value == "default" ? nil : value
-        @settings.polkit_default_priviledges = res
+        @settings.polkit_default_privileges = res
       end
     end
   end

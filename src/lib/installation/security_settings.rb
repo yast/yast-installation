@@ -38,9 +38,9 @@ module Installation
     attr_accessor :open_vnc
     # [String] Name of the default zone where perform the changes
     attr_accessor :default_zone
-    # [String, nil] Setting for policy kit default priviledges
+    # [String, nil] Setting for policy kit default privileges
     # For more info see /etc/sysconfig/security#POLKIT_DEFAULT_PRIVS
-    attr_accessor :polkit_default_priviledges
+    attr_accessor :polkit_default_privileges
     # [Y2Security::Selinux] selinux configuration
     attr_accessor :selinux_config
 
@@ -66,7 +66,7 @@ module Installation
       load_feature(:enable_firewall, :enable_firewall)
       load_feature(:firewall_enable_ssh, :open_ssh)
       load_feature(:enable_sshd, :enable_sshd)
-      load_feature(:polkit_default_privs, :polkit_default_priviledges)
+      load_feature(:polkit_default_privs, :polkit_default_privileges)
     end
 
     # Services
@@ -144,7 +144,7 @@ module Installation
       @enable_firewall && !@open_ssh
     end
 
-    def human_polkit_priviledges
+    def human_polkit_privileges
       {
         "default"     => _("Default"),
         # TRANSLATORS: restrictive in sense the most restrictive policy

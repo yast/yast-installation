@@ -93,7 +93,7 @@ module Installation
         # Do not write polkit privs during update (bsc#1120720)
         return if Yast::Mode.update
 
-        polkit_default_privs = @settings.polkit_default_priviledges
+        polkit_default_privs = @settings.polkit_default_privileges
         # exit if there is no config to write
         return if [nil, ""].include?(polkit_default_privs)
 
