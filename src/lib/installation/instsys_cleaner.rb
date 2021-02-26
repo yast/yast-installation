@@ -34,30 +34,6 @@ module Installation
     KERNEL_MODULES_WATERLINE = 1 << 30
     KERNEL_MODULES_MOUNT_POINT = "/parts/mp_0000".freeze
 
-    # memory limit for removing the libzypp metadata cache (640MB)
-    LIBZYPP_WATERLINE = 640 << 20
-    # the cache in inst-sys, the target system cache is at /mnt/...,
-    # in upgrade mode the target cache is kept
-    LIBZYPP_CACHE_PATH = "/var/cache/zypp/raw".freeze
-
-    # files which can be removed from the libzypp "raw" cache in inst-sys (globs),
-    # not needed for package installation
-    LIBZYPP_CLEANUP_PATTERNS = [
-      # repository meta data already included in the "solv" cache,
-      "*-deltainfo.xml.gz",
-      "*-primary.xml.gz",
-      "*-susedata.xml.gz",
-      "*-susedinfo.xml.gz",
-      "*-updateinfo.xml.gz",
-      # product licenses (already confirmed)
-      "*-license-*.tar.gz",
-      # application meta data
-      "*-appdata.xml.gz",
-      "appdata-icons.tar.gz",
-      "appdata-ignore.xml.gz",
-      "appdata-screenshots.tar"
-    ].freeze
-
     # Remove some files in inst-sys to have more free space if the system
     # has too low memory. If the system has enough memory keep everything in place.
     # This method might remove the kernel modules from the system, make sure
@@ -74,37 +50,9 @@ module Installation
 
       # run the cleaning actions depending on the available memory
       unmount_kernel_modules if memory < KERNEL_MODULES_WATERLINE
-      cleanup_zypp_cache if memory < LIBZYPP_WATERLINE
     end
 
     ########################## Internal methods ################################
-
-    # Remove the libzypp downloaded repository metadata.
-    # Libzypp has "raw" and "solv" caches, the "solv" is built from "raw"
-    # but it cannot be removed because libzypp keeps the files open.
-    # The "raw" files will be later downloaded automatically again when loading
-    # the repositories. But libzypp still need some files during package
-    # installation, we can only remove the known files, @see LIBZYPP_CLEANUP_PATTERNS
-    def self.cleanup_zypp_cache
-      log.info("Cleaning unused files in the libzypp cache (#{LIBZYPP_CACHE_PATH})")
-      saved_space = 0
-
-      LIBZYPP_CLEANUP_PATTERNS.each do |p|
-        files = Dir[File.join(LIBZYPP_CACHE_PATH, "**", p)]
-        next if files.empty?
-
-        files.each do |f|
-          log.debug("Removing cache file #{f}")
-          saved_space += File.size(f)
-          # make sure we do not collide with Yast::FileUtils...
-          ::FileUtils.rm(f)
-        end
-      end
-
-      # convert to kiB
-      saved_space /= 1024
-      log.info("Libzypp cache cleanup saved #{saved_space}kiB (#{saved_space / 1024}MiB)")
-    end
 
     # Remove the kernel modules squashfs image.
     # It assumes that all needed kernel drivers are already loaded and active
@@ -176,6 +124,6 @@ module Installation
     end
 
     private_class_method :log_space_usage, :unmount_kernel_modules,
-      :cleanup_zypp_cache, :find_device, :losetup_backing_file
+      :find_device, :losetup_backing_file
   end
 end
