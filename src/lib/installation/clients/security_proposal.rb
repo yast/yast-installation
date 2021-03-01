@@ -246,7 +246,7 @@ module Installation
           @settings.selinux_config.needed_patterns)
 
         _(
-          "Selinux Default Mode is %s"
+          "SELinux Default Mode is %s"
         ) % @settings.selinux_config.mode.to_human_string
       end
     end

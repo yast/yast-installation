@@ -144,7 +144,7 @@ describe Installation::Clients::SecurityProposal do
 
         proposal = client.make_proposal({})
 
-        expect(proposal["preformatted_proposal"]).to include("Selinux Default Mode")
+        expect(proposal["preformatted_proposal"]).to include("SELinux Default Mode")
       end
     end
 
