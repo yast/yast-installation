@@ -122,7 +122,7 @@ Conflicts:      yast2-mouse < 2.18.0
 # new autoinst_files_finish call
 Conflicts:      autoyast2 < 4.3.26
 # moved security_finish client
-Conflicts:      yast2-security < 4.3.7
+Conflicts:      yast2-security < 4.3.11
 
 Obsoletes:      yast2-installation-devel-doc
 
