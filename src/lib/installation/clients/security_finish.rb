@@ -62,11 +62,17 @@ module Installation
           Yast::SignatureCheckDialogs.CheckSignatures
         )
 
+        # in autoinstallation write security profile here
+        Yast::Security.Write if Yast::Mode.autoinst
+
         # ensure we have correct ca certificates
         if Yast::Mode.update
           res = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"),
             "/usr/sbin/update-ca-certificates")
           log.info("updating ca certificates result: #{res}")
+
+          # Finish here as during upgrade we do not want to modify security settings
+          return true
         end
 
         write_polkit
@@ -77,9 +83,6 @@ module Installation
         res = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"),
           "/usr/bin/chkstat --system --set")
         log.info("updating capabilities: #{res}")
-
-        # in autoinstallation write security profile here
-        Yast::Security.Write if Yast::Mode.autoinst
 
         # Write down selinux configuration
         settings.selinux_config.save
