@@ -111,6 +111,12 @@ describe Installation::Clients::SecurityFinish do
         allow(proposal_settings).to receive(:polkit_default_privs).and_return("easy")
         expect(Yast::SCR).to_not receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything)
       end
+
+      it "skips writting selinux" do
+        expect(proposal_settings.selinux_config).to_not receive(:save)
+
+        subject.write
+      end
     end
 
     context "when policy kit default priviges is defined" do
