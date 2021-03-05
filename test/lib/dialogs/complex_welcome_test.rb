@@ -4,6 +4,10 @@ require_relative "../../test_helper"
 require "installation/dialogs/complex_welcome"
 
 describe Installation::Dialogs::ComplexWelcome do
+  before do
+    allow(Yast::Language).to receive(:language)
+  end
+
   RSpec.shared_examples "show_license" do
     it "shows the product license" do
       expect(Y2Packager::Widgets::ProductLicense).to receive(:new)
