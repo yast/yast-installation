@@ -116,7 +116,7 @@ module Installation
         $stdin.reopen(@tty)
 
         begin
-          block.call if block_given?
+          block.call
         ensure
           # restore the original IO channels
           $stdout.reopen(stdout_orig)

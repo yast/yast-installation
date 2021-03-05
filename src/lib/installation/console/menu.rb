@@ -50,8 +50,6 @@ module Installation
           ret = super
           break if [:next, :back, :abort, :close].include?(ret)
         end
-
-        nil
       end
 
       # the content of the dialog

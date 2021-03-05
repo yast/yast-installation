@@ -45,6 +45,7 @@ module Installation
 
       # define the display order (in ascending order),
       # if the order value is same than it sorts by the class name
+      # @return [Integer] the order
       def order
         100
       end

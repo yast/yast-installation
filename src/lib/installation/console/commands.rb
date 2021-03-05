@@ -43,8 +43,12 @@ module Installation
         puts
         # this is the most important message so make it translatable,
         # the console is for experts so it is OK have the rest untranslated
-        # TRANSLATORS: help text displayed in the installer command line console
-        puts _("Type 'quit' or press Ctrl+D to close the console and go back to the installer")
+        # TRANSLATORS: help text displayed in the installer command line console,
+        # do not change these texts they are replaced:
+        # %{cmd} is replaced by a command name
+        # %{keys} is replaced by a keyboard shortcut
+        puts _("Type '%{cmd}' or press %{keys} to close the console and go back " \
+          "to the installer") % {cmd: "quit", keys: "Ctrl+D"}
         puts
         puts "Type 'commands' to see the available special commands"
         puts
