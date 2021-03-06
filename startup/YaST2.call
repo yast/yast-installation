@@ -352,24 +352,20 @@ function start_yast () {
 	log "\tUI_ARGS:      $Y2_UI_ARGS"
 	log "\tQT_IM_MODULE: $QT_IM_MODULE"
 
+        Y2START=/usr/lib/YaST2/bin/y2start
+        Y2START_ARGS="$Y2_MODULE_NAME $Y2_MODE_FLAGS $Y2_MODULE_ARGS $Y2_MODE $Y2_UI_ARGS"
+
 	if [ "$Y2GDB" != "1" ]; then
-	    $OPT_FBITERM y2start		\
-		"$Y2_MODULE_NAME"	\
-		$Y2_MODE_FLAGS		\
-		$Y2_MODULE_ARGS	        \
-		$Y2_MODE		\
-		$Y2_UI_ARGS
+	    $OPT_FBITERM \
+                "$Y2START"		\
+		$Y2START_ARGS
 	    Y2_EXIT_CODE=$?
 	else
 	    GDBCMDS=/var/lib/YaST2/gdb-cmds
 	    echo tty /dev/tty10 > $GDBCMDS
-	    echo set args "$Y2_MODULE_NAME"	\
-			$Y2_MODE_FLAGS		\
-			$Y2_MODULE_ARGS 	\
-			$Y2_MODE		\
-			$Y2_UI_ARGS >> $GDBCMDS
 	    echo set pagination off >> $GDBCMDS
-	    /usr/bin/gdb -x $GDBCMDS /usr/lib/YaST2/bin/y2start | \
+	    echo set args $Y2START_ARGS >> $GDBCMDS
+	    /usr/bin/gdb -x $GDBCMDS "$Y2START" | \
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
