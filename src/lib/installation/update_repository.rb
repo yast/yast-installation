@@ -142,9 +142,9 @@ module Installation
 
     # Retrieves the list of packages to unpack to the inst-sys
     #
-    # Only packages in the update repository are considered, meta-packages
-    # which should be used in an add-on and not applied to the inst-sys are ignored.
-    # The packages are sorted by name (alphabetical order).
+    # Only packages in the update repository are considered, meta-packages which should be used in
+    # an add-on and not applied to the inst-sys are ignored.  The packages are sorted by name
+    # (alphabetical order). Additionally, only the latest version is considered.
     #
     # @return [Array<Y2Packager::Resolvable>] List of packages to install
     #
@@ -152,7 +152,13 @@ module Installation
     def packages
       return @packages unless @packages.nil?
       add_repo
-      @packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id).sort_by!(&:name)
+      all_packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id)
+      pkg_names = all_packages.map(&:name).uniq
+      @packages = pkg_names.map do |name|
+        all_packages.select { |p| p.name == name }.max do |a, b|
+          Yast::Pkg.CompareVersions(a.version, b.version)
+        end
+      end
       log.info "Found #{@packages.size} packages: #{@packages.map(&:name)}"
       # remove packages which are used as addons, these should not be applied to the inst-sys
       addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)

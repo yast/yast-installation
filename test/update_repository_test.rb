@@ -37,20 +37,44 @@ describe Installation::UpdateRepository do
     after { FileUtils.rm_rf(TEMP_DIR) }
 
     let(:package) do
-      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg1",
+        "version" => "3.2",
+        "path"    => "./x86_64/pkg1-3.2.x86_64.rpm",
+        "source"  => repo_id
+      )
+    end
+
+    let(:same_package) do
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg1",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg1-3.1.x86_64.rpm",
+        "source"  => repo_id
+      )
     end
 
     let(:other_package) do
-      Y2Packager::Resolvable.new("name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg0",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg0-3.1.x86_64.rpm",
+        "source"  => repo_id
+      )
     end
 
     let(:from_other_repo) do
-      Y2Packager::Resolvable.new("name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg2",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg2-3.1.x86_64.rpm",
+        "source"  => repo_id + 1
+      )
     end
 
     before do
       allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id)
-        .and_return([other_package, package])
+        .and_return([other_package, package, same_package])
       allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id + 1)
         .and_return([from_other_repo])
     end
