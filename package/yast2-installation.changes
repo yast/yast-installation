@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  9 10:21:49 UTC 2021 - Josef Reidinger <jreidinger@suse.com>
+
+- Backport: Remove bashism in startup/common/network.sh to be able
+  to use newer installation images (bsc#1183188)
+- 4.2.50
+
+-------------------------------------------------------------------
 Wed Feb 10 08:01:33 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Do not crash when it is not possible to create a snapshot after
