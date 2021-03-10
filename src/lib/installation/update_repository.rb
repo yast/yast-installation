@@ -193,7 +193,6 @@ module Installation
           update_progress(100 * index / packages.size)
           fetch_and_extract_package(package, workdir)
         end
-        clean_unneeded_files(workdir)
         @squashfs_file = build_squashfs(workdir, next_name(path, length: 3))
       end
     rescue Packages::PackageDownloader::FetchError, Packages::PackageExtractor::ExtractionFailed,
@@ -284,8 +283,12 @@ module Installation
       downloader = Packages::PackageDownloader.new(repo_id, package.name)
       downloader.download(tempfile.path.to_s)
 
-      extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
-      extractor.extract(dir)
+      Dir.mktmpdir do |workdir|
+        extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
+        extractor.extract(workdir)
+        clean_unneeded_files(workdir)
+        FileUtils.cp_r(Pathname.new(workdir).children, dir)
+      end
     ensure
       tempfile.unlink
     end
