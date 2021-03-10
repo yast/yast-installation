@@ -62,8 +62,8 @@ module Installation
 
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Array<Pathname>] local paths of updates fetched from the repo
-    attr_reader :update_files
+    # @return [Array<Pathname>] squash filesystem path
+    attr_reader :updates_file
     # @return [Symbol] Repository origin. @see ORIGINS
     attr_reader :origin
     # @return [Integer] Repository ID
@@ -122,7 +122,7 @@ module Installation
       textdomain "installation"
 
       @uri = uri
-      @update_files = []
+      @updates_file = nil
       @packages = nil
       raise UnknownOrigin unless ORIGINS.include?(origin)
       @origin = origin
@@ -142,17 +142,26 @@ module Installation
 
     # Retrieves the list of packages to unpack to the inst-sys
     #
-    # Only packages in the update repository are considered, meta-packages
-    # which should be used in an add-on and not applied to the inst-sys are ignored.
-    # The packages are sorted by name (alphabetical order).
+    # Only packages in the update repository are considered, meta-packages which should be used in
+    # an add-on and not applied to the inst-sys are ignored.  The packages are sorted by name
+    # (alphabetical order). Additionally, only the latest version is considered.
     #
     # @return [Array<Y2Packager::Resolvable>] List of packages to install
     #
     # @see Y2Packager::Resolvable
     def packages
       return @packages unless @packages.nil?
+
       add_repo
-      @packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id).sort_by!(&:name)
+      all_packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id)
+      pkg_names = all_packages.map(&:name).uniq
+
+      # find the highest version of each package
+      @packages = pkg_names.map do |name|
+        all_packages.select { |p| p.name == name }.max do |a, b|
+          Yast::Pkg.CompareVersions(a.version, b.version)
+        end
+      end
       log.info "Found #{@packages.size} packages: #{@packages.map(&:name)}"
       # remove packages which are used as addons, these should not be applied to the inst-sys
       addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)
@@ -161,11 +170,9 @@ module Installation
       @packages
     end
 
-    # Fetch updates
+    # Fetch updates and save them in a squasfs filesystem
     #
-    # Updates will be stored in the given directory. They'll be named
-    # sequentially using three digits and the prefix 'yast'. For example:
-    # yast_000, yast_001 and so on.
+    # Updates will be stored in the given directory.
     #
     # If a known error occurs, it will be converted to a CouldNotFetchUpdate
     # exception.
@@ -176,36 +183,24 @@ module Installation
     # @param path [Pathname] Directory to store the updates
     # @return [Pathname] Paths to the updates
     #
-    # @see #fetch_package
+    # @see #fetch_and_extract_package
     # @see #paths
-    # @see #update_files
     #
     # @raise CouldNotFetchUpdate
     def fetch(path = Pathname("/download"))
       init_progress
 
-      packages.each_with_object(update_files).with_index do |(package, files), index|
-        update_progress(100 * index / packages.size)
-        files << fetch_package(package, path)
+      Dir.mktmpdir do |workdir|
+        packages.each_with_index do |package, index|
+          update_progress(100 * index / packages.size)
+          fetch_and_extract_package(package, workdir)
+        end
+        @updates_file = build_squashfs(workdir, next_name(path, length: 3))
       end
     rescue Packages::PackageDownloader::FetchError, Packages::PackageExtractor::ExtractionFailed,
            CouldNotSquashPackage => e
-
       log.error("Could not fetch update: #{e.inspect}. Rolling back.")
-      remove_update_files
       raise CouldNotFetchUpdate
-    end
-
-    # Remove fetched packages
-    #
-    # Remove fetched packages from the filesystem. This method won't work
-    # if the update is already applied.
-    def remove_update_files
-      log.info("Removing update files: #{update_files}")
-      update_files.each do |path|
-        FileUtils.rm_f(path)
-      end
-      update_files.clear
     end
 
     # Apply updates to inst-sys
@@ -215,15 +210,6 @@ module Installation
     # * Mount the squashfs filesystem
     # * Add files/directories to inst-sys using the /sbin/adddir script
     #
-    # @note The current implementation creates one squashfs image per package
-    # and mounting a squashfs image consumes one loop device (/dev/loop*).
-    # Inst-sys has by default 64 loop devices, but some of them already used,
-    # in an extreme case we might run out of loop devices.
-    #
-    # On the other hand downloading and unpacking all packages at once might
-    # require a lot of memory, the installer could crash on a system with
-    # small memory.
-    #
     # @param mount_path [Pathname] Directory to mount the update
     #
     # @raise UpdatesNotFetched
@@ -231,14 +217,12 @@ module Installation
     # @see #mount_squashfs
     # @see #adddir
     def apply(mount_path = Pathname("/mounts"))
-      raise UpdatesNotFetched if update_files.nil?
-      update_files.each do |path|
-        mountpoint = next_name(mount_path, length: 4)
-        mount_squashfs(path, mountpoint)
-        adddir(mountpoint)
-        update_instsys_parts(path, mountpoint)
-      end
+      raise UpdatesNotFetched if updates_file.nil?
 
+      mountpoint = next_name(mount_path, length: 4)
+      mount_squashfs(updates_file, mountpoint)
+      adddir(mountpoint)
+      update_instsys_parts(updates_file, mountpoint)
       write_package_index
     end
 
@@ -286,27 +270,27 @@ module Installation
 
   private
 
-    # Fetch and build a squashfs filesytem for a given package
+    # Fetch and extract a package to a given directory
     #
     # @param package [Y2Packager::Resolvable] Package to retrieve
-    # @param dir     [Pathname] Path to store the squashed filesystems
-    # @return [Pathname] Path where the file is stored
+    # @param dir     [Pathname] Directory to extract the package contents to
     #
     # @see #packages
     # @see #apply
     #
     # @raise PackageNotFound
-    def fetch_package(package, dir)
+    def fetch_and_extract_package(package, dir)
       tempfile = Tempfile.new(package.name)
       tempfile.close
-      Dir.mktmpdir do |workdir|
-        downloader = Packages::PackageDownloader.new(repo_id, package.name)
-        downloader.download(tempfile.path.to_s)
+      downloader = Packages::PackageDownloader.new(repo_id, package.name)
+      downloader.download(tempfile.path.to_s)
 
+      Dir.mktmpdir do |tmpdir|
+        workdir = Pathname.new(tmpdir)
         extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
         extractor.extract(workdir)
-
-        build_squashfs(workdir, next_name(dir, length: 3))
+        clean_unneeded_files(workdir)
+        FileUtils.cp_r(workdir.children, dir) unless workdir.empty?
       end
     ensure
       tempfile.unlink
@@ -374,6 +358,44 @@ module Installation
       else
         log.warn("Status of repository at #{uri} cannot be determined")
         :error
+      end
+    end
+
+    # Directories that are ignored in the instsys
+    IGNORED_DIRS = [
+      "usr/share/doc",
+      "usr/share/info",
+      "usr/share/man",
+      "var/adm/fillup-templates"
+    ].freeze
+
+    # Clean-up unnecessary files
+    #
+    # Clean-up those files that are not needed as part of the update because:
+    #
+    # * they are under a path which is not relevant at installation time (doc, man, etc.)
+    # * they are identical to the original files (no real changes)
+    #
+    # @param dir [String,Pathname] Directory to clean-up
+    def clean_unneeded_files(dir)
+      top = Pathname.new(dir)
+
+      ignored_dirs = IGNORED_DIRS.map { |d| top.join(d) }.select(&:directory?)
+      ignored_dirs.each { |d| FileUtils.rm_r(d) }
+
+      top.find do |path|
+        next if !path.file? || path.symlink?
+
+        instsys_path = Pathname.new("/").join(path.relative_path_from(top))
+        next unless instsys_path.exist?
+
+        path.unlink if FileUtils.identical?(path, instsys_path)
+      end
+
+      top.find.to_a[1..-1].reverse.each do |path|
+        next if !path.directory? || path.symlink?
+
+        path.unlink if path.empty?
       end
     end
 

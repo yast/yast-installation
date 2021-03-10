@@ -18,7 +18,6 @@ describe Installation::UpdateRepository do
   let(:repo_id) { 1 }
   let(:download_path) { TEMP_DIR.join("download") }
   let(:updates_path) { TEMP_DIR.join("mounts") }
-  let(:tmpdir) { TEMP_DIR.join("tmp") }
   let(:probed) { "RPMMD" }
   let(:packages) { [] }
 
@@ -37,20 +36,44 @@ describe Installation::UpdateRepository do
     after { FileUtils.rm_rf(TEMP_DIR) }
 
     let(:package) do
-      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg1",
+        "version" => "3.2",
+        "path"    => "./x86_64/pkg1-3.2.x86_64.rpm",
+        "source"  => repo_id
+      )
+    end
+
+    let(:same_package) do
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg1",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg1-3.1.x86_64.rpm",
+        "source"  => repo_id
+      )
     end
 
     let(:other_package) do
-      Y2Packager::Resolvable.new("name" => "pkg0", "path" => "./x86_64/pkg0-3.1.x86_64.rpm", "source" => repo_id)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg0",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg0-3.1.x86_64.rpm",
+        "source"  => repo_id
+      )
     end
 
     let(:from_other_repo) do
-      Y2Packager::Resolvable.new("name" => "pkg2", "path" => "./x86_64/pkg2-3.1.x86_64.rpm", "source" => repo_id + 1)
+      Y2Packager::Resolvable.new(
+        "name"    => "pkg2",
+        "version" => "3.1",
+        "path"    => "./x86_64/pkg2-3.1.x86_64.rpm",
+        "source"  => repo_id + 1
+      )
     end
 
     before do
       allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id)
-        .and_return([other_package, package])
+        .and_return([other_package, package, same_package])
       allow(Y2Packager::Resolvable).to receive(:find).with(kind: :package, source: repo_id + 1)
         .and_return([from_other_repo])
     end
@@ -101,7 +124,7 @@ describe Installation::UpdateRepository do
 
   describe "#fetch" do
     around do |example|
-      FileUtils.mkdir_p([download_path, updates_path, tmpdir])
+      FileUtils.mkdir_p([download_path, updates_path])
       example.run
       FileUtils.rm_rf(TEMP_DIR)
     end
@@ -115,79 +138,81 @@ describe Installation::UpdateRepository do
     let(:tempfile) { double("tempfile", close: true, path: package_path, unlink: true) }
     let(:downloader) { double("Packages::PackageDownloader", download: nil) }
     let(:extractor) { double("Packages::PackageExtractor", extract: nil) }
+    let(:self_update_archive) { fixtures_dir("self-update-content.tar.xz") }
 
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
-      allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
-      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package.name).and_return(downloader)
-      allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s).and_return(extractor)
+      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package.name)
+        .and_return(downloader)
+      allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s)
+        .and_return(extractor)
+      allow(extractor).to receive(:extract) do |dir|
+        FileUtils.mkdir_p(dir)
+        system("/usr/bin/tar xf #{self_update_archive} -C #{dir}")
+      end
       allow(Tempfile).to receive(:new).and_return(tempfile)
     end
 
-    it "builds one squashed filesystem by package" do
+    it "builds a squashed filesystem containing all updates" do
       # Download
       expect(downloader).to receive(:download).with(tempfile.path.to_s)
 
-      # Extract
-      expect(extractor).to receive(:extract).with(tmpdir.to_s)
-
       # Squash
-      expect(Yast::SCR).to receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), /mksquashfs.+#{tmpdir} .+\/yast_000/)
-        .and_return("exit" => 0, "stdout" => "", "stderr" => "")
+      expect(Yast::SCR).to receive(:Execute) do |*args|
+        yast_path, command = args
+        expect(yast_path).to eq(Yast::Path.new(".target.bash_output"))
+        dir = command[/mksquashfs ([^ ]+) .+\/yast_000/, 1]
+        tmpdir = Pathname.new(dir)
+        squashed = tmpdir.glob("**/*")
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "doc"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "info"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "man"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "YaST2", "schema"))
+        expect(squashed).to include(
+          tmpdir.join("usr", "share", "YaST2", "lib", "installation", "sample.rb")
+        )
+      end.and_return("exit" => 0, "stdout" => "")
 
       repo.fetch(download_path)
     end
 
     context "when a package can't be retrieved" do
       before do
-        expect(downloader).to receive(:download).and_raise(Packages::PackageDownloader::FetchError)
+        allow(downloader).to receive(:download)
+          .and_raise(Packages::PackageDownloader::FetchError)
       end
 
-      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
-        expect(repo).to receive(:remove_update_files)
+      it "raises a CouldNotFetchUpdate error" do
         expect { repo.fetch(download_path) }
           .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
     end
 
     context "when a package can't be extracted" do
-      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
-        expect(extractor).to receive(:extract).and_raise(Packages::PackageExtractor::ExtractionFailed)
+      it "raises a CouldNotFetchUpdate error" do
+        expect(extractor).to receive(:extract)
+          .and_raise(Packages::PackageExtractor::ExtractionFailed)
 
-        expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
           .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
     end
 
     context "when a package can't be squashed" do
-      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
+      it "raises a CouldNotFetchUpdate error" do
         allow(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), /mksquash/)
           .and_return("exit" => 1, "stdout" => "", "stderr" => "")
 
-        expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
           .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
     end
   end
 
-  describe "#remove_update_files" do
-    let(:update_file) { Pathname.new("yast_001") }
-
-    it "removes downloaded files and clear update_files" do
-      allow(repo).to receive(:update_files).and_return([update_file])
-      expect(FileUtils).to receive(:rm_f).with(update_file)
-      expect(repo.update_files).to receive(:clear)
-      repo.remove_update_files
-    end
-  end
-
   describe "#apply" do
-    let(:update_path) { Pathname("/download/yast_000") }
+    let(:updates_file) { Pathname("/download/yast_000") }
     let(:mount_point) { updates_path.join("yast_0000") }
     let(:file) { double("file") }
     let(:package) do
@@ -195,7 +220,7 @@ describe Installation::UpdateRepository do
     end
 
     before do
-      allow(repo).to receive(:update_files).and_return([update_path])
+      allow(repo).to receive(:updates_file).and_return(updates_file)
       allow(Installation::UpdateRepository::INSTSYS_PARTS_PATH).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir_p).with(mount_point)
       allow(repo).to receive(:packages).and_return([package])
@@ -206,14 +231,13 @@ describe Installation::UpdateRepository do
     it "mounts and adds files/dir" do
       # mount
       expect(Yast::SCR).to receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), /mount.+#{update_path}.+#{mount_point}/)
+        .with(Yast::Path.new(".target.bash_output"), /mount.+#{updates_file}.+#{mount_point}/)
         .and_return("exit" => 0)
       # adddir
       expect(Yast::SCR).to receive(:Execute)
         .with(Yast::Path.new(".target.bash_output"), /adddir #{mount_point} \//)
         .and_return("exit" => 0)
 
-      expect(file).to receive(:puts)
       repo.apply(updates_path)
     end
 
