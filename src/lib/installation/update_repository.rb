@@ -285,11 +285,12 @@ module Installation
       downloader = Packages::PackageDownloader.new(repo_id, package.name)
       downloader.download(tempfile.path.to_s)
 
-      Dir.mktmpdir do |workdir|
+      Dir.mktmpdir do |tmpdir|
+        workdir = Pathname.new(tmpdir)
         extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
         extractor.extract(workdir)
         clean_unneeded_files(workdir)
-        FileUtils.cp_r(Pathname.new(workdir).children, dir)
+        FileUtils.cp_r(workdir.children, dir) unless workdir.empty?
       end
     ensure
       tempfile.unlink
@@ -391,7 +392,7 @@ module Installation
         path.unlink if FileUtils.identical?(path, instsys_path)
       end
 
-      top.find.to_a.reverse.each do |path|
+      top.find.to_a[1..-1].reverse.each do |path|
         next if !path.directory? || path.symlink?
 
         path.unlink if path.empty?
