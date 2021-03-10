@@ -97,11 +97,13 @@ The rpm-md repository is required by SMT ([SUSE Subscription Management Tool](
 https://www.suse.com/products/subscription-management-tool))
 as this is the only format which it supports for data mirroring.
 
-The files from the packages override the files from the original inst-sys.
-That means the update packages might not need to contain all files,
-it is enough to include only the changed files which are different than
-in the original inst-sys. The unchanged files can be omitted to save memory
-and the download bandwidth.
+The files from the packages override the files from the original inst-sys. YaST
+automatically ignores those files that have not changed, removing them to save
+some memory. Additionally, `/usr/share/doc`, `/usr/share/info`, `/usr/share/man`
+and `var/adm/fillup-templates` are excluded too.
+
+In order to reduce the download bandwidth, the update packages might include
+only the changed files.
 
 ## Where to Find the Updates
 
