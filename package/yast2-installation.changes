@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Mar 10 10:06:00 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Reduce self-update mechanism memory consumption (bsc#1182928):
+  - Make sure to download the package only once.
+  - Use a single squash file system for each update repository.
+  - Ignore unchanged files and directories like /usr/share/man,
+    /usr/share/info, etc.
+- 4.3.32
+
+-------------------------------------------------------------------
 Thu Mar  4 13:49:52 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Added special installer configuration dialog
