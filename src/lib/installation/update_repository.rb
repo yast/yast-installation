@@ -63,7 +63,7 @@ module Installation
     # @return [URI] URI of the repository
     attr_reader :uri
     # @return [Array<Pathname>] squash filesystem path
-    attr_reader :squashfs_file
+    attr_reader :updates_file
     # @return [Symbol] Repository origin. @see ORIGINS
     attr_reader :origin
     # @return [Integer] Repository ID
@@ -122,7 +122,7 @@ module Installation
       textdomain "installation"
 
       @uri = uri
-      @squashfs_file = nil
+      @updates_file = nil
       @packages = nil
       raise UnknownOrigin unless ORIGINS.include?(origin)
       @origin = origin
@@ -193,7 +193,7 @@ module Installation
           update_progress(100 * index / packages.size)
           fetch_and_extract_package(package, workdir)
         end
-        @squashfs_file = build_squashfs(workdir, next_name(path, length: 3))
+        @updates_file = build_squashfs(workdir, next_name(path, length: 3))
       end
     rescue Packages::PackageDownloader::FetchError, Packages::PackageExtractor::ExtractionFailed,
            CouldNotSquashPackage => e
@@ -215,12 +215,12 @@ module Installation
     # @see #mount_squashfs
     # @see #adddir
     def apply(mount_path = Pathname("/mounts"))
-      raise UpdatesNotFetched if squashfs_file.nil?
+      raise UpdatesNotFetched if updates_file.nil?
 
       mountpoint = next_name(mount_path, length: 4)
-      mount_squashfs(squashfs_file, mountpoint)
+      mount_squashfs(updates_file, mountpoint)
       adddir(mountpoint)
-      update_instsys_parts(squashfs_file, mountpoint)
+      update_instsys_parts(updates_file, mountpoint)
       write_package_index
     end
 

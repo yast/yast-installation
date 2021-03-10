@@ -209,7 +209,7 @@ describe Installation::UpdateRepository do
   end
 
   describe "#apply" do
-    let(:squashfs_file) { Pathname("/download/yast_000") }
+    let(:updates_file) { Pathname("/download/yast_000") }
     let(:mount_point) { updates_path.join("yast_0000") }
     let(:file) { double("file") }
     let(:package) do
@@ -217,7 +217,7 @@ describe Installation::UpdateRepository do
     end
 
     before do
-      allow(repo).to receive(:squashfs_file).and_return(squashfs_file)
+      allow(repo).to receive(:updates_file).and_return(updates_file)
       allow(Installation::UpdateRepository::INSTSYS_PARTS_PATH).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir_p).with(mount_point)
       allow(repo).to receive(:packages).and_return([package])
@@ -228,7 +228,7 @@ describe Installation::UpdateRepository do
     it "mounts and adds files/dir" do
       # mount
       expect(Yast::SCR).to receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), /mount.+#{squashfs_file}.+#{mount_point}/)
+        .with(Yast::Path.new(".target.bash_output"), /mount.+#{updates_file}.+#{mount_point}/)
         .and_return("exit" => 0)
       # adddir
       expect(Yast::SCR).to receive(:Execute)
