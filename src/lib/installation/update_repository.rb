@@ -155,6 +155,8 @@ module Installation
       add_repo
       all_packages = Y2Packager::Resolvable.find(kind: :package, source: repo_id)
       pkg_names = all_packages.map(&:name).uniq
+
+      # find the highest version of each package
       @packages = pkg_names.map do |name|
         all_packages.select { |p| p.name == name }.max do |a, b|
           Yast::Pkg.CompareVersions(a.version, b.version)
