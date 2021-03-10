@@ -30,6 +30,10 @@
 #
 # $Id$
 #
+
+require "yast"
+require "yast2/execute"
+
 module Yast
   class KernelFinishClient < Client
     def main
@@ -83,10 +87,8 @@ module Yast
         # This will recreate all missing links.
         # bnc#774301 - without --action=change at least when installing
         # over lcs device on s390 emulated eth device get lost
-        SCR.Execute(
-          path(".target.bash"),
-          "/usr/bin/udevadm trigger --action=change; /usr/bin/udevadm settle --timeout=60"
-        )
+        Yast::Execute.on_target("/usr/bin/udevadm", "trigger", "--action=change")
+        Yast::Execute.on_target("/usr/bin/udevadm", "settle", "--timeout=60")
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
