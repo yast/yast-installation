@@ -208,17 +208,6 @@ describe Installation::UpdateRepository do
     end
   end
 
-  xdescribe "#remove_update_files" do
-    let(:update_file) { Pathname.new("yast_001") }
-
-    it "removes downloaded files and clear update_files" do
-      allow(repo).to receive(:update_files).and_return([update_file])
-      expect(FileUtils).to receive(:rm_f).with(update_file)
-      expect(repo.update_files).to receive(:clear)
-      repo.remove_update_files
-    end
-  end
-
   describe "#apply" do
     let(:squashfs_file) { Pathname("/download/yast_000") }
     let(:mount_point) { updates_path.join("yast_0000") }
