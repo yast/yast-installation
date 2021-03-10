@@ -18,7 +18,6 @@ describe Installation::UpdateRepository do
   let(:repo_id) { 1 }
   let(:download_path) { TEMP_DIR.join("download") }
   let(:updates_path) { TEMP_DIR.join("mounts") }
-  let(:tmpdir) { TEMP_DIR.join("tmp") }
   let(:probed) { "RPMMD" }
   let(:packages) { [] }
 
@@ -125,7 +124,7 @@ describe Installation::UpdateRepository do
 
   describe "#fetch" do
     around do |example|
-      FileUtils.mkdir_p([download_path, updates_path, tmpdir])
+      FileUtils.mkdir_p([download_path, updates_path])
       example.run
       FileUtils.rm_rf(TEMP_DIR)
     end
@@ -144,7 +143,6 @@ describe Installation::UpdateRepository do
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
-      allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
       allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package.name)
         .and_return(downloader)
       allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s)
@@ -161,19 +159,19 @@ describe Installation::UpdateRepository do
       expect(downloader).to receive(:download).with(tempfile.path.to_s)
 
       # Squash
-      expect(Yast::SCR).to receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), /mksquashfs.+#{tmpdir} .+\/yast_000/)
-        .and_return("exit" => 0, "stdout" => "", "stderr" => "")
+      expect(Yast::SCR).to receive(:Execute) do |*args|
+        yast_path, command = args
+        expect(yast_path).to eq(Yast::Path.new(".target.bash_output"))
+        dir = command[/mksquashfs ([^ ]+) .+\/yast_000/, 1]
+        tmpdir = Pathname.new(dir)
+        squashed = tmpdir.glob("**/*")
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "doc"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "info"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "man"))
+        expect(squashed).to include(tmpdir.join("usr", "share", "YaST2", "sample.rb"))
+      end.and_return("exit" => 0, "stdout" => "")
 
       repo.fetch(download_path)
-
-      # Those files are not removed because FileUtils.mkdir_p is mocked. Otherwise,
-      # they should not be there.
-      squashed = tmpdir.glob("**/*")
-      expect(squashed).to_not include(tmpdir.join("usr", "share", "doc"))
-      expect(squashed).to_not include(tmpdir.join("usr", "share", "info"))
-      expect(squashed).to_not include(tmpdir.join("usr", "share", "man"))
-      expect(squashed).to include(tmpdir.join("usr", "share", "YaST2", "sample.rb"))
     end
 
     context "when a package can't be retrieved" do
