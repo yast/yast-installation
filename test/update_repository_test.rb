@@ -138,7 +138,7 @@ describe Installation::UpdateRepository do
     let(:tempfile) { double("tempfile", close: true, path: package_path, unlink: true) }
     let(:downloader) { double("Packages::PackageDownloader", download: nil) }
     let(:extractor) { double("Packages::PackageExtractor", extract: nil) }
-    let(:self_update_content) { fixtures_dir("self-update-content") }
+    let(:self_update_archive) { fixtures_dir("self-update-content.tar.xz") }
 
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
@@ -149,7 +149,7 @@ describe Installation::UpdateRepository do
         .and_return(extractor)
       allow(extractor).to receive(:extract) do |dir|
         FileUtils.mkdir_p(dir)
-        FileUtils.cp_r(self_update_content.glob("*"), dir)
+        system("/usr/bin/tar xf #{self_update_archive} -C #{dir}")
       end
       allow(Tempfile).to receive(:new).and_return(tempfile)
     end
@@ -168,7 +168,10 @@ describe Installation::UpdateRepository do
         expect(squashed).to_not include(tmpdir.join("usr", "share", "doc"))
         expect(squashed).to_not include(tmpdir.join("usr", "share", "info"))
         expect(squashed).to_not include(tmpdir.join("usr", "share", "man"))
-        expect(squashed).to include(tmpdir.join("usr", "share", "YaST2", "sample.rb"))
+        expect(squashed).to_not include(tmpdir.join("usr", "share", "YaST2", "schema"))
+        expect(squashed).to include(
+          tmpdir.join("usr", "share", "YaST2", "lib", "installation", "sample.rb")
+        )
       end.and_return("exit" => 0, "stdout" => "")
 
       repo.fetch(download_path)

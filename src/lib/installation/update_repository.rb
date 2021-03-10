@@ -380,11 +380,19 @@ module Installation
       ignored_dirs = IGNORED_DIRS.map { |d| top.join(d) }.select(&:directory?)
       ignored_dirs.each { |d| FileUtils.rm_r(d) }
 
-      top.glob("**/*").select(&:file?).each do |path|
+      top.find do |path|
+        next if !path.file? || path.symlink?
+
         instsys_path = Pathname.new("/").join(path.relative_path_from(top))
-        next if path.symlink? || !instsys_path.exist?
+        next unless instsys_path.exist?
 
         path.unlink if FileUtils.identical?(path, instsys_path)
+      end
+
+      top.find.to_a.reverse.each do |path|
+        next if !path.directory? || path.symlink?
+
+        path.unlink if path.empty?
       end
     end
 
