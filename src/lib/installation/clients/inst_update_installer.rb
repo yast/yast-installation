@@ -16,6 +16,7 @@
 require "installation/updates_manager"
 require "installation/update_repositories_finder"
 require "y2packager/self_update_addon_repo"
+require "installation/selfupdate_cleaner"
 require "uri"
 require "yaml"
 
@@ -63,6 +64,7 @@ module Yast
       # shortcut - already updated, disabled via boot option or network not running
       if installer_updated? || disabled_in_linuxrc? || !NetworkService.isNetworkRunning
         log.info "Self update not needed, skipping"
+        ::Installation::SelfupdateCleaner.new.run if installer_updated?
         return :next
       end
 
