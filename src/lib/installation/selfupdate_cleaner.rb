@@ -25,7 +25,7 @@ require "fileutils"
 module Installation
   # This class cleans-up those files that are not actually needed for the
   # self-update mechanism. Starting in SLE-15-SP3, this class is not needed
-  # anymore because the self-update procedure already remove them.
+  # anymore because the self-update procedure already removes them.
   #
   # The self-update mechanism involves the following pieces:
   #
@@ -36,7 +36,7 @@ module Installation
   #   The original files are basically links to the updated ones (the `adddir`
   #   script of the inst-sys creates those links).
   #
-  # This class umounts the directories which files are not linked and removes
+  # This class umounts the directories whose files are not linked and removes
   # their associated squashfs files.
   #
   # See bsc#1182928 for further details.
@@ -125,7 +125,7 @@ module Installation
       /\A#{mounts_dir.join("yast_")}(\d+)/
     end
 
-    # Umounts and remove an update with a given id
+    # Umounts and removes an update with a given id
     #
     # @param update_id [String] Update ID
     def umount_and_remove(update_id)
