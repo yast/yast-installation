@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 11 10:54:41 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Clean-up the unneeded installer updates (bsc#1182928).
+- 4.2.51
+
+-------------------------------------------------------------------
 Tue Mar  9 10:21:49 UTC 2021 - Josef Reidinger <jreidinger@suse.com>
 
 - Backport: Remove bashism in startup/common/network.sh to be able
