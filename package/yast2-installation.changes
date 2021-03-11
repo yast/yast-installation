@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Mar 11 15:13:16 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Remove the libzypp cache symlink (related to bsc#1182928)
+- Improved "memsample" script handling
+   - Do not start it again if it is already running
+     (might happen if YaST is started again after crash)
+   - Stop it when YaST finishes
+- 4.3.34
+
+-------------------------------------------------------------------
 Wed Mar 10 17:25:29 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
 
 - Do not trigger any kernel event with udevadm from the
