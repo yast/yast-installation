@@ -30,6 +30,7 @@
 #
 # $Id$
 #
+
 module Yast
   class KernelFinishClient < Client
     def main
@@ -77,16 +78,6 @@ module Yast
 
         # Write list of modules to load after system gets up
         Kernel.SaveModulesToLoad
-
-        # BNC #427705, formerly added as BNC #163073
-        # after the chroot into the installed system has been performed.
-        # This will recreate all missing links.
-        # bnc#774301 - without --action=change at least when installing
-        # over lcs device on s390 emulated eth device get lost
-        SCR.Execute(
-          path(".target.bash"),
-          "/usr/bin/udevadm trigger --action=change; /usr/bin/udevadm settle --timeout=60"
-        )
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
