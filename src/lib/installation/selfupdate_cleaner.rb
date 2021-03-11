@@ -43,20 +43,16 @@ module Installation
   class SelfupdateCleaner
     include Yast::Logger
 
-    # This exception is raised when it is not possible to find out which
-    # updates are used.
-    class CouldNotFindUsedUpdates < StandardError; end
-
     MOUNTS_DIR = "mounts".freeze
     UPDATES_DIR = "download".freeze
 
     # Constructor
     #
     # @param root_dir [String,Pathname] Root directory
-    def initialize(root_dir = Pathname.new("/"))
+    def initialize(root_dir = "/")
       @root_dir = Pathname.new(root_dir)
-      @mounts_dir = root_dir.join(MOUNTS_DIR)
-      @updates_dir = root_dir.join(UPDATES_DIR)
+      @mounts_dir = @root_dir.join(MOUNTS_DIR)
+      @updates_dir = @root_dir.join(UPDATES_DIR)
     end
 
     # Runs the cleaning process
@@ -65,12 +61,9 @@ module Installation
     def run
       ids = unused_updates
 
-      log.info "These updates are not used and they will be removed: #{ids.sort}"
+      log.info "These #{ids.size} updates are not used and they will be removed: #{ids.sort}"
       ids.each { |id| umount_and_remove(id) }
       ids
-    rescue CouldNotFindUsedUpdates => e
-      log.error "It was impossible to determine which updates are in use: #{e.inspect}"
-      []
     end
 
   private
@@ -89,15 +82,14 @@ module Installation
     # @return [Array<String>]
     # @raise CouldNotFindUsedUpdates
     def used_updates
-      out, = Yast::Execute.locally!(
-        ["find", root_dir.to_s, "-type", "l", "-print0"],
-        ["xargs", "-0", "readlink"], stdout: :capture, allowed_exitstatus: [0, 123]
-      )
-      # Let's try to be permissive. '123' is the code returned by xargs when the command exited with
-      # a code between 1-125.
-      find_update_ids(out.split)
-    rescue Cheetah::ExecutionFailed
-      raise CouldNotFindUsedUpdates
+      links = []
+      root_dir.find do |path|
+        next unless path.symlink?
+
+        links << path.readlink if path.exist?
+      end
+
+      find_update_ids(links)
     end
 
     # Returns the list of all the updates
@@ -130,7 +122,7 @@ module Installation
     # @param update_id [String] Update ID
     def umount_and_remove(update_id)
       mounts_path = mounts_dir.join("yast_#{update_id}")
-      Yast::WFM.Execute(Yast::Path.new(".local.umount"), mounts_path.to_s)
+      system("umount #{mounts_path.to_s.shellescape}")
       ::FileUtils.rm_r(mounts_path)
 
       updated_path = updates_dir.join("yast_#{update_id[1..-1]}")

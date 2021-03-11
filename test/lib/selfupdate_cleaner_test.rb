@@ -29,7 +29,6 @@ describe Installation::SelfupdateCleaner do
     let(:instsys) { Pathname.new(Dir.mktmpdir) }
 
     context "when updates are applied" do
-
       let(:mounts) { instsys.join("mounts") }
       let(:downloads) { instsys.join("download") }
 
@@ -58,22 +57,6 @@ describe Installation::SelfupdateCleaner do
     context "when no updates are applied" do
       it "returns an empty array" do
         expect(cleaner.run).to eq([])
-      end
-    end
-
-    context "when it is not possible to find out which updates are in use" do
-      before do
-        allow(Yast::Execute).to receive(:locally!)
-          .and_raise(Cheetah::ExecutionFailed.new("", "", "", ""))
-      end
-
-      it "returns an empty array" do
-        expect(cleaner.run).to eq([])
-      end
-
-      it "logs the error" do
-        expect(cleaner.log).to receive(:error).with(/which updates are in use/)
-        cleaner.run
       end
     end
   end
