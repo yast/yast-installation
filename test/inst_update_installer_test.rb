@@ -3,6 +3,7 @@
 require_relative "test_helper"
 require_relative "./support/fake_registration"
 require "installation/clients/inst_update_installer"
+require "installation/selfupdate_cleaner"
 require "singleton"
 
 describe Yast::InstUpdateInstaller do
@@ -31,9 +32,11 @@ describe Yast::InstUpdateInstaller do
   let(:ay_profile) { double("Yast::Profile", current: profile) }
   let(:ay_profile_location) { double("Yast::ProfileLocation") }
   let(:finder) { ::Installation::UpdateRepositoriesFinder.new }
+  let(:cleaner) { instance_double(::Installation::SelfupdateCleaner, run: []) }
 
   before do
     allow(::Installation::UpdateRepositoriesFinder).to receive(:new).and_return(finder)
+    allow(::Installation::SelfupdateCleaner).to receive(:new).and_return(cleaner)
     allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
@@ -286,6 +289,11 @@ describe Yast::InstUpdateInstaller do
 
       it "finishes the restarting process" do
         expect(Yast::Installation).to receive(:finish_restarting!)
+        subject.main
+      end
+
+      it "clean-up the unused updates" do
+        expect(cleaner).to receive(:run)
         subject.main
       end
     end
