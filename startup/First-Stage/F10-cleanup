@@ -14,6 +14,9 @@ if [ "$UPDATE_MOUNTED" = true ];then
 	umount /y2update
 fi
 
+# stop memory sampling
+pkill -f memsample
+
 #=============================================
 # 10.4) write exit code for evaluation
 #---------------------------------------------

@@ -17,9 +17,16 @@ callHooks preFirstCall
 # Using /dev/null - If there is nothing to do, let it fail silently
 SUSEConnect --cleanup > /dev/null 2>&1
 
-# delete the repositories accidentally saved into inst-sys
+# delete the repositories saved into inst-sys
 # they make troubles when restarting YaST
 rm -fv /etc/zypp/repos.d/*.repo
+
+# during installation we move the libzypp cache to the target system (/mnt)
+# and replace it with a symlink, when YaST is restarted the symlink becomes
+# invalid and needs to be removed
+if [ -L /var/cache/zypp ]; then
+  rm -fv /var/cache/zypp
+fi
 
 #=============================================
 # 9.1) check for driver update mode
