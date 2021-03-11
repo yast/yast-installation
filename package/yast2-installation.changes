@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 11 10:54:41 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Clean-up the unneeded installer updates (bsc#1182928).
+- 4.0.78
+
+-------------------------------------------------------------------
 Mon Dec  7 09:27:38 UTC 2020 - Ladislav Slezák <lslezak@suse.cz>
 
 - Do not cleanup the libzypp cache when the system has low memory,
