@@ -12,6 +12,7 @@ module Installation
 
       Yast.import "Mode"
       Yast.import "InstFunctions"
+      Yast.import "Report"
       Yast.include self, "installation/misc.rb"
     end
 
@@ -52,12 +53,20 @@ module Installation
       Yast2::FsSnapshot.create_post(_("after update"), pre_number, cleanup: :number, important: true)
       Yast2::FsSnapshotStore.clean("update")
       true
+    rescue Yast2::SnapshotCreationFailed, Yast2::FsSnapshotStore::IOError => error
+      log.error("Error creating a post-update snapshot: #{error}")
+      Yast::Report.Error(_("Could not create a post-update snapshot."))
+      false
     end
 
     def create_single_snapshot
       # TRANSLATORS: label for filesystem snapshot taken after system installation
       Yast2::FsSnapshot.create_single(_("after installation"), cleanup: :number, important: true)
       true
+    rescue Yast2::SnapshotCreationFailed => error
+      log.error("Error creating a post-installation snapshot: #{error}")
+      Yast::Report.Error(_("Could not create a post-installation snapshot."))
+      false
     end
 
     def snapper_config
