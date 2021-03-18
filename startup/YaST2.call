@@ -366,6 +366,16 @@ function start_yast () {
             Y2START="ruby-memory-profiler"
         fi
 
+        # https://www.valgrind.org/docs/manual/ms-manual.html
+        if [ "$MASSIF" = "1" ]; then
+            Y2START_ARGS="\
+                --tool=massif \
+                --massif-out-file=/var/log/YaST2/massif-%p.out \
+                $Y2START \
+                $Y2START_ARGS"
+            Y2START="valgrind"
+        fi
+
 	if [ "$Y2GDB" != "1" ]; then
 	    $OPT_FBITERM \
                 "$Y2START"		\
