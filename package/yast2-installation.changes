@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar 17 16:53:42 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Expert console: use "dash" if available instead of "bash" shell
+  to avoid job control error messages (bsc#1183648)
+- 4.3.35
+
+-------------------------------------------------------------------
 Thu Mar 11 15:13:16 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Remove the libzypp cache symlink (related to bsc#1182928)

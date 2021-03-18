@@ -16,13 +16,23 @@ module Installation
     # define the "shell" command in the expert console
     class Commands
       def shell
-        system("/bin/bash")
+        # dash is a simple shell and needs less memory, also it does not complain
+        # about missing job control terminal
+        if File.exist?("/bin/dash")
+          system("/bin/dash")
+        # use full featured bash
+        elsif File.exist?("/bin/bash")
+          system("/bin/bash")
+        # fallback
+        else
+          system("/bin/sh")
+        end
       end
 
     private
 
       def shell_description
-        "Starts a shell session (/bin/bash), use the \"exit\" command\n" \
+        "Starts a shell session, use the \"exit\" command\n" \
         "or press Ctrl+D to return back to the YaST console"
       end
     end
