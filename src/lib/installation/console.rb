@@ -49,7 +49,7 @@ module Installation
     class << self
       # open a console and run an interactive IRB session in it
       # testing in installed system:
-      # ruby -I src/lib -r installation/console.rb -e ::Installation::Console.run
+      # Y2DIR=./src ruby -I src/lib -r installation/console.rb -e ::Installation::Console.run
       def run
         console = Yast::UI.TextMode ? Console::Tui.new : Console::Gui.new
         console.run do
