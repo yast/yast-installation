@@ -28,8 +28,9 @@ module Installation
       def tui_shell
         puts quit_hint
 
-        # some interactive tools like "vim" get stuck when running in "fbiterm",
-        # the workaround is to override TERM to "vt100" (bsc#1183652)
+        # some interactive tools like "vim" get stuck when running in "fbiterm"
+        # "fbiterm" sets TERM to "iterm", the workaround is to override it
+        # to "vt100" (bsc#1183652)
         term = ENV["TERM"] == "iterm" ? "TERM=vt100" : ""
 
         system("#{term} /bin/bash")
