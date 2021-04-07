@@ -13,7 +13,7 @@ Mon Mar 29 16:25:00 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
     fix for job control error messages bsc#1183648)
   - Override TERM to "vt100" when running in fbiterm,
     a workaround for frozen vim (bsc#1183652)
-- 4.4.0
+- 4.3.36
 
 -------------------------------------------------------------------
 Wed Mar 17 16:53:42 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
