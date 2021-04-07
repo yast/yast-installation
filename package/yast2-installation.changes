@@ -6,6 +6,12 @@ Fri Apr  9 16:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 - 4.4.1
 
 -------------------------------------------------------------------
+Wed Apr  7 19:53:01 UTC 2021 - Dirk Müller <dmueller@suse.com>
+
+- spec cleanups
+- stop listing bindir in the filelist - it is owned by filesystem
+
+-------------------------------------------------------------------
 Wed Apr  7 10:54:58 UTC 2021 - David Diaz <dgonzalez@suse.com>
 
 - Hide the abort button when the network client is called
