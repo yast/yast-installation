@@ -263,7 +263,10 @@ module Yast
         "and try installing the updates again?")
 
       if Popup.YesNo(msg)
-        Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
+        Yast::WFM.CallFunction(
+          "inst_lan",
+          [{ "skip_detection" => true, "hide_abort_button" => true }]
+        )
         true
       else
         false

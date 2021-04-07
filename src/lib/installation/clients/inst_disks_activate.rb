@@ -133,7 +133,10 @@ module Yast
           WFM.call("inst_fcoe-client", [@argmap])
           @ret = :redraw
         when :network
-          WFM.call("inst_lan", [@argmap.merge("skip_detection" => true)])
+          WFM.call(
+            "inst_lan",
+            [@argmap.merge("skip_detection" => true, "hide_abort_button" => true)]
+          )
           @ret = :redraw
         when :abort
           @ret = nil unless Popup.ConfirmAbort(:painless)
