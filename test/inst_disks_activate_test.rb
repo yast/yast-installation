@@ -147,7 +147,8 @@ describe Yast::InstDisksActivateClient do
       end
 
       it "calls inst_lan client" do
-        expect(Yast::WFM).to receive(:call).with("inst_lan", ["skip_detection" => true])
+        expect(Yast::WFM).to receive(:call)
+          .with("inst_lan", ["skip_detection" => true, "hide_abort_button" => true])
         expect(subject).to receive(:show_base_dialog).twice
 
         subject.main
