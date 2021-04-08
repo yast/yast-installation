@@ -5,7 +5,7 @@ CSV="${1-memsample.csv}"
 PNG="${2-memsample.png}"
 echo >&2 "Plotting from $CSV to $PNG"
 cat <<EOS | gnuplot > "$PNG"
-set title "YaST instaler memory usage"
+set title "YaST installer memory usage"
 set datafile separator comma
 set timefmt "%Y-%m-%dT%H:%M:%S+00:00"
 set xdata time
