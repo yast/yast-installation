@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 29 09:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Start the "memsample" tool in a subshell to avoid "Terminated"
+  message displayed at the end (bsc#1184491)
+- 4.3.38
+
+-------------------------------------------------------------------
 Wed Apr 14 11:08:52 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
 
 - Show 'Default' in the proposal summary as the PolicyKit Default
