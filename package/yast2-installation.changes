@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 12 11:46:40 UTC 2021 - Ludwig Nussel <lnussel@suse.com>
+
+- check for usr/lib/modules to handle usrmerge (bsc#1029961)
+- 4.4.2
+
+-------------------------------------------------------------------
 Fri Apr  9 16:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Start the "memsample" tool in a subshell to avoid "Terminated"
