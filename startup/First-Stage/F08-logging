@@ -65,7 +65,10 @@ else
     if pgrep -f memsample; then
         log "\talready running"
     else
-        memsample --sleep="${MEMSAMPLE-5}" --archive=/var/log/YaST2/memsample.zcat &
-        log "\tPID: $!"
+        # use a subshell to avoid "Terminated" message when killing the process at the end
+        (
+            memsample --sleep="${MEMSAMPLE-5}" --archive=/var/log/YaST2/memsample.zcat &
+            log "\tPID: $!"
+        )
     fi
 fi
