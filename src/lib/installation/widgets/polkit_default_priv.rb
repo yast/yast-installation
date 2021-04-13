@@ -18,6 +18,7 @@
 # ------------------------------------------------------------------------------
 
 require "cwm/common_widgets"
+require "installation/security_settings"
 
 module Installation
   module Widgets
@@ -59,12 +60,11 @@ module Installation
       end
 
       def init
-        self.value = @settings.polkit_default_privileges || "default"
+        self.value = @settings.polkit_default_privileges.to_s
       end
 
       def store
-        res = value == "default" ? nil : value
-        @settings.polkit_default_privileges = res
+        @settings.polkit_default_privileges = value.empty? ? nil : value
       end
     end
   end
