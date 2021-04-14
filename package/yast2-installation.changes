@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 14 09:46:38 UTC 2021 - Ludwig Nussel <lnussel@suse.com>
+
+- Check for usr/lib/modules to handle usrmerge (bsc#1029961)
+- 4.4.2
+
+-------------------------------------------------------------------
 Wed Apr 14 08:44:31 UTC 2021 - Dominique Leuenberger <dimstar@opensuse.org>
 
 - Do not own system directories (like /usr/bin):
@@ -7,7 +13,6 @@ Wed Apr 14 08:44:31 UTC 2021 - Dominique Leuenberger <dimstar@opensuse.org>
     races/conflicts.
   + As a result: expand the files section for bindir and unitdir to
     be exact on the files.
-- 4.4.2
 
 -------------------------------------------------------------------
 Fri Apr  9 16:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
