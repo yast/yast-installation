@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Apr 14 11:08:52 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
+
+- Show 'Default' in the proposal summary as the PolicyKit Default
+  Privileges to be used when it is not specified or specified as
+  empty in the control file (bsc#1184277)
+- 4.4.3
+
+-------------------------------------------------------------------
 Wed Apr 14 09:46:38 UTC 2021 - Ludwig Nussel <lnussel@suse.com>
 
 - Check for usr/lib/modules to handle usrmerge (bsc#1029961)
