@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Apr 14 11:08:52 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
+
+- Show 'Default' in the proposal summary as the PolicyKit Default
+  Privileges to be used when it is not specified or specified as
+  empty in the control file (bsc#1184277)
+- 4.3.37
+
+-------------------------------------------------------------------
 Mon Mar 29 16:25:00 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Expert console: fixed "shell" command

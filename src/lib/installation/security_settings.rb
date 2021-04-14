@@ -146,7 +146,7 @@ module Installation
 
     def human_polkit_privileges
       {
-        "default"     => _("Default"),
+        ""            => _("Default"),
         # TRANSLATORS: restrictive in sense the most restrictive policy
         "restrictive" => _("Restrictive"),
         "standard"    => _("Standard"),

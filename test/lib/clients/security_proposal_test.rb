@@ -184,5 +184,39 @@ describe Installation::Clients::SecurityProposal do
         end
       end
     end
+
+    context "when showing the PolicyKit Default privileges selected" do
+      let(:selected) { "" }
+
+      before do
+        allow(proposal_settings).to receive(:polkit_default_privileges).and_return(selected)
+      end
+
+      context "and it is not set" do
+        let(:selected) { nil }
+
+        it "shows it as 'Default'" do
+          proposal = client.make_proposal({})
+          expect(proposal["preformatted_proposal"]).to include("Privileges: Default")
+        end
+      end
+
+      context "and it is empty" do
+        let(:selected) { nil }
+
+        it "shows it as 'Default'" do
+          proposal = client.make_proposal({})
+          expect(proposal["preformatted_proposal"]).to include("Privileges: Default")
+        end
+      end
+      context "and it is restrictive" do
+        let(:selected) { "restrictive" }
+
+        it "shows it as 'Restrictive'" do
+          proposal = client.make_proposal({})
+          expect(proposal["preformatted_proposal"]).to include("Privileges: Restrictive")
+        end
+      end
+    end
   end
 end
