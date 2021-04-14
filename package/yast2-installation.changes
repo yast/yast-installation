@@ -8,7 +8,7 @@ Wed Apr 14 09:46:38 UTC 2021 - Ludwig Nussel <lnussel@suse.com>
 Wed Apr 14 08:44:31 UTC 2021 - Dominique Leuenberger <dimstar@opensuse.org>
 
 - Do not own system directories (like /usr/bin):
-  + filesystem is reasponsible to bring those directories with the
+  + filesystem is responsible to bring those directories with the
     correct permission flags. Owning them here only introduces
     races/conflicts.
   + As a result: expand the files section for bindir and unitdir to
