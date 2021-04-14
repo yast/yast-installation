@@ -54,7 +54,7 @@ module Installation
           "to allow a more seamless user experience without" \
           " interruptions in the workflow due to password " \
           "prompts.</li></ul><br>" \
-          "The \"default\" is to keep value empty and it will be" \
+          "The \"default\" is to keep value empty and it will be " \
           "assigned automatically.</p>"
         )
       end
