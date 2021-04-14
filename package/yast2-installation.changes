@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Wed Apr 14 08:44:31 UTC 2021 - Dominique Leuenberger <dimstar@opensuse.org>
+
+- Do not own system directories (like /usr/bin):
+  + filesystem is reasponsible to bring those directories with the
+    correct permission flags. Owning them here only introduces
+    races/conflicts.
+  + As a result: expand the files section for bindir and unitdir to
+    be exact on the files.
+- 4.4.2
+
+-------------------------------------------------------------------
 Fri Apr  9 16:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Start the "memsample" tool in a subshell to avoid "Terminated"
