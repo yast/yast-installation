@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.4.1
+Version:        4.4.2
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -199,9 +199,13 @@ systemctl enable YaST2-Firstboot.service
 %files
 
 # systemd service files
-%{_unitdir}
+%{_unitdir}/YaST2-Firstboot.service
+%{_unitdir}/YaST2-Second-Stage.service
+%{_bindir}/memsample
+%{_bindir}/memsample-archive-to-csv
+%{_bindir}/memsample-csv-plot
 # yupdate script
-%{_bindir}/
+%{_bindir}/yupdate
 %{yast_clientdir}
 %{yast_moduledir}
 %{yast_desktopdir}

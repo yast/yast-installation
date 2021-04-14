@@ -61,7 +61,7 @@ module Installation
     # kernel modules can vary significantly. This saves about 29MB on x86_64
     # and about 5MB on s390x.
     def self.unmount_kernel_modules
-      if !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "lib/modules"))
+      if !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "lib/modules")) && !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "usr/lib/modules"))
         log.warn("Kernel modules not found at #{KERNEL_MODULES_MOUNT_POINT}")
         log.warn("Skipping module cleanup")
         return
