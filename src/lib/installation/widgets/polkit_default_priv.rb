@@ -18,6 +18,7 @@
 # ------------------------------------------------------------------------------
 
 require "cwm/common_widgets"
+require "installation/security_settings"
 
 module Installation
   module Widgets
@@ -53,18 +54,17 @@ module Installation
           "to allow a more seamless user experience without" \
           " interruptions in the workflow due to password " \
           "prompts.</li></ul><br>" \
-          "The \"default\" is to keep value empty and it will be" \
+          "The \"default\" is to keep value empty and it will be " \
           "assigned automatically.</p>"
         )
       end
 
       def init
-        self.value = @settings.polkit_default_privileges || "default"
+        self.value = @settings.polkit_default_privileges.to_s
       end
 
       def store
-        res = value == "default" ? nil : value
-        @settings.polkit_default_privileges = res
+        @settings.polkit_default_privileges = value.empty? ? nil : value
       end
     end
   end
