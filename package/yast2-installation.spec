@@ -171,8 +171,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %post
 %{fillup_only -ns security checksig}
 
-%if 0%{suse_version} > 1140
-
 %service_add_post YaST2-Second-Stage.service YaST2-Firstboot.service
 
 # bsc#924278 Always enable these services by default, they are already listed
@@ -193,11 +191,7 @@ systemctl enable YaST2-Firstboot.service
 %postun
 %service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
-#suse_version
-%endif
-
 %files
-
 # systemd service files
 %{_unitdir}/YaST2-Firstboot.service
 %{_unitdir}/YaST2-Second-Stage.service
