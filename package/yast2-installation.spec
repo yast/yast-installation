@@ -53,40 +53,14 @@ BuildRequires:  yast2-users >= 3.2.8
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
-
-PreReq:         %fillup_prereq
-Requires:       yast2-users >= 3.2.8
-Requires:       yast2-country >= 3.3.1
-# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
-Requires:       tar
-Requires:       gzip
-Requires:       coreutils
 # Augeas lenses
 Requires:       augeas-lenses
-# Only in inst-sys
-Requires:       yast2-storage-ng >= 4.0.175
-# Language::GetLanguageItems and other API
-# Language::Set (handles downloading the translation extensions)
-Requires:       yast2-country-data >= 2.16.11
-# Pkg::ProvidePackage
-Requires:       yast2-pkg-bindings >= 3.1.33
-# Y2Packager::MediumType
-Requires:       yast2-packager >= 4.2.22
-# CIOIgnore
-Requires:       yast2-bootloader
+Requires:       coreutils
+Requires:       gzip
 # use in startup scripts
 Requires:       initviocons
-# Proxy settings for 2nd stage (bnc#764951)
-Requires:       yast2-proxy
-# Systemd default target and services. This version supports
-# writing settings in the first installation stage.
-Requires:       yast2-services-manager >= 3.2.1
-# Yast2::FsSnapshotStore::IOError
-Requires:       yast2 >= 4.3.53
-# Y2Network::NtpServer
-Requires:       yast2-network >= 4.2.55
-# for AbortException and handle direct abort
-Requires:       yast2-ruby-bindings >= 4.0.6
+# Needed call /sbin/ip in vnc.sh/network.sh
+Requires:       iproute2
 # for the first/second stage of installation
 # currently not used
 # bugzilla #208307
@@ -94,8 +68,33 @@ Requires:       yast2-ruby-bindings >= 4.0.6
 #Requires:      /usr/bin/pnmtopng
 # BNC 446533, /sbin/lspci called but not installed
 Requires:       pciutils
-# Needed call /sbin/ip in vnc.sh/network.sh
-Requires:       iproute2
+# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
+Requires:       tar
+# Yast2::FsSnapshotStore::IOError
+Requires:       yast2 >= 4.3.53
+# CIOIgnore
+Requires:       yast2-bootloader
+Requires:       yast2-country >= 3.3.1
+# Language::GetLanguageItems and other API
+# Language::Set (handles downloading the translation extensions)
+Requires:       yast2-country-data >= 2.16.11
+# Y2Network::NtpServer
+Requires:       yast2-network >= 4.2.55
+# Y2Packager::MediumType
+Requires:       yast2-packager >= 4.2.22
+# Pkg::ProvidePackage
+Requires:       yast2-pkg-bindings >= 3.1.33
+# Proxy settings for 2nd stage (bnc#764951)
+Requires:       yast2-proxy
+# for AbortException and handle direct abort
+Requires:       yast2-ruby-bindings >= 4.0.6
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires:       yast2-services-manager >= 3.2.1
+# Only in inst-sys
+Requires:       yast2-storage-ng >= 4.0.175
+Requires:       yast2-users >= 3.2.8
+PreReq:         %fillup_prereq
 Recommends:     yast2-add-on
 Recommends:     yast2-firewall
 Recommends:     yast2-online-update
