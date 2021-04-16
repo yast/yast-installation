@@ -3,6 +3,7 @@ Fri Apr 16 09:50:49 UTC 2021 - Dirk Müller <dmueller@suse.com>
 
 - spec-cleaner part two out of five: move conditionalized sections at the end
 - spec-cleaner part three out of five: move weak requires (recommends) below requires
+- spec-cleaner part four out of five: sort and deduplicate BuildRequires
 
 -------------------------------------------------------------------
 Fri Apr 16 08:39:17 UTC 2021 - Dirk Müller <dmueller@suse.com>
