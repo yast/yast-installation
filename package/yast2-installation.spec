@@ -97,6 +97,10 @@ Requires:       yast2-ruby-bindings >= 4.0.6
 Requires:       pciutils
 # Needed call /sbin/ip in vnc.sh/network.sh
 Requires:       iproute2
+Recommends:     yast2-add-on
+Recommends:     yast2-firewall
+Recommends:     yast2-online-update
+Supplements:    autoyast(deploy_image:ssh_import)
 # new autoinst_files_finish call
 Conflicts:      autoyast2 < 4.3.26
 # SingleItemSelector not enforcing an initial selection
@@ -119,13 +123,6 @@ Conflicts:      yast2-security < 4.3.11
 # Top bar with logo
 Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
-
-Recommends:     yast2-online-update
-Recommends:     yast2-firewall
-Recommends:     yast2-add-on
-
-Supplements:    autoyast(deploy_image:ssh_import)
-
 BuildArch:      noarch
 %if 0%{?suse_version} >= 1210
 %{systemd_requires}
