@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 16 08:39:17 UTC 2021 - Dirk Müller <dmueller@suse.com>
+
+- remove check for non-systemd distros
+- first out of 5 splits of "spec-cleaner -m -i *ec" run (for easier review)
+
+-------------------------------------------------------------------
 Wed Apr 14 11:08:52 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
 
 - Show 'Default' in the proposal summary as the PolicyKit Default
