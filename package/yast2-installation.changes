@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 16 09:50:49 UTC 2021 - Dirk Müller <dmueller@suse.com>
+
+- spec-cleaner part two out of five: move conditionalized sections at the end
+
+-------------------------------------------------------------------
 Fri Apr 16 08:39:17 UTC 2021 - Dirk Müller <dmueller@suse.com>
 
 - remove check for non-systemd distros
