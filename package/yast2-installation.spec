@@ -28,32 +28,31 @@ Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
+# Yast2::FsSnapshotStore::IOError
+BuildRequires:  yast2 >= 4.3.53
+# CIOIgnore
+BuildRequires:  yast2-bootloader
+# storage-ng based version
+BuildRequires:  yast2-country >= 3.3.1
 BuildRequires:  yast2-devtools >= 3.1.10
+# For firewall widgets
+BuildRequires:  yast2-firewall
+# Y2Network::NtpServer
+BuildRequires:  yast2-network >= 4.2.55
+# Y2Packager::MediumType
+BuildRequires:  yast2-packager >= 4.2.27
 # for AbortException and handle direct abort
 BuildRequires:  yast2-ruby-bindings >= 4.0.6
+# For selinux classes
+BuildRequires:  yast2-security
+# using /usr/bin/udevadm
+BuildRequires:  yast2-storage-ng >= 4.2.71
+# new root password cwm widget
+BuildRequires:  yast2-users >= 3.2.8
 # needed for xml agent reading about products
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
-# Yast2::FsSnapshotStore::IOError
-BuildRequires:  yast2 >= 4.3.53
-# Y2Packager::MediumType
-BuildRequires:  yast2-packager >= 4.2.27
-# CIOIgnore
-BuildRequires:  yast2-bootloader
-# For selinux classes
-BuildRequires:  yast2-security
-# For firewall widgets
-BuildRequires:  yast2-firewall
-# using /usr/bin/udevadm
-BuildRequires:  yast2-storage-ng >= 4.2.71
-# Y2Network::NtpServer
-BuildRequires:  yast2-network >= 4.2.55
-# new root password cwm widget
-BuildRequires:  yast2-users >= 3.2.8
-# storage-ng based version
-BuildRequires:  yast2-country >= 3.3.1
-BuildRequires:  yast2-bootloader
 
 PreReq:         %fillup_prereq
 Requires:       yast2-users >= 3.2.8
@@ -97,10 +96,10 @@ Requires:       yast2-ruby-bindings >= 4.0.6
 Requires:       pciutils
 # Needed call /sbin/ip in vnc.sh/network.sh
 Requires:       iproute2
-%if 0%{?suse_version} >= 1210
-%{systemd_requires}
-%endif
-
+Recommends:     yast2-add-on
+Recommends:     yast2-firewall
+Recommends:     yast2-online-update
+Supplements:    autoyast(deploy_image:ssh_import)
 # new autoinst_files_finish call
 Conflicts:      autoyast2 < 4.3.26
 # SingleItemSelector not enforcing an initial selection
@@ -123,14 +122,10 @@ Conflicts:      yast2-security < 4.3.11
 # Top bar with logo
 Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
-
-Recommends:     yast2-online-update
-Recommends:     yast2-firewall
-Recommends:     yast2-add-on
-
-Supplements:    autoyast(deploy_image:ssh_import)
-
 BuildArch:      noarch
+%if 0%{?suse_version} >= 1210
+%{systemd_requires}
+%endif
 
 %description
 System installation code as present on installation media.
