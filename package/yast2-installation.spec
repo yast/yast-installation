@@ -101,29 +101,27 @@ Requires:       iproute2
 %{systemd_requires}
 %endif
 
-
+# new autoinst_files_finish call
+Conflicts:      autoyast2 < 4.3.26
 # SingleItemSelector not enforcing an initial selection
 Conflicts:      libyui < 3.8.2
-# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
-# pkg-bindings are not directly required
-Conflicts:      yast2-pkg-bindings < 2.17.25
 # InstError
 Conflicts:      yast2 < 2.18.6
 # storage-ng based version
 Conflicts:      yast2-bootloader < 3.3.1
 # Added new function WFM::ClientExists
 Conflicts:      yast2-core < 2.17.10
-# Top bar with logo
-Conflicts:      yast2-ycp-ui-bindings < 3.1.7
-# Registration#get_updates_list does not handle exceptions
-Conflicts:      yast2-registration < 3.2.3
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:      yast2-mouse < 2.18.0
-# new autoinst_files_finish call
-Conflicts:      autoyast2 < 4.3.26
+# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
+# pkg-bindings are not directly required
+Conflicts:      yast2-pkg-bindings < 2.17.25
+# Registration#get_updates_list does not handle exceptions
+Conflicts:      yast2-registration < 3.2.3
 # moved security_finish client
 Conflicts:      yast2-security < 4.3.11
-
+# Top bar with logo
+Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
 
 Recommends:     yast2-online-update
