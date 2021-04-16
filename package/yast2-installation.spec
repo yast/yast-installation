@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-installation
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -15,14 +15,14 @@
 # Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
+
 Name:           yast2-installation
 Version:        4.4.3
 Release:        0
-Group:          System/YaST
-License:        GPL-2.0-only
 Summary:        YaST2 - Installation Parts
-Url:            https://github.com/yast/yast-installation
-
+License:        GPL-2.0-only
+Group:          System/YaST
+URL:            https://github.com/yast/yast-installation
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
