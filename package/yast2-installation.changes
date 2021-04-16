@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 16 10:19:04 UTC 2021 - Dirk Müller <dmueller@suse.com>
+
+- spec-cleaner part five out of five: sort and deduplicate requires
+- 4.4.4
+
+-------------------------------------------------------------------
 Fri Apr 16 09:50:49 UTC 2021 - Dirk Müller <dmueller@suse.com>
 
 - spec-cleaner part two out of five: move conditionalized sections at the end
