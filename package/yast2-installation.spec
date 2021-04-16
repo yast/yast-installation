@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-installation
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -15,14 +15,14 @@
 # Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
+
 Name:           yast2-installation
 Version:        4.4.3
 Release:        0
-Group:          System/YaST
-License:        GPL-2.0-only
 Summary:        YaST2 - Installation Parts
-Url:            https://github.com/yast/yast-installation
-
+License:        GPL-2.0-only
+Group:          System/YaST
+URL:            https://github.com/yast/yast-installation
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
@@ -101,29 +101,27 @@ Requires:       iproute2
 %{systemd_requires}
 %endif
 
-
+# new autoinst_files_finish call
+Conflicts:      autoyast2 < 4.3.26
 # SingleItemSelector not enforcing an initial selection
 Conflicts:      libyui < 3.8.2
-# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
-# pkg-bindings are not directly required
-Conflicts:      yast2-pkg-bindings < 2.17.25
 # InstError
 Conflicts:      yast2 < 2.18.6
 # storage-ng based version
 Conflicts:      yast2-bootloader < 3.3.1
 # Added new function WFM::ClientExists
 Conflicts:      yast2-core < 2.17.10
-# Top bar with logo
-Conflicts:      yast2-ycp-ui-bindings < 3.1.7
-# Registration#get_updates_list does not handle exceptions
-Conflicts:      yast2-registration < 3.2.3
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:      yast2-mouse < 2.18.0
-# new autoinst_files_finish call
-Conflicts:      autoyast2 < 4.3.26
+# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
+# pkg-bindings are not directly required
+Conflicts:      yast2-pkg-bindings < 2.17.25
+# Registration#get_updates_list does not handle exceptions
+Conflicts:      yast2-registration < 3.2.3
 # moved security_finish client
 Conflicts:      yast2-security < 4.3.11
-
+# Top bar with logo
+Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
 
 Recommends:     yast2-online-update
@@ -171,8 +169,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %post
 %{fillup_only -ns security checksig}
 
-%if 0%{suse_version} > 1140
-
 %service_add_post YaST2-Second-Stage.service YaST2-Firstboot.service
 
 # bsc#924278 Always enable these services by default, they are already listed
@@ -193,11 +189,7 @@ systemctl enable YaST2-Firstboot.service
 %postun
 %service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
-#suse_version
-%endif
-
 %files
-
 # systemd service files
 %{_unitdir}/YaST2-Firstboot.service
 %{_unitdir}/YaST2-Second-Stage.service
