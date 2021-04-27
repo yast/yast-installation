@@ -32,7 +32,6 @@ module Installation
         textdomain "installation"
 
         Yast.import "Lan"
-        Yast.import "LanItems"
         Yast.import "Product"
         Yast.import "ProductFeatures"
 
@@ -68,26 +67,10 @@ module Installation
       def ntp_servers
         # TODO: use Yast::NtpClient.ntp_conf if configured
         # to better handle going back
-        servers = dhcp_ntp_servers
+        servers = Yast::Lan.dhcp_ntp_servers
         servers = [ntp_fallback.hostname] if servers.empty? && default_ntp_setup_enabled?
 
         servers
-      end
-
-      # List of NTP servers from DHCP
-      #
-      # @return [Array<String>] List of servers (IP or host names), empty if not provided
-      def dhcp_ntp_servers
-        # When proposing NTP servers we need to know
-        #
-        #   1) list of (dhcp) interfaces
-        #   2) network service in use
-        #
-        # We can either use networking submodule for network service handling and get list of
-        # interfaces e.g. using a bash command or initialize whole networking module.
-        Yast::Lan.ReadWithCacheNoGUI
-
-        Yast::LanItems.dhcp_ntp_servers.values.flatten.uniq
       end
 
       # Whether the a default (fallback) NTP setup is enabled in the control.xml
