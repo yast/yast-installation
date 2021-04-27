@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.1.53
+Version:        4.1.54
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -43,8 +43,8 @@ BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
 # Yast2::FsSnapshotStore::IOError
-BuildRequires:  yast2 >= 4.1.80
-Requires:       yast2 >= 4.1.80
+BuildRequires:  yast2 >= 4.1.81
+Requires:       yast2 >= 4.1.81
 
 # Y2Packager::KnownRepositories
 BuildRequires:	yast2-packager >= 4.1.27
