@@ -282,12 +282,7 @@ module Yast
     def handle_second_stage
       # Copy /etc/install.inf into built system so that the
       # second phase of the installation can find it.
-      if InstFunctions.second_stage_required?
-        Linuxrc.SaveInstallInf(Installation.destdir)
-      else
-        # TODO: write why it is needed
-        ::FileUtils.rm "/etc/install.inf"
-      end
+      Linuxrc.SaveInstallInf(Installation.destdir) if InstFunctions.second_stage_required?
     end
 
     def copy_control_file

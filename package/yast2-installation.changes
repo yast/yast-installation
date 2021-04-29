@@ -1,8 +1,10 @@
 -------------------------------------------------------------------
-Tue Apr 27 13:14:40 CEST 2021 - Jozef Pupava <jpupava@suse.com>
+Thu Apr 29 13:14:40 CEST 2021 - Jozef Pupava <jpupava@suse.com>
 
 - Use linuxrc option "reboot_timeout" to configure the timeout
   before reboot (bsc#1122493 poo#89716)
+- Do not remove /etc/install.inf from inst-sys (bsc#1122493,
+  bsc#1157476).
 - 4.1.54
 
 -------------------------------------------------------------------
