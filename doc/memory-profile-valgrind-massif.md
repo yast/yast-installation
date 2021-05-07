@@ -37,7 +37,7 @@ But to see names inside libraries Massif needs debuginfo files.
 tl;dr: Boot with `extend=gdb MASSIF=1`.
 
 1. Install Massif. It is part of the [**gdb** extension][gdb-ext], so use
-   `extend=gdb` at the boot prompt, or in an inst-sys shell.
+   `extend=gdb` at the boot prompt, or run `extend gdb` in an inst-sys shell.
 
 2. Install Debuginfo. For Tumbleweed an automatic downloader is in place
    from <https://debuginfod.opensuse.org/>.
