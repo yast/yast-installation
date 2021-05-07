@@ -43,46 +43,11 @@ module Yast
 
       return :back if GetInstArgs.going_back
 
-      Builtins.y2milestone("Preparing image for package selector")
+      WFM.call("clone_system", [{"target_path" => "/root/autoinst.xml"}])
 
-      # set repo to get images from
-      ImageInstallation.SetRepo(Ops.get(Packages.theSources, 0, 0))
+      # TODO: restart yast + modify install.inf to start autoyast
 
-      @all_patterns = Y2Packager::Resolvable.find(kind: :pattern)
-
-      @patterns_to_install = Builtins.maplist(@all_patterns) do |one_patern|
-        if one_patern.status == :selected ||
-            one_patern.status == :installed
-          next one_patern.name
-        else
-          next ""
-        end
-      end
-
-      @patterns_to_install = Builtins.filter(@patterns_to_install) do |one_pattern|
-        one_pattern != "" && !one_pattern.nil?
-      end
-
-      if @patterns_to_install == ImageInstallation.last_patterns_selected
-        Builtins.y2milestone("List of selected patterns hasn't changed...")
-        return :auto
-      end
-      ImageInstallation.last_patterns_selected = deep_copy(@patterns_to_install)
-
-      # list images for currently selected patterns
-      Builtins.y2milestone(
-        "Currently selected patterns: %1",
-        @patterns_to_install
-      )
-
-      # avoid useles calls
-      if Ops.greater_than(Builtins.size(@patterns_to_install), 0)
-        ImageInstallation.FindImageSet(@patterns_to_install)
-      end
-
-      Builtins.y2milestone("Images for installation ready")
-
-      :auto
+      :abort
     end
   end
 end
