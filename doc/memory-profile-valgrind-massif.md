@@ -4,7 +4,7 @@ Valgrind is an instrumentation framework that runs a program by simulating
 every instruction.  It has several tools. Memcheck is the original one, used
 for detecting memory errors. Massif is a memory profiler.
 
-(The output it produces, example: https://gist.github.com/mvidner/4e8ed01c7dabb648a50e0dd5f0fdcc62 )
+(The output it produces, example: https://github.com/yast/yast-installation/wiki/Massif-Sample-Output )
 
 The basic invocation of Massif is simple,
 `valgrind --tool=massif my_program its_arguments`, so for YaST it is
