@@ -1,0 +1,17 @@
+packages:
+  - name: yast2
+    version: 4.1.77-1.1
+    arch: x86_64
+  - name: yast2
+    version: 4.1.77-1.1
+    arch: aarch64
+
+  - name: yast2-pkg-bindings
+    version: 4.1.2-3.5.9
+    arch: x86_64
+  - name: yast2-pkg-bindings
+    version: 4.1.2-3.5.9
+    arch: aarch64
+
+message: |
+  These packages are too old, newer packages should be preferred.

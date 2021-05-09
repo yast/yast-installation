@@ -214,6 +214,9 @@ systemctl enable YaST2-Firstboot.service
 %files
 %defattr(-,root,root)
 
+# data files
+%{yast_ydatadir}
+
 # systemd service files
 %{_unitdir}/YaST2-Second-Stage.service
 %{_unitdir}/YaST2-Firstboot.service
