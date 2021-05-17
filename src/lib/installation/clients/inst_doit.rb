@@ -69,7 +69,7 @@ module Yast
 
         # Log all information about the installation/update
         ::Installation::InstallationInfo.instance.write(
-          Mode.update ? "Stating update" : "Starting installation"
+          Mode.update ? "Starting update" : "Starting installation"
         )
       end
 
