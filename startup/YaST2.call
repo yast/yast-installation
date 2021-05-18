@@ -37,6 +37,9 @@ function wait_for_x11() {
 # the server is ready for requests using this function
 # ---
 	server_running=0
+	# Accepts a max number of attempts to connect to the X-Server. In case that the number is
+	# reached the X-Server will be killed. By default it tries forever. (bsc#1185095)
+	open_display_attempts="${1:-0}"
 	TESTX=/usr/lib/YaST2/bin/testX
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
@@ -47,6 +50,12 @@ function wait_for_x11() {
 			if test $err = 1;then
 				log "\tTestX: XOpenDisplay failed"
 				server_running=0
+				((open_display_attempts-=1))
+				if [ "$open_display_attempts" = 0 ];then
+					log "\tXOpenDisplay failed too many times (killing XServer)"
+					kill_xserver
+					break
+				fi
 				continue
 			fi
 			# server is running, detach oom-killer from it
@@ -78,7 +87,8 @@ function prepare_for_x11 () {
 		export DISPLAY=:0
 		Xorg -noreset -br -nolisten tcp -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
-		wait_for_x11
+		# wait 15 seconds for the X-Server before killing it.
+		wait_for_x11 15
 		if [ "$server_running" = 1 ];then
 			log "\tX-Server is ready: $xserver_pid"
 		fi
@@ -184,6 +194,17 @@ function prepare_for_vnc () {
 	# Use YaST theme
 	#---------------------------------------------
 	set_inst_qt_env
+}
+
+#----[ kill_xserver ]----#
+function kill_xserver () {
+  if [ -n "$xserver_pid" ];then
+    sleep 1 && kill $xserver_pid
+    while kill -0 $xserver_pid 2>/dev/null ; do
+      sleep 1
+    done
+    unset xserver_pid
+  fi
 }
 
 #----[ check_x11 ]----#
@@ -532,8 +553,10 @@ if [ $MEM_TOTAL -lt "$MEM_NEEDED" ];then
 	log "\tMemory requirement > $MEM_NEEDED not fulfilled -> Medium Qt disabled"
 	MEDIUM[0]=0
 fi
+
 # 3.1.4) Check if we need to start our own X11 server...
 if [ -z "$DISPLAY" ];then
+	log "\tX-Server is needed"
 	NEED_XSERVER=1
 fi
 
@@ -709,10 +732,7 @@ clr_inst_qt_env
 
 # 9.2) kill X-Server...
 if [ "$server_running" = 1 ];then
-	sleep 1 && kill $xserver_pid
-	while kill -0 $xserver_pid 2>/dev/null ; do
-		sleep 1
-	done
+  kill_xserver
 fi
 
 if [ -s /etc/yast.inf ];then
