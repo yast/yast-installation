@@ -1,7 +1,6 @@
 require "yast"
 require "network/install_inf_convertor"
 require "installation/dialogs/registration_url_dialog"
-require "installation/installation_data"
 
 module Yast
   class InstInstallInfClient < Client
@@ -16,9 +15,6 @@ module Yast
 
     def main
       textdomain "installation"
-
-      # register the installation data dump callback
-      ::Installation::InstallationData.add
 
       InstallInfConvertor.instance.write_netconfig
 
