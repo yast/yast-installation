@@ -30,6 +30,7 @@
 # $Id$
 
 require "ui/wizards/layout"
+require "installation/installation_data"
 
 module Yast
   class InstallationClient < Client
@@ -47,6 +48,9 @@ module Yast
       Yast.import "OSRelease"
       Yast.import "ProductFeatures"
       Yast.import "ProductControl"
+
+      # register the installation data dump callback
+      ::Installation::InstallationData.add
 
       # log the inst-sys identification for easier debugging
       log_os_release
