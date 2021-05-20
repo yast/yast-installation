@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu May 20 14:29:15 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Logging all available product information into directory
+  /var/log/YaST2/installation_info. This should help for evaluating
+  the cause of e.g. bsc#1180888, bsc#1180908, bsc#1178688.
+- 4.4.8
+
+-------------------------------------------------------------------
 Tue May 18 12:39:25 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
 
 - Fallback to ncurses when a X display is not opened after 15
