@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "installation/installation_info"
+
 module Yast
   # Asks user to really do the installation/update.
   class InstDoitClient < Client
@@ -63,6 +65,11 @@ module Yast
           _("<p>Installation is just about to start!</p>"),
           false,
           false
+        )
+
+        # Log all information about the installation/update
+        ::Installation::InstallationInfo.instance.write(
+          Mode.update ? "Starting update" : "Starting installation"
         )
       end
 

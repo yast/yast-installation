@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.7
+Version:        4.4.8
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -70,8 +70,8 @@ Requires:       iproute2
 Requires:       pciutils
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:       tar
-# Yast2::FsSnapshotStore::IOError
-Requires:       yast2 >= 4.3.53
+# Installation::InstallationInfo
+Requires:       yast2 >= 4.4.4
 # CIOIgnore
 Requires:       yast2-bootloader
 Requires:       yast2-country >= 3.3.1
