@@ -50,7 +50,7 @@ module Yast
       Yast.import "ProductControl"
 
       # register the installation data dump callback
-      ::Installation::InstallationData.add
+      ::Installation::InstallationData.new.register_callback
 
       # log the inst-sys identification for easier debugging
       log_os_release
