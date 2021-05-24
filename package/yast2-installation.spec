@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.8
+Version:        4.4.9
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -39,8 +39,8 @@ BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  yast2-firewall
 # Dropped Yast::LanItems
 BuildRequires:  yast2-network >= 4.4.7
-# Y2Packager::MediumType
-BuildRequires:  yast2-packager >= 4.2.27
+# Y2Packager::InstallationData
+BuildRequires:  yast2-packager >= 4.4.2
 # for AbortException and handle direct abort
 BuildRequires:  yast2-ruby-bindings >= 4.0.6
 # For selinux classes
@@ -80,8 +80,8 @@ Requires:       yast2-country >= 3.3.1
 Requires:       yast2-country-data >= 2.16.11
 # Dropped Yast::LanItems
 Requires:       yast2-network >= 4.4.7
-# Y2Packager::MediumType
-Requires:       yast2-packager >= 4.2.22
+# Y2Packager::InstallationData
+Requires:       yast2-packager >= 4.4.2
 # Pkg::ProvidePackage
 Requires:       yast2-pkg-bindings >= 3.1.33
 # Proxy settings for 2nd stage (bnc#764951)
