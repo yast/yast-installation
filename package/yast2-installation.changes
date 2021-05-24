@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 24 11:20:46 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- The InstallationData class has been moved to yast2-packager
+  (related to the previous fix, e.g. bsc#1180888)
+- 4.4.9
+
+-------------------------------------------------------------------
 Thu May 20 14:29:15 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Logging all available product information into directory
