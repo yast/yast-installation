@@ -22,6 +22,7 @@ require "ui/installation_dialog"
 require "ui/text_helpers"
 require "installation/services"
 require "installation/system_role"
+require "y2network/proposal_settings"
 
 Yast.import "GetInstArgs"
 Yast.import "Packages"
@@ -228,6 +229,7 @@ module Installation
       role = SystemRole.select(role_id)
       role.overlay_features
       adapt_services(role)
+      adapt_network_defaults(role)
 
       select_packages
     end
@@ -266,6 +268,14 @@ module Installation
       log.info "enable for #{role.id} these services: #{to_enable.inspect}"
 
       Installation::Services.enabled = to_enable
+    end
+
+    def adapt_network_defaults(role)
+      settings = Y2Network::ProposalSettings.instance
+
+      settings.modify_defaults # Load network global section defaults first
+      settings.modify_defaults(role["network"])
+      settings.apply_defaults
     end
 
     # Return the list of defined roles

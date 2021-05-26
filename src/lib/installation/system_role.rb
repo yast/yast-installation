@@ -166,6 +166,7 @@ module Installation
 
         role["additional_dialogs"] = raw_role["additional_dialogs"]
         role["services"] = raw_role["services"] || []
+        role["network"] = raw_role["network"]
         role["no_default"] = raw_role["no_default"] || false
 
         role
