@@ -205,7 +205,7 @@ HELP
     # create an OverlayFS overlay for this directory if it is not writable
     def create
       # skip non-existing or already writable directories
-      return if !File.directory?(f) || File.writable?(dir)
+      return if !File.directory?(dir) || File.writable?(dir)
       msg "Adding overlay for #{orig_dir}..."
 
       FileUtils.mkdir_p(upperdir)
