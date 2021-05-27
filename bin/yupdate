@@ -35,7 +35,7 @@ module YUpdate
   class Version
     MAJOR = 0
     MINOR = 1
-    PATCH = 2
+    PATCH = 3
 
     STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
   end
@@ -204,7 +204,8 @@ HELP
 
     # create an OverlayFS overlay for this directory if it is not writable
     def create
-      return if File.writable?(dir)
+      # skip non-existing or already writable directories
+      return if !File.directory?(f) || File.writable?(dir)
       msg "Adding overlay for #{orig_dir}..."
 
       FileUtils.mkdir_p(upperdir)
