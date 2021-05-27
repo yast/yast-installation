@@ -35,7 +35,7 @@ module YUpdate
   class Version
     MAJOR = 0
     MINOR = 1
-    PATCH = 2
+    PATCH = 3
 
     STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
   end
@@ -191,7 +191,11 @@ HELP
       "/usr/share/icons"
     ].freeze
 
-    attr_reader :dir, :orig_dir
+    # @return [String] the original requested directory
+    attr_reader :orig_dir
+
+    # @return [String] expanded requested directory (i.e. symlink target)
+    attr_reader :dir
 
     # manage the OverlayFS for this directory
     # @param directory [String] the directory
@@ -204,7 +208,8 @@ HELP
 
     # create an OverlayFS overlay for this directory if it is not writable
     def create
-      return if File.writable?(dir)
+      # skip non-existing or already writable directories
+      return if !File.directory?(dir) || File.writable?(dir)
       msg "Adding overlay for #{orig_dir}..."
 
       FileUtils.mkdir_p(upperdir)
@@ -262,6 +267,7 @@ HELP
       OverlayFS.escape_path("workdir", dir)
     end
 
+    # path pointing to the original directory content
     def origdir
       OverlayFS.escape_path("original", dir)
     end
