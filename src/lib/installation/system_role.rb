@@ -1,5 +1,5 @@
 # encoding: utf-8
-
+#
 # ------------------------------------------------------------------------------
 # Copyright (c) 2017 SUSE LLC
 #
@@ -22,6 +22,7 @@
 require "yast"
 require "installation/services"
 require "installation/system_role_handlers_runner"
+require "y2network/proposal_settings"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -166,6 +167,7 @@ module Installation
 
         role["additional_dialogs"] = raw_role["additional_dialogs"]
         role["services"] = raw_role["services"] || []
+        role["network"] = raw_role["network"] || {}
         role["no_default"] = raw_role["no_default"] || false
 
         role
@@ -185,9 +187,7 @@ module Installation
     #
     # @return [Array] the list of services to be enable
     def adapt_services
-      return [] if !self["services"]
-
-      to_enable = self["services"].map { |s| s["name"] }
+      to_enable = (self["services"] || []).map { |s| s["name"] }
 
       log.info "enable for #{id} these services: #{to_enable.inspect}"
 
@@ -211,6 +211,14 @@ module Installation
 
       NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
+    end
+
+    def adapt_network
+      settings = Y2Network::ProposalSettings.instance
+      network = Yast::ProductFeatures.GetSection("network")
+
+      settings.modify_defaults(network.merge(self["network"] || {}))
+      settings.apply_defaults
     end
   end
 end
