@@ -229,7 +229,7 @@ module Installation
       role = SystemRole.select(role_id)
       role.overlay_features
       adapt_services(role)
-      adapt_network_defaults(role)
+      role.adapt_network
 
       select_packages
     end
@@ -261,6 +261,8 @@ module Installation
 
     # for given role sets in {::Installation::Services} list of services to enable
     # according to its config. Do not use alone and use apply_role instead.
+    #
+    # FIXME: duplicate code?
     def adapt_services(role)
       services = role["services"] || []
 
@@ -268,14 +270,6 @@ module Installation
       log.info "enable for #{role.id} these services: #{to_enable.inspect}"
 
       Installation::Services.enabled = to_enable
-    end
-
-    def adapt_network_defaults(role)
-      settings = Y2Network::ProposalSettings.instance
-
-      settings.modify_defaults # Load network global section defaults first
-      settings.modify_defaults(role["network"])
-      settings.apply_defaults
     end
 
     # Return the list of defined roles
