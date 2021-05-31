@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 31 08:43:52 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
+
+- Modify IP forwarding network configuration using the defaults
+  defined in the control file when selecting the role (bsc#1186280)
+- 4.4.10
+
+-------------------------------------------------------------------
 Mon May 24 11:20:46 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - The InstallationData class has been moved to yast2-packager
