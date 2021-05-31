@@ -228,7 +228,7 @@ module Installation
 
       role = SystemRole.select(role_id)
       role.overlay_features
-      adapt_services(role)
+      role.adapt_services
       role.adapt_network
 
       select_packages
@@ -257,19 +257,6 @@ module Installation
       Yast::Packages.SelectSystemPackages(false)
 
       Yast::Pkg.PkgSolve(false)
-    end
-
-    # for given role sets in {::Installation::Services} list of services to enable
-    # according to its config. Do not use alone and use apply_role instead.
-    #
-    # FIXME: duplicate code?
-    def adapt_services(role)
-      services = role["services"] || []
-
-      to_enable = services.map { |s| s["name"] }
-      log.info "enable for #{role.id} these services: #{to_enable.inspect}"
-
-      Installation::Services.enabled = to_enable
     end
 
     # Return the list of defined roles
