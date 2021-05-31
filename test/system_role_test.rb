@@ -21,7 +21,7 @@ describe Installation::SystemRole do
       },
       {
         "id"      => "role_three",
-        "network" => { "ipv4_forwarding" => true, "ipv6_forwarding" => true },
+        "network" => { "ipv4_forward" => true, "ipv6_forward" => true },
         "order"   => "50"
       }
 
@@ -141,12 +141,12 @@ describe Installation::SystemRole do
     before do
       allow(Yast::ProductFeatures).to receive(:GetSection)
       allow(Yast::ProductFeatures).to receive(:GetSection).with("network")
-        .and_return("ipv6_forwarding" => false)
+        .and_return("ipv6_forward" => false)
     end
 
     it "modifies the network proposal settings with defaults from the control file" do
       expect(settings).to receive(:modify_defaults)
-        .with("ipv4_forwarding" => true, "ipv6_forwarding" => true)
+        .with("ipv4_forward" => true, "ipv6_forward" => true)
 
       role.adapt_network
     end
