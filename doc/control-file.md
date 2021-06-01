@@ -1236,16 +1236,15 @@ This is the full list of SLE-15 SP2:
 
 ## Network
 
-The network sections contains some options that allows to modify network 
-configuration defaults.
+Some options to modify network configuration defaults.
 
   * `force_static_ip` *(boolean, default: `false`)*
-    New connections will be initialized using an static bootproto.
+    Initialize new connections using a static bootproto.
   * `startmode` *(string)*
     When to bring up an interface. Possible values are `hotplug`, `auto`, `ifplugd`, 
     `manual`, `nfsroot` or `off`.
   * `network_manager`
-    Whether NetworkManager should be the default backend to be used or not.
+    Whether NetworkManager should be the default backend.
     Possible values are  `always`, `never` or `laptop` which will be true in 
     case the computer being installed is a `laptop`.
   * `ipv4_forward` *(boolean, no default value)*
