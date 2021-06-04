@@ -25,6 +25,7 @@ module Installation
   # and using them in the new upgraded system.
   class UpgradeRepoManager
     include Yast::Logger
+    extend Yast::Logger
 
     # @return [Array<Y2Packager::Repository>] The old repositories
     attr_reader :repositories
@@ -52,7 +53,12 @@ module Installation
       current_repos = Y2Packager::Repository.all
       stored_repos = Y2Packager::OriginalRepositorySetup.instance.repositories
       stored_repo_aliases = stored_repos.map(&:repo_alias)
-      old_repos = current_repos.select { |r| stored_repo_aliases.include?(r.repo_alias) }
+      reg_urls = registration_urls
+
+      old_repos = current_repos.select do |r|
+        stored_repo_aliases.include?(r.repo_alias) &&
+          !reg_urls.include?(base_url(r.raw_url.uri))
+      end
 
       current_services = Y2Packager::Service.all
       stored_services = Y2Packager::OriginalRepositorySetup.instance.services
@@ -158,5 +164,49 @@ module Installation
         repo.url = url
       end
     end
+
+    # Collect the repository URLs for all registered products and addons,
+    # If the system is not registered or the yast2-registration package is not
+    # installed then it return an empty list.
+    #
+    # @return [Array<URI>] list of simplified URLs
+    # @see .base_url
+    def self.registration_urls
+      require "registration/registration"
+      require "registration/registration_ui"
+      require "registration/url_helpers"
+
+      return [] unless Registration::Registration.is_registered?
+
+      registration = Registration::Registration.new(Registration::UrlHelpers.registration_url)
+      registration_ui = Registration::RegistrationUI.new(registration)
+      activations = registration_ui.activated_products
+
+      activations.map(&:repositories).flatten.map { |repo| base_url(repo["url"]) }
+    rescue LoadError
+      # the registration package is not available in the openSUSE installer
+      # or during RPM build
+      log.info("Registration package not available")
+      []
+    end
+
+    # Remove some URL parts to allow less strict comparison:
+    # - remove the query parameter, the locally saved SCC repositories have
+    #   an unique hash attached as a query parameter, the activated products
+    #   result does not contain that
+    # - ignore the trailing slash, it is not important for comparing repositories
+    #
+    # @param repo_url [String, URI] the input URL
+    # @return [URI] simplified URL
+    def self.base_url(repo_url)
+      uri = repo_url.is_a?(URI) ? repo_url.dup : URI(repo_url)
+      uri.query = nil
+      # do NOT use the bang method here (delete_suffix!), it would modify
+      # the original URL although the .dup is used above!
+      uri.path = uri.path.delete_suffix("/")
+      uri
+    end
+
+    private_class_method :registration_urls, :base_url
   end
 end
