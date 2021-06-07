@@ -3,6 +3,20 @@
 require_relative "../test_helper"
 require "installation/upgrade_repo_manager"
 
+begin
+  # check if the registration package is present, it might not be available during RPM build
+  require "registration/registration"
+rescue LoadError
+  # mock the Registration class if missing
+  module Registration
+    class Registration
+      def self.is_registered?
+        false
+      end
+    end
+  end
+end
+
 describe Installation::UpgradeRepoManager do
   let(:repo1) do
     Y2Packager::Repository.new(repo_id: 1, repo_alias: "test1",
@@ -122,6 +136,7 @@ describe Installation::UpgradeRepoManager do
       allow(Y2Packager::Repository).to receive(:all).and_return([repo1, repo2])
       expect(Y2Packager::OriginalRepositorySetup.instance).to receive(:repositories)
         .and_return([repo1, repo2])
+      allow(Registration::Registration).to receive(:is_registered?).and_return(false)
     end
 
     it "initializes the UpgradeRepoManager from the stored old repositories" do

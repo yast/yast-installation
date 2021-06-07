@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Jun  7 13:19:09 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Better evaluate the old and new repositories during upgrade,
+  do not preselect new repositories for removal if they
+  accidentally use the same repository as already present in
+  the system (bsc#1185822)
+- 4.3.39
+
+-------------------------------------------------------------------
 Thu Apr 29 09:21:31 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Start the "memsample" tool in a subshell to avoid "Terminated"
