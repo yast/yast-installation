@@ -64,3 +64,8 @@ Style/VariableName:
     - src/lib/**/*.rb
   Exclude:
     - src/lib/installation/clients/*.rb
+
+Style/PredicateName:
+  Exclude:
+    # mocked Registration.is_registered?
+    - test/lib/upgrade_repo_manager_test.rb

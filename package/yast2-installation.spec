@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.10
+Version:        4.4.11
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
