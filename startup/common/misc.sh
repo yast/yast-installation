@@ -24,6 +24,7 @@ function set_proxy() {
 # ---
 	if [ "$ProxyURL" ] ; then
 		export http_proxy="$ProxyURL"
+		export https_proxy="$ProxyURL"
 		export ftp_proxy="$ProxyURL"
 	fi
 }
