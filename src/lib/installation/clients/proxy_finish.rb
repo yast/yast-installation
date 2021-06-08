@@ -32,10 +32,13 @@
 #
 module Yast
   class ProxyFinishClient < Client
+    include Yast::Logger
+
     def main
       textdomain "installation"
 
       Yast.import "Stage"
+      Yast.import "Proxy"
 
       @ret = nil
       @func = ""
@@ -64,16 +67,15 @@ module Yast
         }
       elsif @func == "Write"
         if Stage.initial
-          @proxy = Convert.to_string(SCR.Read(path(".etc.install_inf.ProxyURL")))
+          # In case of written by linuxrc or by AutoYaST it should be copied to the target system
+          return if Proxy.GetEnvironment.reject { |_, v| v.to_s.empty? }.empty?
 
-          if !@proxy.nil?
-            Builtins.y2milestone("setting proxy to %1", @proxy)
+          ex = Proxy.Export
+          log.info("Writing proxy settings to the target system: #{ex.inspect}")
 
-            # maybe use Proxy module
-            SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @proxy)
-            SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @proxy)
-            SCR.Write(path(".sysconfig.proxy"), nil)
-          end
+          Proxy.Import(ex)
+          Proxy.WriteSysconfig
+          Proxy.WriteCurlrc
         end
       else
         Builtins.y2error("unknown function: %1", @func)
