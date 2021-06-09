@@ -37,7 +37,7 @@ module Installation
       def main
         setup_wizard
 
-        runner = Installation::YomiRunner.new
+        runner = ::Installation::YomiRunner.new
         pillar_data = YAML.load_file(YOMI_PILLAR)
         log.info "Running Salt with #{pillar_data}"
         add_message("Setting up Salt...")
@@ -52,7 +52,7 @@ module Installation
     private
 
       def salt_client
-        @salt_client ||= Installation::SaltClient.new(SALT_API_URL).tap do |client|
+        @salt_client ||= ::Installation::SaltClient.new(SALT_API_URL).tap do |client|
           client.login("salt", "linux")
         end
       end
