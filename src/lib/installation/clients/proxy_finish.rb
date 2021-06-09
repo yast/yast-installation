@@ -66,14 +66,12 @@ module Yast
           "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
-        if Stage.initial
-          # In case of written by linuxrc or by AutoYaST it should be copied to the target system
-          return if Proxy.GetEnvironment.reject { |_, v| v.to_s.empty? }.empty?
+        if Stage.initial && Proxy.to_target
+          proxy_settings = Proxy.Export
 
-          ex = Proxy.Export
-          log.info("Writing proxy settings to the target system: #{ex.inspect}")
+          log.info("Writing proxy settings to the target system: #{proxy_settings.inspect}")
 
-          Proxy.Import(ex)
+          Proxy.Import(proxy_settings)
           Proxy.WriteSysconfig
           Proxy.WriteCurlrc
         end
