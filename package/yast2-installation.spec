@@ -211,5 +211,6 @@ systemctl enable YaST2-Firstboot.service
 %doc %{yast_docdir}
 %license COPYING
 %{yast_icondir}
+%{yast_ydatadir}
 
 %changelog
