@@ -19,7 +19,10 @@
 
 require "yast"
 require "installation/yomi_runner"
+require "installation/salt_client"
 require "yaml"
+Yast.import "Wizard"
+Yast.import "UI"
 
 module Installation
   module Clients
@@ -28,13 +31,48 @@ module Installation
     class InstYomi < Yast::Client
       include Yast::Logger
 
+      SALT_API_URL = URI("http://localhost:8000").freeze
       YOMI_PILLAR = "/usr/share/YaST2/lib/installation/yomi.sls".freeze
 
       def main
+        setup_wizard
+
         runner = Installation::YomiRunner.new
         pillar_data = YAML.load_file(YOMI_PILLAR)
         log.info "Running Salt with #{pillar_data}"
-        runner.run_master_mode(pillar_data)
+        add_message("Setting up Salt...")
+        runner.start_salt(pillar_data)
+        add_message("Starting Yomi...")
+        runner.start_yomi
+        salt_client.events do |event|
+          add_message(event.to_s)
+        end
+      end
+
+    private
+
+      def salt_client
+        @salt_client ||= Installation::SaltClient.new(SALT_API_URL).tap do |client|
+          client.login("salt", "linux")
+        end
+      end
+
+      def setup_wizard
+        Yast::Wizard.CreateDialog
+        Yast::Wizard.SetContents(_("Running Yomi"), RichText(Id(:messages), ""), "", false, false)
+      end
+
+      def messages
+        @messages ||= []
+      end
+
+      def add_message(message)
+        messages << message
+        update_messages
+      end
+
+      def update_messages
+        Yast::UI.ChangeWidget(Id(:messages), :Value, messages.join("<br>"))
       end
     end
   end
