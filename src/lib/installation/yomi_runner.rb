@@ -26,47 +26,53 @@ require "yast2/systemd/service"
 
 module Installation
   class YomiRunner
-    attr_reader :root_path
+    include Yast::Logger
 
-    ROOT_PATH = Pathname.new("/").freeze
+    attr_reader :root_dir, :data_dir
 
-    def initialize(root_path: ROOT_PATH)
-      @root_path = root_path
+    ROOT_DIR = Pathname.new("/").freeze
+    DATA_DIR = Pathname.new(__FILE__).join("..", "..", "..", "data", "installation").freeze
+
+    def initialize(root_dir: ROOT_DIR, data_dir: DATA_DIR)
+      @root_dir = root_dir
+      @data_dir = data_dir
     end
 
-    def config_dir
-      @config_dir ||= root_path.join("etc", "salt")
-    end
-
-    def pillar_path
-      @pillar_path ||= root_path.join("srv", "pillar", "installer.sls")
-    end
-
-    def _run_local_mode(pillar)
-      # salt-call
-      # write minion.d files to point to yomi
-      # write the pillar to /srv/pillar/installer.sls
-      # run yomi
-    end
-
-    def run_master_mode(pillar)
-      # salt-master
-      # the configuration is already in place because yomi-formula is installed
-      # set up authentication (auto sign-in)
-      # start the master
-      # write the pillar to /srv/pillar/installer.sls
-      # run yomi (salt 'name' stage.apply)
+    # Starts Salt in master/minion mode
+    #
+    # * Sets up the authentication (auto sign-in) using the machine ID
+    # * Sets up the minion to connect to localhost
+    # * Write the installer's data to /srv/pillar/installer.sls
+    # * Prepare the /srv/salt/top.sls file
+    # * Sets up the Salt API configuration
+    # * Start master, minion, and API services
+    #
+    # @param pillar [Hash] Pillar data
+    def start_salt(pillar)
       prepare_autosign
       prepare_minion
       prepare_pillar(pillar)
       prepare_top
+      prepare_salt_api
       start_service("salt-master")
-      # FIXME
-      sleep 5
       start_service("salt-minion")
-      # FIXME
-      sleep 10
+      start_service("salt-api")
+    end
+
+    YOMI_MAX_ATTEMPTS = 3
+    private_constant :YOMI_MAX_ATTEMPTS
+
+    # Starts Yomi
+    #
+    # It starts Yomi by applying the salt states
+    def start_yomi
+      retries ||= 1
       Yast::Execute.locally!("salt", "*", "state.apply", "--async")
+    rescue Cheetah::ExecutionFailed => e
+      log.error("Error (#{retries}/#{YOMI_MAX_ATTEMPTS}): #{e}")
+      sleep 1
+      retries += 1
+      retry unless retries > YOMI_MAX_ATTEMPTS
     end
 
   private
@@ -107,16 +113,22 @@ module Installation
 
     # Writes the pillar data to the pillar path
     def prepare_pillar(pillar_data)
-      FileUtils.cp("/usr/share/yomi/pillar.conf", config_dir.join("master.d"))
+      FileUtils.cp(root_dir.join("usr", "share", "yomi", "pillar.conf"), config_dir.join("master.d"))
       pillar_dir = pillar_path.dirname
       FileUtils.mkdir_p(pillar_dir) unless pillar_dir.exist?
       File.write(pillar_path, YAML.dump(pillar_data))
     end
 
     def prepare_top
-      top_path = root_path.join("srv", "salt", "top.sls")
+      top_path = root_dir.join("srv", "salt", "top.sls")
       hash = { "base" => { "*" => ["yomi"] } }
       File.write(top_path, YAML.dump(hash))
+    end
+
+    def prepare_salt_api
+      FileUtils.cp(data_dir.join("eauth.conf"), config_dir.join("master.d", "eauth.conf"))
+      FileUtils.cp(data_dir.join("salt-api.conf"), config_dir.join("master.d", "salt-api.conf"))
+      File.write(config_dir.join("user-list.txt"), "salt:linux") # TODO
     end
 
     def start_service(name)
@@ -125,9 +137,13 @@ module Installation
 
       service.start
     end
+
+    def config_dir
+      @config_dir ||= root_dir.join("etc", "salt")
+    end
+
+    def pillar_path
+      @pillar_path ||= root_dir.join("srv", "pillar", "installer.sls")
+    end
   end
 end
-
-# root_path = Pathname.new("/tmp/root")
-# runner = Installation::YomiRunner.new(root_path: root_path)
-# runner.run_master_mode("partitions" => [])
