@@ -32,10 +32,13 @@
 #
 module Yast
   class ProxyFinishClient < Client
+    include Yast::Logger
+
     def main
       textdomain "installation"
 
       Yast.import "Stage"
+      Yast.import "Proxy"
 
       @ret = nil
       @func = ""
@@ -63,17 +66,14 @@ module Yast
           "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
-        if Stage.initial
-          @proxy = Convert.to_string(SCR.Read(path(".etc.install_inf.ProxyURL")))
+        if write_to_target?
+          proxy_settings = Proxy.Export
 
-          if !@proxy.nil?
-            Builtins.y2milestone("setting proxy to %1", @proxy)
+          log.info("Writing proxy settings to the target system: #{proxy_settings.inspect}")
 
-            # maybe use Proxy module
-            SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @proxy)
-            SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @proxy)
-            SCR.Write(path(".sysconfig.proxy"), nil)
-          end
+          Proxy.Import(proxy_settings)
+          Proxy.WriteSysconfig
+          Proxy.WriteCurlrc
         end
       else
         Builtins.y2error("unknown function: %1", @func)
@@ -83,6 +83,18 @@ module Yast
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("proxy_finish finished")
       deep_copy(@ret)
+    end
+
+  private
+
+    # Whether the configuration should be written to the target system or not
+    #
+    #  @return [Boolean]
+    def write_to_target?
+      return false unless Stage.initial
+
+      # In case of AutoYaST the configuration could have been imported but not written yet
+      Proxy.modified || Proxy.to_target
     end
   end
 end
