@@ -39,6 +39,7 @@ stub_module("Profile")
 stub_module("ProfileLocation")
 # we cannot depend on this module (circular dependency)
 stub_module("NtpClient")
+stub_module("Proxy")
 
 if ENV["COVERAGE"]
   require "simplecov"

@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.3.39
+Version:        4.3.40
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -77,8 +77,8 @@ Requires:       yast2-packager >= 4.2.22
 Requires:       yast2-bootloader
 # use in startup scripts
 Requires:       initviocons
-# Proxy settings for 2nd stage (bnc#764951)
-Requires:       yast2-proxy
+# Use of Proxy.to_target (bsc#1185016).
+Requires:       yast2-proxy >= 4.3.3
 # Systemd default target and services. This version supports
 # writing settings in the first installation stage.
 Requires:       yast2-services-manager >= 3.2.1
