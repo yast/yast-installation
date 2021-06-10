@@ -39,6 +39,7 @@ describe Yast::ProxyFinishClient do
   context "when the client is called with the 'Write' argument" do
     let(:initial_stage) { true }
     let(:to_target) { false }
+    let(:modified) { false }
     let(:args) { ["Write"] }
     let(:config) { { "http_proxy" => "http://proxy.example.com:3128/" } }
 
@@ -46,6 +47,7 @@ describe Yast::ProxyFinishClient do
       allow(Yast::Stage).to receive(:initial).and_return(initial_stage)
       allow(Yast::Proxy).to receive(:to_target).and_return(to_target)
       allow(Yast::Proxy).to receive(:Export).and_return(config)
+      allow(Yast::Proxy).to receive(:modified).and_return(modified)
     end
 
     context "when running on the first stage" do
@@ -53,6 +55,17 @@ describe Yast::ProxyFinishClient do
         it "does nothing" do
           expect(Yast::Proxy).to_not receive(:WriteSysconfig)
           expect(Yast::Proxy).to_not receive(:WriteCurlrc)
+          client.main
+        end
+      end
+
+      context "and the proxy settings have been modified but not written yet" do
+        let(:modified) { true }
+
+        it "writes the current sysconfig and curlrc configuration to the target system" do
+          expect(Yast::Proxy).to receive(:Import).with(config)
+          expect(Yast::Proxy).to receive(:WriteSysconfig)
+          expect(Yast::Proxy).to receive(:WriteCurlrc)
           client.main
         end
       end

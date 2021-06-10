@@ -66,7 +66,7 @@ module Yast
           "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
-        if Stage.initial && Proxy.to_target
+        if write_to_target?
           proxy_settings = Proxy.Export
 
           log.info("Writing proxy settings to the target system: #{proxy_settings.inspect}")
@@ -83,6 +83,18 @@ module Yast
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("proxy_finish finished")
       deep_copy(@ret)
+    end
+
+  private
+
+    # Whether the configuration should be written to the target system or not
+    #
+    #  @return [Boolean]
+    def write_to_target?
+      return false unless Stage.initial
+
+      # In case of AutoYaST the configuration could have been imported but not written yet
+      Proxy.modified || Proxy.to_target
     end
   end
 end
