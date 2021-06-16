@@ -139,14 +139,6 @@ describe ::Installation::SSHImportAutoClient do
       end
     end
 
-    context "Read" do
-      let(:func) { "Read" }
-
-      it "returns true" do
-        expect(subject.run).to eq(true)
-      end
-    end
-
     context "Reset" do
       let(:func) { "Reset" }
 
