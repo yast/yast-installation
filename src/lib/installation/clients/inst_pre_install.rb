@@ -119,7 +119,7 @@ module Yast
     def can_read_users?
       @can_read_users ||= begin
         require_users_database
-        defined? Users::UsersDatabase
+        defined? ::Users::UsersDatabase
       end
     end
 
@@ -137,7 +137,7 @@ module Yast
     # @param mount_point [String] path where the filesystem is mounted
     def read_users(device, mount_point)
       log.info "Reading users information from #{device}"
-      Users::UsersDatabase.import(mount_point)
+      ::Users::UsersDatabase.import(mount_point)
     end
 
     # Stores the SSH configuration of a given partition in the SSH importer
