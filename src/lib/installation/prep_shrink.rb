@@ -46,7 +46,14 @@ module Installation
 
   private
 
-    MAXIMAL_SIZE_KB = 8192
+    # PReP partition should end at 8191 KiB to ensure a correct alignment for both 4 KiB block size
+    # (due to parted rounding) and for 0.5 KiB block size (loosing 1 KiB), see bsc#1186371.
+    PREP_END_KIB = 8191.freeze
+
+    # Shrinks PReP partitions
+    #
+    # Note that a PReP is expected to be the first partition in the disk. Otherwise, this logic does
+    # not work (see {PREP_END_KIB}).
     def shrink_partitions
       target_map = Yast::Storage.GetTargetMap
       target_map.each do |_disk, disk_values|
@@ -65,7 +72,7 @@ module Installation
     PREP_IDS = [0x41, 0x108].freeze
     def need_shrink?(partition)
       PREP_IDS.include?(partition["fsid"]) &&
-        partition["size_k"] > MAXIMAL_SIZE_KB
+        (partition["size_k"] * 1000) > (PREP_END_KIB * 1024)
     end
 
     def shrink_command(disk_values, part_values)
@@ -73,7 +80,7 @@ module Installation
       cmd << disk_values["device"]
       cmd << " resize "
       cmd << part_values["nr"].to_s
-      cmd << " #{MAXIMAL_SIZE_KB}k"
+      cmd << " #{PREP_END_KIB}KiB"
     end
   end
 end
