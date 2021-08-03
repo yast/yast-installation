@@ -148,7 +148,11 @@ module Yast
         end
       end
 
-      Y2Storage::StorageManager.instance.probe if @disks_changed
+      if @disks_changed
+        storage = Y2Storage::StorageManager.instance
+        storage.activate
+        storage.probe
+      end
 
       Builtins.y2debug("ret=%1", @ret)
 
