@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.15
+Version:        4.4.16
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -160,7 +160,6 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
-
 %post
 %{fillup_only -ns security checksig}
 
@@ -185,6 +184,8 @@ systemctl enable YaST2-Firstboot.service
 %service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %files
+%license COPYING
+%doc %{yast_docdir}
 # systemd service files
 %{_unitdir}/YaST2-Firstboot.service
 %{_unitdir}/YaST2-Second-Stage.service
@@ -196,7 +197,6 @@ systemctl enable YaST2-Firstboot.service
 %{yast_clientdir}
 %{yast_moduledir}
 %{yast_desktopdir}
-%{yast_metainfodir}
 %{_datadir}/autoinstall/
 %{yast_schemadir}
 %{yast_yncludedir}
@@ -209,8 +209,7 @@ systemctl enable YaST2-Firstboot.service
 %{yast_ystartupdir}/startup
 # installation hooks
 %{yast_vardir}
-%doc %{yast_docdir}
-%license COPYING
-%{yast_icondir}
+%{_datadir}/metainfo/org.*yast.*xml
+%{_datadir}/icons/hicolor/*/apps/yast-*
 
 %changelog
