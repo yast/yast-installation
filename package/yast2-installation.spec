@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.8
+Version:        4.4.16
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -37,18 +37,18 @@ BuildRequires:  yast2-country >= 3.3.1
 BuildRequires:  yast2-devtools >= 3.1.10
 # For firewall widgets
 BuildRequires:  yast2-firewall
-# Dropped Yast::LanItems
-BuildRequires:  yast2-network >= 4.4.7
-# Y2Packager::MediumType
-BuildRequires:  yast2-packager >= 4.2.27
+# Y2Network::ProposalSettings #modify_defaults and #apply_defaults (forwarding configurable)
+BuildRequires:  yast2-network >= 4.4.12
+# Y2Packager::InstallationData
+BuildRequires:  yast2-packager >= 4.4.2
 # for AbortException and handle direct abort
 BuildRequires:  yast2-ruby-bindings >= 4.0.6
 # For selinux classes
 BuildRequires:  yast2-security
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
-# new root password cwm widget
-BuildRequires:  yast2-users >= 3.2.8
+# Y2Users
+BuildRequires:  yast2-users >= 4.4.2
 # needed for xml agent reading about products
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
@@ -70,22 +70,22 @@ Requires:       iproute2
 Requires:       pciutils
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:       tar
-# Yast2::FsSnapshotStore::IOError
-Requires:       yast2 >= 4.3.53
+# Installation::InstallationInfo
+Requires:       yast2 >= 4.4.4
 # CIOIgnore
 Requires:       yast2-bootloader
 Requires:       yast2-country >= 3.3.1
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
 Requires:       yast2-country-data >= 2.16.11
-# Dropped Yast::LanItems
-Requires:       yast2-network >= 4.4.7
-# Y2Packager::MediumType
-Requires:       yast2-packager >= 4.2.22
+# Y2Network::ProposalSettings #modify_defaults and #apply_defaults (forwarding configurable)
+Requires:       yast2-network >= 4.4.12
+# Y2Packager::InstallationData
+Requires:       yast2-packager >= 4.4.2
 # Pkg::ProvidePackage
 Requires:       yast2-pkg-bindings >= 3.1.33
 # Proxy settings for 2nd stage (bnc#764951)
-Requires:       yast2-proxy
+Requires:       yast2-proxy >= 4.4.1
 # for AbortException and handle direct abort
 Requires:       yast2-ruby-bindings >= 4.0.6
 # Systemd default target and services. This version supports
@@ -93,7 +93,8 @@ Requires:       yast2-ruby-bindings >= 4.0.6
 Requires:       yast2-services-manager >= 3.2.1
 # Only in inst-sys
 Requires:       yast2-storage-ng >= 4.0.175
-Requires:       yast2-users >= 3.2.8
+# Y2Users
+Requires:       yast2-users >= 4.4.2
 PreReq:         %fillup_prereq
 Recommends:     yast2-add-on
 Recommends:     yast2-firewall

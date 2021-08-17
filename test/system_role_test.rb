@@ -3,6 +3,7 @@
 require_relative "./test_helper"
 require "installation/services"
 require "installation/system_role"
+require "y2network/proposal_settings"
 
 describe Installation::SystemRole do
   let(:system_roles) do
@@ -17,7 +18,13 @@ describe Installation::SystemRole do
         "id"       => "role_two",
         "services" => [{ "name" => "service_one" }, { "name" => "service_two" }],
         "order"    => "100"
+      },
+      {
+        "id"      => "role_three",
+        "network" => { "ipv4_forward" => true, "ipv6_forward" => true },
+        "order"   => "50"
       }
+
     ]
   end
 
@@ -30,26 +37,27 @@ describe Installation::SystemRole do
     it "returns the roles from the control file" do
       raw_roles = described_class.raw_roles
 
-      expect(raw_roles.size).to eql 2
+      expect(raw_roles.size).to eql 3
       expect(raw_roles.first["id"]).to eql "role_one"
     end
   end
 
   describe ".ids" do
     it "returns a list with all the role ids declared in the control file" do
-      expect(described_class.ids).to match_array(["role_one", "role_two"])
+      expect(described_class.ids).to match_array(["role_one", "role_two", "role_three"])
     end
   end
 
   describe ".all" do
     it "returns an array of SystemRole objects for all the declared roles " do
-      expect(described_class.all.size).to eql(2)
+      expect(described_class.all.size).to eql(3)
       expect(described_class.all.last.class).to eql(described_class)
     end
 
     it "returns array sorted by order" do
-      expect(described_class.all.first.id).to eql("role_two")
-      expect(described_class.all[1].id).to eql("role_one")
+      expect(described_class.all.first.id).to eql("role_three")
+      expect(described_class.all[1].id).to eql("role_two")
+      expect(described_class.all[2].id).to eql("role_one")
     end
   end
 
@@ -124,6 +132,28 @@ describe Installation::SystemRole do
       expect(Installation::Services).to receive(:enabled=).with(["service_one", "service_two"])
 
       role.adapt_services
+    end
+  end
+
+  describe "#adapt_network" do
+    let(:settings) { Y2Network::ProposalSettings.instance }
+    let(:role) { described_class.find("role_three") }
+    before do
+      allow(Yast::ProductFeatures).to receive(:GetSection)
+      allow(Yast::ProductFeatures).to receive(:GetSection).with("network")
+        .and_return("ipv6_forward" => false)
+    end
+
+    it "modifies the network proposal settings with defaults from the control file" do
+      expect(settings).to receive(:modify_defaults)
+        .with("ipv4_forward" => true, "ipv6_forward" => true)
+
+      role.adapt_network
+    end
+
+    it "applies the network proposal settings defaults" do
+      expect(settings).to receive(:apply_defaults)
+      role.adapt_network
     end
   end
 

@@ -1,32 +1,41 @@
 #!/usr/bin/env rspec
 
-# ------------------------------------------------------------------------------
-# Copyright (c) 2017 SUSE LLC
+# Copyright (c) [2017-2021] SUSE LLC
 #
+# All Rights Reserved.
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of version 2 of the GNU General Public License as published by the
-# Free Software Foundation.
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of version 2 of the GNU General Public License as published
+# by the Free Software Foundation.
 #
 # This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
 #
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, contact SUSE.
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, contact SUSE LLC.
 #
-# To contact SUSE about this file by physical or electronic mail, you may find
-# current contact information at www.suse.com.
-# ------------------------------------------------------------------------------
+# To contact SUSE LLC about this file by physical or electronic mail, you may
+# find current contact information at www.suse.com.
 
 require_relative "../test_helper.rb"
 require "installation/security_settings"
+require "y2users"
 
 Yast.import "Linuxrc"
 Yast.import "ProductFeatures"
 
 describe Installation::SecuritySettings do
   subject { described_class.create_instance }
+
+  def create_target_config
+    root = Y2Users::User.create_root
+    config = Y2Users::Config.new.attach(root)
+
+    Y2Users::ConfigManager.instance.target = config
+  end
+
   let(:global_section) do
     {
       "enable_firewall"     => false,
@@ -34,18 +43,23 @@ describe Installation::SecuritySettings do
       "firewall_enable_ssh" => false
     }
   end
+
   let(:use_vnc) { false }
   let(:use_ssh) { false }
-  let(:root_password) { "secret" }
 
   before do
     allow(Yast::Linuxrc).to receive(:vnc).and_return(use_vnc)
     allow(Yast::Linuxrc).to receive(:usessh).and_return(use_ssh)
-    allow(Yast::UsersSimple).to receive(:GetRootPassword).and_return(root_password)
 
     allow(Yast::ProductFeatures).to receive("GetSection")
       .with("globals").and_return(global_section)
+
+    create_target_config
+
+    Y2Users::ConfigManager.instance.target.users.root.password = root_password
   end
+
+  let(:root_password) { Y2Users::Password.create_plain("s3cr3t") }
 
   describe "#initialize" do
     it "loads the default values from the control file" do
@@ -91,10 +105,10 @@ describe Installation::SecuritySettings do
     end
 
     context "when no root password was set" do
+      let(:root_password) { Y2Users::Password.create_plain("") }
+
       before do
         allow(Yast::Linuxrc).to receive(:usessh).and_return(false)
-        allow(Yast::UsersSimple).to receive(:GetRootPassword)
-          .and_return("")
       end
 
       it "opens SSH to allow public key authentication" do

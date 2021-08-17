@@ -69,6 +69,11 @@ options:
     LVM and encryption, and what subvolumes to create if Btrfs is used on the
     root filesystem.
 
+-   Network
+
+    This is used to customize some network configuration defaults like
+    IP forwarding, new connections startmode or the use of NetworkManager.
+
 -   Scripting and Hooks
 
     To customize installation further more, hooks and special slots can
@@ -827,7 +832,8 @@ The *supported\_desktops* section contains a list of one or more
 
 System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them,
-and they will affect the proposed configuration of partitioning and software.
+and they will affect the proposed configuration of partitioning, 
+network and software.
 It also allows to modify the configuration of systemd services.
 
 A role can also define additional dialogs that are shown when a given role is
@@ -888,6 +894,10 @@ Example:
             <name>devil-master</name>
           </service>
         </services>
+        <network>
+          <ipv4_forward config:type="boolean">true</ipv4_forward>
+          <ipv6_forward config:type="boolean">true</ipv6_forward>
+        </network>
       </system_role>
     </system_roles>
 
@@ -926,9 +936,9 @@ Will use LVM disk layout.</label>
 ```
 
 Each role has a short label and a few lines of description in the *texts*
-section, identified by a matching *id* element. The contents of *partitioning*,
-*software* and *globals* are merged with the corresponding top-level definitions. See
-[Partitioning](#partitioning) and [Software](#software).
+section, identified by a matching *id* element. The contents of *partitioning*, 
+*network*, *software* and *globals* are merged with the corresponding top-level
+definitions. See [Partitioning](#partitioning), [Network](#network) and [Software](#software).
 
 The *services* part currently only supports enabling additional services which
 is done by specifying *service* with its *name* as seen in the example.
@@ -1223,6 +1233,24 @@ This is the full list of SLE-15 SP2:
     </subvolume>
 </subvolumes>
 ```
+
+## Network
+
+Some options to modify network configuration defaults.
+
+  * `force_static_ip` *(boolean, default: `false`)*
+    Initialize new connections using a static bootproto.
+  * `startmode` *(string)*
+    When to bring up an interface. Possible values are `hotplug`, `auto`, `ifplugd`, 
+    `manual`, `nfsroot` or `off`.
+  * `network_manager`
+    Whether NetworkManager should be the default backend.
+    Possible values are  `always`, `never` or `laptop` which will be true in 
+    case the computer being installed is a `laptop`.
+  * `ipv4_forward` *(boolean, no default value)*
+    Sets IPv4 Forwarding to be enabled.
+  * `ipv6_forward` *(boolean, no default value)*
+    Sets IPv6 Forwarding to be enabled.
 
 ### Self Update
 

@@ -21,6 +21,7 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("WithFCoE").and_return("0")
       allow(Yast::UI).to receive(:UserInput).and_return(:abort)
 
+      allow(Y2Storage::StorageManager.instance).to receive(:activate)
       allow(Y2Storage::StorageManager.instance).to receive(:probe)
 
       allow(Yast::SCR).to receive(:Read).with(path(".probe.disk"))
