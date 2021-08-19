@@ -148,6 +148,7 @@ module Installation
     end
 
     # Return the mount for a specified device or nil if there is none.
+    #
     # @param device [String]
     # @return [Mount,nil] Matching mount
     #
@@ -163,17 +164,17 @@ module Installation
     # @return [Array<String>] paths
     #
     def unmount_paths
-      paths = @mounts.map { |mount| mount.mount_path }
+      paths = @mounts.map(&:mount_path)
       paths.reverse
     end
 
-    # Return the paths that were ignored in the order of /proc/mounts.
+    # Return the paths that were ignored (in the order of /proc/mounts).
     # This is mostly useful for debugging and testing.
     #
     # @return [Array<String>] paths
     #
     def ignored_paths
-      @ignored_mounts.map { |mount| mount.mount_path }
+      @ignored_mounts.map(&:mount_path)
     end
 
     # Actually execute all the pending unmount operations.
