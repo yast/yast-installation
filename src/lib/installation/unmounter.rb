@@ -32,7 +32,7 @@ module Installation
     include Yast::Logger
     # @return [Array<Mount>] Relevant mounts to unmount
     attr_reader :mounts
-    # @return [Array<Mount>] Ignored mount
+    # @return [Array<Mount>] Ignored mounts
     attr_reader :ignored_mounts
 
     # Helper class to represent one mount, i.e. one entry in /proc/mounts.
