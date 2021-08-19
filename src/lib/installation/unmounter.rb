@@ -28,6 +28,16 @@ module Installation
   # order (which it always does), i.e. in the mount hierarchy from top to
   # bottom. If you add entries manually, make sure to maintain that order.
   #
+  # Sample usage:
+  #
+  #   unmounter = Installation::Unmounter.new("/mnt")
+  #   log.info("Paths to unmount: #{unmounter.unmount_paths}")
+  #   unmounter.execute
+  #
+  # Without specifying a file to read as the second parameter in the
+  # constructor, it will default to /proc/mounts which is the right thing for
+  # real life use.
+  #
   class Unmounter
     include Yast::Logger
     # @return [Array<Mount>] Relevant mounts to unmount
