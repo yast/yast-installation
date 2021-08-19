@@ -1,5 +1,5 @@
-# /proc/mounts during RPM installation on a btrfs on an encrypted LVM
-# no snapshots (not enough disk space), separate /home
+# /proc/mounts during RPM installation on a btrfs on an encrypted LVM;
+# no snapshots (not enough disk space), separate /home (also btrfs)
 #
 # formatted with  column -t
 #

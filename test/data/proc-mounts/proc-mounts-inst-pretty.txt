@@ -1,4 +1,4 @@
-# /proc/mounts during the installlation worflow before any target partitions are created or mounted
+# /proc/mounts during the installlation worflow before any target partitions are created or mounted;
 # formatted with  column -t
 #
 tmpfs       /                        tmpfs       rw,relatime,size=4020488k,nr_inodes=0                0  0

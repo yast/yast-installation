@@ -1,5 +1,6 @@
-# /proc/mounts during installation with root on btrfs
-# reformatted with  column -t
+# /proc/mounts during installation with root on btrfs, no separate /home
+# formatted with  column -t
+#
 tmpfs       /                           tmpfs       rw,relatime,size=2030608k,nr_inodes=0                                 0  0
 tmpfs       /                           tmpfs       rw,relatime,size=2030608k,nr_inodes=0                                 0  0
 proc        /proc                       proc        rw,relatime                                                           0  0
