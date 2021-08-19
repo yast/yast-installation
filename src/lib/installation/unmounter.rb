@@ -52,7 +52,7 @@ module Installation
       def btrfs?
         return false if @fs_type.nil?
 
-        @fs_type.downcase == "btrfs"
+        @fs_type == "btrfs"
       end
 
       # Format this mount as a string for logging.
