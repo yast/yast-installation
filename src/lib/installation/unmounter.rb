@@ -144,7 +144,7 @@ module Installation
       return nil if line.empty? || line.start_with?("#")
 
       (device, mount_path, fs_type, mount_opt) = line.split
-      return Mount.new(device, mount_path, fs_type, mount_opt)
+      Mount.new(device, mount_path, fs_type, mount_opt)
     end
 
     # Return the mount for a specified device or nil if there is none.
@@ -187,4 +187,3 @@ module Installation
     end
   end
 end
-
