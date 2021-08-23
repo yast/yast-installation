@@ -101,34 +101,75 @@ describe Installation::Unmounter do
     let(:subject) { described_class.new(PREFIX, proc_mounts) }
 
     context "partition-based btrfs with subvolumes, no separate /home" do
-      let(:proc_mounts) { stored_proc_mounts("btrfs") }
+      let(:proc_mounts) { stored_proc_mounts("btrfs") } # see data/proc/mounts/
+      let(:expected_result) do
+        %w(/mnt/run
+           /mnt/sys
+           /mnt/proc
+           /mnt/dev
+           /mnt/var
+           /mnt/usr/local
+           /mnt/tmp
+           /mnt/srv
+           /mnt/root
+           /mnt/opt
+           /mnt/home
+           /mnt/boot/grub2/x86_64-efi
+           /mnt/boot/grub2/i386-pc
+           /mnt/.snapshots
+           /mnt)
+      end
 
-      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, /mnt" do
-        expect(subject.unmount_paths).to eq ["/mnt/run", "/mnt/sys", "/mnt/proc", "/mnt/dev", "/mnt"]
+      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt" do
+        expect(subject.unmount_paths).to eq expected_result
       end
     end
 
     context "partition-based btrfs with subvolumes and separate xfs /home" do
       let(:proc_mounts) { stored_proc_mounts("btrfs-xfs-home") }
-
-      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, /mnt/home, /mnt" do
-        expect(subject.unmount_paths).to eq ["/mnt/run", "/mnt/sys", "/mnt/proc", "/mnt/dev", "/mnt/home", "/mnt"]
+      let(:expected_result) do
+        %w(/mnt/run
+           /mnt/sys
+           /mnt/proc
+           /mnt/dev
+           /mnt/var
+           /mnt/usr/local
+           /mnt/tmp
+           /mnt/srv
+           /mnt/root
+           /mnt/opt
+           /mnt/home
+           /mnt/boot/grub2/x86_64-efi
+           /mnt/boot/grub2/i386-pc
+           /mnt)
       end
-    end
 
-    context "partition-based btrfs with subvolumes and separate btrfs /home" do
-      let(:proc_mounts) { stored_proc_mounts("btrfs-xfs-home") }
-
-      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, /mnt/home, /mnt" do
-        expect(subject.unmount_paths).to eq ["/mnt/run", "/mnt/sys", "/mnt/proc", "/mnt/dev", "/mnt/home", "/mnt"]
+      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt/home, /mnt" do
+        expect(subject.unmount_paths).to eq expected_result
       end
     end
 
     context "encrypted LVM with btrfs with subvolumes and separate btrfs /home" do
       let(:proc_mounts) { stored_proc_mounts("btrfs-xfs-home") }
+      let(:expected_result) do
+        %w(/mnt/run
+           /mnt/sys
+           /mnt/proc
+           /mnt/dev
+           /mnt/var
+           /mnt/usr/local
+           /mnt/tmp
+           /mnt/srv
+           /mnt/root
+           /mnt/opt
+           /mnt/home
+           /mnt/boot/grub2/x86_64-efi
+           /mnt/boot/grub2/i386-pc
+           /mnt)
+      end
 
-      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, /mnt/home, /mnt" do
-        expect(subject.unmount_paths).to eq ["/mnt/run", "/mnt/sys", "/mnt/proc", "/mnt/dev", "/mnt/home", "/mnt"]
+      it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt/home, /mnt" do
+        expect(subject.unmount_paths).to eq expected_result
       end
     end
   end

@@ -56,15 +56,6 @@ module Installation
         @mount_opt = mount_opt
       end
 
-      # Check if this is a mount for a btrfs.
-      # @return [Boolean] true if btrfs, false if not
-      #
-      def btrfs?
-        return false if @fs_type.nil?
-
-        @fs_type == "btrfs"
-      end
-
       # Format this mount as a string for logging.
       #
       def to_s
@@ -102,7 +93,7 @@ module Installation
     end
 
     # Parse one entry of /proc/mounts and add it to @mounts
-    # if it meets the criteria (mount prefix, no btrfs subvolume)
+    # if it meets the criteria (mount prefix)
     #
     # @param line [String] one line of /proc/mounts
     # @return [Mount,nil] parsed mount if relevant
@@ -111,7 +102,7 @@ module Installation
       mount = parse_mount(line)
       return nil if mount.nil? # Empty or comment
 
-      if ignore?(mount)
+      if !mount.mount_path.start_with?(@mnt_prefix)
         @ignored_mounts << mount
         return nil
       end
@@ -119,29 +110,6 @@ module Installation
       log.info("Adding #{mount}")
       @mounts << mount
       mount
-    end
-
-    # Check if a mount should be ignored, i.e. if the path either doesn't start
-    # with the mount prefix (usually "/mnt") or if it is a btrfs subvolume.
-    #
-    # A subvolume cannot be unmounted while its parent main volume is still mounted; that will result in a
-    #
-    # @return [Boolean] ignore
-    #
-    def ignore?(mount)
-      return true unless mount.mount_path.start_with?(@mnt_prefix)
-
-      if mount.btrfs? && mount_for_device(mount.device)
-        # We already have a mount for a Btrfs on this device,
-        # so any more mount for that device must be a subvolume.
-        #
-        # Notice that this relies on /proc/mounts being in the correct order:
-        # Btrfs main mount first, all its subvolumes after that.
-        log.info("-- Ignoring btrfs subvolume #{mount}")
-        return true
-      end
-
-      false # don't ignore
     end
 
     # Parse one entry of /proc/mounts.
@@ -155,15 +123,6 @@ module Installation
 
       (device, mount_path, fs_type, mount_opt) = line.split
       Mount.new(device, mount_path, fs_type, mount_opt)
-    end
-
-    # Return the mount for a specified device or nil if there is none.
-    #
-    # @param device [String]
-    # @return [Mount,nil] Matching mount
-    #
-    def mount_for_device(device)
-      @mounts.find { |mount| mount.device == device }
     end
 
     # Return the paths to be unmounted in the correct unmount order.
@@ -187,7 +146,31 @@ module Installation
       @ignored_mounts.map(&:mount_path)
     end
 
-    # Actually execute all the pending unmount operations.
+    # Actually execute all the pending unmount operations in the right
+    # sequence.
+    #
+    # This iterates over all relevant mounts and invokes the external "umount"
+    # command for each one separately. Notice that while "umount -R path" also
+    # exists, it will stop executing when it first encounters any mount that
+    # cannot be unmounted ("filesystem busy"), even if mounts that come after
+    # that could safely be unmounted.
+    #
+    # If unmounting a mount fails, this does not attempt to remount read-only
+    # ("umount -r"), by force ("umount -f") or lazily ("umount -l"):
+    #
+    # - Remounting read-only ("umount -r" or "mount -o remount,ro") typically
+    #   also fails if unmounting fails. It would have to be a rare coincidence
+    #   that a filesystem has only open files in read-only mode already; only
+    #   then it would have a chance to succeed.
+    #
+    # - Force-unmounting ("umount -f") realistically only works for NFS mounts.
+    #   It is intended for cases when the NFS server has become unreachable.
+    #
+    # - Lazy unmounting ("umount -l") mostly removes the entry for this
+    #   filesytem from /proc/mounts; it actually only unmounts when the pending
+    #   operations that prevent a simple unmount are finished which may take a
+    #   long time; or forever. And there is no way to find out if or when this
+    #   has ever happened, so the next mount for this filesystem may fail.
     #
     def execute
       unmount_paths.each do |path|
