@@ -46,6 +46,28 @@ describe Installation::Unmounter do
     end
   end
 
+  describe "#mnt_prefix" do
+    it "leaves a normal mount prefix as it is" do
+      um = described_class.new("/foo", "")
+      expect(um.mnt_prefix).to eq "/foo"
+    end
+
+    it "strips off one trailing slash" do
+      um = described_class.new("/foo/", "")
+      expect(um.mnt_prefix).to eq "/foo"
+    end
+
+    it "does not overdo insanely broken prefixes" do
+      um = described_class.new("/foo//", "")
+      expect(um.mnt_prefix).to eq "/foo/"
+    end
+
+    it "leaves a root directory prefix as it is" do
+      um = described_class.new("/", "")
+      expect(um.mnt_prefix).to eq "/"
+    end
+  end
+
   describe "#ignore?" do
     let(:subject) { described_class.new("/mnt", "") }
 

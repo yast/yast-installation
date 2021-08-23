@@ -40,6 +40,8 @@ module Installation
   #
   class Unmounter
     include Yast::Logger
+    # The mount prefix (typically "/mnt")
+    attr_reader :mnt_prefix
     # @return [Array<Mount>] Relevant mounts to unmount
     attr_reader :mounts
     # @return [Array<Mount>] Ignored mounts (not starting with the mount prefix)
@@ -72,7 +74,8 @@ module Installation
     #   (but in that case, use read_mounts_file or add_mount later).
     #
     def initialize(mnt_prefix, mounts_file_name = nil)
-      @mnt_prefix = mnt_prefix || "/mnt"
+      @mnt_prefix = mnt_prefix.dup || "/mnt"
+      @mnt_prefix.chomp!("/") unless @mnt_prefix == "/"
       mounts_file_name ||= "/proc/mounts"
       clear
       read_mounts_file(mounts_file_name) unless mounts_file_name.empty?
