@@ -10,6 +10,10 @@ def stored_proc_mounts(scenario)
   File.join(PROC_MOUNTS_PATH, "proc-mounts-#{scenario}-raw.txt")
 end
 
+def mount(mount_path)
+  Installation::Unmounter::Mount.new("/dev/something", mount_path, "FooFS")
+end
+
 describe Installation::Unmounter do
   let(:proc_mounts) { "" }
 
@@ -39,6 +43,30 @@ describe Installation::Unmounter do
 
       # Don't check in this context that there is nothing to unmount:
       # The machine that executes the test might actually have something mounted at /mnt.
+    end
+  end
+
+  describe "#ignore?" do
+    let(:subject) { described_class.new("/mnt", "") }
+
+    it "does not ignore /mnt" do
+      expect(subject.ignore?(mount("/mnt"))).to eq false
+    end
+
+    it "does not ignore /mnt/foo" do
+      expect(subject.ignore?(mount("/mnt/foo"))).to eq false
+    end
+
+    it "ignores /mnt2" do
+      expect(subject.ignore?(mount("/mnt2"))).to eq true
+    end
+
+    it "ignores /mnt2/foo" do
+      expect(subject.ignore?(mount("/mnt2"))).to eq true
+    end
+
+    it "ignores an empty path" do
+      expect(subject.ignore?(mount(""))).to eq true
     end
   end
 

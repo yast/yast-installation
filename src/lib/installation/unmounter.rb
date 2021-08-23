@@ -42,7 +42,7 @@ module Installation
     include Yast::Logger
     # @return [Array<Mount>] Relevant mounts to unmount
     attr_reader :mounts
-    # @return [Array<Mount>] Ignored mounts
+    # @return [Array<Mount>] Ignored mounts (not starting with the mount prefix)
     attr_reader :ignored_mounts
 
     # Helper class to represent one mount, i.e. one entry in /proc/mounts.
@@ -102,7 +102,7 @@ module Installation
       mount = parse_mount(line)
       return nil if mount.nil? # Empty or comment
 
-      if !mount.mount_path.start_with?(@mnt_prefix)
+      if ignore?(mount)
         @ignored_mounts << mount
         return nil
       end
@@ -110,6 +110,17 @@ module Installation
       log.info("Adding #{mount}")
       @mounts << mount
       mount
+    end
+
+    # Check if a mount should be ignored, i.e. if the path doesn't start with
+    # the mount prefix (usually "/mnt").
+    #
+    # @return [Boolean] ignore
+    #
+    def ignore?(mount)
+      return false if mount.mount_path == @mnt_prefix
+
+      !mount.mount_path.start_with?(@mnt_prefix + "/")
     end
 
     # Parse one entry of /proc/mounts.
