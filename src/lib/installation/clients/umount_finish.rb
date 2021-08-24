@@ -3,7 +3,6 @@
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 # Copyright (c) 2013-2021 SUSE LLC
 #
-#
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of version 2 of the GNU General Public License as published by the
 # Free Software Foundation.
@@ -13,86 +12,105 @@
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 # ------------------------------------------------------------------------------
 
-# File:
-#  umount_finish.rb
-
 require "yast"
+require "installation/finish_client"
+require "installation/unmounter"
+require "storage"
 require "y2storage"
-require "pathname"
 require "shellwords"
 
-module Yast
-  class UmountFinishClient < Client
-    include Yast::Logger
+module Installation
+  module Clients
+    # Finish client to unmount all mounts to the target
+    class UmountFinishClient < FinishClient
+      include Yast::Logger
 
-    EFIVARS_PATH = "/sys/firmware/efi/efivars".freeze
-    USB_PATH = "/proc/bus/usb".freeze
+      # Constructor
+      def initialize
+        textdomain "installation"
+        Yast.import "Installation"
+        Yast.import "Hotplug"
+        Yast.import "String"
+        Yast.import "FileUtils"
+        @running_standalone = false
+      end
 
-    def main
-      textdomain "installation"
+      # This can be used when invoking this file directly with
+      # ruby ./umount_finish.rb
+      #
+      def run_standalone
+        @running_standalone = true
+        Installation.destdir = "/mnt" if Installation.destdir == "/"
+        write
+      end
 
-      Yast.import "Installation"
-      Yast.import "Hotplug"
-      Yast.import "String"
-      Yast.import "FileUtils"
+      protected
 
-      @ret = nil
-      @func = ""
-      @param = {}
+      def title
+        # progress step title
+        _("Unmounting all mounted devices...")
+      end
 
-      # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
-          Ops.is_string?(WFM.Args(0))
-        @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
-            Ops.is_map?(WFM.Args(1))
-          @param = Convert.to_map(WFM.Args(1))
+      def modes
+        [:installation, :live_installation, :update, :autoinst]
+      end
+
+      # Perform the final actions in the target system
+      def write
+        log.info("Starting umount_finish.rb")
+
+        close_scr_on_target
+        remove_target_etc_mtab
+        set_btrfs_defaults_as_ro # No write access to the target after this!
+        umount_target_mounts
+
+        log.info("umount_finish.rb done")
+        true
+      end
+
+      # Unmount all mounts to the target typically /mnt.
+      #
+      # This uses an Installation::Unmounter object which reads /proc/mounts.
+      # Relying on y2storage would be risky here since other processes like
+      # snapper or libzypp may have mounted filesystems without y2storage
+      # knowing about it.
+      #
+      def umount_target_mounts
+        dump_file("/proc/partitions")
+        dump_file("/proc/mounts")
+        unmounter = ::Installation::Unmounter.new(Installation.destdir)
+        log.info("Paths to unmount: #{unmounter.unmount_paths}")
+        return if unmounter.mounts.empty?
+
+        begin
+          unmounter.execute
+        rescue Cheetah::ExecutionFailed => e # Typically permissions problem
+          log.error(e.message)
+        end
+        unmounter.clear
+        unmounter.read_mounts_file("/proc/mounts")
+        unmount_summary(unmounter.unmount_paths)
+      end
+
+      # Write a summary of the unmount operations to the log.
+      def unmount_summary(leftover_paths)
+        if (leftover_paths.empty?)
+          log.info("All unmounts successful")
+        else
+          log.warn("Leftover paths that could not be unmounted: #{leftover_paths}")
+          dump_file("/proc/mounts")
+          leftover_paths.each { |p| log_running_processes(p) }
         end
       end
 
-      Builtins.y2milestone("starting umount_finish")
-      Builtins.y2debug("func=%1", @func)
-      Builtins.y2debug("param=%1", @param)
+      # Dump a file in human-readable form to the log.
+      # Do not add the y2log header to each line so it can be easily used.
+      def dump_file(filename)
+        content = File.read(filename)
+        log.info("\n\n#{filename}:\n\n#{content}\n")
+      end
 
-      if @func == "Info"
-        return {
-          "steps" => 1,
-          # progress step title
-          "title" => _(
-            "Unmounting all mounted devices..."
-          ),
-          "when"  => [:installation, :live_installation, :update, :autoinst]
-        }
-      elsif @func == "Write"
-
-        #
-        # !!! NO WRITE OPERATIONS TO THE TARGET HERE !!!
-        # !!! Use pre_umount_finish instead          !!!
-        #
-
-        Builtins.y2milestone(
-          "/proc/mounts:\n%1",
-          WFM.Read(path(".local.string"), "/proc/mounts")
-        )
-        Builtins.y2milestone(
-          "/proc/partitions:\n%1",
-          WFM.Read(path(".local.string"), "/proc/partitions")
-        )
-
-        # get mounts at and in the target from /proc/mounts - do not use
-        # Storage here since Storage does not know whether other processes,
-        # e.g. snapper, mounted filesystems in the target
-
-        umount_list = []
-        SCR.Read(path(".proc.mounts")).each do |entry|
-          mountpoint = entry["file"]
-          if mountpoint.start_with?(Installation.destdir)
-            umount_list << mountpoint[Installation.destdir.length, mountpoint.length]
-          end
-        end
-        umount_list.sort!
-        log.info("umount_list:#{umount_list}")
-
+      def remove_target_etc_mtab
         # symlink points to /proc, keep it (bnc#665437)
         if !FileUtils.IsLink("/etc/mtab")
           # remove [Installation::destdir]/etc/mtab which was faked for %post
@@ -102,204 +120,90 @@ module Yast
           # hotfix: recreating /etc/mtab as symlink (bnc#725166)
           SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
         end
+      end
 
-        # This must be done as long as the target root is still mounted
-        # (because the btrfs command requires that), but after the last write
-        # access to it (because it will be read only afterwards).
-        set_btrfs_defaults_as_ro
-
-        # Stop SCR on target
+      def close_scr_on_target
         WFM.SCRClose(Installation.scr_handle)
+      end
 
-        # first, umount everthing mounted *in* the target.
-        # /proc/bus/usb
-        # /proc
+      # For btrfs filesystems that should be read-only, set the root subvolume
+      # to read-only and change the /etc/fstab entry accordingly.
+      #
+      # Since we had to install RPMs to the target, we could not set it to
+      # read-only right away; but now we can, and we have to.
+      #
+      # This must be done as long as the target root is still mounted
+      # (because the btrfs command requires that), but after the last write
+      # access to it (because it will be read only afterwards).
+      def set_btrfs_defaults_as_ro
+        return if @running_standalone # Can't get storage lock without root privleges
 
-        @umount_these = ["/proc", "/sys", "/dev", "/run"]
+        devicegraph = Y2Storage::StorageManager.instance.staging
 
-        @umount_these.unshift(USB_PATH) if Hotplug.haveUSB
-
-        # exists in both inst-sys and target or in neither
-        @umount_these.unshift(EFIVARS_PATH) if File.exist?(EFIVARS_PATH)
-
-        Builtins.foreach(@umount_these) do |umount_dir|
-          umount_this = Builtins.sformat(
-            "%1%2",
-            Installation.destdir,
-            umount_dir
-          )
-          Builtins.y2milestone("Umounting: %1", umount_this)
-          umount_result = Convert.to_boolean(
-            WFM.Execute(path(".local.umount"), umount_this)
-          )
-          if umount_result != true
-            log_running_processes(umount_this)
-            # bnc #395034
-            # Don't remount them read-only!
-            if Builtins.contains(
-              ["/proc", "/sys", "/dev", USB_PATH, EFIVARS_PATH],
-              umount_dir
-            )
-              Builtins.y2warning("Umount failed, trying lazy umount...")
-              cmd = Builtins.sformat(
-                "sync; umount -l -f '%1';",
-                String.Quote(umount_this)
-              )
-            else
-              Builtins.y2warning(
-                "Umount failed, trying to remount read only..."
-              )
-              cmd = Builtins.sformat(
-                "sync; mount -o remount,noatime,ro '%1'; umount -l -f '%1';",
-                String.Quote(umount_this)
-              )
-            end
-            Builtins.y2milestone(
-              "Cmd: '%1' Ret: %2",
-              cmd,
-              WFM.Execute(path(".local.bash_output"), cmd)
-            )
-          end
+        ro_btrfs_filesystems = devicegraph.filesystems.select do |fs|
+          new_filesystem?(fs) && ro_btrfs_filesystem?(fs)
         end
 
-        # *** umount_list is lexically ordered !
-        # now umount in reverse order (guarantees "/" as last umount)
+        ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
+      end
 
-        @umountLength = Builtins.size(umount_list)
+      # [String] Name used by btrfs tools to name the filesystem tree.
+      BTRFS_FS_TREE = "(FS_TREE)".freeze
 
-        while Ops.greater_than(@umountLength, 0)
-          @umountLength = Ops.subtract(@umountLength, 1)
-          @tmp = Ops.add(
-            Installation.destdir,
-            Ops.get(umount_list, @umountLength, "")
-          )
-
-          Builtins.y2milestone(
-            "umount target: %1, %2 more to go..",
-            @tmp,
-            @umountLength
-          )
-
-          @umount_status = Convert.to_boolean(
-            WFM.Execute(path(".local.umount"), @tmp)
-          )
-
-          # bnc #395034
-          # Don't remount them read-only!
-          next if @umount_status
-          log_running_processes(@tmp)
-
-          if Builtins.contains(
-            ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-            @tmp
-          )
-            Builtins.y2warning("Umount failed, trying lazy umount...")
-            @cmd2 = Builtins.sformat(
-              "sync; umount -l -f '%1';",
-              String.Quote(@tmp)
-            )
-          else
-            Builtins.y2warning(
-              "Umount failed, trying to remount read only..."
-            )
-            @cmd2 = Builtins.sformat(
-              "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
-              String.Quote(@tmp)
-            )
-          end
-          Builtins.y2milestone(
-            "Cmd: '%1' Ret: %2",
-            @cmd2,
-            WFM.Execute(path(".local.bash_output"), @cmd2)
-          )
-
-        end
-
-        # bugzilla #326478
-        Builtins.y2milestone(
-          "Currently mounted partitions: %1",
-          WFM.Execute(path(".local.bash_output"), "mount")
+      # Set the "read-only" property for the root subvolume.
+      # This has to be done as long as the target root filesystem is still
+      # mounted.
+      #
+      # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+      def default_subvolume_as_ro(fs)
+        output = Yast::Execute.on_target(
+          "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
         )
+        default_subvolume = output.strip.split.last
+        # no btrfs_default_subvolume and no snapshots
+        default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
 
-        log_running_processes(Installation.destdir)
+        subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
 
-      else
-        Builtins.y2error("unknown function: %1", @func)
-        @ret = nil
+        log.info("Setting root subvol read-only property on #{subvolume_path}")
+        Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
       end
 
-      Builtins.y2debug("ret=%1", @ret)
-      Builtins.y2milestone("umount_finish finished")
-      deep_copy(@ret)
-    end # main
-    #
-    #------------------------------------------------------------------------------
-    #
-
-    # Set the root subvolume to read-only and change the /etc/fstab entry
-    # accordingly
-    def set_btrfs_defaults_as_ro
-      devicegraph = Y2Storage::StorageManager.instance.staging
-
-      ro_btrfs_filesystems = devicegraph.filesystems.select do |fs|
-        new_filesystem?(fs) && ro_btrfs_filesystem?(fs)
+      # run "fuser" to get the details about open files
+      #
+      # @param mount_point [String]
+      def log_running_processes(mount_point)
+        fuser =
+          begin
+            # (the details are printed on STDERR, redirect it)
+            `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
+          rescue => e
+            "fuser failed: #{e}"
+          end
+        log.warn("Running processes using #{mount_point}: #{fuser}")
       end
 
-      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
-    end
+      # Check whether the given filesystem is going to be created
+      #
+      # @param filesystem [Y2Storage::Filesystems::Base]
+      # @return [Boolean]
+      def new_filesystem?(filesystem)
+        !filesystem.exists_in_probed?
+      end
 
-    # [String] Name used by btrfs tools to name the filesystem tree.
-    BTRFS_FS_TREE = "(FS_TREE)".freeze
-
-    # Set the "read-only" property for the root subvolume.
-    # This has to be done as long as the target root filesystem is still
-    # mounted.
-    #
-    # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
-    def default_subvolume_as_ro(fs)
-      output = Yast::Execute.on_target(
-        "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
-      )
-      default_subvolume = output.strip.split.last
-      # no btrfs_default_subvolume and no snapshots
-      default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
-
-      subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
-
-      log.info("Setting root subvol read-only property on #{subvolume_path}")
-      Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
-    end
-
-    # run "fuser" to get the details about open files
-    #
-    # @param mount_point [String]
-    def log_running_processes(mount_point)
-      fuser =
-        begin
-          # (the details are printed on STDERR, redirect it)
-          `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
-        rescue => e
-          "fuser failed: #{e}"
-        end
-      log.warn("Running processes using #{mount_point}: #{fuser}")
-    end
-
-  private
-
-    # Check whether the given filesystem is going to be created
-    #
-    # @param filesystem [Y2Storage::Filesystems::Base]
-    # @return [Boolean]
-    def new_filesystem?(filesystem)
-      !filesystem.exists_in_probed?
-    end
-
-    # Check whether the given filesystem is read-only BTRFS
-    #
-    # @param filesystem [Y2Storage::Filesystems::Base]
-    # @return [Boolean]
-    def ro_btrfs_filesystem?(filesystem)
-      filesystem.is?(:btrfs) && filesystem.mount_point && filesystem.mount_options.include?("ro")
+      # Check whether the given filesystem is read-only BTRFS
+      #
+      # @param filesystem [Y2Storage::Filesystems::Base]
+      # @return [Boolean]
+      def ro_btrfs_filesystem?(filesystem)
+        filesystem.is?(:btrfs) && filesystem.mount_point && filesystem.mount_options.include?("ro")
+      end
     end
   end
+end
+
+if $0 == __FILE__    # Called direcly as standalone command? (not via rspec or require)
+  puts("Running UmountFinishClient standalone")
+  Installation::Clients::UmountFinishClient.new.run_standalone
+  puts("UmountFinishClient done")
 end
