@@ -15,7 +15,6 @@
 require "yast"
 require "installation/finish_client"
 require "installation/unmounter"
-require "storage"
 require "y2storage"
 require "shellwords"
 
@@ -28,15 +27,12 @@ module Installation
       # Constructor
       def initialize
         textdomain "installation"
-        Yast.import "Installation"
-        Yast.import "Hotplug"
-        Yast.import "String"
         Yast.import "FileUtils"
         @running_standalone = false
       end
 
       # This can be used when invoking this file directly with
-      # ruby ./umount_finish.rb
+      #   ruby ./umount_finish.rb
       #
       def run_standalone
         @running_standalone = true
@@ -52,6 +48,8 @@ module Installation
       end
 
       def modes
+        # FIXME: better use 'nil' for all modes? Then we could rely on the base
+        # class implementation which returns nil by default.
         [:installation, :live_installation, :update, :autoinst]
       end
 
@@ -68,7 +66,7 @@ module Installation
         true
       end
 
-      # Unmount all mounts to the target typically /mnt.
+      # Unmount all mounts to the target (typically using the /mnt prefix).
       #
       # This uses an Installation::Unmounter object which reads /proc/mounts.
       # Relying on y2storage would be risky here since other processes like
@@ -202,7 +200,22 @@ module Installation
   end
 end
 
-if $0 == __FILE__    # Called direcly as standalone command? (not via rspec or require)
+#
+#------------------------------------------------------------------------------------
+#
+# This can be called standalone with
+#
+#   ruby /usr/share/YaST2/lib/installation/clients/umount_finish.rb
+#
+# or (even from the git checkout directory where this file is)
+#
+#   ruby ./umount_finish.rb
+#
+# with or without root permissions. Obviously, without root permissions, the
+# "umount" commands will fail. But you can observe in the user's ~/.y2log what
+# mounts would be unmounted. Make sure to mount something to /mnt to see anything.
+#
+if $0 == __FILE__  # Called direcly as standalone command? (not via rspec or require)
   puts("Running UmountFinishClient standalone")
   Installation::Clients::UmountFinishClient.new.run_standalone
   puts("UmountFinishClient done")
