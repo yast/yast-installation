@@ -124,6 +124,8 @@ module Installation
         WFM.SCRClose(Installation.scr_handle)
       end
 
+      public
+
       # For btrfs filesystems that should be read-only, set the root subvolume
       # to read-only and change the /etc/fstab entry accordingly.
       #
@@ -144,6 +146,8 @@ module Installation
 
         ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
       end
+
+      protected
 
       # [String] Name used by btrfs tools to name the filesystem tree.
       BTRFS_FS_TREE = "(FS_TREE)".freeze

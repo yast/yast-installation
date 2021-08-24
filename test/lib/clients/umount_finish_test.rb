@@ -3,7 +3,7 @@
 require_relative "../../test_helper"
 require "installation/clients/umount_finish"
 
-describe Yast::UmountFinishClient do
+describe Installation::Clients::UmountFinishClient do
   before do
     Y2Storage::StorageManager.create_test_instance
   end
