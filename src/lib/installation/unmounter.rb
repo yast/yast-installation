@@ -70,15 +70,14 @@ module Installation
     # @param mnt_prefix [String] Prefix which paths should be unmounted.
     #
     # @param mounts_file_name [String] what to use instead of /proc/mounts.
-    #   Use an empty string (not nil!) to not read anything at all yet
-    #   (but in that case, use read_mounts_file or add_mount later).
+    #   Use 'nil' to not read any file at all; but in that case, later use
+    #   read_mounts_file() or add_mount().
     #
-    def initialize(mnt_prefix, mounts_file_name = nil)
-      @mnt_prefix = mnt_prefix.dup || "/mnt"
+    def initialize(mnt_prefix = "/mnt", mounts_file_name = "/proc/mounts")
+      @mnt_prefix = mnt_prefix.dup
       @mnt_prefix.chomp!("/") unless @mnt_prefix == "/"
-      mounts_file_name ||= "/proc/mounts"
       clear
-      read_mounts_file(mounts_file_name) unless mounts_file_name.empty?
+      read_mounts_file(mounts_file_name) unless mounts_file_name.nil?
     end
 
     # Clear all prevous content.

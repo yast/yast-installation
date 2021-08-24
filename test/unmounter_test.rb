@@ -15,7 +15,7 @@ def mount(mount_path)
 end
 
 describe Installation::Unmounter do
-  let(:proc_mounts) { "" }
+  let(:proc_mounts) { nil }
 
   describe "#new" do
     let(:subject) { described_class.new(PREFIX, proc_mounts) }
@@ -35,7 +35,7 @@ describe Installation::Unmounter do
     end
 
     context "when reading the actual /proc/mounts file" do
-      let(:proc_mounts) { nil } # use built-in default /proc/mounts
+      let(:proc_mounts) { "/proc/mounts" }
 
       it "ignores /, /proc, /sys, /dev" do
         expect(subject.ignored_paths).to include("/", "/proc", "/sys", "/dev")
@@ -48,28 +48,28 @@ describe Installation::Unmounter do
 
   describe "#mnt_prefix" do
     it "leaves a normal mount prefix as it is" do
-      um = described_class.new("/foo", "")
+      um = described_class.new("/foo", nil)
       expect(um.mnt_prefix).to eq "/foo"
     end
 
     it "strips off one trailing slash" do
-      um = described_class.new("/foo/", "")
+      um = described_class.new("/foo/", nil)
       expect(um.mnt_prefix).to eq "/foo"
     end
 
     it "does not overdo insanely broken prefixes" do
-      um = described_class.new("/foo//", "")
+      um = described_class.new("/foo//", nil)
       expect(um.mnt_prefix).to eq "/foo/"
     end
 
     it "leaves a root directory prefix as it is" do
-      um = described_class.new("/", "")
+      um = described_class.new("/", nil)
       expect(um.mnt_prefix).to eq "/"
     end
   end
 
   describe "#ignore?" do
-    let(:subject) { described_class.new("/mnt", "") }
+    let(:subject) { described_class.new("/mnt", nil) }
 
     it "does not ignore /mnt" do
       expect(subject.ignore?(mount("/mnt"))).to eq false
@@ -96,7 +96,7 @@ describe Installation::Unmounter do
     before(:all) do
       # Start with a completely empty unmounter
       # and keep it alive between the tests of this group
-      @unmounter = described_class.new(PREFIX, "")
+      @unmounter = described_class.new(PREFIX, nil)
     end
 
     it "starts completely empty" do
