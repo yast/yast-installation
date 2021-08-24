@@ -19,6 +19,8 @@ module Installation
   # Class to handle unmounting all mounts from the given subtree on in the
   # right order.
   #
+  #   See also https://github.com/yast/yast-installation/pull/975
+  #
   # This uses /proc/mounts by default to find active mounts, but for
   # testability, it can also be fed from other files or line by line. It stores
   # all necessary unmount actions so they can be executed all at once, and they
