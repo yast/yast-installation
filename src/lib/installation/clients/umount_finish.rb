@@ -1,7 +1,7 @@
 # encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
+# Copyright (c) 2013-2021 SUSE LLC
 #
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -11,23 +11,12 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, contact Novell, Inc.
-#
-# To contact Novell about this file by physical or electronic mail, you may find
-# current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
 # File:
 #  umount_finish.rb
-#
-# Module:
-#  Step of base installation finish
-#
-# Authors:
-#  Jiri Srain <jsrain@suse.cz>
 
+require "yast"
 require "y2storage"
 require "pathname"
 require "shellwords"
@@ -173,34 +162,6 @@ module Yast
           end
         end
 
-# storage-ng
-# rubocop:disable Style/BlockComments
-=begin
-
-        @targetMap = Storage.GetTargetMap
-
-        # first umount all file based crypto fs since they potentially
-        # could mess up umounting of normale filesystems if the crypt
-        # file is not on the root fs
-        Builtins.y2milestone("umount list %1", umount_list)
-        Builtins.foreach(
-          Ops.get_list(@targetMap, ["/dev/loop", "partitions"], [])
-        ) do |e|
-          if Ops.greater_than(Builtins.size(Ops.get_string(e, "mount", "")), 0)
-            Storage.Umount(Ops.get_string(e, "device", ""), true)
-            umount_list = Builtins.filter(umount_list) do |m|
-              m != Ops.get_string(e, "mount", "")
-            end
-            Builtins.y2milestone(
-              "loop umount %1 new list %2",
-              Ops.get_string(e, "mount", ""),
-              umount_list
-            )
-          end
-        end
-
-=end
-
         # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
 
@@ -262,33 +223,6 @@ module Yast
 
         log_running_processes(Installation.destdir)
 
-# storage-ng
-=begin
-
-        # must call .local.bash_output !
-        @max_loop_dev = Storage.NumLoopDevices
-
-        # disable loop device of crypto fs
-        @unload_crypto = false
-
-        while Ops.greater_than(@max_loop_dev, 0)
-          @unload_crypto = true
-          @exec_str = Builtins.sformat(
-            "/sbin/losetup -d /dev/loop%1",
-            Ops.subtract(@max_loop_dev, 1)
-          )
-          Builtins.y2milestone("loopdev: %1", @exec_str)
-          WFM.Execute(path(".local.bash"), @exec_str)
-          @max_loop_dev = Ops.subtract(@max_loop_dev, 1)
-        end
-
-        if @targetMap.any? { |_k, v| v["type"] == :CT_LVM }
-          Builtins.y2milestone("shutting down LVM")
-          WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
-        end
-
-=end
-
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
@@ -297,7 +231,10 @@ module Yast
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("umount_finish finished")
       deep_copy(@ret)
-    end
+    end # main
+    #
+    #------------------------------------------------------------------------------
+    #
 
     # Set the root subvolume to read-only and change the /etc/fstab entry
     # accordingly
