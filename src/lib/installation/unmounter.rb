@@ -13,6 +13,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "pathname"
 
 module Installation
   # Class to handle unmounting all mounts from the given subtree on in the
@@ -74,8 +75,7 @@ module Installation
     #   read_mounts_file() or add_mount().
     #
     def initialize(mnt_prefix = "/mnt", mounts_file_name = "/proc/mounts")
-      @mnt_prefix = mnt_prefix.dup
-      @mnt_prefix.chomp!("/") unless @mnt_prefix == "/"
+      @mnt_prefix = Pathname.new(mnt_prefix).cleanpath.to_s
       clear
       read_mounts_file(mounts_file_name) unless mounts_file_name.nil?
     end

@@ -57,9 +57,9 @@ describe Installation::Unmounter do
       expect(um.mnt_prefix).to eq "/foo"
     end
 
-    it "does not overdo insanely broken prefixes" do
-      um = described_class.new("/foo//", nil)
-      expect(um.mnt_prefix).to eq "/foo/"
+    it "even fixes up insanely broken prefixes" do
+      um = described_class.new("/foo///bar///", nil)
+      expect(um.mnt_prefix).to eq "/foo/bar"
     end
 
     it "leaves a root directory prefix as it is" do
