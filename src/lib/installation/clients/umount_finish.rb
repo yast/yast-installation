@@ -40,7 +40,7 @@ module Installation
         write
       end
 
-      protected
+    protected
 
       def title
         # progress step title
@@ -92,7 +92,7 @@ module Installation
 
       # Write a summary of the unmount operations to the log.
       def unmount_summary(leftover_paths)
-        if (leftover_paths.empty?)
+        if leftover_paths.empty?
           log.info("All unmounts successful")
         else
           log.warn("Leftover paths that could not be unmounted: #{leftover_paths}")
@@ -124,7 +124,7 @@ module Installation
         WFM.SCRClose(Installation.scr_handle)
       end
 
-      public
+    public
 
       # For btrfs filesystems that should be read-only, set the root subvolume
       # to read-only and change the /etc/fstab entry accordingly.
@@ -147,7 +147,7 @@ module Installation
         ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
       end
 
-      protected
+    protected
 
       # [String] Name used by btrfs tools to name the filesystem tree.
       BTRFS_FS_TREE = "(FS_TREE)".freeze
@@ -219,7 +219,7 @@ end
 # "umount" commands will fail. But you can observe in the user's ~/.y2log what
 # mounts would be unmounted. Make sure to mount something to /mnt to see anything.
 #
-if $0 == __FILE__  # Called direcly as standalone command? (not via rspec or require)
+if $PROGRAM_NAME == __FILE__ # Called direcly as standalone command? (not via rspec or require)
   puts("Running UmountFinishClient standalone")
   Installation::Clients::UmountFinishClient.new.run_standalone
   puts("UmountFinishClient done")
