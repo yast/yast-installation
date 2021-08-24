@@ -1,2 +1,4 @@
+require "yast"
 require "installation/clients/umount_finish"
-Yast::UmountFinishClient.new.main
+
+Installation::Clients::UmountFinishClient.run(*Yast::WFM.Args)
