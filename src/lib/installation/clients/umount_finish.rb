@@ -16,7 +16,6 @@ require "yast"
 require "installation/finish_client"
 require "installation/unmounter"
 require "y2storage"
-require "shellwords"
 
 module Installation
   module Clients
@@ -93,11 +92,11 @@ module Installation
       # Write a summary of the unmount operations to the log.
       def unmount_summary(leftover_paths)
         if leftover_paths.empty?
-          log.info("All unmounts successful")
+          log.info("All unmounts successful.")
         else
           log.warn("Leftover paths that could not be unmounted: #{leftover_paths}")
+          log_running_processes(leftover_paths)
           dump_file("/proc/mounts")
-          leftover_paths.each { |p| log_running_processes(p) }
         end
       end
 
@@ -173,16 +172,17 @@ module Installation
 
       # run "fuser" to get the details about open files
       #
-      # @param mount_point [String]
-      def log_running_processes(mount_point)
+      # @param mount_points <Array>[String]
+      def log_running_processes(mount_points)
+        paths = mount_points.join(" ")
         fuser =
           begin
             # (the details are printed on STDERR, redirect it)
-            `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
+            `LC_ALL=C fuser -v -m #{paths} 2>&1`
           rescue => e
             "fuser failed: #{e}"
           end
-        log.warn("Running processes using #{mount_point}: #{fuser}")
+        log.warn("\n\nRunning processes using #{mount_points}:\n#{fuser}\n")
       end
 
       # Check whether the given filesystem is going to be created
