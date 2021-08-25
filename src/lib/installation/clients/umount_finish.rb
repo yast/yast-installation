@@ -56,9 +56,9 @@ module Installation
       def write
         log.info("Starting umount_finish.rb")
 
-        close_scr_on_target
         remove_target_etc_mtab
         set_btrfs_defaults_as_ro # No write access to the target after this!
+        close_scr_on_target
         umount_target_mounts
 
         log.info("umount_finish.rb done")
