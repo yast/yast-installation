@@ -135,7 +135,12 @@ module Installation
       # (because the btrfs command requires that), but after the last write
       # access to it (because it will be read only afterwards).
       def set_btrfs_defaults_as_ro
-        return if @running_standalone # Can't get storage lock without root privleges
+        # This operation needs root privileges, but it's also generally not a
+        # good idea to do this even if you have the privileges: In that case,
+        # it would change your root subvolume to read-only which is not a good
+        # idea when just invoking this standalone for testing in a development
+        # environment.
+        return if @running_standalone
 
         devicegraph = Y2Storage::StorageManager.instance.staging
 
