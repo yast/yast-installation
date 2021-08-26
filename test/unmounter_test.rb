@@ -37,8 +37,12 @@ describe Installation::Unmounter do
     context "when reading the actual /proc/mounts file" do
       let(:proc_mounts) { "/proc/mounts" }
 
-      it "ignores /, /proc, /sys, /dev" do
-        expect(subject.ignored_paths).to include("/", "/proc", "/sys", "/dev")
+      it "ignores /proc and /sys" do
+        expect(subject.ignored_paths).to include("/proc", "/sys")
+        # With checking for /, /proc, /sys, /dev this failed in Jenkins
+        # because that environment only seems to have /proc, /sys, /dev/pts, /dev/shm,
+        # so this test checks only for the least common denominator between
+        # a sane Linux system and that Jenkins environment.
       end
 
       # Don't check in this context that there is nothing to unmount:
