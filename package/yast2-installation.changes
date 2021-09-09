@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  8 15:20:21 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Display release notes during upgrade (bsc#1186044)
+- 4.3.42
+
+-------------------------------------------------------------------
 Mon Aug  2 14:31:22 UTC 2021 - José Iván López González <jlopez@suse.com>
 
 - Activate devices before probing (bsc#1187220).

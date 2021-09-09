@@ -39,6 +39,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       allow(sles).to receive(:status?).with(:available).and_return(false)
       allow(sdk).to receive(:status?).with(:available).and_return(!sdk_selected)
       allow(Yast::Stage).to receive(:initial).and_return(true)
+      allow(Yast::Mode).to receive(:update).and_return(false)
       allow(Yast::Packages).to receive(:init_called).and_return(packages_init_called)
       stub_const("Yast::Language", language)
 
