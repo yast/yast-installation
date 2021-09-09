@@ -77,7 +77,8 @@ module Yast
     def main
       textdomain "installation"
 
-      return :auto unless Packages.init_called
+      # Packages.Init is not called during upgrade
+      return :auto if !Packages.init_called && !Stage.initial && !Mode.update
 
       return :back if GetInstArgs.going_back
 
