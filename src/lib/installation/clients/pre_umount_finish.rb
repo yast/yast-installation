@@ -59,6 +59,9 @@ module Installation
       # save all sources and finish target
       # bnc #398315
       Pkg.SourceSaveAll
+      # release the sources and unload the pool so the libzypp cache can be closed
+      # and /mnt/var/cache/zypp unmounted
+      Pkg.SourceFinishAll
       Pkg.TargetFinish
 
       # BNC #692799: Preserve the randomness state before umounting
