@@ -3,6 +3,7 @@
 require_relative "test_helper"
 
 require "transfer/file_from_url"
+require "tmpdir"
 
 describe Yast::Transfer::FileFromUrl do
   Yast.import "Installation"
@@ -34,13 +35,13 @@ describe Yast::Transfer::FileFromUrl do
 
   describe "#Get" do
     before do
-      expect(Yast::WFM).to receive(:Read)
-        .and_return("/tmp_dir")
+      expect(Yast::WFM).to receive(:Read).with(path(".local.tmpdir"), [])
+        .and_return(tmpdir)
       expect(Yast::WFM).to receive(:SCRGetDefault)
         .and_return(333)
       expect(Yast::WFM).to receive(:SCRGetName).with(333)
         .and_return("chroot=/mnt:scr")
-      expect(Yast::WFM).to receive(:Execute)
+      allow(Yast::WFM).to receive(:Execute)
         .with(path(".local.mkdir"), "/destdir/tmp_dir/tmp_mount")
       # the local/target mess was last modified in
       # https://github.com/yast/yast-autoinstallation/commit/69f1966dd1456301a69102c6d3bacfe7c9f9dc49
@@ -49,6 +50,7 @@ describe Yast::Transfer::FileFromUrl do
       allow(Yast::Execute).to receive(:new).and_return(execute_object)
     end
 
+    let(:tmpdir) { "/tmp_dir" }
     let(:execute_object) { Yast::Execute.new }
 
     it "returns false for unknown scheme" do
@@ -180,55 +182,120 @@ describe Yast::Transfer::FileFromUrl do
     context "when scheme is 'file'" do
       let(:scheme) { "file" }
       let(:destination) { "/tmp/auto.xml" }
-      let(:source) { "/oss.xml" }
       let(:cd_device) { "/dev/sr0" }
-      let(:tmp_mount) { "/tmp_dir/tmp_mount" }
+      let(:tmp_mount) { File.join(tmpdir, "tmp_mount") }
+      let(:destination) { File.join(dir, "dest") }
+      let(:source) { File.join(dir, "source") }
+      let(:dir) { Dir.mktmpdir }
 
       before do
-        allow(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash"), "/bin/cp #{tmp_mount}/#{source} #{destination}")
-        allow(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash"), "/bin/cp #{source} #{destination}")
-        allow(Yast::WFM).to receive(:Execute)
-          .with(Yast::Path.new(".local.umount"), tmp_mount)
-        allow(Yast::Installation).to receive(:sourcedir).and_return("/mnt")
+        allow(Yast::Installation).to receive(:sourcedir).and_return(File.join(dir, "mnt"))
         allow(Yast::Installation).to receive(:boot).and_return("cd")
         allow(Yast::InstURL).to receive("installInf2Url").and_return("cd:/?devices=#{cd_device}")
-        expect(Yast::SCR).to receive(:Read)
-          .with(Yast::Path.new(".target.size"), "/mnt/#{source}").and_return(0)
-        expect(Yast::SCR).to receive(:Read)
-          .with(Yast::Path.new(".target.size"), destination).and_return(0, 10)
-      end
+        allow(Yast::Builtins).to receive(:sleep).with(3000)
 
-      context "CD has already been mounted multiple times" do
-        before do
-          allow(File).to receive(:read).with("/proc/mounts").and_return(
-            "#{cd_device} /mounts/mp_0005 iso9660 ro,relatime 0 0\n"\
-            "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
-          )
+        allow(Yast::SCR).to receive(:Execute)
+          .with(path(".target.bash"), /bin\/cp/) do |*args|
+          cmd = args.last
+          _, from, to = cmd.split(" ")
+          begin
+            FileUtils.cp(from, to)
+          rescue Errno::ENOENT
+            nil
+          end
         end
 
-        it "mounts with --bind option and returns true" do
-          expect(Yast::SCR).to receive(:Execute)
-            .with(Yast::Path.new(".target.bash_output"), "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
-            .and_return("exit" => 0, "stdout" => "ok")
+        allow(Yast::WFM).to receive(:Execute)
+          .with(path(".local.mount"), anything).and_return(false)
+      end
+
+      after do
+        FileUtils.remove_entry(dir) if File.exist?(dir)
+      end
+
+      context "when the source file exists in the installation sourcedir" do
+        before do
+          inst_source = File.join(Yast::Installation.sourcedir, source)
+          FileUtils.mkdir_p(File.dirname(inst_source))
+          File.write(inst_source, "sourcedir")
+        end
+
+        it "tries to copy the file from the installation sourcedir" do
           expect(subject.Get(scheme, "", source, destination)).to eq(true)
+          expect(File.read(destination)).to eq("sourcedir")
         end
       end
 
-      context "CD has not been mounted" do
+      context "when the source file exists" do
+        before { File.write(source, "testing") }
+
+        it "copies the file to the given destination and returns true" do
+          expect(subject.Get(scheme, "", source, destination)).to eq(true)
+          expect(File.read(destination)).to eq("testing")
+        end
+      end
+
+      context "when the source file does not exist" do
+        it "returns false" do
+          expect(subject.Get(scheme, "", source, destination)).to eq(false)
+        end
+      end
+
+      context "when the destination directory does not exist" do
+        let(:destination) { File.join(dir, "not", "a", "directory") }
+
+        before { File.write(source, "testing") }
+
+        it "returns false" do
+          expect(subject.Get(scheme, "", source, destination)).to eq(false)
+        end
+      end
+
+      context "when the file cannot be copied and the installation medium is a CD/DVD" do
+        let(:mounts) { "" }
+        let(:tmpdir) { File.join(dir, "tmp") }
+        let(:source_on_dvd) { File.join(tmp_mount, source) }
+
         before do
-          allow(File).to receive(:read).with("/proc/mounts").and_return("")
+          allow(Yast::WFM).to receive(:Execute).with(path(".local.mkdir"), anything)
+          allow(Yast::WFM).to receive(:Execute)
+            .with(path(".local.mount"), anything).and_return(true)
+          allow(File).to receive(:read).and_call_original
+          allow(File).to receive(:read).with("/proc/mounts").and_return(mounts)
+
+          FileUtils.mkdir_p(File.dirname(source_on_dvd))
+          File.write(source_on_dvd, "testing")
         end
 
-        it "mounts CD and returns true" do
+        it "tries to copy the file from the CD/DVD" do
           expect(Yast::WFM).to receive(:Execute)
             .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount, Yast::Installation.mountlog])
             .and_return(true)
-          expect(subject.Get(scheme, "", source, destination)).to eq(true)
+          expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
+
+          expect(subject.Get(scheme, "", source, destination))
+          expect(File.read(destination)).to eq("testing")
+        end
+
+        context "and the CD/DVD is already mounted" do
+          let(:mounts) do
+            "#{cd_device} /mounts/mp_0005 iso9660 ro,relatime 0 0\n" \
+            "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
+          end
+
+          it "bind mounts the CD/DVD and tries to copy the file from it" do
+            expect(Yast::SCR).to receive(:Execute)
+              .with(path(".target.bash_output"), "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
+              .and_return("exit" => 0, "stdout" => "ok")
+            expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
+
+            expect(subject.Get(scheme, "", source, destination)).to eq(true)
+            expect(File.read(destination)).to eq("testing")
+          end
         end
       end
     end
+
     context "when scheme is 'nfs'" do
     end
     context "when scheme is 'cifs'" do
