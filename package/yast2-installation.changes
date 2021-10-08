@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct  8 10:04:16 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Fix file copying when using relurl:// and file:// naming schemes
+  (bsc#1191160).
+- 4.3.43
+
+-------------------------------------------------------------------
 Wed Sep  8 15:20:21 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
 
 - Display release notes during upgrade (bsc#1186044)
