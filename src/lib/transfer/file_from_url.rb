@@ -531,8 +531,8 @@ module Yast::Transfer
     def copy_local_file(source, destination)
       log.info "Copying #{source} to #{destination}"
       ::FileUtils.cp(source, destination)
-    rescue Errno::ENOENT
-      log.warn "Could not copy #{source} to #{destination}"
+    rescue SystemCallError => e
+      log.warn "Could not copy #{source} to #{destination}: #{e.inspect}"
     end
   end
 end
