@@ -181,7 +181,6 @@ describe Yast::Transfer::FileFromUrl do
     end
     context "when scheme is 'file'" do
       let(:scheme) { "file" }
-      let(:destination) { "/tmp/auto.xml" }
       let(:cd_device) { "/dev/sr0" }
       let(:tmp_mount) { File.join(tmpdir, "tmp_mount") }
       let(:destination) { File.join(dir, "dest") }
