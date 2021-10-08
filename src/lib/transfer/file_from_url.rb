@@ -182,9 +182,7 @@ module Yast::Transfer
       elsif _Scheme == "file"
         file = Builtins.sformat("%1/%2", Installation.sourcedir, _Path) # FIXME: I have doubts this will ever work. Too early.
         if Ops.greater_than(SCR.Read(path(".target.size"), file), 0)
-          cpcmd = Builtins.sformat("/bin/cp %1 %2", file, _Localfile)
-          Builtins.y2milestone("Copy profile: %1", cpcmd)
-          SCR.Execute(path(".target.bash"), cpcmd)
+          copy_local_file(file, _Localfile)
         else
           @GET_error = Ops.add(
             @GET_error,
@@ -194,12 +192,10 @@ module Yast::Transfer
               _Path
             )
           )
-          cpcmd = Builtins.sformat("/bin/cp %1 %2", _Path, _Localfile)
-          Builtins.y2milestone("Copy profile: %1", cpcmd)
-          SCR.Execute(path(".target.bash"), cpcmd)
+          copy_local_file(_Path, _Localfile)
         end
 
-        if Ops.greater_than(SCR.Read(path(".target.size"), _Localfile), 0)
+        if File.exist?(_Localfile)
           @GET_error = ""
           ok = true
         else
@@ -263,15 +259,9 @@ module Yast::Transfer
               end
             end
             if ok
-              cpcmd = Builtins.sformat(
-                Ops.add(Ops.add("/bin/cp ", mount_point), "/%1 %2"),
-                _Path,
-                _Localfile
-              )
-              Builtins.y2milestone("Copy profile: %1", cpcmd)
-              SCR.Execute(path(".target.bash"), cpcmd)
+              copy_local_file(File.join(mount_point, _Path), _Localfile)
               WFM.Execute(path(".local.umount"), mount_point)
-              if Ops.greater_than(SCR.Read(path(".target.size"), _Localfile), 0)
+              if File.exist?(_Localfile)
                 @GET_error = ""
                 return true
               end
@@ -530,6 +520,19 @@ module Yast::Transfer
         Builtins.y2warning("GET_error:%1", @GET_error)
       end
       ok
+    end
+
+  private
+
+    # Copy a file
+    #
+    # @param source [String] Source file path
+    # @param destination [String] Destination file path
+    def copy_local_file(source, destination)
+      log.info "Copying #{source} to #{destination}"
+      ::FileUtils.cp(source, destination)
+    rescue Errno::ENOENT
+      log.warn "Could not copy #{source} to #{destination}"
     end
   end
 end
