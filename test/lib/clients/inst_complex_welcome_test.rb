@@ -8,18 +8,28 @@ describe Yast::InstComplexWelcomeClient do
 
   let(:product) do
     instance_double(
-      Y2Packager::Product,
+      Y2Packager::ProductSpec,
       name:                           "Product",
       license_confirmation_required?: license_needed?,
       license?:                       license?,
       license:                        "license content",
-      license_confirmed?:             license_confirmed?
+      license_confirmed?:             license_confirmed?,
+      display_name:                   "SUSE Linux Enteprise Server",
+      version:                        "15.3",
+      arch:                           "x86_64",
+      base:                           true,
+      order:                          1
     )
   end
   let(:other_product) do
     instance_double(
-      Y2Packager::Product,
-      name: "Other Product"
+      Y2Packager::ProductSpec,
+      name:         "Other Product",
+      display_name: "SUSE Linux Enterprise Desktop",
+      version:      "15.3",
+      arch:         "x86_64",
+      base:         true,
+      order:        2
     )
   end
 
@@ -66,8 +76,8 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::ProductLicense", double.as_null_object)
     stub_const("Yast::Mode", mode_mock)
 
-    allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
-    allow(Y2Packager::Product).to receive(:available_base_products).and_return(products)
+    allow(Y2Packager::ProductSpec).to receive(:selected_base).and_return(product)
+    allow(Y2Packager::ProductSpec).to receive(:base_products).and_return(products)
     allow(Y2Packager::Product).to receive(:forced_base_product).and_return(forced_base_product)
     allow(Y2Packager::MediumType).to receive(:type).and_return(:standard)
   end
