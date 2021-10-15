@@ -26,10 +26,7 @@ require "yast"
 
 require "installation/dialogs/complex_welcome"
 require "y2packager/medium_type"
-require "y2packager/product"
-require "y2packager/product_control_product"
-require "y2packager/product_location"
-require "y2packager/product_sorter"
+require "y2packager/product_spec"
 
 Yast.import "Console"
 Yast.import "FileUtils"
@@ -158,14 +155,12 @@ module Yast
     # list because the dialog will not show the license (we do not know which product we are
     # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductSpec>] List of available
-    #    base products; if any, a list containing only the forced base product; empty list in
-    #    update mode.
+    # @return [Array<Y2Packager::ProductSpec>] List of available base products; if any, a list
+    #    containing only the forced base product; empty list in update mode.
     def products
       return @products if @products
 
-      # FIXME: use the same class if possible
-      @products = Array(Y2Packager::Product.forced_base_product || available_base_products)
+      @products = Array(Y2Packager::ProductSpec.forced_base_product || available_base_products)
       @products = [] if Mode.update && @products.size > 1
       @products
     end
@@ -186,9 +181,11 @@ module Yast
 
     # Convenience method to find out the selected base product
     #
-    # @return [Y2Packager::Product] Selected base product
+    # @return [Y2Packager::ProductSpec] Selected base product
     def selected_product
-      Y2Packager::ProductSpec.selected_base
+      return nil unless Y2Packager::ProductSpec.selected_base
+
+      Y2Packager::ProductSpec.selected_base.to_product
     end
 
     # Buttons to disable according to GetInstArgs

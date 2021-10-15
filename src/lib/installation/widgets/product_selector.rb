@@ -1,7 +1,7 @@
 require "yast"
 
 require "y2packager/medium_type"
-require "y2packager/product_control_product"
+require "y2packager/product_sorter"
 
 Yast.import "Pkg"
 Yast.import "Popup"
@@ -18,11 +18,11 @@ module Installation
       attr_reader :items, :products
       attr_reader :product
 
-      # @param products [Array<Installation::Product>] to display
+      # @param products [Array<Y2Packager::Product>] products to display
       # @param skip_validation [Boolean] Skip value validation
       def initialize(products, skip_validation: false)
         @products = products
-        @items = products.map { |p| [item_id(p), p.label] }
+        @items = products.sort(&Y2Packager::PRODUCT_SORTER).map { |p| [item_id(p), p.label] }
         @skip_validation = skip_validation
         textdomain "installation"
       end
@@ -86,7 +86,7 @@ module Installation
       # unique widget ID for the product
       # @return [String] widget ID
       def item_id(prod)
-        return prod.dir if prod.is_a?(Y2Packager::ProductLocation)
+        return prod.dir if prod.respond_to?(:dir)
         "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end

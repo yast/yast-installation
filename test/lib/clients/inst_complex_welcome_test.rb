@@ -6,7 +6,7 @@ require "installation/clients/inst_complex_welcome"
 describe Yast::InstComplexWelcomeClient do
   textdomain "installation"
 
-  let(:product) do
+  let(:product_spec) do
     instance_double(
       Y2Packager::ProductSpec,
       name:                           "Product",
@@ -18,10 +18,12 @@ describe Yast::InstComplexWelcomeClient do
       version:                        "15.3",
       arch:                           "x86_64",
       base:                           true,
-      order:                          1
+      order:                          1,
+      to_product:                     product
     )
   end
-  let(:other_product) do
+
+  let(:other_product_spec) do
     instance_double(
       Y2Packager::ProductSpec,
       name:         "Other Product",
@@ -33,10 +35,19 @@ describe Yast::InstComplexWelcomeClient do
     )
   end
 
+  let(:product) do
+    instance_double(
+      Y2Packager::Product,
+      name:                           "Product",
+      license_confirmation_required?: license_needed?,
+      license_confirmed?:             license_confirmed?
+    )
+  end
+
   let(:license_needed?) { true }
   let(:license_confirmed?) { false }
   let(:license?) { true }
-  let(:products) { [product, other_product] }
+  let(:product_specs) { [product_spec, other_product_spec] }
   let(:auto) { false }
   let(:config_mode) { false }
   let(:update_mode) { false }
@@ -76,9 +87,9 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::ProductLicense", double.as_null_object)
     stub_const("Yast::Mode", mode_mock)
 
-    allow(Y2Packager::ProductSpec).to receive(:selected_base).and_return(product)
-    allow(Y2Packager::ProductSpec).to receive(:base_products).and_return(products)
-    allow(Y2Packager::Product).to receive(:forced_base_product).and_return(forced_base_product)
+    allow(Y2Packager::ProductSpec).to receive(:selected_base).and_return(product_spec)
+    allow(Y2Packager::ProductSpec).to receive(:base_products).and_return(product_specs)
+    allow(Y2Packager::ProductSpec).to receive(:forced_base_product).and_return(forced_base_product)
     allow(Y2Packager::MediumType).to receive(:type).and_return(:standard)
   end
 
@@ -140,7 +151,7 @@ describe Yast::InstComplexWelcomeClient do
       end
 
       context "when there are no products available" do
-        let(:products) { [] }
+        let(:product_specs) { [] }
 
         it "sets up according to chosen values" do
           expect(subject).to receive(:setup_final_choice)
@@ -260,21 +271,21 @@ describe Yast::InstComplexWelcomeClient do
         let(:update_mode) { false }
 
         context "and more than 1 product is available" do
-          let(:products) { [product, other_product] }
+          let(:product_specs) { [product_spec, other_product_spec] }
 
           it "runs the complex welcome dialog with the list of available products" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
-              .with(products, anything)
+              .with(product_specs, anything)
             subject.main
           end
         end
 
         context "and only 1 product is available" do
-          let(:products) { [product] }
+          let(:product_specs) { [product_spec] }
 
           it "runs the complex welcome dialog with the list of available products" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
-              .with(products, anything)
+              .with(product_specs, anything)
             subject.main
           end
         end
@@ -283,12 +294,12 @@ describe Yast::InstComplexWelcomeClient do
         # issue with the wrong selected product during a network installation having multiples
         # products in a single repository, bsc#1124590
         context "and there is a forced base product" do
-          let(:products) { [product, other_product] }
-          let(:forced_base_product) { other_product }
+          let(:product_specs) { [product_spec, other_product_spec] }
+          let(:forced_base_product) { other_product_spec }
 
           it "runs the complex welcome dialog with the selected product" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
-              .with([other_product], anything)
+              .with([other_product_spec], anything)
             subject.main
           end
         end
@@ -298,7 +309,7 @@ describe Yast::InstComplexWelcomeClient do
         let(:update_mode) { true }
 
         context "and more than 1 product is availble" do
-          let(:products) { [product, other_product] }
+          let(:product_specs) { [product_spec, other_product_spec] }
 
           it "runs the complex welcome dialog with no products (no license or product selector)" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
@@ -308,11 +319,11 @@ describe Yast::InstComplexWelcomeClient do
         end
 
         context "and only 1 product is available" do
-          let(:products) { [product] }
+          let(:product_specs) { [product_spec] }
 
           it "runs the complex welcome dialog with the list of available products" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
-              .with(products, anything)
+              .with(product_specs, anything)
             subject.main
           end
         end
@@ -338,7 +349,7 @@ describe Yast::InstComplexWelcomeClient do
     end
 
     context "when license was not confirmed" do
-      let(:products) { [product] }
+      let(:product_specs) { [product_spec] }
       let(:license_confirmed?) { false }
 
       context "and confirmation is needed" do
@@ -363,7 +374,7 @@ describe Yast::InstComplexWelcomeClient do
       context "when more than 1 product exists (it should be accepted later)" do
         let(:dialog_results) { [:next, :back] }
         let(:license_needed?) { true }
-        let(:products) { [product, other_product] }
+        let(:product_specs) { [product_spec, other_product_spec] }
 
         it "does not report an error" do
           expect(Yast::Popup).to_not receive(:Error)

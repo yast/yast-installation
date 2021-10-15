@@ -48,7 +48,6 @@ describe Installation::Dialogs::ComplexWelcome do
 
   describe "#content" do
     let(:license) { instance_double("Y2Packager::ProductLicense") }
-    # there are 3 different 'product' classes: Y2Packager::Product, Y2Packager::ProductControlProduct, Y2Packager::ProductLocation
     let(:sles_product) { instance_double("Y2Packager::ProductSpec", label: "SLES", license: license) }
     let(:sles_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLES", license: license) }
     let(:sles_offline_product) { instance_double("Y2Packager::RepoProductSpec", label: "SLES") }
