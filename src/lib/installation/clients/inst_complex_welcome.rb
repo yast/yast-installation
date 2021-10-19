@@ -181,7 +181,8 @@ module Yast
 
     # Convenience method to find out the selected base product
     #
-    # @return [Y2Packager::ProductSpec] Selected base product
+    # @return [Y2Packager::Product,nil] Selected base product. When no product is selected,
+    #   it returns nil.
     def selected_product
       return nil unless Y2Packager::ProductSpec.selected_base
 
