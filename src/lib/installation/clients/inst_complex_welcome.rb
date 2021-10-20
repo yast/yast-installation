@@ -43,7 +43,6 @@ Yast.import "ProductFeatures"
 Yast.import "Stage"
 Yast.import "Timezone"
 Yast.import "Wizard"
-Yast.import "WorkflowManager"
 
 module Yast
   # This client shows main dialog for choosing the language, keyboard,
@@ -74,12 +73,7 @@ module Yast
           products, disable_buttons: disable_buttons
         )
         result = handle_dialog_result(dialog_result)
-        next unless result
-
-        return result if !available_products? || result != :next
-        # in the online installation the workflow is merged after registering the system
-        return result if Y2Packager::MediumType.online?
-        return merge_and_run_workflow
+        return result if result
       end
     end
 
@@ -108,14 +102,6 @@ module Yast
       else
         value
       end
-    end
-
-    # Merge selected product's workflow and go to next step
-    #
-    # @see Yast::WorkflowManager.merge_product_workflow
-    def merge_and_run_workflow
-      Yast::WorkflowManager.merge_product_workflow(selected_product)
-      Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
     # Set up system according to user choices
