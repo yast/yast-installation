@@ -1,7 +1,7 @@
 require "yast"
 
 require "y2packager/medium_type"
-require "y2packager/product_control_product"
+require "y2packager/product_sorter"
 
 Yast.import "Pkg"
 Yast.import "Popup"
@@ -18,11 +18,11 @@ module Installation
       attr_reader :items, :products
       attr_reader :product
 
-      # @param products [Array<Installation::Product>] to display
+      # @param products [Array<Y2Packager::Product>] products to display
       # @param skip_validation [Boolean] Skip value validation
       def initialize(products, skip_validation: false)
         @products = products
-        @items = products.map { |p| [item_id(p), p.label] }
+        @items = products.sort(&Y2Packager::PRODUCT_SORTER).map { |p| [item_id(p), p.label] }
         @skip_validation = skip_validation
         textdomain "installation"
       end
@@ -52,34 +52,7 @@ module Installation
 
         return unless @product
 
-        # online product from control.xml
-        if @product.is_a?(Y2Packager::ProductControlProduct)
-          Y2Packager::ProductControlProduct.selected = @product
-        # offline product from the medium repository
-        elsif @product.is_a?(Y2Packager::ProductLocation)
-          # in offline installation add the repository with the selected base product
-          show_popup = true
-          base_url = Yast::InstURL.installInf2Url("")
-          log_url = Yast::URL.HidePassword(base_url)
-          Yast::Packages.Initialize_StageInitial(show_popup, base_url, log_url, @product.dir)
-          # select the product to install
-          Yast::Pkg.ResolvableInstall(@product.details && @product.details.product, :product, "")
-          # initialize addons and the workflow manager
-          Yast::AddOnProduct.SetBaseProductURL(base_url)
-          Yast::WorkflowManager.SetBaseWorkflow(false)
-        else
-          # reset both YaST and user selection (when going back or any products
-          # selected by YaST in the previous steps)
-          Yast::Pkg.PkgApplReset
-          Yast::Pkg.PkgReset
-          @product.select
-
-          # Reselecting existing add-on-products for installation again
-          Yast::AddOnProduct.selected_installation_products.each do |product|
-            log.info "Reselecting add-on product #{product} for installation"
-            Yast::Pkg.ResolvableInstall(product, :product, "")
-          end
-        end
+        @product.select
       end
 
       def validate
@@ -113,7 +86,7 @@ module Installation
       # unique widget ID for the product
       # @return [String] widget ID
       def item_id(prod)
-        return prod.dir if prod.is_a?(Y2Packager::ProductLocation)
+        return prod.dir if prod.respond_to?(:dir)
         "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end

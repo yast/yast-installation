@@ -72,6 +72,8 @@ module Installation
 
       # BNC #463567
       @submods_already_called = []
+      # NOTE: it would be better to receive the object already initialized. Why? Because if it
+      # needs some argument, we do not know how to handle it.
       @store_class = store
       @errors = ProposalErrors.new
     end
