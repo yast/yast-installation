@@ -178,14 +178,8 @@ describe Yast::InstComplexWelcomeClient do
           subject.main
         end
 
-        it "executes from next step" do
-          expect(Yast::ProductControl).to receive(:RunFrom)
-            .with(Yast::ProductControl.CurrentStep + 1, true)
-          subject.main
-        end
-
-        it "returns nil" do
-          expect(subject.main).to be_nil
+        it "returns :next" do
+          expect(subject.main).to eq(:next)
         end
       end
 
@@ -202,14 +196,8 @@ describe Yast::InstComplexWelcomeClient do
             allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
           end
 
-          it "returns nil" do
-            expect(subject.main).to be_nil
-          end
-
-          it "executes from next step" do
-            expect(Yast::ProductControl).to receive(:RunFrom)
-              .with(Yast::ProductControl.CurrentStep + 1, true)
-            subject.main
+          it "returns :next" do
+            expect(subject.main).to eq(:next)
           end
         end
 
