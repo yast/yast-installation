@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 28 08:33:55 UTC 2021 - José Iván López González <jlopez@suse.com>
+
+- Remove obsolete prep_shrink client (with yast2-storage-ng such a
+  client is not needed anymore).
+
+-------------------------------------------------------------------
 Fri Oct  8 10:04:16 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Fix file copying when using relurl:// and file:// naming schemes
