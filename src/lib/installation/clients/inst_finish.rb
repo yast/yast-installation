@@ -399,18 +399,11 @@ module Yast
       end
     end
 
-    INSTALL_BOOTLOADER_STEPS_MINIMAL =
-      [
-        "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-        "bootloader"
-      ].freeze
-
     def install_bootloader_steps
       if ::Installation::MinimalInstallation.instance.enabled?
-        INSTALL_BOOTLOADER_STEPS_MINIMAL
+        ["bootloader"]
       else
         [
-          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
           "cio_ignore", # needs to be run before initrd is created (bsc#933177)
           ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
           "bootloader"
