@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Sun Sep 26 22:01:53 UTC 2021 - Martin Vidner <mvidner@suse.com>
+
+- Filter the installation proposals (in the Installation Settings
+  screen) according to the AutoYaST profile even before
+  tab switching (related to bsc#1190294)
+- 4.1.55
+
+-------------------------------------------------------------------
 Thu Apr 29 13:14:40 CEST 2021 - Jozef Pupava <jpupava@suse.com>
 
 - Use linuxrc option "reboot_timeout" to configure the timeout
