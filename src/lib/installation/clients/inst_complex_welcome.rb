@@ -26,10 +26,7 @@ require "yast"
 
 require "installation/dialogs/complex_welcome"
 require "y2packager/medium_type"
-require "y2packager/product"
-require "y2packager/product_control_product"
-require "y2packager/product_location"
-require "y2packager/product_sorter"
+require "y2packager/product_spec"
 
 Yast.import "Console"
 Yast.import "FileUtils"
@@ -46,7 +43,6 @@ Yast.import "ProductFeatures"
 Yast.import "Stage"
 Yast.import "Timezone"
 Yast.import "Wizard"
-Yast.import "WorkflowManager"
 
 module Yast
   # This client shows main dialog for choosing the language, keyboard,
@@ -77,12 +73,7 @@ module Yast
           products, disable_buttons: disable_buttons
         )
         result = handle_dialog_result(dialog_result)
-        next unless result
-
-        return result if !available_products? || result != :next
-        # in the online installation the workflow is merged after registering the system
-        return result if Y2Packager::MediumType.online?
-        return merge_and_run_workflow
+        return result if result
       end
     end
 
@@ -111,14 +102,6 @@ module Yast
       else
         value
       end
-    end
-
-    # Merge selected product's workflow and go to next step
-    #
-    # @see Yast::WorkflowManager.merge_product_workflow
-    def merge_and_run_workflow
-      Yast::WorkflowManager.merge_product_workflow(selected_product)
-      Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
     # Set up system according to user choices
@@ -158,44 +141,21 @@ module Yast
     # list because the dialog will not show the license (we do not know which product we are
     # upgrading yet) nor the product selector (as you cannot change the product during upgrade).
     #
-    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct, Array<Y2Packager::ProductLocation>] List of
-    #    available base products; if any, a list containing only the forced base product;
-    #    empty list in update mode.
+    # @return [Array<Y2Packager::ProductSpec>] List of available base products; if any, a list
+    #    containing only the forced base product; empty list in update mode.
     def products
       return @products if @products
 
-      @products = Array(Y2Packager::Product.forced_base_product || available_base_products)
+      @products = Array(Y2Packager::ProductSpec.forced_base_product || available_base_products)
       @products = [] if Mode.update && @products.size > 1
       @products
     end
 
     # Returns all available base products
     #
-    # @return [Array<Y2Packager::Product>, Array<Y2Packager::ProductControlProduct>, Array<Y2Packager::ProductLocation>] List of
-    #   available base products
+    # @return [Array<Y2Packager::ProductSpec>] List of available base products
     def available_base_products
-      return @available_base_products if @available_base_products
-
-      case Y2Packager::MediumType.type
-      when :online
-        # read the products from the control.xml
-        @available_base_products = Y2Packager::ProductControlProduct.products
-        log.info "Found base products in the control.xml: #{@available_base_products.pretty_inspect}"
-
-        # we cannot continue, the control.xml in the installer is invalid
-        raise "control.xml does not define any base products!" if @available_base_products.empty?
-      when :offline
-        url = InstURL.installInf2Url("")
-        @available_base_products = Y2Packager::ProductLocation
-                                   .scan(url)
-                                   .select { |p| p.details && p.details.base }
-                                   .sort(&::Y2Packager::PRODUCT_SORTER)
-        log.info "Found base products on the offline medium: #{@available_base_products.pretty_inspect}"
-      else
-        @available_base_products = Y2Packager::Product.available_base_products
-      end
-
-      @available_base_products
+      @available_base_products ||= Y2Packager::ProductSpec.base_products
     end
 
     # Determine whether some product is available or not
@@ -207,13 +167,10 @@ module Yast
 
     # Convenience method to find out the selected base product
     #
-    # @return [Y2Packager::Product] Selected base product
+    # @return [Y2Packager::ProductSpec,nil] Selected base product. When no product is selected,
+    #   it returns nil.
     def selected_product
-      if Y2Packager::MediumType.online?
-        Y2Packager::ProductControlProduct.selected
-      else
-        Y2Packager::Product.selected_base
-      end
+      Y2Packager::ProductSpec.selected_base
     end
 
     # Buttons to disable according to GetInstArgs

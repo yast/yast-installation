@@ -48,13 +48,12 @@ describe Installation::Dialogs::ComplexWelcome do
 
   describe "#content" do
     let(:license) { instance_double("Y2Packager::ProductLicense") }
-    # there are 3 different 'product' classes: Y2Packager::Product, Y2Packager::ProductControlProduct, Y2Packager::ProductLocation
-    let(:sles_product) { instance_double("Y2Packager::Product", label: "SLES", license: license) }
-    let(:sles_online_product) { instance_double("Y2Packager::ProductControlProduct", label: "SLES", license: license) }
-    let(:sles_offline_product) { instance_double("Y2Packager::ProductLocation", label: "SLES") }
+    let(:sles_product) { instance_double("Y2Packager::ProductSpec", label: "SLES", license: license) }
+    let(:sles_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLES", license: license) }
+    let(:sles_offline_product) { instance_double("Y2Packager::RepoProductSpec", label: "SLES") }
     let(:sled_product) { instance_double("Y2Packager::Product", label: "SLED", license: license) }
-    let(:sled_online_product) { instance_double("Y2Packager::ProductControlProduct", label: "SLED", license: license) }
-    let(:sled_offline_product) { instance_double("Y2Packager::ProductLocation", label: "SLED") }
+    let(:sled_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLED", license: license) }
+    let(:sled_offline_product) { instance_double("Y2Packager::RepoProductSpec", label: "SLED") }
     let(:language_widget) { Yast::Term.new(:language_widget) }
     let(:keyboard_widget) { Yast::Term.new(:keyboard_widget) }
     let(:license_widget) { Yast::Term.new(:license_widget) }
