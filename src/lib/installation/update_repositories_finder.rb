@@ -15,6 +15,7 @@
 
 require "yast"
 require "installation/update_repository"
+require "y2packager/product_location"
 require "uri"
 
 Yast.import "Pkg"
@@ -169,7 +170,8 @@ module Installation
     # Loads the base product from the installation medium
     def add_installation_repo
       base_url = Yast::InstURL.installInf2Url("")
-      initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
+      # pass the repository to libzypp to use all GPG/checksum checks
+      initial_repository = Yast::Pkg.SourceCreateBase(base_url, update_product_dir(base_url))
 
       until initial_repository
         log.error "Adding the installation repository failed"
@@ -183,6 +185,24 @@ module Installation
       end
     end
 
+    def update_product_dir(url)
+      # this scan is faster, but skips all GPG/checksum checks!
+      products = Y2Packager::ProductLocation.scan(url)
+
+      # none or only one repository at the URL, use full scan
+      return "" if products.empty?
+
+      requested_product = Yast::ProductFeatures.GetStringFeature("globals", "self_update_id")
+      update_product = products.find { |p| p.details && p.details.product == requested_product }
+
+      if update_product
+        log.info "Self-update product #{requested_product.inspect} found in #{update_product.dir}"
+        return update_product.dir
+      end
+
+      ""
+    end
+
     # Return the URL of the preferred registration server
     #
     # Determined in the following order:
@@ -194,9 +214,9 @@ module Installation
     #     if the scan finds *exactly* one SLP service then it is used. If more
     #     than one service is found then an interactive popup is displayed.
     #     (This breaks the AY unattended concept but basically more services
-    #     is treated as an error, AytoYaST cannot know which one to use.)
+    #     is treated as an error, AutoYaST cannot know which one to use.)
     #   * In non-AutoYaST mode it will ask the user to choose the found SLP
-    #     servise or the SCC default.
+    #     service or the SCC default.
     #  * Fallbacks to SCC if no SLP service is found.
     #
     # @return [URI,:scc,:cancel] Registration URL; :scc if SCC server was selected;
