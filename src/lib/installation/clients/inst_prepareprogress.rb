@@ -31,109 +31,45 @@ module Yast
   class InstPrepareprogressClient < Client
     def main
       textdomain "installation"
-      Yast.import "Installation"
       Yast.import "Mode"
       Yast.import "Packages"
       Yast.import "Language"
       Yast.import "SlideShow"
-      Yast.import "ImageInstallation"
       Yast.import "PackageSlideShow"
-      Yast.import "Wizard"
       Yast.import "InstData"
-      Yast.import "Product"
-      Yast.import "Report"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
-
-      # hide the RN button and set the release notes for SlideShow (bnc#871158)
-      Wizard.HideReleaseNotesButton
-      base_products = Product.FindBaseProducts
-      base_product_name = base_products && !base_products.empty? &&
-        base_products.first["name"]
-      if !base_product_name || base_product_name.empty?
-        Builtins.y2error "base product not found. Products: #{base_products.inspect}."
-        Report.Error _("Cannot find base product. Release notes will not be shown.")
-        SlideShow.SetReleaseNotes(InstData.release_notes, "")
-      else
-        SlideShow.SetReleaseNotes(InstData.release_notes, base_product_name)
-      end
 
       Packages.SlideShowSetUp(Language.language)
 
       SlideShow.OpenDialog
       PackageSlideShow.InitPkgData(true) # FIXME: this is odd!
 
-      # Details (such as images sizes) have to known before initializing the SlideShow
-      # but only if Installation from Images is in use
-      ImageInstallation.FillUpImagesDetails if Installation.image_installation
-
-      @live_size = 0
-      if Mode.live_installation
-        @cmd = "/usr/bin/df -P -k /"
-        Builtins.y2milestone("Executing %1", @cmd)
-        @out = Convert.to_map(SCR.Execute(path(".target.bash_output"), @cmd))
-        Builtins.y2milestone("Output: %1", @out)
-        @total_str = Ops.get_string(@out, "stdout", "")
-        @total_str = Ops.get(Builtins.splitstring(@total_str, "\n"), 1, "")
-        @live_size = Builtins.tointeger(
-          Ops.get(
-            Builtins.filter(Builtins.splitstring(@total_str, " ")) do |s|
-              s != ""
-            end,
-            2,
-            "0"
-          )
-        )
-        @live_size = 1024 * 1024 if @live_size == 0 # 1 GB is a good approximation
-      end
-
-      @stages = [
+      stages = [
         {
           "name"        => "disk",
           "description" => _("Preparing disks..."),
-          "value"       => Mode.update ? 0 : 120, # FIXME: 2 minutes
+          "value"       => Mode.update ? 0 : 120, # two minutes only when doing partitioning
           "units"       => :sec
-        },
-        {
-          "name"        => "images",
-          "description" => _("Deploying Images..."),
-          # Use 'zero' if image installation is not used
-          # BNC #439104
-          "value"       => if @live_size > 0
-                             @live_size
-                           elsif Installation.image_installation
-                             ImageInstallation.TotalSize / 1024
-                           else
-                             0
-                           end,
-          "units"       => :kb
         },
         {
           "name"        => "packages",
           "description" => _("Installing Packages..."),
-          # here, we do a hack, because until images are deployed, we cannot determine how many
-          # packages will be really installed additionally
-          "value"       => Ops.divide(
-            Ops.subtract(
-              PackageSlideShow.total_size_to_install,
-              ImageInstallation.TotalSize
-            ),
-            1024
-          ), # kilobytes
-          "units"       => :kb
+          "value"       => 5*60, # just random number like others, but expect that package installation takes most
+          "units"       => :sec
         },
         {
           "name"        => "finish",
           "description" => _("Finishing Basic Installation"),
           # fixed value
-          "value"       => 100,
+          "value"       => 120,
           "units"       => :sec
         }
       ]
 
       # own workflow for OEM image deployment
       if InstData.image_target_disk
-        @stages = [
+        stages = [
           {
             "name"        => "images",
             "description" => _("Deploying Images..."),
@@ -151,9 +87,7 @@ module Yast
 
       end
 
-      SlideShow.Setup(@stages)
-
-      @ret_val = :auto
+      SlideShow.Setup(stages)
 
       Builtins.y2milestone("END of inst_prepareprogress.ycp")
 
@@ -164,7 +98,7 @@ module Yast
       GC.start
       Builtins.y2milestone("Memory after:\n#{File.read("/proc/#{Process.pid}/status")}")
 
-      @ret_val
+      :auto
     end
   end
 end
