@@ -52,11 +52,6 @@ module Yast
       Yast.import "Linuxrc"
       Yast.import "InstData"
       Yast.import "HTML"
-# storage-ng
-# rubocop:disable Style/BlockComments
-=begin
-      Yast.import "Storage"
-=end
 
       @modules_to_enable_with_AC_on = nil
     end
@@ -104,36 +99,15 @@ module Yast
           "<p>Information required for the base installation is now complete.</p>"
         )
 
-        # storage-ng
-        some_destructive = false
-=begin
-        some_destructive = Storage.GetCommitInfos.any? do |info|
-          Ops.get_boolean(info, :destructive, false)
-        end
-=end
-
-        if some_destructive
-          # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
-            body,
-            _(
-              "<p>If you continue now, <b>existing\n" \
-                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
-                "(<b>erasing any existing data</b> in those partitions) according to the\n" \
-                "installation settings in the previous dialogs.</p>"
-            )
+        # Text for confirmation popup before the installation really starts 2/3
+        body = Ops.add(
+          body,
+          _(
+            "<p>If you continue now, partitions on your\n" \
+              "hard disk will be modified according to the installation settings in the\n" \
+              "previous dialogs.</p>"
           )
-        else
-          # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
-            body,
-            _(
-              "<p>If you continue now, partitions on your\n" \
-                "hard disk will be modified according to the installation settings in the\n" \
-                "previous dialogs.</p>"
-            )
-          )
-        end
+        )
 
         # Text for confirmation popup before the installation really starts 3/3
         body = Ops.add(
