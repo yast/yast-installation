@@ -100,19 +100,15 @@ module Yast
         )
 
         # Text for confirmation popup before the installation really starts 2/3
-        body = Ops.add(
-          body,
-          _(
-            "<p>If you continue now, partitions on your\n" \
-              "hard disk will be modified according to the installation settings in the\n" \
-              "previous dialogs.</p>"
-          )
+        body << _(
+          "<p>If you continue now, partitions on your\n" \
+            "hard disk will be modified according to the installation settings in the\n" \
+            "previous dialogs.</p>"
         )
 
         # Text for confirmation popup before the installation really starts 3/3
-        body = Ops.add(
-          body,
-          _("<p>Go back and check the settings if you are unsure.</p>")
+        body << _(
+          "<p>Go back and check the settings if you are unsure.</p>"
         )
 
         confirm_button_label = Label.InstallButton
