@@ -111,7 +111,7 @@ module Yast
 
     # Text for confirmation popup before the installation really starts
     #
-    # @return String
+    # @return [String]
     def confirm_installation_text
       result = []
 
