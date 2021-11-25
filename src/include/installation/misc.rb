@@ -113,7 +113,7 @@ module Yast
     #
     # @return [String]
     def confirm_installation_text
-      result = []
+      result = ""
 
       result << HTML.Heading(_("Confirm Installation"))
       result << _("<p>Information required for the base installation is now complete.</p>")
@@ -125,15 +125,13 @@ module Yast
       result << _(
         "<p>Go back and check the settings if you are unsure.</p>"
       )
-
-      result.join
     end
 
     # Text for confirmation popup before the update really starts
     #
     # @return [String]
     def confirm_update_text
-      result = []
+      result = ""
 
       result << HTML.Heading(_("Confirm Update"))
       result << _("<p>Information required to perform an update is now complete.</p>")
@@ -143,8 +141,6 @@ module Yast
           "according to the settings in the previous dialogs.</p>"
       )
       result << _("<p>Go back and check the settings if you are unsure.</p>")
-
-      result.join
     end
 
     # Label for the confirmation button before starting the installation or update process
