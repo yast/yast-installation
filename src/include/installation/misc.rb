@@ -79,59 +79,12 @@ module Yast
       nil
     end
 
-    # moved from clients/inst_doit.ycp
-    # to fix bug #219097
-
-    # Confirm installation or update.
-    # Returns 'true' if the user confirms, 'false' otherwise.
+    # Confirm installation or update
     #
+    # @note moved from clients/inst_doit.ycp to fix bug #219097
+    #
+    # @return [Booelan] true if the user confirms; false otherwise
     def confirmInstallation
-      heading = ""
-      body = ""
-      confirm_button_label = ""
-
-      if !Mode.update
-        # Heading for confirmation popup before the installation really starts
-        heading = HTML.Heading(_("Confirm Installation"))
-
-        # Text for confirmation popup before the installation really starts 1/3
-        body = _(
-          "<p>Information required for the base installation is now complete.</p>"
-        )
-
-        # Text for confirmation popup before the installation really starts 2/3
-        body << _(
-          "<p>If you continue now, partitions on your\n" \
-            "hard disk will be modified according to the installation settings in the\n" \
-            "previous dialogs.</p>"
-        )
-
-        # Text for confirmation popup before the installation really starts 3/3
-        body << _(
-          "<p>Go back and check the settings if you are unsure.</p>"
-        )
-
-        confirm_button_label = Label.InstallButton
-      else
-        # Heading for confirmation popup before the update really starts
-        heading = HTML.Heading(_("Confirm Update"))
-
-        body =
-          # Text for confirmation popup before the update really starts 1/3
-          _("<p>Information required to perform an update is now complete.</p>") +
-          # Text for confirmation popup before the update really starts 2/3
-          _(
-            "\n" \
-              "<p>If you continue now, data on your hard disk will be overwritten\n" \
-              "according to the settings in the previous dialogs.</p>"
-          ) +
-          # Text for confirmation popup before the update really starts 3/3
-          _("<p>Go back and check the settings if you are unsure.</p>")
-
-        # Label for the button that confirms startint the installation
-        confirm_button_label = _("Start &Update")
-      end
-
       display_info = UI.GetDisplayInfo
       size_x = Builtins.tointeger(Ops.get_integer(display_info, "Width", 800))
       size_y = Builtins.tointeger(Ops.get_integer(display_info, "Height", 600))
@@ -153,7 +106,7 @@ module Yast
           HBox(
             HSpacing(0.7),
             VSpacing(size_y), # force height
-            RichText(heading + body),
+            RichText(Mode.update ? confirm_update_text : confirm_installation_text),
             HSpacing(0.7)
           ),
           ButtonBox(
@@ -171,6 +124,51 @@ module Yast
       UI.CloseDialog
 
       button == :ok
+    end
+
+    # Text for confirmation popup before the installation really starts
+    #
+    # @return String
+    def confirm_installation_text
+      result = []
+
+      result << HTML.Heading(_("Confirm Installation"))
+      result << _("<p>Information required for the base installation is now complete.</p>")
+      result << _(
+        "<p>If you continue now, partitions on your\n" \
+          "hard disk will be modified according to the installation settings in the\n" \
+          "previous dialogs.</p>"
+      )
+      result << _(
+        "<p>Go back and check the settings if you are unsure.</p>"
+      )
+
+      result.join
+    end
+
+    # Text for confirmation popup before the update really starts
+    #
+    # @return [String]
+    def confirm_update_text
+      result = []
+
+      result << HTML.Heading(_("Confirm Update"))
+      result << _("<p>Information required to perform an update is now complete.</p>")
+      result << _(
+        "\n" \
+          "<p>If you continue now, data on your hard disk will be overwritten\n" \
+          "according to the settings in the previous dialogs.</p>"
+      )
+      result << _("<p>Go back and check the settings if you are unsure.</p>")
+
+      result.join
+    end
+
+    # Label for the confirmation button before starting the installation or update process
+    #
+    # @return [String]
+    def confirm_button_label
+      Mode.update ? _("Start &Update") : Label.InstallButton
     end
 
     # Some client calls have to be called even if using AC
