@@ -46,7 +46,7 @@ describe Installation::Dialogs::ComplexWelcome do
     end
   end
 
-  describe "#content" do
+  describe "#contents" do
     let(:license) { instance_double("Y2Packager::ProductLicense") }
     let(:sles_product) { instance_double("Y2Packager::ProductSpec", label: "SLES", license: license) }
     let(:sles_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLES", license: license) }
@@ -86,7 +86,13 @@ describe Installation::Dialogs::ComplexWelcome do
       end
       context "when it is the offline medium" do
         let(:products) { [sles_offline_product] }
-        include_examples "show_selector"
+
+        it "does not show the license or the product selection" do
+          expect(Y2Packager::Widgets::ProductLicense).to_not receive(:new)
+          expect(Installation::Widgets::ProductSelector).to_not receive(:new)
+
+          widget.contents
+        end
       end
     end
 

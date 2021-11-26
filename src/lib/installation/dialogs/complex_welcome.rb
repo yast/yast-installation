@@ -171,8 +171,9 @@ module Installation
       # @return [Yast::Term] Product selection content; Empty() if no products
       def license_or_product_content
         return Empty() unless available_products?
+        return product_selector if products.size > 1
 
-        show_license? ? product_license : product_selector
+        show_license? ? product_license : Empty()
       end
 
       # UI to fill space if needed
