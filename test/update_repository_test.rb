@@ -6,6 +6,7 @@ require "installation/update_repository"
 require "uri"
 require "pathname"
 require "stringio"
+require "y2packager/exceptions"
 
 describe Installation::UpdateRepository do
   TEMP_DIR = Pathname.new(__FILE__).dirname.join("tmp")
@@ -180,7 +181,7 @@ describe Installation::UpdateRepository do
     context "when a package can't be retrieved" do
       before do
         allow(downloader).to receive(:download)
-          .and_raise(Packages::PackageDownloader::FetchError)
+          .and_raise(Y2Packager::PackageFetchError)
       end
 
       it "raises a CouldNotFetchUpdate error" do
@@ -192,7 +193,7 @@ describe Installation::UpdateRepository do
     context "when a package can't be extracted" do
       it "raises a CouldNotFetchUpdate error" do
         expect(extractor).to receive(:extract)
-          .and_raise(Packages::PackageExtractor::ExtractionFailed)
+          .and_raise(Y2Packager::PackageExtractionError)
 
         expect { repo.fetch(download_path) }
           .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
