@@ -28,6 +28,7 @@
 
 require "y2packager/product"
 require "y2packager/product_reader"
+require "y2packager/exceptions"
 
 Yast.import "InstData"
 Yast.import "Pkg"
@@ -38,6 +39,8 @@ Yast.import "GetInstArgs"
 Yast.import "Wizard"
 Yast.import "Mode"
 Yast.import "Language"
+Yast.import "Report"
+Yast.import "HTML"
 
 module Yast
   # Client to download and manage release notes button
@@ -53,15 +56,21 @@ module Yast
     def download_release_notes
       format = UI.TextMode ? :txt : :rtf
 
+      errors = []
       relnotes_map = products.each_with_object({}) do |product, all|
-        relnotes = product.release_notes(Yast::Language.language, format)
-        if relnotes.nil?
-          log.info "No release notes were found for product #{product.short_name}"
-          next
+        relnotes = fetch_release_notes(product, Yast::Language.language, format)
+
+        case relnotes
+        when :missing
+          log.info "No release notes were found for product #{product.short_name}" if relnotes.nil?
+        when :error
+          errors << product
+        else
+          all[product.short_name] = relnotes.content
         end
-        all[product.short_name] = relnotes.content
       end
 
+      display_warning(errors) unless errors.empty?
       refresh_ui(relnotes_map)
       InstData.release_notes = relnotes_map
       !relnotes_map.empty?
@@ -121,6 +130,29 @@ module Yast
       else
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
+    end
+
+    # Fetch the release notes for a given product
+    #
+    # @param product [Y2Packager::Product]
+    # @param user_lang [String] Preferred language (use current language as default)
+    # @param format    [Symbol] Release notes format (use :txt as default)
+    # @return [ReleaseNotes,Symbol] Release notes for product, language and format.
+    #   :missing if release notes are not present and :error if something went wrong
+    # @see Y2Packager::Product#release_notes
+    def fetch_release_notes(product, user_lang, format)
+      product.release_notes(user_lang, format) || :missing
+    rescue Y2Packager::PackageFetchError, Y2Packager::PackageExtractionError => e
+      log.warn "Could not download and extract the release notes package for '#{product.name}': #{e.inspect}"
+      :error
+    end
+
+    # Displays
+    def display_warning(products)
+      # TRANSLATORS: 'product' stands for the product's name
+      msg = HTML.Para(_("An error occurred when retrieving the release notes for the following products:")) +
+        HTML.List(products.map(&:name))
+      Yast::Report.Warning(msg)
     end
   end
 end
