@@ -87,7 +87,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
 
       it "warns the user" do
-        expect(Yast::Report).to receive(:Warning).with(/An error occurred/)
+        expect(Yast::Report).to receive(:LongWarning).with(/An error occurred/)
         client.main
       end
     end
@@ -98,7 +98,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
 
       it "warns the user" do
-        expect(Yast::Report).to receive(:Warning).with(/An error occurred/)
+        expect(Yast::Report).to receive(:LongWarning).with(/An error occurred/)
         client.main
       end
     end

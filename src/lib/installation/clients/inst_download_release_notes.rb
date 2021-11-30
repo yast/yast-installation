@@ -152,7 +152,7 @@ module Yast
       # TRANSLATORS: 'product' stands for the product's name
       msg = HTML.Para(_("An error occurred when retrieving the release notes for the following products:")) +
         HTML.List(products.map(&:name))
-      Yast::Report.Warning(msg)
+      Yast::Report.LongWarning(msg)
     end
   end
 end
