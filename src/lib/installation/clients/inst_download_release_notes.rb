@@ -151,7 +151,7 @@ module Yast
     def display_warning(products)
       # TRANSLATORS: 'product' stands for the product's name
       msg = HTML.Para(_("An error occurred when retrieving the release notes for the following products:")) +
-        HTML.List(products.map(&:name))
+        HTML.List(products.map(&:display_name))
       Yast::Report.LongWarning(msg)
     end
   end
