@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Nov 30 14:45:45 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not crash when it is not possible to fetch the package
+  containing the release notes (bsc#1193148).
+- 4.4.24
+
+-------------------------------------------------------------------
 Wed Nov 24 15:13:23 UTC 2021 - David Diaz <dgonzalez@suse.com>
 
 - Remove no longer used extra warning about destructive actions

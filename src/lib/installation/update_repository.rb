@@ -20,6 +20,7 @@ require "packages/package_downloader"
 require "packages/package_extractor"
 require "y2packager/self_update_addon_filter"
 require "y2packager/resolvable"
+require "y2packager/exceptions"
 
 Yast.import "Pkg"
 Yast.import "Progress"
@@ -197,7 +198,7 @@ module Installation
         end
         @updates_file = build_squashfs(workdir, next_name(path, length: 3))
       end
-    rescue Packages::PackageDownloader::FetchError, Packages::PackageExtractor::ExtractionFailed,
+    rescue Y2Packager::PackageFetchError, Y2Packager::PackageExtractionError,
            CouldNotSquashPackage => e
       log.error("Could not fetch update: #{e.inspect}. Rolling back.")
       raise CouldNotFetchUpdate
