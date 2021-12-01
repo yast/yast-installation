@@ -14,13 +14,15 @@ describe Yast::InstDownloadReleaseNotesClient do
 
     let(:sles) do
       instance_double(
-        Y2Packager::Product, name: "SUSE Linux Enteprise Server", short_name: "SLES", release_notes: sles_relnotes
+        Y2Packager::Product, name: "SLES", display_name: "SUSE Linux Enteprise Server",
+        short_name: "SLES", release_notes: sles_relnotes
       )
     end
 
     let(:sdk) do
       instance_double(
-        Y2Packager::Product, name: "Development Kit", short_name: "SDK", release_notes: sdk_relnotes
+        Y2Packager::Product, name: "sle-development-tools", display_name: "Development Kit",
+        short_name: "SDK", release_notes: sdk_relnotes
       )
     end
 
@@ -87,7 +89,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
 
       it "warns the user" do
-        expect(Yast::Report).to receive(:LongWarning).with(/An error occurred/)
+        expect(Yast::Report).to receive(:LongWarning).with(/The release notes for/)
         client.main
       end
     end
@@ -98,7 +100,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
 
       it "warns the user" do
-        expect(Yast::Report).to receive(:LongWarning).with(/An error occurred/)
+        expect(Yast::Report).to receive(:LongWarning).with(/The release notes for/)
         client.main
       end
     end
