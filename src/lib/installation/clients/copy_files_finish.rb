@@ -33,7 +33,6 @@ Yast.import "Directory"
 Yast.import "Mode"
 Yast.import "Packages"
 Yast.import "ProductControl"
-Yast.import "ProductProfile"
 Yast.import "String"
 Yast.import "WorkflowManager"
 Yast.import "SystemFilesCopy"
@@ -87,7 +86,6 @@ module Yast
       # Copy /media.1/media to the installed system (fate#311377)
       # Formerly /media.1/build (bsc#1062297)
       copy_media_file
-      copy_product_profiles
 
       # List of files used as additional workflow definitions
       # TODO check if it is still needed
@@ -108,22 +106,6 @@ module Yast
     end
 
   private
-
-    def copy_product_profiles
-      all_profiles = ProductProfile.all_profiles
-      # copy all product profiles to the installed system (fate#310730)
-      return if all_profiles.empty?
-
-      target_dir = File.join(Installation.destdir, "/etc/productprofiles.d")
-      ::FileUtils.mkdir_p(target_dir)
-      all_profiles.each do |profile_path|
-        log.info "Copying '#{profile_path}' to #{target_dir}"
-        WFM.Execute(
-          path(".local.bash"),
-          "/usr/bin/cp -a #{profile_path.shellescape} #{target_dir.shellescape}/"
-        )
-      end
-    end
 
     def copy_hardware_status
       log.info "Copying hardware information"

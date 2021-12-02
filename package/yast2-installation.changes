@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec  2 16:56:16 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Drop support for subscription-tools, that package is not present
+  in SLE15 anymore (bsc#1193339)
+- 4.4.25
+
+-------------------------------------------------------------------
 Tue Nov 30 14:45:45 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Do not crash when it is not possible to fetch the package
