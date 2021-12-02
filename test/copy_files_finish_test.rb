@@ -217,17 +217,6 @@ describe Yast::CopyFilesFinishClient do
       subject.write
     end
 
-    it "copies all product profiles" do
-      allow(Yast::ProductProfile).to receive(:all_profiles).and_return(["/product1.xml", "/product2.xml"])
-      allow(::FileUtils).to receive(:mkdir_p)
-
-      expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/productprofiles.d")
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product1.xml/)
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product2.xml/)
-
-      subject.write
-    end
-
     it "copies all used control files" do
       allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles).and_return(["/control.xml", "/addon/addon.xml"])
 

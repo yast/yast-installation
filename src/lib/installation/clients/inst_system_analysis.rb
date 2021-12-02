@@ -51,7 +51,6 @@ module Yast
       Yast.import "Packages"
       Yast.import "Popup"
       Yast.import "Product"
-      Yast.import "ProductProfile"
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
@@ -155,9 +154,6 @@ module Yast
         return ret if ret == :restart_yast
       end
       Installation.probing_done = true
-
-      # the last step is hidden
-      return :abort if !skip_software && ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
 
