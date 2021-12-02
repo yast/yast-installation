@@ -68,6 +68,9 @@ module Yast
 
       Yast::Wizard.EnableAbortButton
 
+      # Preselect the product if there is only one so the license can be shown.
+      products.first.select if products.size == 1 && !products.first.selected?
+
       loop do
         dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
           products, disable_buttons: disable_buttons
