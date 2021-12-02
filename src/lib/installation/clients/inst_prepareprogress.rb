@@ -31,15 +31,21 @@ module Yast
   class InstPrepareprogressClient < Client
     def main
       textdomain "installation"
-      Yast.import "Mode"
-      Yast.import "Packages"
-      Yast.import "Language"
-      Yast.import "SlideShow"
-      Yast.import "PackageSlideShow"
       Yast.import "InstData"
+      Yast.import "Language"
+      Yast.import "Mode"
+      Yast.import "PackageSlideShow"
+      Yast.import "Packages"
+      Yast.import "SlideShow"
+      Yast.import "UI"
+      Yast.import "Wizard"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
+      # hide in ncurses release notes button as it block installation process if pressed
+      Wizard.HideReleaseNotesButton if UI.TextMode
+      Wizard.HideBackButton
+      Wizard.HideNextButton
       Packages.SlideShowSetUp(Language.language)
 
       SlideShow.OpenDialog
