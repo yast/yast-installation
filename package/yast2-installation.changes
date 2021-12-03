@@ -5,7 +5,7 @@ Fri Dec  3 06:53:52 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
   in the online medium (bsc#1193223).
 - Do not display the product's selector during upgrade
   (kanderssen@suse.com, bsc#1192230).
-- 4.2.26
+- 4.4.26
 
 -------------------------------------------------------------------
 Thu Dec  2 16:56:16 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
