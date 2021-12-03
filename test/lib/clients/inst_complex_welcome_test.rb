@@ -257,7 +257,7 @@ describe Yast::InstComplexWelcomeClient do
       end
     end
 
-    context "when only 1n product is available" do
+    context "when only 1 product is available" do
       let(:product_specs) { [product_spec] }
       let(:selected?) { false }
 
