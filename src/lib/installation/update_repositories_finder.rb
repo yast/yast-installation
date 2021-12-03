@@ -15,7 +15,7 @@
 
 require "yast"
 require "installation/update_repository"
-require "y2packager/product_location"
+require "y2packager/product_spec_readers/full"
 require "uri"
 
 Yast.import "Pkg"
@@ -186,8 +186,9 @@ module Installation
     end
 
     def update_product_dir(url)
+      reader = Y2Packager::ProductSpecReaders::Full.new
       # this scan is faster, but skips all GPG/checksum checks!
-      products = Y2Packager::ProductLocation.scan(url)
+      products = reader.products(url)
 
       # none or only one repository at the URL, use full scan
       return "" if products.empty?
