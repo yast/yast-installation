@@ -86,5 +86,16 @@ describe ::Installation::Widgets::ProductSelector do
       expect(product2).to_not receive(:select)
       subject.store
     end
+
+    context "when the product was already selected" do
+      before do
+        allow(product1).to receive(:selected?).and_return(true)
+      end
+
+      it "does not select the product again" do
+        expect(product1).to_not receive(:select)
+        subject.store
+      end
+    end
   end
 end

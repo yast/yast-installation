@@ -52,7 +52,7 @@ module Installation
 
         return unless @product
 
-        @product.select
+        @product.select unless @product.selected?
       end
 
       def validate

@@ -153,7 +153,7 @@ module Installation
       #
       # @return [Boolean] true if the license must be shown; false otherwise
       def show_license?
-        products.size == 1 && products.first.respond_to?(:license)
+        products.size == 1 && products.first.license?
       end
 
       # Determine whether some product is available or not
@@ -171,8 +171,9 @@ module Installation
       # @return [Yast::Term] Product selection content; Empty() if no products
       def license_or_product_content
         return Empty() unless available_products?
+        return product_selector if products.size > 1
 
-        show_license? ? product_license : product_selector
+        show_license? ? product_license : Empty()
       end
 
       # UI to fill space if needed

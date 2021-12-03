@@ -68,6 +68,11 @@ module Yast
 
       Yast::Wizard.EnableAbortButton
 
+      # Preselect the product if there is only one so the license can be shown.
+      # As selecting a product can have side effects (especially in the full
+      # medium), do not select it twice.
+      products.first.select if products.size == 1 && !products.first.selected?
+
       loop do
         dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
           products, disable_buttons: disable_buttons
