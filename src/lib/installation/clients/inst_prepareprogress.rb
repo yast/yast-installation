@@ -44,8 +44,7 @@ module Yast
 
       # hide in ncurses release notes button as it block installation process if pressed
       Wizard.HideReleaseNotesButton if UI.TextMode
-      Wizard.HideBackButton
-      Wizard.HideNextButton
+
       Packages.SlideShowSetUp(Language.language)
 
       SlideShow.OpenDialog
