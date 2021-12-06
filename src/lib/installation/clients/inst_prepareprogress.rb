@@ -42,6 +42,9 @@ module Yast
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
+      # Use only the simple wizard here as only progress is shown
+      Wizard.CloseDialog
+      Wizard.OpenNextBackDialog
       # hide in ncurses release notes button as it block installation process if pressed
       Wizard.HideReleaseNotesButton if UI.TextMode
 
