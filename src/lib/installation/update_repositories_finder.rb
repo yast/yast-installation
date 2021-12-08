@@ -86,7 +86,6 @@ module Installation
       return [] unless defined?(::Registration::UrlHelpers)
       # load the base product from the installation medium,
       # the registration server needs it for evaluating the self update URL
-      add_installation_repo
       urls = update_urls_from_connect
       urls ? urls.map { |u| UpdateRepository.new(u, :default) } : []
     end
@@ -164,23 +163,6 @@ module Installation
       real_url = real_url.gsub(/\$os_release_version\b/,
         Yast::OSRelease.ReleaseVersionHumanReadable)
       URI.regexp.match(real_url) ? URI(real_url) : nil
-    end
-
-    # Loads the base product from the installation medium
-    def add_installation_repo
-      base_url = Yast::InstURL.installInf2Url("")
-      initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
-
-      until initial_repository
-        log.error "Adding the installation repository failed"
-        # ask user to retry
-        base_url = Packages.UpdateSourceURL(base_url)
-
-        # aborted by user
-        return false if base_url == ""
-
-        initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
-      end
     end
 
     # Return the URL of the preferred registration server
