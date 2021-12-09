@@ -164,10 +164,10 @@ The URL of the update repository is evaluated in this order:
    - `$arch` - is replaced by the RPM package architecture used by the machine
      (like `x86_64` or `ppc64le`)
    - These variables are replaced by the value from the `/etc/os-release` file:
-     - `$os_release_name`       => `NAME`
-     - `$os_release_id`         => `ID`
-     - `$os_release_version`    => `VERSION`
-     - `$os_release_version_id` => `VERSION_ID`
+     - `$os_release_name`       => `NAME`       (e.g. `SLE`)
+     - `$os_release_id`         => `ID`         (e.g. `sle`)
+     - `$os_release_version`    => `VERSION`    (e.g. `15-SP4`)
+     - `$os_release_version_id` => `VERSION_ID` (e.g. `15.4`)
 
 The first suitable URL will be used. There are two exceptions:
 
