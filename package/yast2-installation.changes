@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Dec  9 15:56:25 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Improve the self-update process, do not read the products from
+  the installation medium (bsc#1193536)
+- Adde more /etc/os-release replacements in the self-update URL
+- 4.4.27
+
+-------------------------------------------------------------------
 Fri Dec  3 06:53:52 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Display the product's license when only 1 product is available
