@@ -31,7 +31,7 @@ describe Installation::Dialogs::ComplexWelcome do
   describe "#title" do
     context "when more than one product exists" do
       let(:products) do
-        [ instance_double("Y2Packager::ProductSpec"), instance_double("Y2Packager::ProductSpec") ]
+        [instance_double("Y2Packager::ProductSpec"), instance_double("Y2Packager::ProductSpec")]
       end
 
       it "returns 'Language, Keyboard and Product Selection'" do
@@ -41,7 +41,7 @@ describe Installation::Dialogs::ComplexWelcome do
 
     context "when just a single product exists" do
       let(:products) do
-        [ instance_double("Y2Packager::ProductSpec", license?: license?) ]
+        [instance_double("Y2Packager::ProductSpec", license?: license?)]
       end
 
       context "and it has a license" do
