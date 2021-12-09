@@ -59,9 +59,13 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        return license_or_product_title if available_products?
-
-        _("Language and Keyboard Selection")
+        if products.size > 1
+          _("Language, Keyboard and Product Selection")
+        elsif show_license?
+          _("Language, Keyboard and License Agreement")
+        else
+          _("Language and Keyboard Selection")
+        end
       end
 
       # Dialog content
@@ -182,20 +186,6 @@ module Installation
           Empty()
         else
           VWeight(1, VStretch())
-        end
-      end
-
-      # Title of the dialog in case there is some product available.
-      #
-      # The title can vary depending if the license agreement or the product
-      # selection is shown.
-      #
-      # @return [String] Dialog's title
-      def license_or_product_title
-        if show_license?
-          _("Language, Keyboard and License Agreement")
-        else
-          _("Language, Keyboard and Product Selection")
         end
       end
     end
