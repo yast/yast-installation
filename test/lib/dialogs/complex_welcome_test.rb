@@ -29,8 +29,42 @@ describe Installation::Dialogs::ComplexWelcome do
   let(:products) { [] }
 
   describe "#title" do
-    it "returns a string" do
-      expect(widget.title).to be_a(::String)
+    context "when more than one product exists" do
+      let(:products) do
+        [ instance_double("Y2Packager::ProductSpec"), instance_double("Y2Packager::ProductSpec") ]
+      end
+
+      it "returns 'Language, Keyboard and Product Selection'" do
+        expect(widget.title).to eq("Language, Keyboard and Product Selection")
+      end
+    end
+
+    context "when just a single product exists" do
+      let(:products) do
+        [ instance_double("Y2Packager::ProductSpec", license?: license?) ]
+      end
+
+      context "and it has a license" do
+        let(:license?) { true }
+
+        it "returns 'Language, Keyboard and License Agreement" do
+          expect(widget.title).to eq("Language, Keyboard and License Agreement")
+        end
+      end
+
+      context "but it has no license" do
+        let(:license?) { false }
+
+        it "returns 'Language and Keyboard Selection" do
+          expect(widget.title).to eq("Language and Keyboard Selection")
+        end
+      end
+    end
+
+    context "when there are not products" do
+      it "returns 'Language and Keyboard Selection" do
+        expect(widget.title).to eq("Language and Keyboard Selection")
+      end
     end
   end
 
