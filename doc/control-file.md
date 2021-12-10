@@ -1028,6 +1028,9 @@ be important to fully understand some of them.
 
   * `mount_point` *(string, no default value)*
     Directory where the volume will be mounted in the system.
+  * `mount_options` *(string, no default value)*
+    Fstab options separated by comma. If this option is not given, then YaST will set
+    default mount options depending on the mount point and the filesystem type.
   * `proposed` *(boolean, default: `true`)*
     Default value of the user setting deciding whether this volume should be
     created or skipped.
