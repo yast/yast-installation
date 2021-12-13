@@ -133,7 +133,7 @@ module Installation
       def proposals
         # Filter proposals with content
         [cpu_mitigations_proposal, firewall_proposal, sshd_proposal,
-         ssh_port_proposal, vnc_fw_proposal, selinux_proposal,
+         ssh_port_proposal, vnc_fw_proposal, lsm_proposal,
          polkit_default_priv_proposal].compact
       end
 
@@ -238,16 +238,22 @@ module Installation
         format(_("PolicyKit Default Privileges: %s"), human_value)
       end
 
-      def selinux_proposal
-        return nil unless @settings.selinux_config.configurable?
+      def lsm_proposal
+        return nil unless @settings.lsm_config.configurable?
 
         # add required patterns
-        Yast::PackagesProposal.SetResolvables("SELinux", :pattern,
-          @settings.selinux_config.needed_patterns)
-
-        _(
-          "SELinux Default Mode is %s"
-        ) % @settings.selinux_config.mode.to_human_string
+        log.info("Setting LSM resolvables to : #{@settings.lsm_config.needed_patterns}")
+        Yast::PackagesProposal.SetResolvables("LSM", :pattern, @settings.lsm_config.needed_patterns)
+        case @settings.lsm_config.selected&.id
+        when :selinux
+          _(
+            "Linux Security Module: Activate SELinux in '%s' mode"
+          ) % @settings.lsm_config.selinux.mode.to_human_string
+        when :apparmor
+          _("Linux Security Module: Activate AppArmor")
+        when :none
+          _("Linux Security Module: No major module will be activated")
+        end
       end
     end
   end

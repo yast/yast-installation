@@ -2,6 +2,10 @@
 inherit_from:
   /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
 
+
+AllCops:
+  TargetRubyVersion: 2.3
+
 # Offense count: 153
 Metrics/AbcSize:
   Max: 304
@@ -69,3 +73,6 @@ Style/PredicateName:
   Exclude:
     # mocked Registration.is_registered?
     - test/lib/upgrade_repo_manager_test.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

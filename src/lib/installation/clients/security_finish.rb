@@ -85,7 +85,7 @@ module Installation
         log.info("updating capabilities: #{res}")
 
         # Write down selinux configuration
-        settings.selinux_config.save
+        settings.lsm_config.save
 
         true
       end

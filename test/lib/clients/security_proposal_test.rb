@@ -106,7 +106,7 @@ describe Installation::Clients::SecurityProposal do
     before do
       allow(proposal_settings).to receive("enable_firewall").and_return(firewall_enabled)
 
-      allow(proposal_settings.selinux_config).to receive(:configurable?)
+      allow(proposal_settings.lsm_config).to receive(:configurable?)
         .and_return(false)
     end
 
@@ -136,9 +136,9 @@ describe Installation::Clients::SecurityProposal do
       end
     end
 
-    context "when selinux is configurable" do
-      it "contains in proposal selinux configuration" do
-        allow(proposal_settings.selinux_config).to receive(:configurable?)
+    context "when LSM is configurable" do
+      it "contains in proposal LSM configuration" do
+        allow(proposal_settings.lsm_config).to receive(:configurable?)
           .and_return(true)
         allow(Yast::Bootloader).to receive(:kernel_param).and_return(:missing)
 

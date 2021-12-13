@@ -18,8 +18,8 @@
 # find current contact information at www.suse.com.
 
 require "yast"
-require "y2security/selinux"
 require "y2users"
+require "installation/lsm_config"
 
 module Installation
   # Class that stores the security proposal settings during installation.
@@ -40,8 +40,8 @@ module Installation
     # [String, nil] Setting for policy kit default privileges
     # For more info see /etc/sysconfig/security#POLKIT_DEFAULT_PRIVS
     attr_accessor :polkit_default_privileges
-    # [Y2Security::Selinux] selinux configuration
-    attr_accessor :selinux_config
+    # [LSMConfig] selinux configuration
+    attr_accessor :lsm_config
 
     # Constructor
     def initialize
@@ -157,8 +157,11 @@ module Installation
     # Returns a SELinux configuration handler
     #
     # @return [Y2Security::Selinux] the SELinux config handler
-    def selinux_config
-      @selinux_config ||= Y2Security::Selinux.new
+    def lsm_config
+      return @lsm_config if @lsm_config
+      @lsm_config = ::Installation::LSMConfig.new
+      @lsm_config.propose_default
+      @lsm_config
     end
 
   private

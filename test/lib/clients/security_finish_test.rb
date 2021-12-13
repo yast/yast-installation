@@ -112,8 +112,8 @@ describe Installation::Clients::SecurityFinish do
         expect(Yast::SCR).to_not receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything)
       end
 
-      it "skips writting selinux" do
-        expect(proposal_settings.selinux_config).to_not receive(:save)
+      it "skips writting LSM config" do
+        expect(proposal_settings.lsm_config).to_not receive(:save)
 
         subject.write
       end
@@ -139,8 +139,8 @@ describe Installation::Clients::SecurityFinish do
       end
     end
 
-    it "saves selinux configuration" do
-      expect(proposal_settings.selinux_config).to receive(:save)
+    it "saves LSM configuration" do
+      expect(proposal_settings.lsm_config).to receive(:save)
 
       subject.write
     end

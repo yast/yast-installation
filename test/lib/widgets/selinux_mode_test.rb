@@ -5,7 +5,8 @@ require "installation/widgets/selinux_mode"
 require "cwm/rspec"
 
 describe Installation::Widgets::SelinuxMode do
-  subject { described_class.new(Installation::SecuritySettings.create_instance) }
+  subject { described_class.new }
+  let(:selinux_config) { instance_double("") }
 
   include_examples "CWM::ComboBox"
 end
