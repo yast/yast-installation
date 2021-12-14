@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.57
+Version:        3.2.57.1
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -41,14 +41,14 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# CWM::RadioButtons#vspacing
-BuildRequires: yast2 >= 3.2.20
+# Yast2::FsSnapshotStore::IOError
+BuildRequires:  yast2 >= 3.2.46.2
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# PackageDownloader and PackageExtractor
-Requires:       yast2 >= 3.2.19
+# Yast2::FsSnapshotStore::IOError
+Requires:       yast2 >= 3.2.46.2
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
