@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Dec 10 11:50:58 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not crash when it is not possible to create a snapshot after
+  installing or upgrading the system (bsc#1180142).
+- 3.4.3
+
+-------------------------------------------------------------------
 Mon Jul  5 15:45:33 UTC 2021 - José Iván López González <jlopez@suse.com>
 
 - Ensure correct alignment when shrinking a PReP partition.
