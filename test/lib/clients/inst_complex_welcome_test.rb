@@ -340,6 +340,11 @@ describe Yast::InstComplexWelcomeClient do
               .with(product_specs, anything)
             subject.main
           end
+
+          it "does not preselect the product" do
+            expect(product_spec).to_not receive(:select)
+            subject.main
+          end
         end
       end
     end
