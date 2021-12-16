@@ -15,6 +15,7 @@
 
 require "yast"
 require "installation/update_repository"
+require "yast2/rel_url"
 require "uri"
 
 Yast.import "Pkg"
@@ -27,6 +28,7 @@ Yast.import "Profile"
 Yast.import "ProductFeatures"
 Yast.import "InstFunctions"
 Yast.import "OSRelease"
+Yast.import "URL"
 
 module Installation
   # Invalid registration URL error
@@ -150,6 +152,8 @@ module Installation
 
     # Converts the string into an URI if it's valid
     #
+    # Expands a relative URL (relurl://) to an URL relative to the installation
+    # repository.
     # Substituting $arch pattern with the architecture of the current system.
     # Substituting these variables with the /etc/os-release content:
     #   $os_release_name       => NAME
@@ -172,7 +176,20 @@ module Installation
         Yast::OSRelease.ReleaseVersion)
       real_url = real_url.gsub(/\$os_release_version\b/,
         Yast::OSRelease.ReleaseVersionHumanReadable)
-      URI.regexp.match(real_url) ? URI(real_url) : nil
+
+      return nil unless URI.regexp.match(real_url)
+
+      # convert a relative URL to absolute
+      if Yast2::RelURL.relurl?(real_url)
+        # relative URL is relative to the installation repository
+        relurl = Yast2::RelURL.from_installation_repository(real_url)
+        absolute_url = relurl.absolute_url
+        log.info "Relative URL #{Yast::URL.HidePassword(real_url)} "\
+          "converted to absolute URL #{Yast::URL.HidePassword(absolute_url.to_s)}"
+        absolute_url
+      else
+        URI(real_url)
+      end
     end
 
     # Return the URL of the preferred registration server

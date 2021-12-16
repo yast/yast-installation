@@ -296,7 +296,47 @@ or by the `setup_dhcp` YaST client which does not need to remember any state.
 
 Currently only HTTP/HTTPS and FTP URL schemes are supported for downloading
 the updates. Some additional schemes might work but are not tested and therefore
-not supported.
+not supported. (See `man zypper` for the complete list of possible URLs.)
+
+Additionally the self-update supports the `relurl://` schema. This refers to a
+location relative to the installation repository (defined by the `install` boot
+parameter which by default uses the booting device).
+
+### Relative URL Examples
+
+Using a relative URL (relurl://) can be useful when serving the packages via a
+local installation server or when building a custom installation medium which
+includes a self-update repository.
+
+#### Custom DVD/USB Medium
+
+Assume the installation repository is at the medium root (`/`) and the
+self-update repository in the `self_update` subdirectory.
+
+Then you can add the `self_update=relurl://self_update` boot option directly to
+the default boot parameters and it will work properly even if the medium is
+copied to an USB stick, hard disk or a network server.
+
+#### Installation Server
+
+Relative URL can be also useful when you copy the original installation medium
+unmodified to a network server.
+
+Assume that the installation packages are available via
+`http://example.com/repo` and a self-update repository is available at
+`http://example.com/self_update`.
+
+Then you can use the `install=http://example.com/repo` and
+`self_update=relurl://../self_update` boot parameters. *That means you can even
+go up in the directory structure using the usual `../` notation!*
+
+The advantage is that you do not need to change the `self_update` parameter
+when the repositories are moved to a different location or different server.
+
+But the most beneficial is using a relative URL in an AutoYaST profile. Then the
+same AutoYaST profile can work with different product versions without any
+change if you use the same repository structure on the server for all versions.
+
 
 ## Error Handling
 
