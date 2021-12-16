@@ -68,10 +68,7 @@ module Yast
 
       Yast::Wizard.EnableAbortButton
 
-      # Preselect the product if there is only one so the license can be shown.
-      # As selecting a product can have side effects (especially in the full
-      # medium), do not select it twice.
-      products.first.select if products.size == 1 && !products.first.selected?
+      preselect_product_if_needed
 
       loop do
         dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
@@ -224,6 +221,21 @@ module Yast
       end
 
       true
+    end
+
+    # Preselects the product if required
+    #
+    # The product is preselected if:
+    #
+    # * There is only a single base product available.
+    # * The installer is not running on update mode. In this case, the product
+    #   is selected when the user choses which system to upgrade.
+    def preselect_product_if_needed
+      return if Mode.update || products.size != 1
+
+      # As selecting a product can have side effects (especially in the full
+      # medium), do not select it twice.
+      products.first.select unless products.first.selected?
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
