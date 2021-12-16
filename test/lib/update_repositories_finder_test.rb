@@ -30,15 +30,29 @@ describe Installation::UpdateRepositoriesFinder do
         .and_return(url_from_linuxrc)
       allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
       allow(Yast::AutoinstGeneral).to receive(:self_update_url).and_return(nil)
+      allow(Yast::InstURL).to receive(:installInf2Url)
+        .and_return("http://example.com/install/sle15-sp3")
     end
 
     context "when URL was specified via Linuxrc" do
-      let(:url_from_linuxrc) { "http://example.net/sles12/" }
+      context "a normal URL is used" do
+        let(:url_from_linuxrc) { "http://example.net/sles12/" }
 
-      it "returns the updates repository using the URL from Linuxrc" do
-        expect(Installation::UpdateRepository).to receive(:new)
-          .with(URI(url_from_linuxrc), :user).and_return(repo)
-        expect(finder.updates).to eq([repo])
+        it "returns the updates repository using the URL from Linuxrc" do
+          expect(Installation::UpdateRepository).to receive(:new)
+            .with(URI(url_from_linuxrc), :user).and_return(repo)
+          expect(finder.updates).to eq([repo])
+        end
+      end
+
+      context "a relative URL is used" do
+        let(:url_from_linuxrc) { "relurl://../self_update" }
+
+        it "returns the updates repository relative to the installation repository" do
+          expect(Installation::UpdateRepository).to receive(:new)
+            .with(URI("http://example.com/install/self_update"), :user).and_return(repo)
+          expect(finder.updates).to eq([repo])
+        end
       end
     end
 
