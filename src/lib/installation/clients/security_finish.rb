@@ -84,7 +84,7 @@ module Installation
           "/usr/bin/chkstat --system --set")
         log.info("updating capabilities: #{res}")
 
-        # Write down selinux configuration
+        # Write down the Linux Security Module configuration
         settings.lsm_config.save
 
         true

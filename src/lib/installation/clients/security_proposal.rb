@@ -238,20 +238,33 @@ module Installation
         format(_("PolicyKit Default Privileges: %s"), human_value)
       end
 
+      # Returns the text describing the Linux Security Module proposal or nil in case that there is
+      # no module selected explicitly.
+      #
+      # @return [String, nil] returns the description of the selected LSM or nil in case no module
+      #   is selected explicitly
       def lsm_proposal
         return nil unless @settings.lsm_config.configurable?
 
         # add required patterns
         log.info("Setting LSM resolvables to : #{@settings.lsm_config.needed_patterns}")
         Yast::PackagesProposal.SetResolvables("LSM", :pattern, @settings.lsm_config.needed_patterns)
-        case @settings.lsm_config.selected&.id
+        selected = @settings.lsm_config.selected
+        case selected&.id
         when :selinux
-          _(
-            "Linux Security Module: Activate SELinux in '%s' mode"
-          ) % @settings.lsm_config.selinux.mode.to_human_string
+          # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
+          # after the installation will be SELinux running in the selected mode which could be
+          # 'enforcing', 'permissive' or 'disabled'
+          format(_(
+                   "Linux Security Module: Activate %{module} in '%{mode}' mode"
+          ), module: selected.label, mode: selected.mode.to_human_string)
         when :apparmor
-          _("Linux Security Module: Activate AppArmor")
+          # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
+          # after the installation will be AppArmor
+          format(_("Linux Security Module: Activate %{module}"), module: selected.label)
         when :none
+          # TRANSLATORS: Proposal's text describing that no Linux Security Major Module will be
+          # activated after the installation
           _("Linux Security Module: No major module will be activated")
         end
       end

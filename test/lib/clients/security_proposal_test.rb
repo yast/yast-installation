@@ -137,7 +137,7 @@ describe Installation::Clients::SecurityProposal do
     end
 
     context "when LSM is configurable" do
-      it "contains in proposal LSM configuration" do
+      it "contains the LSM configuration" do
         allow(proposal_settings.lsm_config).to receive(:configurable?)
           .and_return(true)
         allow(Yast::Bootloader).to receive(:kernel_param).and_return(:missing)
