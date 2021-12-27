@@ -18,8 +18,8 @@
 # find current contact information at www.suse.com.
 
 require "yast"
-require "y2security/selinux"
 require "y2users"
+require "y2security/lsm"
 
 module Installation
   # Class that stores the security proposal settings during installation.
@@ -40,8 +40,6 @@ module Installation
     # [String, nil] Setting for policy kit default privileges
     # For more info see /etc/sysconfig/security#POLKIT_DEFAULT_PRIVS
     attr_accessor :polkit_default_privileges
-    # [Y2Security::Selinux] selinux configuration
-    attr_accessor :selinux_config
 
     # Constructor
     def initialize
@@ -55,6 +53,7 @@ module Installation
       enable_sshd! if wanted_enable_sshd?
       open_ssh! if wanted_open_ssh?
       open_vnc! if wanted_open_vnc?
+      lsm_config.propose_default unless lsm_config.selected
       # FIXME: obtain from Y2Firewall::Firewalld, control file or allow to
       # chose a different one in the proposal
       @default_zone = "public"
@@ -154,11 +153,9 @@ module Installation
       }
     end
 
-    # Returns a SELinux configuration handler
-    #
-    # @return [Y2Security::Selinux] the SELinux config handler
-    def selinux_config
-      @selinux_config ||= Y2Security::Selinux.new
+    # @return [Y2Security::LSM::Config] the LSM config handler
+    def lsm_config
+      Y2Security::LSM::Config.instance
     end
 
   private
