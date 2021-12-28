@@ -223,14 +223,14 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "writes list of active devices to zipl so it is not blocked" do
-          test_output = <<~EOL
+          test_output = <<~CIO_IGNORE
             Devices that are not ignored:
             =============================
             0.0.0160
             0.0.01c0
             0.0.0700-0.0.0702
             0.0.fc00
-          EOL
+          CIO_IGNORE
           expect(Yast::SCR).to receive(:Execute)
             .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
