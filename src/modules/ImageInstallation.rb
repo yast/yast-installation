@@ -363,7 +363,7 @@ module Yast
           )
         else
           ret = UI.PollInput
-          if ret == :abort || ret == :cancel
+          if [:abort, :cancel].include?(ret)
             if Popup.ConfirmAbort(:unusable)
               Builtins.y2warning("Aborted!")
               aborted = true
