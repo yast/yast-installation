@@ -1,5 +1,4 @@
-# encoding: utf-8
-# File:	   src/lib/installation/clients/inst_save_y2logs.rb
+# File:     src/lib/installation/clients/inst_save_y2logs.rb
 # Module:  Installation
 # Summary: Saving y2logs by calling save_y2logs
 #

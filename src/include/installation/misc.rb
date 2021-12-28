@@ -240,7 +240,7 @@ module Yast
         path(".local.bash"),
         Builtins.sformat(
           "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; /usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
-          scst_required == false ? "0" : "1"
+          (scst_required == false) ? "0" : "1"
         )
       )
       # Is it really needed? It will enforce a read of /etc/install.inf from

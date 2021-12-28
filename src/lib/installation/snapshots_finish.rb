@@ -53,8 +53,8 @@ module Installation
       Yast2::FsSnapshot.create_post("after update", pre_number, cleanup: :number, important: true)
       Yast2::FsSnapshotStore.clean("update")
       true
-    rescue Yast2::SnapshotCreationFailed, Yast2::FsSnapshotStore::IOError => error
-      log.error("Error creating a post-update snapshot: #{error}")
+    rescue Yast2::SnapshotCreationFailed, Yast2::FsSnapshotStore::IOError => e
+      log.error("Error creating a post-update snapshot: #{e}")
       Yast::Report.Error(_("Could not create a post-update snapshot."))
       false
     end
@@ -63,8 +63,8 @@ module Installation
       # as of bsc #1092757 snapshot descriptions are not translated
       Yast2::FsSnapshot.create_single("after installation", cleanup: :number, important: true)
       true
-    rescue Yast2::SnapshotCreationFailed => error
-      log.error("Error creating a post-installation snapshot: #{error}")
+    rescue Yast2::SnapshotCreationFailed => e
+      log.error("Error creating a post-installation snapshot: #{e}")
       Yast::Report.Error(_("Could not create a post-installation snapshot."))
       false
     end

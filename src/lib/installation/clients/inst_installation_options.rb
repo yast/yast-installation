@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2014 Novell, Inc. All Rights Reserved.
 #
@@ -19,11 +17,11 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_installation_options.rb
-# Package:	Installation
-# Summary:	Initialize installation, set installation options
-# Authors:	Jiri Srain <jsrain@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
+# File:  clients/inst_installation_options.rb
+# Package:  Installation
+# Summary:  Initialize installation, set installation options
+# Authors:  Jiri Srain <jsrain@suse.cz>
+#    Lukas Ocilka <locilka@suse.cz>
 #
 #
 module Yast
@@ -68,9 +66,7 @@ module Yast
         "show_online_repositories"
       )
       # if not visible, internally disabled as well
-      if @show_online_repositories != true
-        Installation.productsources_selected = false
-      end
+      Installation.productsources_selected = false if @show_online_repositories != true
 
       # nothing to display, simply continue
       return :auto unless @show_online_repositories
@@ -115,9 +111,7 @@ module Yast
           end
         # Abort button
         elsif @ret == :abort
-          if Popup.ConfirmAbort(Stage.initial ? :painless : :incomplete)
-            return :abort
-          end
+          return :abort if Popup.ConfirmAbort(Stage.initial ? :painless : :incomplete)
         end
         break if [:back, :next].include?(@ret)
       end

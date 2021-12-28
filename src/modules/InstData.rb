@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	modules/InstData.ycp
-# Package:	Installation
-# Summary:	Installation Data (variables, maps, probed info)
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# File:  modules/InstData.ycp
+# Package:  Installation
+# Summary:  Installation Data (variables, maps, probed info)
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
 # $Id: $
 #

@@ -257,7 +257,7 @@ module Installation
           # 'enforcing', 'permissive' or 'disabled'
           format(_(
                    "Linux Security Module: Activate %{module} in '%{mode}' mode"
-          ), module: selected.label, mode: selected.mode.to_human_string)
+                 ), module: selected.label, mode: selected.mode.to_human_string)
         when :apparmor
           # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
           # after the installation will be AppArmor

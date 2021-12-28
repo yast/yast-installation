@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -140,6 +138,7 @@ module Yast
     def report_messages
       return if Misc.boot_msg.empty?
       return if Mode.autoinst
+
       # --------------------------------------------------------------
       # Check if there is a message left to display
       # and display it, if necessary
@@ -405,7 +404,7 @@ module Yast
       else
         [
           "cio_ignore", # needs to be run before initrd is created (bsc#933177)
-          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
+          (ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true) ? "kdump" : "",
           "bootloader"
         ]
       end
@@ -427,11 +426,10 @@ module Yast
       stages.each do |stage|
         label = stage["label"]
         next if label.nil? || label == ""
+
         loc_label = Builtins.dgettext(textdom, label)
         # if translated
-        if !loc_label.nil? && loc_label != "" && loc_label != label
-          stage["label"] = loc_label
-        end
+        stage["label"] = loc_label if !loc_label.nil? && loc_label != "" && loc_label != label
       end
 
       log.info "Inst finish stages after: #{stages}"
@@ -521,6 +519,7 @@ module Yast
       steps = stage["steps"].map do |s|
         # some steps are called in live installer only
         next nil if s == "" || s.nil?
+
         s += "_finish"
         if !WFM.ClientExists(s)
           log.warn "Missing YaST client: #{s}"
@@ -542,6 +541,7 @@ module Yast
             !(Mode.autoupgrade && info["when"].include?(:autoupg))
           next nil
         end
+
         log.info "inst_finish client #{s} will be called"
         info["client"] = s
 

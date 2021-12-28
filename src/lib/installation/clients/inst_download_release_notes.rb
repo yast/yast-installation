@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -20,9 +18,9 @@
 # ------------------------------------------------------------------------------
 
 #
-# Authors:	Jiri Srain <jsrain@suse.cz>
+# Authors:  Jiri Srain <jsrain@suse.cz>
 #
-# Purpose:	Downloads on-line release notes
+# Purpose:  Downloads on-line release notes
 #
 # $Id$
 
@@ -117,8 +115,10 @@ module Yast
       # of online media, and that means only base products, no add-ons.
       all_products = Y2Packager::ProductReader.new.all_products(force_repos: true)
       return all_products.select { |p| p.status?(:selected, :installed) } unless Stage.initial
+
       selected = all_products.select { |p| p.status?(:selected) }
       return selected unless selected.empty?
+
       all_products.select { |p| p.status?(:available) }
     end
 

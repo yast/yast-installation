@@ -47,8 +47,8 @@ module Installation
         # do not change these texts they are replaced:
         # %{cmd} is replaced by a command name
         # %{keys} is replaced by a keyboard shortcut
-        puts _("Type '%{cmd}' or press %{keys} to close the console and go back " \
-          "to the installer") % { cmd: "quit", keys: "Ctrl+D" }
+        puts format(_("Type '%{cmd}' or press %{keys} to close the console and go back " \
+          "to the installer"), cmd: "quit", keys: "Ctrl+D")
         puts
         puts "Type 'commands' to see the available special commands"
         puts

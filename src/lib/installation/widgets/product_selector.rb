@@ -87,6 +87,7 @@ module Installation
       # @return [String] widget ID
       def item_id(prod)
         return prod.dir if prod.respond_to?(:dir)
+
         "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end

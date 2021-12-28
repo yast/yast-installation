@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 # Copyright (c) 2020 SUSE LLC
@@ -195,6 +193,7 @@ module Yast
       UI.ChangeWidget(Id("table_of_repos"), :Items, items)
 
       return unless current_item
+
       UI.ChangeWidget(Id("table_of_repos"), :CurrentItem, current_item)
     end
 

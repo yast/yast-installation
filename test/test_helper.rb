@@ -1,4 +1,4 @@
-srcdir = File.expand_path("../../src", __FILE__)
+srcdir = File.expand_path("../src", __dir__)
 y2dirs = ENV.fetch("Y2DIR", "").split(":")
 ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
@@ -47,7 +47,7 @@ if ENV["COVERAGE"]
     add_filter "/test/"
   end
 
-  bindir = File.expand_path("../../bin", __FILE__)
+  bindir = File.expand_path("../bin", __dir__)
   # For coverage we need to load all ruby files
   SimpleCov.track_files("{#{srcdir}/**/*.rb,#{bindir}/{yupdate,memsample-archive-to-csv}}")
 

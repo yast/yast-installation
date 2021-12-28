@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2017 SUSE LLC
 #
@@ -86,6 +84,7 @@ module Installation
     # @return [Array<UpdateRepository>] self-update repositories
     def updates_from_connect
       return [] unless defined?(::Registration::UrlHelpers)
+
       # load the base product from the installation medium,
       # the registration server needs it for evaluating the self update URL
       urls = update_urls_from_connect
@@ -167,6 +166,7 @@ module Installation
     # @see URI.regexp
     def get_url_from(url)
       return nil unless url.is_a?(::String)
+
       real_url = url.gsub(/\$arch\b/, Yast::Pkg.GetArchitecture)
       real_url = real_url.gsub(/\$os_release_name\b/,
         Yast::OSRelease.ReleaseName)
@@ -177,7 +177,7 @@ module Installation
       real_url = real_url.gsub(/\$os_release_version\b/,
         Yast::OSRelease.ReleaseVersionHumanReadable)
 
-      return nil unless URI.regexp.match(real_url)
+      return nil unless URI::DEFAULT_PARSER.make_regexp.match(real_url)
 
       # convert a relative URL to absolute
       if Yast2::RelURL.relurl?(real_url)
@@ -233,6 +233,7 @@ module Installation
       log.info "Selected SLP service: #{service.inspect}"
 
       return service unless service.respond_to?(:slp_url)
+
       URI(::Registration::UrlHelpers.service_url(service.slp_url))
     end
 

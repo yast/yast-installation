@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,11 +17,11 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/installation_settings_finish.ycp
-# Package:	Installation
-# Summary:	Installation - save settings (used later in second stage, or ...).
-#		See bnc #364066, #390930.
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# File:  clients/installation_settings_finish.ycp
+# Package:  Installation
+# Summary:  Installation - save settings (used later in second stage, or ...).
+#    See bnc #364066, #390930.
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
 #

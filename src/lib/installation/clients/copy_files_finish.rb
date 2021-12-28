@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # Copyright (c) [2006-2020] SUSE LLC
 #
 # All Rights Reserved.
@@ -60,9 +58,7 @@ module Yast
     # @raise RuntimeError if called with switched SCR to have defined behavior and prevent
     #   accidental overwrite and data loss
     def write
-      if Yast::WFM.scr_chrooted?
-        raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}"
-      end
+      raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}" if Yast::WFM.scr_chrooted?
 
       # bugzilla #221815 and #485980
       # Adding blacklisted modules into the /etc/modprobe.d/50-blacklist.conf
@@ -158,6 +154,7 @@ module Yast
     # see bugzilla #328126
     def copy_hardware_udev_rules
       return if Mode.update
+
       udev_rules_destdir = ::File.join(installation_destination, UDEV_RULES_DIR)
       ::FileUtils.mkdir_p(udev_rules_destdir)
 

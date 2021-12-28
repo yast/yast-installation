@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,9 +17,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	test_proposal.ycp
-# Summary:	For testing the network and hardware proposals.
-# Author:	Michal Svec <msvec@suse.cz>
+# File:  test_proposal.ycp
+# Summary:  For testing the network and hardware proposals.
+# Author:  Michal Svec <msvec@suse.cz>
 #
 # $Id$
 module Yast
@@ -37,12 +35,11 @@ module Yast
 
       @aclient = WFM.Args(0)
       return false if !Ops.is_string?(@aclient)
+
       @client = Convert.to_string(@aclient)
 
       # Client name does not start with "inst_"
-      if !Builtins.regexpmatch(@client, "^inst_")
-        @client = Ops.add("inst_", @client)
-      end
+      @client = Ops.add("inst_", @client) if !Builtins.regexpmatch(@client, "^inst_")
 
       Stage.Set("continue")
       Mode.SetMode("installation")

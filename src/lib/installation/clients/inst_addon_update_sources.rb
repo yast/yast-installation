@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_addon_update_sources.ycp
-# Package:	yast2-installation
-# Summary:	Add installation sources for online update, #163192
-# Authors:	Martin Vidner <mvidner@suse.cz>
+# File:  clients/inst_addon_update_sources.ycp
+# Package:  yast2-installation
+# Summary:  Add installation sources for online update, #163192
+# Authors:  Martin Vidner <mvidner@suse.cz>
 #
 # Assumptions:
 # - the sources will be saved afterwards

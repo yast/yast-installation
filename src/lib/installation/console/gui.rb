@@ -99,8 +99,8 @@ module Installation
         # send an empty string to the waiting "read" process
         File.write(fd_path(@pid, @close_fd), "\n") if @pid && @close_fd
         # close the pipes
-        @read.close if @read
-        @write.close if @write
+        @read&.close
+        @write&.close
       end
 
       # run a block with redirected IO (redirect to the started xterm console)

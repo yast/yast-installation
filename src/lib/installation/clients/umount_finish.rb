@@ -1,4 +1,3 @@
-# encoding: utf-8
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 # Copyright (c) 2013-2021 SUSE LLC
@@ -184,7 +183,7 @@ module Installation
           begin
             # (the details are printed on STDERR, redirect it)
             `LC_ALL=C fuser -v -m #{paths} 2>&1`
-          rescue => e
+          rescue StandardError => e
             "fuser failed: #{e}"
           end
         log.warn("\n\nRunning processes using #{mount_points}:\n#{fuser}\n")

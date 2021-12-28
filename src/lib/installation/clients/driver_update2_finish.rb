@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -62,9 +60,7 @@ module Yast
       when "Write"
         Vendor.DriverUpdate2
 
-        if WFM.ClientExists("product_finish")
-          WFM.CallFunction("product_finish", [Mode.update])
-        end
+        WFM.CallFunction("product_finish", [Mode.update]) if WFM.ClientExists("product_finish")
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

@@ -30,6 +30,7 @@ class ZcatArchive
       l = @plain_io.eof? ? "" : @plain_io.readline
       if l.empty?
         raise "No '### ...\\n' header found before data" if header.nil?
+
         block.call(header, data)
         break
       elsif l =~ /\A### (.*)\n\z/
@@ -142,12 +143,12 @@ if __FILE__ == $PROGRAM_NAME
   if ARGV[0] == "-y"
     y2logs_tar = ARGV[1]
     csv = ARGV[2] || "memsample.csv"
-    $stderr.puts "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
+    warn "Converting memsample.zcat (in #{y2logs_tar}) to #{csv}"
     cmd = "tar xvf #{y2logs_tar.shellescape} -O YaST2/memsample.zcat | zcat"
   else
     zcat = ARGV[0] || "memsample.zcat"
     csv = ARGV[1] || "memsample.csv"
-    $stderr.puts "Converting #{zcat} to #{csv}"
+    warn "Converting #{zcat} to #{csv}"
     cmd = "zcat #{zcat.shellescape}"
   end
 

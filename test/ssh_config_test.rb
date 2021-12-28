@@ -37,7 +37,7 @@ describe Installation::SshConfig do
       textdomain "installation"
       # The ssh_host private key file is more recent than any other file
       allow(File).to receive(:atime) do |path|
-        path =~ /ssh_host_key$/ ? recent_root1_atime : old_root1_atime
+        (path =~ /ssh_host_key$/) ? recent_root1_atime : old_root1_atime
       end
     end
 
