@@ -74,11 +74,17 @@ module Installation
       end
 
       # all unknown commands are handled via this "method_missing" callback
-      def method_missing(method_name, *_args)
+      def method_missing(method_name, *_args) # rubocop:disable Style/MethodMissingSuper
         Yast::Y2Logger.instance.info "Entered unknown command: #{method_name.inspect}"
         puts "Error: Unknown command \"#{method_name}\""
         puts
         commands
+      end
+
+      def respond_to_missing?(_method_name)
+        # method missing is not used for fancy meta programming,
+        # but to provide different behavior. No not respond to anything missing.
+        false
       end
 
       # helper for running an YaST module
