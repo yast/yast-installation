@@ -108,14 +108,14 @@ module Installation
 
       def remove_target_etc_mtab
         # symlink points to /proc, keep it (bnc#665437)
-        if !FileUtils.IsLink("/etc/mtab")
-          # remove [Installation::destdir]/etc/mtab which was faked for %post
-          # scripts in inst_rpmcopy
-          SCR.Execute(path(".target.remove"), "/etc/mtab")
+        return if FileUtils.IsLink("/etc/mtab")
 
-          # hotfix: recreating /etc/mtab as symlink (bnc#725166)
-          SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
-        end
+        # remove [Installation::destdir]/etc/mtab which was faked for %post
+        # scripts in inst_rpmcopy
+        SCR.Execute(path(".target.remove"), "/etc/mtab")
+
+        # hotfix: recreating /etc/mtab as symlink (bnc#725166)
+        SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
       end
 
       def close_scr_on_target
