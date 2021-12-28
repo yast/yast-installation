@@ -1,4 +1,3 @@
-# coding: utf-8
 # Copyright (c) 2016 SUSE LLC.
 #  All Rights Reserved.
 
@@ -82,7 +81,7 @@ module Installation
 
     def dialog_content
       preselected_role_id = SystemRole.current
-      preselected_role_id ||= roles.first && roles.first.id if SystemRole.default?
+      preselected_role_id ||= roles.first&.id if SystemRole.default?
 
       VBox(
         Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
@@ -215,7 +214,7 @@ module Installation
         break unless (0..(clients.size - 1)).cover?(client_to_show)
       end
 
-      client_to_show >= clients.size ? :next : :back
+      (client_to_show >= clients.size) ? :next : :back
     end
 
     def clear_role

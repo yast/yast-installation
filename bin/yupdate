@@ -44,53 +44,53 @@ module YUpdate
   class HelpCommand
     def run
       name = File.basename(__FILE__)
-      puts <<-HELP
-This is a helper script for updating the YaST installer in the installation system.
+      puts <<~HELP
+        This is a helper script for updating the YaST installer in the installation system.
 
-Usage: #{name} <command> <options>
+        Usage: #{name} <command> <options>
 
-Commands:
+        Commands:
 
-    patch <github_repo> <branch>  Patch the installer with the sources from GitHub,
-                            <github_repo> is a repository name (including the organization
-                            or the user name, if missing "yast" is used by default),
-                            <branch> is the Git branch to use
+            patch <github_repo> <branch>  Patch the installer with the sources from GitHub,
+                                    <github_repo> is a repository name (including the organization
+                                    or the user name, if missing "yast" is used by default),
+                                    <branch> is the Git branch to use
 
-    patch <tarball_url>     Patch the installer with the sources provided by
-                            a generic HTTP server
+            patch <tarball_url>     Patch the installer with the sources provided by
+                                    a generic HTTP server
 
-    patch <host[:port]>     Patch the installer with the sources provided by
-                            a "rake server" task (for details see
-                            https://github.com/yast/yast-rake/#server),
-                            the default port is 8000
+            patch <host[:port]>     Patch the installer with the sources provided by
+                                    a "rake server" task (for details see
+                                    https://github.com/yast/yast-rake/#server),
+                                    the default port is 8000
 
-    servers <host[:port]>   List the rake servers running on the remote machine,
-                            ask the specified server to report all `rake server`
-                            instances
+            servers <host[:port]>   List the rake servers running on the remote machine,
+                                    ask the specified server to report all `rake server`
+                                    instances
 
-    overlay create [<dir>]  Create a new writable overlay for directory <dir>,
-                            if no directory is specified it creates overlays
-                            for the default YaST directories
+            overlay create [<dir>]  Create a new writable overlay for directory <dir>,
+                                    if no directory is specified it creates overlays
+                                    for the default YaST directories
 
-    overlay list            Print the created writable overlays
+            overlay list            Print the created writable overlays
 
-    overlay reset           Remove all overlays, restore the system to
-                            the original state
+            overlay reset           Remove all overlays, restore the system to
+                                    the original state
 
-    overlay files           Print the changed files (removed files are not listed)
+            overlay files           Print the changed files (removed files are not listed)
 
-    overlay diff            Print the diff of the changed overlay files
+            overlay diff            Print the diff of the changed overlay files
 
-    version                 Print the script version
+            version                 Print the script version
 
-    help                    Print this help
+            help                    Print this help
 
-WARNING: This script is intended only for testing and development purposes,
-        using this tool makes the installation not supported!
+        WARNING: This script is intended only for testing and development purposes,
+                using this tool makes the installation not supported!
 
-        See more details in
-        https://github.com/yast/yast-installation/blob/master/doc/yupdate.md
-HELP
+                See more details in
+                https://github.com/yast/yast-installation/blob/master/doc/yupdate.md
+      HELP
     end
   end
 
@@ -210,6 +210,7 @@ HELP
     def create
       # skip non-existing or already writable directories
       return if !File.directory?(dir) || File.writable?(dir)
+
       msg "Adding overlay for #{orig_dir}..."
 
       FileUtils.mkdir_p(upperdir)
@@ -242,6 +243,7 @@ HELP
     def print_diff
       iterate_files do |f, _modif, orig|
         next unless File.exist?(f) && File.exist?(orig)
+
         system("diff", "-u", orig, f)
       end
     end
@@ -279,7 +281,7 @@ HELP
 
     def self.unescape_path(path)
       Pathname.new(path).basename.to_s.gsub(/([^_])_([^_])/, "\\1/\\2")
-              .sub(/\A_/, "/").gsub("__", "_").gsub("//", "/")
+        .sub(/\A_/, "/").gsub("__", "_").gsub("//", "/")
     end
 
   private
@@ -294,6 +296,7 @@ HELP
 
       Find.find(upperdir) do |f|
         next unless File.file?(f)
+
         upperdir_path = Pathname.new(upperdir)
         relative_path = Pathname.new(f).relative_path_from(upperdir_path)
         original_path = File.join(origdir, relative_path)
@@ -349,9 +352,7 @@ HELP
     # start the downloading, extract the tarball to the specified directory
     def extract_to(dir)
       download do |input|
-        if input.content_type !~ /application\/(x-|)gzip/
-          raise "Unknown MIME type: #{input.content_type}"
-        end
+        raise "Unknown MIME type: #{input.content_type}" if input.content_type !~ /application\/(x-|)gzip/
 
         # pipe the response body directly to the tar process
         IO.popen(["tar", "-C", dir, "--warning=no-timestamp", "-xz"], "wb") do |io|
@@ -409,6 +410,7 @@ HELP
     # install the specified gems
     def install_gems(gem_names)
       return if gem_names.empty?
+
       add_gem_overlay
       # explicitly set the bindir, the /mounts/mp_0001/usr/.... prefix
       # confuses gem and it does not create the bin file
@@ -469,9 +471,7 @@ HELP
 
       # check for Makefile.cvs, we cannot install packages using autotools
       makefile_cvs = Dir["#{src_dir}/**/Makefile.cvs"].first
-      if makefile_cvs
-        raise "Found Makefile.cvs, autotools based packages cannot be installed!"
-      end
+      raise "Found Makefile.cvs, autotools based packages cannot be installed!" if makefile_cvs
 
       rakefile = Dir["#{src_dir}/**/Rakefile"].first
       raise "Rakefile not found, cannot install the package" unless rakefile
@@ -504,6 +504,7 @@ HELP
 
         if File.exist?(system_file)
           next if FileUtils.identical?(system_file, path)
+
           add_overlay(system_dir)
           # replace a symlink (likely pointing to a read-only location)
           FileUtils.rm_f(system_file) if File.symlink?(system_file)
@@ -577,7 +578,7 @@ HELP
       return if File.exist?("/.packages.initrd")
 
       # exit immediately if running in an installed system
-      $stderr.puts "ERROR: This script can only work in the installation system (inst-sys)!"
+      warn "ERROR: This script can only work in the installation system (inst-sys)!"
       exit 1
     end
   end

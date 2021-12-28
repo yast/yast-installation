@@ -161,6 +161,7 @@ module Installation
         cio_ignore.autoconf_enabled = true
       when ACTION_ID
         # do nothing - when there is a dialog for this, connect it here
+        log.info "Action for CIO requested, but no dialog implemented"
       else
         raise "INTERNAL ERROR: Unexpected value #{edit_id}"
       end
@@ -226,9 +227,7 @@ module Installation
 
       log.info "result of cio_ignore call: #{res.inspect}"
 
-      if res["exit"] != 0
-        raise "cio_ignore command failed with stderr: #{res["stderr"]}"
-      end
+      raise "cio_ignore command failed with stderr: #{res["stderr"]}" if res["exit"] != 0
 
       # add kernel parameters that ensure that ipl and console device is never
       # blacklisted (fate#315318)
@@ -266,6 +265,7 @@ module Installation
       log.info "active devices: #{res}"
 
       raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
+
       # lets select only lines that looks like device. Regexp is not perfect, but good enough
       devices_lines = res["stdout"].lines.grep(/^(?:\h.){0,2}\h{4}.*$/)
 

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,20 +17,20 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:		inst_worker_continue.ycp
+# File:    inst_worker_continue.ycp
 #
-# Authors:		Klaus Kaempf <kkaempf@suse.de>
-#			Mathias Kettner <kettner@suse.de>
-#			Michael Hager <mike@suse.de>
-#			Stefan Hundhammer <sh@suse.de>
-#			Arvin Schnell <arvin@suse.de>
-#			Jiri Srain <jsrain@suse.cz>
-#			Lukas Ocilka <locilka@suse.cz>
+# Authors:    Klaus Kaempf <kkaempf@suse.de>
+#      Mathias Kettner <kettner@suse.de>
+#      Michael Hager <mike@suse.de>
+#      Stefan Hundhammer <sh@suse.de>
+#      Arvin Schnell <arvin@suse.de>
+#      Jiri Srain <jsrain@suse.cz>
+#      Lukas Ocilka <locilka@suse.cz>
 #
-# Purpose:		Set up the UI and define macros for the
-#			installation dialog, general framework, ...
-#			Describing and calling all submodules.
-#			(For continuing installation only).
+# Purpose:    Set up the UI and define macros for the
+#      installation dialog, general framework, ...
+#      Describing and calling all submodules.
+#      (For continuing installation only).
 #
 # $Id$
 module Yast
@@ -173,9 +171,7 @@ module Yast
         HandleSecondStageAborted()
       end
 
-      if @ret == :next || @ret == :abort || @ret == :cancel
-        EnableAutomaticModuleProbing()
-      end
+      EnableAutomaticModuleProbing() if @ret == :next || @ret == :abort || @ret == :cancel
 
       # All Sources and Target need to be released...
       FinishInstallation(@ret)

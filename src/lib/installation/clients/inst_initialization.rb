@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_initialize.ycp
-# Package:	Installation (Second Stage)
-# Summary:	Installation mode selection, initialize installation system
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# File:  clients/inst_initialize.ycp
+# Package:  Installation (Second Stage)
+# Summary:  Installation mode selection, initialize installation system
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
 #

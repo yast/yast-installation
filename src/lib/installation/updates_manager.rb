@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2016 SUSE LLC
 #
@@ -130,6 +128,7 @@ module Installation
     # Replaces the control file with the updated one (if it exists)
     def replace_control_file
       return unless File.exist?(NEW_CONTROL_FILE_PATH)
+
       log.info("Updating control.xml file in inst-sys")
       Yast::Execute.locally!("/sbin/adddir", File.dirname(NEW_CONTROL_FILE_PATH), "/")
     end

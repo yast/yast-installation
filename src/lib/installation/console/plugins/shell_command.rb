@@ -31,7 +31,7 @@ module Installation
         # some interactive tools like "vim" get stuck when running in "fbiterm"
         # "fbiterm" sets TERM to "iterm", the workaround is to override it
         # to "vt100" (bsc#1183652)
-        term = ENV["TERM"] == "iterm" ? "TERM=vt100" : ""
+        term = (ENV["TERM"] == "iterm") ? "TERM=vt100" : ""
 
         system("#{term} /bin/bash")
       end

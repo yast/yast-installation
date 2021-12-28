@@ -1,4 +1,3 @@
-# encoding: utf-8
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 # Copyright (c) 2013-2021 SUSE LLC
@@ -109,14 +108,14 @@ module Installation
 
       def remove_target_etc_mtab
         # symlink points to /proc, keep it (bnc#665437)
-        if !FileUtils.IsLink("/etc/mtab")
-          # remove [Installation::destdir]/etc/mtab which was faked for %post
-          # scripts in inst_rpmcopy
-          SCR.Execute(path(".target.remove"), "/etc/mtab")
+        return if FileUtils.IsLink("/etc/mtab")
 
-          # hotfix: recreating /etc/mtab as symlink (bnc#725166)
-          SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
-        end
+        # remove [Installation::destdir]/etc/mtab which was faked for %post
+        # scripts in inst_rpmcopy
+        SCR.Execute(path(".target.remove"), "/etc/mtab")
+
+        # hotfix: recreating /etc/mtab as symlink (bnc#725166)
+        SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
       end
 
       def close_scr_on_target
@@ -160,16 +159,16 @@ module Installation
       # This has to be done as long as the target root filesystem is still
       # mounted.
       #
-      # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
-      def default_subvolume_as_ro(fs)
+      # @param filesystem [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+      def default_subvolume_as_ro(filesystem)
         output = Yast::Execute.on_target(
-          "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
+          "btrfs", "subvolume", "get-default", filesystem.mount_point.path, stdout: :capture
         )
         default_subvolume = output.strip.split.last
         # no btrfs_default_subvolume and no snapshots
         default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
 
-        subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
+        subvolume_path = filesystem.btrfs_subvolume_mount_point(default_subvolume)
 
         log.info("Setting root subvol read-only property on #{subvolume_path}")
         Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
@@ -184,7 +183,7 @@ module Installation
           begin
             # (the details are printed on STDERR, redirect it)
             `LC_ALL=C fuser -v -m #{paths} 2>&1`
-          rescue => e
+          rescue StandardError => e
             "fuser failed: #{e}"
           end
         log.warn("\n\nRunning processes using #{mount_points}:\n#{fuser}\n")

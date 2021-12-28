@@ -1,4 +1,3 @@
-# encoding: utf-8
 # ------------------------------------------------------------------------------
 # Copyright (c) 2016 SUSE LLC
 #
@@ -126,6 +125,7 @@ module Installation
       @updates_file = nil
       @packages = nil
       raise UnknownOrigin unless ORIGINS.include?(origin)
+
       @origin = origin
     end
 
@@ -241,7 +241,7 @@ module Installation
     #
     # @return [Boolean] true if the repository is empty; false otherwise.
     def empty?
-      !Y2Packager::Resolvable.any?(kind: :package, source: repo_id)
+      Y2Packager::Resolvable.none?(kind: :package, source: repo_id)
     end
 
     # Returns whether is a user defined repository
@@ -312,6 +312,7 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Squashing packages into #{file}: #{out}")
       raise CouldNotSquashPackage unless out["exit"].zero?
+
       file
     end
 
@@ -327,9 +328,11 @@ module Installation
     # @raise CouldNotRefreshRepo
     def add_repo
       return @repo_id unless @repo_id.nil?
+
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
+
       new_repo_id = Yast::Pkg.RepositoryAdd("base_urls" => [uri.to_s],
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")

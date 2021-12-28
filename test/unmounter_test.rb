@@ -3,7 +3,7 @@
 require_relative "./test_helper"
 require "installation/unmounter"
 
-PROC_MOUNTS_PATH = File.join(File.expand_path(File.dirname(__FILE__)), "data/proc-mounts")
+PROC_MOUNTS_PATH = File.join(__dir__, "data/proc-mounts")
 PREFIX = "/mnt".freeze
 
 def stored_proc_mounts(scenario)
@@ -157,7 +157,7 @@ describe Installation::Unmounter do
     context "partition-based btrfs with subvolumes, no separate /home" do
       let(:proc_mounts) { stored_proc_mounts("btrfs") } # see data/proc/mounts/
       let(:expected_result) do
-        %w(/mnt/run
+        %w[/mnt/run
            /mnt/sys
            /mnt/proc
            /mnt/dev
@@ -171,7 +171,7 @@ describe Installation::Unmounter do
            /mnt/boot/grub2/x86_64-efi
            /mnt/boot/grub2/i386-pc
            /mnt/.snapshots
-           /mnt)
+           /mnt]
       end
 
       it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt" do
@@ -182,7 +182,7 @@ describe Installation::Unmounter do
     context "partition-based btrfs with subvolumes and separate xfs /home" do
       let(:proc_mounts) { stored_proc_mounts("btrfs-xfs-home") }
       let(:expected_result) do
-        %w(/mnt/run
+        %w[/mnt/run
            /mnt/sys
            /mnt/proc
            /mnt/dev
@@ -195,7 +195,7 @@ describe Installation::Unmounter do
            /mnt/home
            /mnt/boot/grub2/x86_64-efi
            /mnt/boot/grub2/i386-pc
-           /mnt)
+           /mnt]
       end
 
       it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt/home, /mnt" do
@@ -206,7 +206,7 @@ describe Installation::Unmounter do
     context "encrypted LVM with btrfs with subvolumes and separate btrfs /home" do
       let(:proc_mounts) { stored_proc_mounts("btrfs-xfs-home") }
       let(:expected_result) do
-        %w(/mnt/run
+        %w[/mnt/run
            /mnt/sys
            /mnt/proc
            /mnt/dev
@@ -219,7 +219,7 @@ describe Installation::Unmounter do
            /mnt/home
            /mnt/boot/grub2/x86_64-efi
            /mnt/boot/grub2/i386-pc
-           /mnt)
+           /mnt]
       end
 
       it "will unmount /mnt/run, /mnt/sys, /mnt/proc, /mnt/dev, all subvolumes, /mnt/home, /mnt" do

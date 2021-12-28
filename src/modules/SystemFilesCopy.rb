@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	modules/SystemFilesCopy.ycp
-# Package:	Installation
-# Summary:	Functionality for copying files from another systems
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# File:  modules/SystemFilesCopy.ycp
+# Package:  Installation
+# Summary:  Functionality for copying files from another systems
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
 #
@@ -62,7 +60,7 @@ module Yast
         # exists as a directory
         if FileUtils.IsDirectory(create_directory)
           Builtins.y2milestone("Directory %1 already exists", create_directory)
-          return create_directory
+          create_directory
           # exists but it's not a directory
         else
           Builtins.y2warning("Path %1 is not a directory", create_directory)
@@ -74,7 +72,7 @@ module Yast
             new_dir = CreateDirectoryIfMissing(create_directory)
           end
 
-          return new_dir
+          new_dir
         end
 
         # path doesn't exist

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,9 +17,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	test_proposal.ycp
-# Summary:	For testing the network and hardware proposals.
-# Author:	Michal Svec <msvec@suse.cz>
+# File:  test_proposal.ycp
+# Summary:  For testing the network and hardware proposals.
+# Author:  Michal Svec <msvec@suse.cz>
 #
 # $Id$
 module Yast

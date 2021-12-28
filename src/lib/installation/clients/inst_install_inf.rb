@@ -56,7 +56,7 @@ module Yast
                          "Really cancel URL modification?"))
             regurl = nil
           end
-        when "",
+        when ""
           regurl = nil
         else
           regurl = new_url

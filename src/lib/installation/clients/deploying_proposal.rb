@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,13 +17,13 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# Module:	deploying_proposal.ycp
+# Module:  deploying_proposal.ycp
 #
-# Authors:	Lukas Ocilka <locilka@suse.cz>
+# Authors:  Lukas Ocilka <locilka@suse.cz>
 #
-# Purpose:	Proposal function dispatcher - deploying images
+# Purpose:  Proposal function dispatcher - deploying images
 #
-#		See also file proposal-API.txt for details.
+#    See also file proposal-API.txt for details.
 # $Id$
 module Yast
   class DeployingProposalClient < Client
@@ -147,9 +145,9 @@ module Yast
 
       ret = "<ul>\n"
 
-      if ImageInstallation.image_installation_available == false
+      ret = if ImageInstallation.image_installation_available == false
         # TRANSLATORS: Installation overview
-        ret = Ops.add(
+        Ops.add(
           Ops.add(
             Ops.add(ret, "<li>"),
             _("No installation images are available")
@@ -157,7 +155,7 @@ module Yast
           "</li>"
         )
       elsif Ops.get_boolean(im_conf, "deploying_enabled", false) == true
-        ret = Ops.add(
+        Ops.add(
           Ops.add(
             Ops.add(ret, "<li>"),
             Builtins.sformat(
@@ -172,7 +170,7 @@ module Yast
           "</li>"
         )
       else
-        ret = Ops.add(
+        Ops.add(
           Ops.add(
             Ops.add(ret, "<li>"),
             Builtins.sformat(
