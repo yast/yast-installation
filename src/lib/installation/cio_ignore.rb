@@ -161,6 +161,7 @@ module Installation
         cio_ignore.autoconf_enabled = true
       when ACTION_ID
         # do nothing - when there is a dialog for this, connect it here
+        log.info "Action for CIO requested, but no dialog implemented"
       else
         raise "INTERNAL ERROR: Unexpected value #{edit_id}"
       end

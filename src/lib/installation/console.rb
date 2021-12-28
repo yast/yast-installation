@@ -73,7 +73,7 @@ module Installation
         require "irb/completion"
 
         # see the Binding::irb method in irb.rb in the Ruby stdlib
-        IRB.setup(eval("__FILE__"), argv: [])
+        IRB.setup(eval("__FILE__"), argv: []) # rubocop:disable Style/EvalWithLocation
         # use a simple prompt with some customizations
         IRB.conf[:PROMPT][:YAST] = IRB.conf[:PROMPT][:SIMPLE].dup
         IRB.conf[:PROMPT][:YAST][:RETURN] = ""
