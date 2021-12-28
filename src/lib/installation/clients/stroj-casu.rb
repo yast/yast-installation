@@ -76,8 +76,8 @@ module Yast
     # translations:
     # not to cause unnecessary confusion now,
     # the texts are marked with a dummy marker
-    def Tr(s)
-      s
+    def Tr(string)
+      string
     end
   end
 end

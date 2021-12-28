@@ -84,11 +84,11 @@ class MemsampleCsv < MemsampleArchive
     [total_k_s, used_k_s, free_k_s].map(&:to_i)
   end
 
-  def handle_df(_counter, _dt, data)
+  def handle_df(_counter, _datetime, data)
     @row.concat parse_total_used_free(data.lines[1])
   end
 
-  def handle_free(_counter, _dt, data)
+  def handle_free(_counter, _datetime, data)
     # mem, swap
     @row.concat parse_total_used_free(data.lines[1])
     @row.concat parse_total_used_free(data.lines[2])
@@ -109,7 +109,7 @@ class MemsampleCsv < MemsampleArchive
     result
   end
 
-  def handle_ps(_counter, dt, data)
+  def handle_ps(_counter, datetime, data)
     processes = data.lines.map { |l| l.chomp.split(" ", 9) }
     headings = processes.shift
     processes.map! do |cols|
@@ -131,7 +131,7 @@ class MemsampleCsv < MemsampleArchive
       @row << sizes.reduce(0, &:+)
     end
 
-    @row << dt
+    @row << datetime
     @csv << @row
     @row = []
   end

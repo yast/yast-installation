@@ -159,16 +159,16 @@ module Installation
       # This has to be done as long as the target root filesystem is still
       # mounted.
       #
-      # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
-      def default_subvolume_as_ro(fs)
+      # @param filesystem [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+      def default_subvolume_as_ro(filesystem)
         output = Yast::Execute.on_target(
-          "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
+          "btrfs", "subvolume", "get-default", filesystem.mount_point.path, stdout: :capture
         )
         default_subvolume = output.strip.split.last
         # no btrfs_default_subvolume and no snapshots
         default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
 
-        subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
+        subvolume_path = filesystem.btrfs_subvolume_mount_point(default_subvolume)
 
         log.info("Setting root subvol read-only property on #{subvolume_path}")
         Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")

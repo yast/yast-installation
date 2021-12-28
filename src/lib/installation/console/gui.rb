@@ -127,9 +127,9 @@ module Installation
 
       # get /proc path for a file descriptor
       # @param pid [String, Integer] PID of the process
-      # @param fd [String, Integer] file descriptor number
-      def fd_path(pid, fd)
-        "/proc/#{pid}/fd/#{fd}"
+      # @param file_descriptor [String, Integer] file descriptor number
+      def fd_path(pid, file_descriptor)
+        "/proc/#{pid}/fd/#{file_descriptor}"
       end
     end
   end
