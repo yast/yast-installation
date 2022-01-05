@@ -120,6 +120,65 @@ describe Installation::SecuritySettings do
     end
   end
 
+  describe "#propose_lsm_config" do
+    let(:lsm_config) { Y2Security::LSM::Config.instance }
+    before do
+      lsm_config.reset
+    end
+
+    context "when Linux Security Module is declared as not configurable" do
+      before do
+        lsm_config.configurable = false
+      end
+
+      it "does not propose any module" do
+        expect(lsm_config).to_not receive(:propose_default)
+        subject.propose_lsm_config
+      end
+    end
+
+    context "when Linux Security Module is declared as configurable" do
+      before do
+        lsm_config.configurable = true
+        allow(Yast::PackagesProposal).to receive("SetResolvables")
+          .with("LSM", :pattern, anything)
+        allow(subject).to receive(:propose_default)
+      end
+
+      context "but there is already a module selected" do
+        before do
+          lsm_config.select(:apparmor)
+        end
+
+        it "does not propose any module" do
+          expect(lsm_config).to_not receive(:propose_default)
+          subject.propose_lsm_config
+        end
+      end
+
+      context "and there is no module selected" do
+        before do
+          # The initialization already calls propose default so we force a initialization but
+          # resetting the lsm_config
+          subject.lsm_config.reset
+          lsm_config.configurable = true
+          allow(lsm_config).to receive(:needed_patterns).and_return(["selinux"])
+        end
+
+        it "selects the module declared as the default one to be selected" do
+          expect(lsm_config).to receive(:propose_default)
+          subject.propose_lsm_config
+        end
+
+        it "sets the needed patterns for the selected module" do
+          expect(Yast::PackagesProposal).to receive("SetResolvables")
+            .with("LSM", :pattern, ["selinux"])
+          subject.propose_lsm_config
+        end
+      end
+    end
+  end
+
   describe "#enable_firewall!" do
     it "sets firewalld service to be enabled" do
       allow(Yast::PackagesProposal).to receive("AddResolvables")
