@@ -53,7 +53,7 @@ module Installation
       enable_sshd! if wanted_enable_sshd?
       open_ssh! if wanted_open_ssh?
       open_vnc! if wanted_open_vnc?
-      lsm_config.propose_default unless lsm_config.selected
+      propose_lsm_config
       # FIXME: obtain from Y2Firewall::Firewalld, control file or allow to
       # chose a different one in the proposal
       @default_zone = "public"
@@ -65,6 +65,17 @@ module Installation
       load_feature(:firewall_enable_ssh, :open_ssh)
       load_feature(:enable_sshd, :enable_sshd)
       load_feature(:polkit_default_privs, :polkit_default_privileges)
+    end
+
+    # When Linux Security Module is declared as configurable and there is no Module selected yet
+    # it will select the desired LSM and the needed patterns for it accordingly
+    def propose_lsm_config
+      return false unless lsm_config.configurable?
+      return false if lsm_config.selected
+
+      lsm_config.propose_default
+      # It will be set even if the proposal is not shown (e.g. configurable but not selectable)
+      Yast::PackagesProposal.SetResolvables("LSM", :pattern, lsm_config.needed_patterns)
     end
 
     # Services
