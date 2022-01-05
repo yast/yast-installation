@@ -161,6 +161,7 @@ describe Installation::SecuritySettings do
           # The initialization already calls propose default so we force a initialization but
           # resetting the lsm_config
           subject.lsm_config.reset
+          lsm_config.configurable = true
           allow(lsm_config).to receive(:needed_patterns).and_return(["selinux"])
         end
 

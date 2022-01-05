@@ -102,12 +102,12 @@ describe Installation::Clients::SecurityProposal do
 
   describe "#make_proposal" do
     let(:firewall_enabled) { false }
+    let(:lsm_configurable) { false }
 
     before do
       allow(proposal_settings).to receive("enable_firewall").and_return(firewall_enabled)
-
-      allow(proposal_settings.lsm_config).to receive(:configurable?)
-        .and_return(false)
+      allow(proposal_settings.lsm_config).to receive(:configurable?).and_return(lsm_configurable)
+      allow(proposal_settings.lsm_config).to receive(:propose_default)
     end
 
     it "returns a hash with 'preformatted_proposal', 'links', 'warning_level' and 'warning'" do
@@ -137,10 +137,11 @@ describe Installation::Clients::SecurityProposal do
     end
 
     context "when LSM is configurable" do
+      let(:lsm_configurable) { true }
+
       it "contains the LSM configuration" do
-        allow(proposal_settings.lsm_config).to receive(:configurable?)
-          .and_return(true)
         allow(Yast::Bootloader).to receive(:kernel_param).and_return(:missing)
+        proposal_settings.lsm_config.select(:selinux)
 
         proposal = client.make_proposal({})
 
