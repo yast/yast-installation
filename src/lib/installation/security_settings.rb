@@ -70,8 +70,8 @@ module Installation
     # When Linux Security Module is declared as configurable and there is no Module selected yet
     # it will select the desired LSM and the needed patterns for it accordingly
     def propose_lsm_config
-      return false unless lsm_config.configurable?
-      return false if lsm_config.selected
+      return unless lsm_config.configurable?
+      return if lsm_config.selected
 
       lsm_config.propose_default
       # It will be set even if the proposal is not shown (e.g. configurable but not selectable)

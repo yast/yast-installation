@@ -135,10 +135,6 @@ describe Installation::SecuritySettings do
         expect(lsm_config).to_not receive(:propose_default)
         subject.propose_lsm_config
       end
-
-      it "returns false" do
-        expect(subject.propose_lsm_config).to eql(false)
-      end
     end
 
     context "when Linux Security Module is declared as configurable" do
@@ -157,10 +153,6 @@ describe Installation::SecuritySettings do
         it "does not propose any module" do
           expect(lsm_config).to_not receive(:propose_default)
           subject.propose_lsm_config
-        end
-
-        it "returns false" do
-          expect(subject.propose_lsm_config).to eql(false)
         end
       end
 
