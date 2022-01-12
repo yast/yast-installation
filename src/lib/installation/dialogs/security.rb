@@ -30,6 +30,7 @@ module Installation
     # Dialog for security proposal configuration
     class Security < CWM::Dialog
       def initialize(settings)
+        super()
         textdomain "installation"
 
         @settings = settings

@@ -16,6 +16,7 @@ module Installation
     end
 
     def initialize
+      super
       textdomain "installation"
     end
 

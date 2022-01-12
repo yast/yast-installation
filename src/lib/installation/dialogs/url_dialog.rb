@@ -44,6 +44,7 @@ module Installation
     #
     # @param url [String]
     def initialize(url)
+      super()
       @url = url
     end
 

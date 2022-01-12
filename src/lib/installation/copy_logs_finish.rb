@@ -28,6 +28,7 @@ module Installation
     LOCAL_BASH = Yast::Path.new(".local.bash")
 
     def initialize
+      super
       textdomain "installation"
 
       Yast.import "Directory"

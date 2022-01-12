@@ -24,6 +24,7 @@ module Installation
 
       # Constructor
       def initialize
+        super
         textdomain "installation"
         Yast.import "FileUtils"
         @running_standalone = false

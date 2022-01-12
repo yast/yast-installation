@@ -35,6 +35,7 @@ module Installation
     #  ::Installation::Console::Menu.run'
     class Menu < CWM::Dialog
       def initialize
+        super
         textdomain "installation"
       end
 

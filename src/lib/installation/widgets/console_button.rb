@@ -24,6 +24,7 @@ module Installation
       # @param focused_widget [CWM::Widget,nil] widget which should have
       # the initial focus
       def initialize(focused_widget = nil)
+        super()
         textdomain "installation"
         @focus = focused_widget
       end

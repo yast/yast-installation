@@ -53,6 +53,7 @@ module Yast
       BETA_FILE = "/README.BETA".freeze
 
       def initialize
+        super
         textdomain "installation"
       end
 

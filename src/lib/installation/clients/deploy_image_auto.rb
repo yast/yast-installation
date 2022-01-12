@@ -32,6 +32,7 @@ module Yast
     include Yast::Logger
 
     def initialize
+      super
       textdomain "installation"
     end
 

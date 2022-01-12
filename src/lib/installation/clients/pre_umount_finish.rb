@@ -12,6 +12,7 @@ module Installation
     include Yast::I18n
 
     def initialize
+      super
       textdomain "installation"
       Yast.import "UI"
       Yast.import "Misc"

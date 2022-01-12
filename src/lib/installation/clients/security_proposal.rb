@@ -56,6 +56,7 @@ module Installation
 
       # Constructor
       def initialize
+        super
         Yast.import "UI"
         Yast.import "HTML"
         textdomain "installation"

@@ -9,6 +9,7 @@ module Yast
     include Yast::Logger
 
     def initialize
+      super
       Yast.import "UI"
       textdomain "installation"
     end

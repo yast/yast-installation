@@ -39,6 +39,7 @@ Yast.import "FileUtils"
 module Yast
   class DesktopFinishClient < ::Installation::FinishClient
     def initialize
+      super
       textdomain "installation"
     end
 

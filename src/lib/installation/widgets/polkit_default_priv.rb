@@ -24,6 +24,7 @@ module Installation
   module Widgets
     class PolkitDefaultPriv < CWM::ComboBox
       def initialize(settings)
+        super()
         textdomain "installation"
 
         @settings = settings

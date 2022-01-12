@@ -41,6 +41,7 @@ module Installation
 
       # Constuctor
       def initialize
+        super
         textdomain "installation"
         @settings = ::Installation::SecuritySettings.instance
         @firewalld = Y2Firewall::Firewalld.instance

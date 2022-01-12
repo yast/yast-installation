@@ -25,6 +25,7 @@ module Installation
     # Widget to set SELinux mode
     class SelinuxMode < CWM::ComboBox
       def initialize(settings)
+        super()
         textdomain "installation"
 
         @settings = settings

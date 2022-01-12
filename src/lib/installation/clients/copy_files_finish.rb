@@ -44,6 +44,7 @@ module Yast
     include Yast::I18n
 
     def initialize
+      super
       textdomain "installation"
     end
 
