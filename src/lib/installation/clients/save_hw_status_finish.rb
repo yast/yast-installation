@@ -87,27 +87,27 @@ module Yast
           SCR.Execute(
             path(".target.bash_output"),
             "#!/bin/sh\n" \
-              "set -e\n" \
-              "if test -f /etc/sysconfig/hardware/hwcfg-static-psmouse\n" \
-              "then\n" \
-              " exit 0\n" \
-              "fi\n" \
-              "if test -d /proc/device-tree\n" \
-              "then\n" \
-              "cd /proc/device-tree\n" \
-              "if find * -name name -print0 | xargs -0 grep -qw 8042\n" \
-              "then\n" \
-              "cat > /etc/sysconfig/hardware/hwcfg-static-psmouse <<EOF\n" \
-              "MODULE='psmouse'\n" \
-              "EOF\n" \
-              "fi\n" \
-              "fi\n"
+            "set -e\n" \
+            "if test -f /etc/sysconfig/hardware/hwcfg-static-psmouse\n" \
+            "then\n" \
+            " exit 0\n" \
+            "fi\n" \
+            "if test -d /proc/device-tree\n" \
+            "then\n" \
+            "cd /proc/device-tree\n" \
+            "if find * -name name -print0 | xargs -0 grep -qw 8042\n" \
+            "then\n" \
+            "cat > /etc/sysconfig/hardware/hwcfg-static-psmouse <<EOF\n" \
+            "MODULE='psmouse'\n" \
+            "EOF\n" \
+            "fi\n" \
+            "fi\n"
           )
         )
-        if Ops.get_integer(@out, "exit", 0) != 0
-          Builtins.y2error("Error saving PS/2 mouse: %1", @out)
-        else
+        if Ops.get_integer(@out, "exit", 0) == 0
           Builtins.y2milestone("PS/2 mouse saving process returnes: %1", @out)
+        else
+          Builtins.y2error("Error saving PS/2 mouse: %1", @out)
         end
 
         Builtins.y2milestone("PS/2 mouse saving process returnes: %1", @out)

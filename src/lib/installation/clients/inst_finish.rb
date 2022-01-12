@@ -100,7 +100,7 @@ module Yast
             step["title"] || fallback_msg
           )
           SlideShow.StageProgress(
-            current_stage_percent + (100 / stages.size) * step_index / steps_nr,
+            current_stage_percent + ((100 / stages.size) * step_index / steps_nr),
             nil
           )
           # use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
@@ -150,7 +150,7 @@ module Yast
       else
         # Display the message and wait for user to accept it
         # also live installation - bzilla #297691
-        Report.DisplayMessages(true, (Linuxrc.usessh && !Linuxrc.vnc || Mode.live_installation) ? 0 : 10)
+        Report.DisplayMessages(true, ((Linuxrc.usessh && !Linuxrc.vnc) || Mode.live_installation) ? 0 : 10)
       end
       Report.LongMessage(Misc.boot_msg)
       Misc.boot_msg = ""
@@ -195,7 +195,7 @@ module Yast
 
       if !failed_hooks.empty?
         log.error "#{failed_hooks.size} failed hooks found: " \
-          "#{failed_hooks.map(&:name).join(", ")}"
+                  "#{failed_hooks.map(&:name).join(", ")}"
       end
 
       log.info "Hook summary:" unless used_hooks.empty?

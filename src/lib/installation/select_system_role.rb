@@ -108,7 +108,7 @@ module Installation
       # case.
       if result == :back
         create_dialog
-        return
+        nil
       else
         finish_dialog(result)
       end

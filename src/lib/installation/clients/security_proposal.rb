@@ -163,10 +163,10 @@ module Installation
           dialog = ::Bootloader::ConfigDialog.new(initial_tab: :kernel)
           settings = Yast::Bootloader.Export
           result = dialog.run
-          if result != :next
-            Yast::Bootloader.Import(settings)
-          else
+          if result == :next
             Yast::Bootloader.proposed_cfg_changed = true
+          else
+            Yast::Bootloader.Import(settings)
           end
         ensure
           Yast::Wizard.CloseDialog

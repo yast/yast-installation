@@ -108,8 +108,8 @@ module Yast
                                     Ops.add(
                                       # Logging extracting the driver update
                                       "cd /; \n" \
-                                        "for i in /tmp/update/[0-9]*/install ; do \n" \
-                                        "    echo \"# Installing Driver Update from $i\">>",
+                                      "for i in /tmp/update/[0-9]*/install ; do \n" \
+                                      "    echo \"# Installing Driver Update from $i\">>",
                                       logfile
                                     ),
                                     "; \n"
@@ -149,9 +149,9 @@ module Yast
 
       Builtins.y2milestone(
         "Calling:\n" \
-          "---------------------------------------------------------\n" \
-          "%1\n" \
-          "---------------------------------------------------------",
+        "---------------------------------------------------------\n" \
+        "%1\n" \
+        "---------------------------------------------------------",
         runcmd
       )
 
@@ -175,8 +175,8 @@ module Yast
       SCR.Execute(
         path(".target.bash"),
         "cd / ; for i in /tmp/update/[0-9]*/install ; do " \
-          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \
-          "done"
+        "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \
+        "done"
       )
 
       # remove driver update dir

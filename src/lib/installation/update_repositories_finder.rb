@@ -185,7 +185,7 @@ module Installation
         relurl = Yast2::RelURL.from_installation_repository(real_url)
         absolute_url = relurl.absolute_url
         log.info "Relative URL #{Yast::URL.HidePassword(real_url)} "\
-          "converted to absolute URL #{Yast::URL.HidePassword(absolute_url.to_s)}"
+                 "converted to absolute URL #{Yast::URL.HidePassword(absolute_url.to_s)}"
         absolute_url
       else
         URI(real_url)
@@ -264,7 +264,7 @@ module Installation
       ::Registration::UI::RegserviceSelectionDialog.run(
         services:    services,
         description: _("Select a detected registration server from the list\n" \
-          "to search for installer updates.")
+                       "to search for installer updates.")
       )
     end
 
@@ -302,7 +302,7 @@ module Installation
           yield
         rescue StandardError => e
           log.warn("Could not determine update repositories through the registration server: " \
-            "#{e.class}: #{e}, #{e.backtrace}")
+                   "#{e.class}: #{e}, #{e.backtrace}")
           false
         end
       end

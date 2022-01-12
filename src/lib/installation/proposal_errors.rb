@@ -33,8 +33,8 @@ module Installation
 
       headline = _("Error Found in Installation Settings")
       text = _("The following errors were found in the configuration proposal.\n" \
-        "If you continue with the installation it may not be successful.\n" \
-        "Errors:\n")
+               "If you continue with the installation it may not be successful.\n" \
+               "Errors:\n")
       sep = Yast::UI.TextMode ? "-" : "•"
       text += "#{sep} " + @errors.join("\n#{sep} ")
 

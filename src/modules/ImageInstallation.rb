@@ -348,7 +348,19 @@ module Yast
           SCR.Read(path(".process.read_line_stderr"), pid)
         )
 
-        if !newline.nil?
+        if newline.nil?
+          ret = UI.PollInput
+          if [:abort, :cancel].include?(ret)
+            if Popup.ConfirmAbort(:unusable)
+              Builtins.y2warning("Aborted!")
+              aborted = true
+              break
+            end
+          else
+            SlideShow.HandleInput(ret)
+            Builtins.sleep(200)
+          end
+        else
           if !Builtins.regexpmatch(newline, read_checkpoint_str)
             Builtins.y2milestone("Deploying image: %1", newline)
             next
@@ -361,18 +373,6 @@ module Yast
           @tar_image_progress&.call(
             Ops.add(Builtins.tointeger(newline), better_feeling_constant)
           )
-        else
-          ret = UI.PollInput
-          if [:abort, :cancel].include?(ret)
-            if Popup.ConfirmAbort(:unusable)
-              Builtins.y2warning("Aborted!")
-              aborted = true
-              break
-            end
-          else
-            SlideShow.HandleInput(ret)
-            Builtins.sleep(200)
-          end
         end
       end
 
@@ -1052,11 +1052,11 @@ module Yast
       # FIXME: this does not copy pipes in filesystem (usually not an issue)
       cmd = Builtins.sformat(
         "mkfifo %3 ;\n" \
-          "\t mkfifo %4 ;\n" \
-          "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" \
-          "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" \
-          "\t jobs -l >&2;\n" \
-          "\t tar -C %2 --numeric-owner -xSf %4",
+        "\t mkfifo %4 ;\n" \
+        "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" \
+        "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" \
+        "\t jobs -l >&2;\n" \
+        "\t tar -C %2 --numeric-owner -xSf %4",
         from,
         to,
         tmp_pipe1,
@@ -1075,7 +1075,7 @@ module Yast
         )
         until line.nil?
           if pid == ""
-            if !Builtins.regexpmatch(
+            if Builtins.regexpmatch(
               line,
               Builtins.sformat(
                 "dd bs=1048576 if=%1 of=%2",
@@ -1083,12 +1083,12 @@ module Yast
                 tmp_pipe2
               )
             )
-              pid = ""
-            else
               pid = Builtins.regexpsub(line, "([0-9]+) [^ 0-9]+ +dd", "\\1")
               Builtins.y2milestone("DD's pid: %1", pid)
               # sleep in order not to kill -USR1 to dd too early, otherwise it finishes
               Builtins.sleep(5000)
+            else
+              pid = ""
             end
           elsif Builtins.regexpmatch(line, "^[0-9]+ ")
             done = Builtins.regexpsub(line, "^([0-9]+) ", "\\1")

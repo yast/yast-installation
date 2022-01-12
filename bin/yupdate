@@ -224,7 +224,7 @@ module YUpdate
       system("mount", "--make-private", origdir)
 
       system("mount", "-t", "overlay", "overlay", "-o", "lowerdir=#{dir},"\
-        "upperdir=#{upperdir},workdir=#{workdir}", dir)
+                                                        "upperdir=#{upperdir},workdir=#{workdir}", dir)
     end
 
     # delete the OverlayFS for this directory, all changes will be reverted back

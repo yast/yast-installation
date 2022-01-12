@@ -119,8 +119,8 @@ module Yast
       result << _("<p>Information required for the base installation is now complete.</p>")
       result << _(
         "<p>If you continue now, partitions on your\n" \
-          "hard disk will be modified according to the installation settings in the\n" \
-          "previous dialogs.</p>"
+        "hard disk will be modified according to the installation settings in the\n" \
+        "previous dialogs.</p>"
       )
       result << _(
         "<p>Go back and check the settings if you are unsure.</p>"
@@ -137,8 +137,8 @@ module Yast
       result << _("<p>Information required to perform an update is now complete.</p>")
       result << _(
         "\n" \
-          "<p>If you continue now, data on your hard disk will be overwritten\n" \
-          "according to the settings in the previous dialogs.</p>"
+        "<p>If you continue now, data on your hard disk will be overwritten\n" \
+        "according to the settings in the previous dialogs.</p>"
       )
       result << _("<p>Go back and check the settings if you are unsure.</p>")
     end

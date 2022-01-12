@@ -92,8 +92,8 @@ module Yast
                     Label(
                       _(
                         "No network setup has been found.\n" \
-                          "It is important if using remote repositories,\n" \
-                          "otherwise you can safely skip it.\n"
+                        "It is important if using remote repositories,\n" \
+                        "otherwise you can safely skip it.\n"
                       )
                     )
                   )
@@ -168,7 +168,7 @@ module Yast
             Builtins.y2milestone("Running inst_lan")
             @ret2 = WFM.call(
               "inst_lan",
-              [GetInstArgs.argmap.merge("skip_detection" => true), "hide_abort_button" => true]
+              [GetInstArgs.argmap.merge("skip_detection" => true), { "hide_abort_button" => true }]
             )
             Builtins.y2milestone("inst_lan ret: %1", @ret2)
 

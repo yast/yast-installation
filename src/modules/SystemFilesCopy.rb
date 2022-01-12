@@ -81,11 +81,11 @@ module Yast
         # created successfully
         if FileUtils.Exists(create_directory)
           Builtins.y2milestone("Directory %1 created", create_directory)
-          return create_directory
+          create_directory
           # cannot create
         else
           Builtins.y2error("Cannot create path %1", create_directory)
-          return nil
+          nil
         end
       end
     end
@@ -110,9 +110,7 @@ module Yast
       dir_path_list = Builtins.filter(dir_path_list) { |one_dir| one_dir != "" }
 
       directory_path = Builtins.mergestring(dir_path_list, "/")
-      directory_path = Builtins.sformat("/%1/", directory_path)
-
-      directory_path
+      Builtins.sformat("/%1/", directory_path)
     end
 
     def CopyFilesFromDirToDir(dir_from, dir_to)
@@ -123,12 +121,12 @@ module Yast
       )
       cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
 
-      if Ops.get_integer(cmd_run, "exit", -1) != 0
-        Builtins.y2error("Command %1 failed %2", cmd, cmd_run)
-        return false
-      else
+      if Ops.get_integer(cmd_run, "exit", -1) == 0
         Builtins.y2milestone("Command >%1< succeeded", cmd)
-        return true
+        true
+      else
+        Builtins.y2error("Command %1 failed %2", cmd, cmd_run)
+        false
       end
     end
 

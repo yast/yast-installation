@@ -66,9 +66,9 @@ module Yast
             # TRANSLATORS: help text
             "help"                  => _(
               "<p><b>Installation from Images</b> is used to speed the installation up.\n" \
-                "Images contain compressed snapshots of an installed system matching your\n" \
-                "selection of patterns. The rest of the packages which are not contained in the\n" \
-                "images will be installed from packages the standard way.</p>\n"
+              "Images contain compressed snapshots of an installed system matching your\n" \
+              "selection of patterns. The rest of the packages which are not contained in the\n" \
+              "images will be installed from packages the standard way.</p>\n"
             ) +
               # TRANSLATORS: help text
               _(
@@ -116,9 +116,9 @@ module Yast
           Report.Message(
             _(
               "Cannot enable installation from images.\n" \
-                "\n" \
-                "Currently selected patterns do not fit the images\n" \
-                "stored on the installation media.\n"
+              "\n" \
+              "Currently selected patterns do not fit the images\n" \
+              "stored on the installation media.\n"
             )
           )
         end
@@ -186,9 +186,7 @@ module Yast
         )
       end
 
-      ret = Ops.add(ret, "</ul>\n")
-
-      ret
+      Ops.add(ret, "</ul>\n")
     end
 
     def CallProposalScript

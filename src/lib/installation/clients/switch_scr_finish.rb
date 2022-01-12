@@ -153,9 +153,7 @@ module Yast
         SCR.Execute(path(".target.bash_output"), "LANG=en_US.UTF-8 /bin/df -h")
       )
 
-      if Ops.get_integer(ret_exec, "exit", -1) != 0
-        Builtins.y2error("Cannot find out free space: %1", ret_exec)
-      else
+      if Ops.get_integer(ret_exec, "exit", -1) == 0
         Builtins.y2milestone(
           "Free space: \n%1",
           Builtins.mergestring(
@@ -163,6 +161,8 @@ module Yast
             "\n"
           )
         )
+      else
+        Builtins.y2error("Cannot find out free space: %1", ret_exec)
       end
 
       nil

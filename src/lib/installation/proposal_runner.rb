@@ -81,7 +81,10 @@ module Installation
         # Checking if second stage is needed and the environment has been setup.
         second_stage_error = Yast::AutoinstFunctions.check_second_stage_environment
 
-        if !Yast::AutoinstConfig.Confirm
+        if Yast::AutoinstConfig.Confirm
+          # This string will be shown in the proposal overview
+          Yast::AutoinstData.autoyast_second_stage_error = second_stage_error
+        else
           # Checking if vnc, ssh,... is available
           error_message = Yast::Packages.check_remote_installation_packages
           # Fit to the given UI
@@ -97,9 +100,6 @@ module Installation
           end
           # skip if not interactive mode.
           return :auto
-        else
-          # This string will be shown in the proposal overview
-          Yast::AutoinstData.autoyast_second_stage_error = second_stage_error
         end
       end
 
@@ -748,7 +748,9 @@ module Installation
         end
       end
 
-      vbox = if !enable_skip
+      vbox = if enable_skip
+        VBox(skip_buttons, HBox(HSpacing(4), rt), menu_box)
+      else
         VBox(
           # Help message between headline and installation proposal / settings summary.
           # May contain newlines, but don't make it very much longer than the original.
@@ -768,8 +770,6 @@ module Installation
           rt,
           menu_box
         )
-      else
-        VBox(skip_buttons, HBox(HSpacing(4), rt), menu_box)
       end
 
       Yast::Wizard.SetContents(

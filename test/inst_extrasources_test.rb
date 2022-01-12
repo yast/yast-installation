@@ -8,8 +8,8 @@ describe Yast::InstExtrasourcesClient do
   describe "#RegisteredUrls" do
     before do
       # fake main run, to avoid huge stubbing
-      subject.instance_variable_set(:"@local_urls", {})
-      subject.instance_variable_set(:"@usb_sources", {})
+      subject.instance_variable_set(:@local_urls, {})
+      subject.instance_variable_set(:@usb_sources, {})
 
       allow(Yast::Pkg).to receive(:SourceGetCurrent).with(false).and_return([0, 1, 2, 3])
       allow(Yast::Pkg).to receive(:SourceGeneralData).with(0).and_return("raw_url" => "http://test.com/")
@@ -29,13 +29,13 @@ describe Yast::InstExtrasourcesClient do
       allow(Yast::Mode).to receive(:update).and_return(true)
       subject.RegisteredUrls
 
-      expect(subject.instance_variable_get(:"@local_urls")).to eq(2 => "dir:///mnt/path")
+      expect(subject.instance_variable_get(:@local_urls)).to eq(2 => "dir:///mnt/path")
     end
 
     it "fills list of usb sources" do
       subject.RegisteredUrls
 
-      expect(subject.instance_variable_get(:"@usb_sources")).to eq(
+      expect(subject.instance_variable_get(:@usb_sources)).to eq(
         1 => "usb://device=/dev/disk/by-id/usb-15"
       )
     end

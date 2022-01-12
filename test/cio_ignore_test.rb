@@ -102,7 +102,7 @@ describe ::Installation::CIOIgnoreProposal do
       it "changes proposal if passed with chosen_id in second param hash" do
         params = [
           "AskUser",
-          "chosen_id" => ::Installation::CIOIgnoreProposal::CIO_DISABLE_LINK
+          { "chosen_id" => ::Installation::CIOIgnoreProposal::CIO_DISABLE_LINK }
         ]
         result = subject.run(*params)
 
@@ -119,7 +119,7 @@ describe ::Installation::CIOIgnoreProposal do
       it "raises RuntimeError if \"AskUser\" passed with non-existing chosen_id in second param hash" do
         params = [
           "AskUser",
-          "chosen_id" => "non_existing"
+          { "chosen_id" => "non_existing" }
         ]
 
         expect { subject.run(*params) }.to raise_error(RuntimeError)

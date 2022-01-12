@@ -43,7 +43,7 @@ module Installation
       @services = old_services
       @new_urls = {}
       # by default remove all repositories
-      @status_map = Hash[repositories.map { |r| [r, :removed] }]
+      @status_map = repositories.map { |r| [r, :removed] }.to_h
     end
 
     def self.create_from_old_repositories

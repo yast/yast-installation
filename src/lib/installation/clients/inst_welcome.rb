@@ -64,9 +64,9 @@ module Yast
         # welcome text 2/4
         _(
           "<p>There are a few more steps to take before your system is ready to\n" \
-            "use. YaST will now guide you through some basic configuration.  Click\n" \
-            "<b>Next</b> to continue. </p>\n" \
-            "            \n"
+          "use. YaST will now guide you through some basic configuration.  Click\n" \
+          "<b>Next</b> to continue. </p>\n" \
+          "            \n"
         )
 
       # welcome text

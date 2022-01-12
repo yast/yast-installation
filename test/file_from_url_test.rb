@@ -21,8 +21,8 @@ describe Yast::Transfer::FileFromUrl do
     # adaptor for existing tests
     def Get(scheme, host, urlpath, localfile)
       get_file_from_url(scheme: scheme, host: host, urlpath: urlpath,
-                        localfile: localfile,
-                        urltok: {}, destdir: "/destdir")
+        localfile: localfile,
+        urltok: {}, destdir: "/destdir")
     end
   end
 
@@ -279,7 +279,7 @@ describe Yast::Transfer::FileFromUrl do
         context "and the CD/DVD is already mounted" do
           let(:mounts) do
             "#{cd_device} /mounts/mp_0005 iso9660 ro,relatime 0 0\n" \
-            "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
+              "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
           end
 
           it "bind mounts the CD/DVD and tries to copy the file from it" do

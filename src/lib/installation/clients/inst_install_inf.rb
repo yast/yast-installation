@@ -52,8 +52,8 @@ module Yast
         case new_url
         when :cancel
           if Popup.YesNo(_("If you decide to cancel, the custom URL\n" \
-                         "will be completely ignored.\n\n" \
-                         "Really cancel URL modification?"))
+                           "will be completely ignored.\n\n" \
+                           "Really cancel URL modification?"))
             regurl = nil
           end
         when ""

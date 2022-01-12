@@ -58,7 +58,7 @@ module Yast
         {
           "name"        => "packages",
           "description" => _("Installing Packages..."),
-          "value"       => 5*60, # just random number like others, but expect that package installation takes most
+          "value"       => 5 * 60, # just random number like others, but expect that package installation takes most
           "units"       => :sec
         },
         {

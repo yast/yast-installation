@@ -220,10 +220,10 @@ module Yast
         deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
-          (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
-            Ops.less_than(@prodnamelen, 90) ||
-            Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
-              Ops.less_than(@prodnamelen, 70))
+          ((Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
+            Ops.less_than(@prodnamelen, 90)) ||
+            (Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
+              Ops.less_than(@prodnamelen, 70)))
         DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else

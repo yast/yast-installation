@@ -20,7 +20,7 @@ describe ::Installation::Clients::InstModulesExtensions do
 
       allow(Yast::WorkflowManager).to receive(:merge_modules_extensions)
 
-      allow(Y2Packager::Product).to receive(:selected_base) .and_return(product)
+      allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
     end
 
     it "returns :back if going back" do

@@ -139,7 +139,7 @@ module Installation
     # @param write_config_files [Boolean] whether to copy the config files
     def write_files(root_dir, write_keys: true, write_config_files: true)
       log.info "Writing SSH keys and/or configuration: " \
-        "keys: #{write_keys}, config: #{write_config_files}"
+               "keys: #{write_keys}, config: #{write_config_files}"
       dir = self.class.ssh_dir(root_dir)
       ::FileUtils.mkdir_p(dir)
 

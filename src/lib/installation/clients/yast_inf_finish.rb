@@ -104,15 +104,15 @@ module Yast
               path(".dev.tty.stderr"),
               _(
                 "\n" \
-                  "**************************************************************\n" \
-                  "\n" \
-                  "Loading installed kernel using kexec.\n" \
-                  "\n" \
-                  "Trying to load installed kernel via kexec instead of rebooting\n" \
-                  "Please, wait.\n" \
-                  "\n" \
-                  "**************************************************************\n" \
-                  "\t\t"
+                "**************************************************************\n" \
+                "\n" \
+                "Loading installed kernel using kexec.\n" \
+                "\n" \
+                "Trying to load installed kernel via kexec instead of rebooting\n" \
+                "Please, wait.\n" \
+                "\n" \
+                "**************************************************************\n" \
+                "\t\t"
               )
             )
           end

@@ -48,7 +48,7 @@ module Installation
         # %{cmd} is replaced by a command name
         # %{keys} is replaced by a keyboard shortcut
         puts format(_("Type '%{cmd}' or press %{keys} to close the console and go back " \
-          "to the installer"), cmd: "quit", keys: "Ctrl+D")
+                      "to the installer"), cmd: "quit", keys: "Ctrl+D")
         puts
         puts "Type 'commands' to see the available special commands"
         puts
@@ -74,7 +74,7 @@ module Installation
       end
 
       # all unknown commands are handled via this "method_missing" callback
-      def method_missing(method_name, *_args) # rubocop:disable Style/MethodMissingSuper
+      def method_missing(method_name, *_args)
         Yast::Y2Logger.instance.info "Entered unknown command: #{method_name.inspect}"
         puts "Error: Unknown command \"#{method_name}\""
         puts

@@ -78,7 +78,7 @@ module Installation
       end
 
       NOT_VALID_SERVERS_MESSAGE = N_("Not valid location for the NTP servers:\n%{servers}" \
-        "\n\nPlease, enter a valid IP or Hostname").freeze
+                                     "\n\nPlease, enter a valid IP or Hostname").freeze
       # Validate input
       #
       # * All specified IPs or hostnames should be valid
@@ -125,9 +125,9 @@ module Installation
           _("NTP Servers"),
           # TRANSLATORS: error message for invalid ntp server name/address
           _("You have not configured an NTP server. This may lead to\n" \
-          "your system not functioning properly.\n" \
-          "Proceed with caution and at your own risk.\n\n" \
-          "Would you like to continue with the installation?"),
+            "your system not functioning properly.\n" \
+            "Proceed with caution and at your own risk.\n\n" \
+            "Would you like to continue with the installation?"),
           Yast::Label.YesButton,
           Yast::Label.NoButton,
           :yes

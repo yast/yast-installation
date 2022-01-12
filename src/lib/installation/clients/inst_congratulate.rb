@@ -196,8 +196,8 @@ module Yast
         (if DisplayKDEHelp()
            _(
              "<p>If you choose the default graphical desktop KDE, you can\n" \
-               "adjust some KDE settings to your hardware. Also notice\n" \
-               "our SUSE Welcome Dialog.</p>\n"
+             "adjust some KDE settings to your hardware. Also notice\n" \
+             "our SUSE Welcome Dialog.</p>\n"
            )
          else
            ""
@@ -208,9 +208,9 @@ module Yast
           @help,
           _(
             "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" \
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
-              "needs a profile to know what the installed system should look like. If this option is\n" \
-              "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
+            "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
+            "needs a profile to know what the installed system should look like. If this option is\n" \
+            "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         )
       end
@@ -301,21 +301,21 @@ module Yast
       # Load Add-On products configured in the fist stage
       AddOnProduct.ReadTmpExportFilename
 
-      if !Package.InstallMsg(
+      if Package.InstallMsg(
         "autoyast2",
         _(
           "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
         ) +
           _("<p>Install it now?</p>")
       )
-        Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
-      else
         # #165860
         # Save sources now because cloning garbles the target
         # Cloning reinitializes sources when it needs them
         Pkg.SourceSaveAll
 
         Call.Function("clone_system", [])
+      else
+        Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
       end
 
       nil

@@ -326,15 +326,15 @@ module Yast
       if FileUtils.Exists(var_file)
         var_map = Convert.to_map(SCR.Read(path(".target.ycp"), var_file))
         lang = Ops.get_string(var_map, "second_stage_language")
-        if !lang.nil?
-          Builtins.y2milestone("Setting language to: %1", lang)
-          Language.QuickSet(lang)
-          Builtins.y2milestone("using %1 for second stage", lang)
-        else
+        if lang.nil?
           Builtins.y2error(
             "Cannot set language, tmp-file contains: %1",
             var_map
           )
+        else
+          Builtins.y2milestone("Setting language to: %1", lang)
+          Language.QuickSet(lang)
+          Builtins.y2milestone("using %1 for second stage", lang)
         end
         SCR.Execute(path(".target.remove"), var_file)
       end
@@ -353,17 +353,17 @@ module Yast
         # popup question (#x1)
         show_error = _(
           "The previous installation has failed.\n" \
-            "Would you like it to continue?\n" \
-            "\n" \
-            "Note: You may have to enter some information again."
+          "Would you like it to continue?\n" \
+          "\n" \
+          "Note: You may have to enter some information again."
         )
         if FileUtils.Exists(Installation.file_inst_aborted)
           # popup question (#x1)
           show_error = _(
             "The previous installation has been aborted.\n" \
-              "Would you like it to continue?\n" \
-              "\n" \
-              "Note: You may have to enter some information again."
+            "Would you like it to continue?\n" \
+            "\n" \
+            "Note: You may have to enter some information again."
           )
 
           Builtins.y2milestone("Case: aborted")

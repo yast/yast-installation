@@ -115,9 +115,9 @@ module Installation
           # give some feedback
           # It's dozens of lines...
           "test -x /sbin/set_polkit_default_privs && " \
-            "echo /sbin/set_polkit_default_privs && " \
-            "/sbin/set_polkit_default_privs | wc -l && " \
-            "echo 'Done'"
+          "echo /sbin/set_polkit_default_privs && " \
+          "/sbin/set_polkit_default_privs | wc -l && " \
+          "echo 'Done'"
         )
         log.info "Command returned: #{ret2}"
       end

@@ -38,7 +38,7 @@ module Installation
         "/usr/bin/fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
 
       log.info("These processes are still running at " \
-        "#{Installation.destdir} -> #{cmd_run}")
+               "#{Installation.destdir} -> #{cmd_run}")
 
       unless Misc.boot_msg.empty?
         # just a beep

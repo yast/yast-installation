@@ -20,25 +20,25 @@ end
 describe Installation::UpgradeRepoManager do
   let(:repo1) do
     Y2Packager::Repository.new(repo_id: 1, repo_alias: "test1",
-    url: URI("https://example.com/1"), raw_url: URI("https://example.com/1"),
-    name: "repo1", enabled: true, autorefresh: true)
+      url: URI("https://example.com/1"), raw_url: URI("https://example.com/1"),
+      name: "repo1", enabled: true, autorefresh: true)
   end
 
   let(:repo2) do
     Y2Packager::Repository.new(repo_id: 2, repo_alias: "test2",
-    url: URI("https://example.com/2"), raw_url: URI("https://example.com/2"),
-    name: "repo2", enabled: true, autorefresh: true)
+      url: URI("https://example.com/2"), raw_url: URI("https://example.com/2"),
+      name: "repo2", enabled: true, autorefresh: true)
   end
 
   let(:extra_repo) do
     Y2Packager::Repository.new(repo_id: 42, repo_alias: "extra",
-    url: URI("https://example.com/extra"), raw_url: URI("https://example.com/extra"),
-    name: "extra", enabled: true, autorefresh: true)
+      url: URI("https://example.com/extra"), raw_url: URI("https://example.com/extra"),
+      name: "extra", enabled: true, autorefresh: true)
   end
 
   let(:service1) do
     Y2Packager::Service.new(service_alias: "service1", name: "service1",
-    url: "https://example.com/service", enabled: true, auto_refresh: true)
+      url: "https://example.com/service", enabled: true, auto_refresh: true)
   end
 
   subject { Installation::UpgradeRepoManager.new([repo1, repo2], [service1]) }

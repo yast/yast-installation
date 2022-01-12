@@ -453,8 +453,8 @@ module Yast
       names_only = true
       Pkg.GetPackages(:selected, names_only).each do |pkg|
         Y2Packager::Resolvable.find(kind:   :package,
-                                    name:   pkg,
-                                    status: :selected).each do |p|
+          name:   pkg,
+          status: :selected).each do |p|
           source = p.source
           next unless repos.include?(source)
 
