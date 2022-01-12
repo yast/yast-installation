@@ -40,7 +40,8 @@ module Yast
     end
 
     def InjectFile(filename)
-      command = "/bin/cp #{filename.shellescape} #{File.join(Installation.destdir, filename).shellescape}"
+      command = "/bin/cp #{filename.shellescape} #{File.join(Installation.destdir,
+        filename).shellescape}"
       Builtins.y2milestone("InjectFile: <%1>", filename)
       Builtins.y2debug("Inject command: #{command}")
       WFM.Execute(path(".local.bash"), command)
@@ -239,7 +240,8 @@ module Yast
       WFM.Execute(
         path(".local.bash"),
         Builtins.sformat(
-          "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; /usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
+          "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; " \
+          "/usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
           (scst_required == false) ? "0" : "1"
         )
       )

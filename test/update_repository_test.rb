@@ -131,7 +131,8 @@ describe Installation::UpdateRepository do
     end
 
     let(:package) do
-      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id)
+      Y2Packager::Resolvable.new("name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm",
+        "source" => repo_id)
     end
 
     let(:libzypp_package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
@@ -242,12 +243,14 @@ describe Installation::UpdateRepository do
       repo.apply(updates_path)
     end
 
-    it "writes the list of updated packages to the #{Installation::UpdateRepository::PACKAGE_INDEX} file" do
+    it "writes the list of updated packages to " \
+       "the #{Installation::UpdateRepository::PACKAGE_INDEX} file" do
       # deactivate the global mock
       expect(repo).to receive(:write_package_index).and_call_original
 
       io = StringIO.new
-      expect(File).to receive(:open).with(Installation::UpdateRepository::PACKAGE_INDEX, "a").and_yield(io)
+      expect(File).to receive(:open).with(Installation::UpdateRepository::PACKAGE_INDEX,
+        "a").and_yield(io)
       repo.apply(updates_path)
       # check the written content
       expect(io.string).to eq("pkg1 [1.42-1.2.noarch]\n")

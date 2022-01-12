@@ -60,7 +60,8 @@ module Yast
           "when"  => [:installation, :live_installation, :update, :autoinst]
         }
       when "Write"
-        Builtins.y2error("ldconfig failed\n") if SCR.Execute(path(".target.bash"), "/sbin/ldconfig") != 0
+        Builtins.y2error("ldconfig failed\n") if SCR.Execute(path(".target.bash"),
+          "/sbin/ldconfig") != 0
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

@@ -58,7 +58,8 @@ module Yast
         {
           "name"        => "packages",
           "description" => _("Installing Packages..."),
-          "value"       => 5 * 60, # just random number like others, but expect that package installation takes most
+          # just random number like others, but expect that package installation takes most
+          "value"       => 5 * 60,
           "units"       => :sec
         },
         {
@@ -76,8 +77,8 @@ module Yast
           {
             "name"        => "images",
             "description" => _("Deploying Images..."),
-            "value"       => 300_000, # just make it longer than inst_finish, TODO: better value later
-            "units"       => :kb
+            "value"       => 400, # just make it longer than inst_finish
+            "units"       => :sec
           },
           {
             "name"        => "finish",

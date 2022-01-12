@@ -116,7 +116,8 @@ module Installation
 
       # Copy the current state of random number generator to the installed system
       if local_command(
-        "/usr/bin/dd if='#{String.Quote(RANDOM_PATH)}' bs='#{String.Quote(read_poolsize)}' count=1 of='#{String.Quote(store_to)}'"
+        "/usr/bin/dd if='#{String.Quote(RANDOM_PATH)}' bs='#{String.Quote(read_poolsize)}' " \
+        "count=1 of='#{String.Quote(store_to)}'"
       )
         log.info "State of #{RANDOM_PATH} has been successfully copied to #{store_to}"
       else

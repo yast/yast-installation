@@ -168,7 +168,8 @@ module Yast
       kernel_args = Ops.get_string(out, "stdout", "")
       # check if kernel_params contains any data
       if Ops.less_than(Builtins.size(kernel_args), 2)
-        Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir, kernel_args)
+        Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir,
+          kernel_args)
         return false
       end
 

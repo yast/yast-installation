@@ -508,7 +508,8 @@ module Installation
       # FATE #301151: Allow YaST proposals to have help texts
       Yast::Wizard.SetHelpText(@store.help_text(@current_tab))
 
-      switch_to_tab(tab_to_switch) if @store.tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
+      switch_to_tab(tab_to_switch) if @store.tabs? && Yast::Ops.less_than(tab_to_switch,
+        999) && !current_tab_affected
 
       # now do the display-only proposals
 

@@ -73,11 +73,14 @@ module Yast
             ) +
               # TRANSLATORS: help text
               _(
-                "<p>Note that when installing from images, the time stamps of all packages originating from the images will\nnot match the installation date but rather the date the image was created.</p>"
+                "<p>Note that when installing from images, the time stamps of all packages " \
+                "originating from the images will\nnot match the installation date but rather " \
+                "the date the image was created.</p>"
               ) +
               # TRANSLATORS: help text
               _(
-                "<p>Installation from images is disabled by default if the current\npattern selection does not fit any set of images.</p>"
+                "<p>Installation from images is disabled by default if the current\n" \
+                "pattern selection does not fit any set of images.</p>"
               )
           }
         else
@@ -161,7 +164,8 @@ module Yast
             Ops.add(ret, "<li>"),
             Builtins.sformat(
               # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>,
+              # only visible text
               _(
                 "Installation from images is enabled (<a href=\"%1\">disable</a>)."
               ),
@@ -176,7 +180,8 @@ module Yast
             Ops.add(ret, "<li>"),
             Builtins.sformat(
               # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>,
+              # only visible text
               _(
                 "Installation from images is disabled (<a href=\"%1\">enable</a>)."
               ),

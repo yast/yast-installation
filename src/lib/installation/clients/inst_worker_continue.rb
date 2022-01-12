@@ -161,13 +161,12 @@ module Yast
       # bugzilla #258742
       StoreNetworkServices(@ret)
 
-      # when the installation is not aborted or YaST is not restarted on purpose
-      # ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort && ret != `reboot_same_step)
       case @ret
+      # when the installation is not aborted or YaST is not restarted on purpose
       when :next
         HandleSecondStageFinishedCorrectly()
-        # installation (second stage) has been aborted
-        # FATE #300422
+      # installation (second stage) has been aborted
+      # FATE #300422
       when :abort, :cancel
         HandleSecondStageAborted()
       end

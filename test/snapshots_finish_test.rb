@@ -12,7 +12,8 @@ describe ::Installation::SnapshotsFinish do
 
   describe "#write" do
     before do
-      allow(Yast::InstFunctions).to receive(:second_stage_required?).and_return(second_stage_required)
+      allow(Yast::InstFunctions).to receive(:second_stage_required?)
+        .and_return(second_stage_required)
       allow(Yast2::FsSnapshot).to receive(:configured?).and_return(snapper_configured)
       allow(Yast::Mode).to receive(:installation).and_return(mode == :installation)
       allow(Yast2::FsSnapshot).to receive(:configure_on_install?).and_return configure
@@ -102,14 +103,17 @@ describe ::Installation::SnapshotsFinish do
             allow(Yast2::FsSnapshotStore).to receive(:clean).with("update")
           end
 
-          it "creates a snapshot of type 'post' with 'after update' as description and paired with 'pre' snapshot" do
-            expect(Yast2::FsSnapshot).to receive(:create_post).with("after update", 1, cleanup: :number, important: true).and_return(true)
+          it "creates a snapshot of type 'post' with 'after update' as description " \
+             "and paired with 'pre' snapshot" do
+            expect(Yast2::FsSnapshot).to receive(:create_post).with("after update", 1,
+              cleanup: :number, important: true).and_return(true)
             expect(subject.write).to eq(true)
           end
 
           context "and could not create the snapshot" do
             before do
-              allow(Yast2::FsSnapshot).to receive(:create_post).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast2::FsSnapshot).to receive(:create_post)
+                .and_raise(Yast2::SnapshotCreationFailed)
               allow(Yast::Report).to receive(:Error)
             end
 
@@ -130,13 +134,15 @@ describe ::Installation::SnapshotsFinish do
           end
 
           it "creates a snapshot of type 'single' with 'after installation' as description" do
-            expect(Yast2::FsSnapshot).to receive(:create_single).with("after installation", cleanup: :number, important: true).and_return(true)
+            expect(Yast2::FsSnapshot).to receive(:create_single).with("after installation",
+              cleanup: :number, important: true).and_return(true)
             expect(subject.write).to eq(true)
           end
 
           context "and could not create the snapshot" do
             before do
-              allow(Yast2::FsSnapshot).to receive(:create_single).and_raise(Yast2::SnapshotCreationFailed)
+              allow(Yast2::FsSnapshot).to receive(:create_single)
+                .and_raise(Yast2::SnapshotCreationFailed)
               allow(Yast::Report).to receive(:Error)
             end
 

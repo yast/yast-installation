@@ -77,7 +77,7 @@ module Yast
         )
         @filename = "/etc/X11/xorg.conf"
         WFM.Execute(path(".local.bash"),
-          "/bin/cp " + @filename + " '" + String.Quote(Installation.destdir) + @filename + ".install'")
+          "/bin/cp #{@filename} '" + String.Quote(Installation.destdir) + @filename + ".install'")
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

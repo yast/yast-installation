@@ -194,7 +194,8 @@ module Yast
         # TRANSLATORS: pop-up message
         Report.Message(
           _(
-            "Debugging has been turned on.\nYaST will open a software manager for you to check the current status of packages."
+            "Debugging has been turned on.\n" \
+            "YaST will open a software manager for you to check the current status of packages."
           )
         )
         RunPackageManager()

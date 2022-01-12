@@ -200,10 +200,11 @@ module Yast
            ""
          end) +
         # help text for installation method
-        _("<p>\nTo install an add-on product from separate media together with &product;, select\n" \
-          "<b>Include Add-on Products from Separate Media</b>.</p>\n") +
+        _("<p>\nTo install an add-on product from separate media together with &product;, " \
+          "select\n<b>Include Add-on Products from Separate Media</b>.</p>\n") +
         # help text: additional help for installation
-        _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i> site.</p>")
+        _("<p>If you need specific hardware drivers for installation, see " \
+          "<i>http://drivers.suse.com</i> site.</p>")
     end
   end
 end

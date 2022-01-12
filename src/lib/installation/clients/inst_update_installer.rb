@@ -442,7 +442,8 @@ module Yast
     # (SP3) can cause crashes or unexpected behavior.
     def valid_repositories?
       instsys_packages = ::Installation::InstsysPackages.read("/.packages.root")
-      verifier = ::Installation::SelfupdateVerifier.new(updates_manager.repositories, instsys_packages)
+      verifier = ::Installation::SelfupdateVerifier.new(updates_manager.repositories,
+        instsys_packages)
 
       # no downgraded packages => OK
       return true if verifier.downgraded_packages.empty?

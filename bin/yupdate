@@ -5,7 +5,7 @@
 #
 # See the help text below for the details or see the documentation in
 # the doc/yupdate.md file.
-#
+# rubocop:disable Layout/LineLength Do not split example shell
 # Note: The reason why all classes are in a single file is that
 #       it allows to easy update the script to the latest version
 #       or add it to an older (not supported) installer with:
@@ -14,7 +14,7 @@
 #   chmod +x /usr/bin/yupdate
 #   yupdate ...
 #
-
+# rubocop:enable Layout/LineLength
 require "fileutils"
 require "find"
 require "json"
@@ -348,7 +348,9 @@ module YUpdate
     # start the downloading, extract the tarball to the specified directory
     def extract_to(dir)
       download do |input|
-        raise "Unknown MIME type: #{input.content_type}" if input.content_type !~ /application\/(x-|)gzip/
+        if input.content_type !~ /application\/(x-|)gzip/
+          raise "Unknown MIME type: #{input.content_type}"
+        end
 
         # pipe the response body directly to the tar process
         IO.popen(["tar", "-C", dir, "--warning=no-timestamp", "-xz"], "wb") do |io|

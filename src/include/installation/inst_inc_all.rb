@@ -116,7 +116,8 @@ module Yast
           # default DPMS values, enable DPMS, enable screen-saver
           WFM.Execute(
             path(".local.bash"),
-            "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s on; /usr/bin/xset s default;"
+            "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s on; " \
+            "/usr/bin/xset s default;"
           )
         end
 
@@ -203,7 +204,8 @@ module Yast
 
         if x11_msg == ""
           Builtins.y2error(
-            "There should be a more detailed message displayed here,\nbut something went wrong, that's why it is only in the log"
+            "There should be a more detailed message displayed here,\n" \
+            "but something went wrong, that's why it is only in the log"
           )
         else
           Report.Message(x11_msg)

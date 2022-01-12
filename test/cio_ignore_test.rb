@@ -39,7 +39,8 @@ describe ::Installation::CIOIgnoreProposal do
 
   describe "#run" do
     describe "first parameter \"MakeProposal\"" do
-      it "returns proposal entry hash containing \"links\", \"help\" and \"preformatted_proposal\"" do
+      it "returns proposal entry hash containing \"links\", \"help\" and " \
+         "\"preformatted_proposal\"" do
         result = subject.run("MakeProposal")
 
         expect(result).to have_key("links")
@@ -89,7 +90,8 @@ describe ::Installation::CIOIgnoreProposal do
     end
 
     describe "first parameter \"Description\"" do
-      it "returns proposal metadata hash containing \"rich_text_title\", \"id\" and \"menu_title\"" do
+      it "returns proposal metadata hash containing \"rich_text_title\", " \
+         "\"id\" and \"menu_title\"" do
         result = subject.run("Description")
 
         expect(result).to have_key("rich_text_title")
@@ -116,7 +118,7 @@ describe ::Installation::CIOIgnoreProposal do
         )
       end
 
-      it "raises RuntimeError if \"AskUser\" passed with non-existing chosen_id in second param hash" do
+      it "raises RuntimeError if \"AskUser\" is called with non-existing chosen_id" do
         params = [
           "AskUser",
           { "chosen_id" => "non_existing" }

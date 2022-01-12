@@ -150,7 +150,8 @@ module Yast
       else
         # Display the message and wait for user to accept it
         # also live installation - bzilla #297691
-        Report.DisplayMessages(true, ((Linuxrc.usessh && !Linuxrc.vnc) || Mode.live_installation) ? 0 : 10)
+        Report.DisplayMessages(true,
+          ((Linuxrc.usessh && !Linuxrc.vnc) || Mode.live_installation) ? 0 : 10)
       end
       Report.LongMessage(Misc.boot_msg)
       Misc.boot_msg = ""
@@ -387,7 +388,8 @@ module Yast
         "services",
         "services-manager",
         "pkg", # Some _finish clients might still need Pkg calls (e.g. users) (bsc#1128385)
-        "configuration_management" # *.repo files must be written to the installed system (bsc#1177522)
+        # *.repo files must be written to the installed system (bsc#1177522)
+        "configuration_management"
       ].freeze
 
     def save_settings_steps
@@ -494,8 +496,10 @@ module Yast
     def merge_addon_steps(stages)
       # merge steps from add-on products
       # bnc #438678
-      stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") + stages[0]["steps"]
-      stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") + stages[1]["steps"]
+      stages[0]["steps"] =
+        WorkflowManager.GetAdditionalFinishSteps("before_chroot") + stages[0]["steps"]
+      stages[1]["steps"] =
+        WorkflowManager.GetAdditionalFinishSteps("after_chroot") + stages[1]["steps"]
       stages[3]["steps"].concat(WorkflowManager.GetAdditionalFinishSteps("after_chroot"))
     end
 
@@ -537,7 +541,8 @@ module Yast
           next nil
         end
         if info["when"] && !info["when"].include?(run_type) &&
-            # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
+            # special hack for autoupgrade - should be as regular upgrade as possible,
+            # scripts are the only exception
             !(Mode.autoupgrade && info["when"].include?(:autoupg))
           next nil
         end

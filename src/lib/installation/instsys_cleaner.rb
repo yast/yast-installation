@@ -61,7 +61,8 @@ module Installation
     # kernel modules can vary significantly. This saves about 29MB on x86_64
     # and about 5MB on s390x.
     def self.unmount_kernel_modules
-      if !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "lib/modules")) && !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "usr/lib/modules"))
+      if !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT,
+        "lib/modules")) && !File.exist?(File.join(KERNEL_MODULES_MOUNT_POINT, "usr/lib/modules"))
         log.warn("Kernel modules not found at #{KERNEL_MODULES_MOUNT_POINT}")
         log.warn("Skipping module cleanup")
         return
@@ -98,10 +99,14 @@ module Installation
     # @return [String,nil] device name (/dev/loopN) or nil if not found
     def self.find_device
       mounts = Yast::Execute.locally("mount", stdout: :capture).split("\n")
-      mounts.find { |m| m.match(/\A(\/dev\/loop.*) on #{Regexp.escape(KERNEL_MODULES_MOUNT_POINT)} /) }
+      mounts.find do |m|
+        m.match(/\A(\/dev\/loop.*) on #{Regexp.escape(KERNEL_MODULES_MOUNT_POINT)} /)
+      end
       device = Regexp.last_match(1)
 
-      log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point") if !device
+      if !device
+        log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point")
+      end
 
       device
     end
@@ -111,7 +116,8 @@ module Installation
     # @return [String,nil] backing file or nil if not found
     def self.losetup_backing_file(device)
       # find the backend file for the loop device
-      file = Yast::Execute.locally("losetup", "-n", "-O", "BACK-FILE", device, stdout: :capture).strip
+      file = Yast::Execute.locally("losetup", "-n", "-O", "BACK-FILE", device,
+        stdout: :capture).strip
 
       if file.nil? || file.empty?
         log.warn("Cannot find the backend file for the #{device} device")

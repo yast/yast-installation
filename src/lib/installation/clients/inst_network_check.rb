@@ -139,7 +139,9 @@ module Yast
         ) +
           # TRANSLATORS: help text, part 2/2
           _(
-            "<p>A configured network is needed for using remote repositories\nor add-on products. If you do not use remote repositories, skip the configuration.</p>\n"
+            "<p>A configured network is needed for using remote repositories\n" \
+            "or add-on products. If you do not use remote repositories, " \
+            "skip the configuration.</p>\n"
           ),
         @enable_next,
         @enable_back

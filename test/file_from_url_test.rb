@@ -264,7 +264,8 @@ describe Yast::Transfer::FileFromUrl do
 
         it "tries to copy the file from the CD/DVD" do
           expect(Yast::WFM).to receive(:Execute)
-            .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount, Yast::Installation.mountlog])
+            .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount,
+                                                   Yast::Installation.mountlog])
             .and_return(true)
           expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
 
@@ -280,7 +281,8 @@ describe Yast::Transfer::FileFromUrl do
 
           it "bind mounts the CD/DVD and tries to copy the file from it" do
             expect(Yast::SCR).to receive(:Execute)
-              .with(path(".target.bash_output"), "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
+              .with(path(".target.bash_output"),
+                "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
               .and_return("exit" => 0, "stdout" => "ok")
             expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
 

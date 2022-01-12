@@ -160,7 +160,8 @@ module Installation
       # This has to be done as long as the target root filesystem is still
       # mounted.
       #
-      # @param filesystem [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+      # @param filesystem [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set
+      #                                                   read-only property on.
       def default_subvolume_as_ro(filesystem)
         output = Yast::Execute.on_target(
           "btrfs", "subvolume", "get-default", filesystem.mount_point.path, stdout: :capture

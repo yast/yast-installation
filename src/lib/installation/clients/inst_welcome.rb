@@ -42,7 +42,8 @@ module Yast
 
       directory = argmap["directory"] || Directory.datadir
 
-      directory = Directory.custom_workflow_dir + directory if Ops.get_string(argmap, "directory", "") != ""
+      directory = Directory.custom_workflow_dir + directory if Ops.get_string(argmap, "directory",
+        "") != ""
 
       patterns = argmap["patterns"] || default_patterns
 

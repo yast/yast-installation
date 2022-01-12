@@ -59,7 +59,9 @@ module Yast
 
       # Main client method
       def main
-        InstShowInfo.show_info_txt(BETA_FILE) if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
+        if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
+          InstShowInfo.show_info_txt(BETA_FILE)
+        end
 
         # bnc#206706
         return :auto if Mode.auto
