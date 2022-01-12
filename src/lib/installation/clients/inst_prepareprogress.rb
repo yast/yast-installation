@@ -40,7 +40,7 @@ module Yast
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
-      # hide in ncurses release notes button as it block installation process if pressed
+      # Hide release notes button in ncurses because it blocks the installation process
       Wizard.HideReleaseNotesButton if UI.TextMode
 
       Packages.SlideShowSetUp(Language.language)
