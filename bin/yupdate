@@ -223,8 +223,8 @@ module YUpdate
       # through the bind mount and we would see the changed content here
       system("mount", "--make-private", origdir)
 
-      system("mount", "-t", "overlay", "overlay", "-o", "lowerdir=#{dir},"\
-                                                        "upperdir=#{upperdir},workdir=#{workdir}", dir)
+      system("mount", "-t", "overlay", "overlay", "-o",
+        "lowerdir=#{dir},upperdir=#{upperdir},workdir=#{workdir}", dir)
     end
 
     # delete the OverlayFS for this directory, all changes will be reverted back
