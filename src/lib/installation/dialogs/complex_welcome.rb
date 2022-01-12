@@ -59,9 +59,13 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        return license_or_product_title if available_products?
-
-        _("Language and Keyboard Selection")
+        if products.size > 1
+          _("Language, Keyboard and Product Selection")
+        elsif show_license?
+          _("Language, Keyboard and License Agreement")
+        else
+          _("Language and Keyboard Selection")
+        end
       end
 
       # Dialog content
@@ -153,7 +157,7 @@ module Installation
       #
       # @return [Boolean] true if the license must be shown; false otherwise
       def show_license?
-        products.size == 1 && products.first.respond_to?(:license)
+        products.size == 1 && products.first.license?
       end
 
       # Determine whether some product is available or not
@@ -171,8 +175,9 @@ module Installation
       # @return [Yast::Term] Product selection content; Empty() if no products
       def license_or_product_content
         return Empty() unless available_products?
+        return product_selector if products.size > 1
 
-        show_license? ? product_license : product_selector
+        show_license? ? product_license : Empty()
       end
 
       # UI to fill space if needed
@@ -181,20 +186,6 @@ module Installation
           Empty()
         else
           VWeight(1, VStretch())
-        end
-      end
-
-      # Title of the dialog in case there is some product available.
-      #
-      # The title can vary depending if the license agreement or the product
-      # selection is shown.
-      #
-      # @return [String] Dialog's title
-      def license_or_product_title
-        if show_license?
-          _("Language, Keyboard and License Agreement")
-        else
-          _("Language, Keyboard and Product Selection")
         end
       end
     end

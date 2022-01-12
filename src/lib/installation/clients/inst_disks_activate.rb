@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) [2006-2014] Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_disks_activate.ycp
-# Package:	Activation of disks (DASD, zFCP, iSCSI) during installation
-# Summary:	Main file
-# Authors:	Jiri Srain <jsrain@suse.cz>
+# File:  clients/inst_disks_activate.ycp
+# Package:  Activation of disks (DASD, zFCP, iSCSI) during installation
+# Summary:  Main file
+# Authors:  Jiri Srain <jsrain@suse.cz>
 #
 # $Id$
 #

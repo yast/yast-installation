@@ -75,6 +75,7 @@ module Installation
     # @param root_dir [String] Path to use as "/" to locate the ssh directory
     def write(root_dir)
       return unless device
+
       configurations[device].write_files(
         root_dir,
         write_keys:         true,

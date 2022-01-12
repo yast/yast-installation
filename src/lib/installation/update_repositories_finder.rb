@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2017 SUSE LLC
 #
@@ -15,6 +13,7 @@
 
 require "yast"
 require "installation/update_repository"
+require "yast2/rel_url"
 require "uri"
 
 Yast.import "Pkg"
@@ -27,6 +26,7 @@ Yast.import "Profile"
 Yast.import "ProductFeatures"
 Yast.import "InstFunctions"
 Yast.import "OSRelease"
+Yast.import "URL"
 
 module Installation
   # Invalid registration URL error
@@ -84,9 +84,9 @@ module Installation
     # @return [Array<UpdateRepository>] self-update repositories
     def updates_from_connect
       return [] unless defined?(::Registration::UrlHelpers)
+
       # load the base product from the installation medium,
       # the registration server needs it for evaluating the self update URL
-      add_installation_repo
       urls = update_urls_from_connect
       urls ? urls.map { |u| UpdateRepository.new(u, :default) } : []
     end
@@ -151,8 +151,14 @@ module Installation
 
     # Converts the string into an URI if it's valid
     #
+    # Expands a relative URL (relurl://) to an URL relative to the installation
+    # repository.
     # Substituting $arch pattern with the architecture of the current system.
-    # Substituting $os_release_version pattern with the release of the current system.
+    # Substituting these variables with the /etc/os-release content:
+    #   $os_release_name       => NAME
+    #   $os_release_id         => ID
+    #   $os_release_version    => VERSION
+    #   $os_release_version_id => VERSION_ID
     #
     # @return [URI,nil] The string converted into a URL; nil if it's
     #                   not a valid URL.
@@ -160,26 +166,29 @@ module Installation
     # @see URI.regexp
     def get_url_from(url)
       return nil unless url.is_a?(::String)
+
       real_url = url.gsub(/\$arch\b/, Yast::Pkg.GetArchitecture)
+      real_url = real_url.gsub(/\$os_release_name\b/,
+        Yast::OSRelease.ReleaseName)
+      real_url = real_url.gsub(/\$os_release_id\b/,
+        Yast::OSRelease.id)
+      real_url = real_url.gsub(/\$os_release_version_id\b/,
+        Yast::OSRelease.ReleaseVersion)
       real_url = real_url.gsub(/\$os_release_version\b/,
         Yast::OSRelease.ReleaseVersionHumanReadable)
-      URI.regexp.match(real_url) ? URI(real_url) : nil
-    end
 
-    # Loads the base product from the installation medium
-    def add_installation_repo
-      base_url = Yast::InstURL.installInf2Url("")
-      initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
+      return nil unless URI::DEFAULT_PARSER.make_regexp.match(real_url)
 
-      until initial_repository
-        log.error "Adding the installation repository failed"
-        # ask user to retry
-        base_url = Packages.UpdateSourceURL(base_url)
-
-        # aborted by user
-        return false if base_url == ""
-
-        initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
+      # convert a relative URL to absolute
+      if Yast2::RelURL.relurl?(real_url)
+        # relative URL is relative to the installation repository
+        relurl = Yast2::RelURL.from_installation_repository(real_url)
+        absolute_url = relurl.absolute_url
+        log.info "Relative URL #{Yast::URL.HidePassword(real_url)} "\
+          "converted to absolute URL #{Yast::URL.HidePassword(absolute_url.to_s)}"
+        absolute_url
+      else
+        URI(real_url)
       end
     end
 
@@ -224,6 +233,7 @@ module Installation
       log.info "Selected SLP service: #{service.inspect}"
 
       return service unless service.respond_to?(:slp_url)
+
       URI(::Registration::UrlHelpers.service_url(service.slp_url))
     end
 

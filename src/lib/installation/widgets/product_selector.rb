@@ -52,7 +52,7 @@ module Installation
 
         return unless @product
 
-        @product.select
+        @product.select unless @product.selected?
       end
 
       def validate
@@ -87,6 +87,7 @@ module Installation
       # @return [String] widget ID
       def item_id(prod)
         return prod.dir if prod.respond_to?(:dir)
+
         "#{prod.name}-#{prod.version}-#{prod.arch}"
       end
     end

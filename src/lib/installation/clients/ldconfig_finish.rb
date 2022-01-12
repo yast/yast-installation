@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -61,9 +59,7 @@ module Yast
           "when"  => [:installation, :live_installation, :update, :autoinst]
         }
       elsif @func == "Write"
-        if SCR.Execute(path(".target.bash"), "/sbin/ldconfig") != 0
-          Builtins.y2error("ldconfig failed\n")
-        end
+        Builtins.y2error("ldconfig failed\n") if SCR.Execute(path(".target.bash"), "/sbin/ldconfig") != 0
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

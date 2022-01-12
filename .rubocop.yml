@@ -1,6 +1,6 @@
 # use the shared Yast defaults
 inherit_from:
-  /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
+  /usr/share/YaST2/data/devtools/data/rubocop-0.71.0_yast_style.yml
 
 # Offense count: 153
 Metrics/AbcSize:
@@ -9,6 +9,14 @@ Metrics/AbcSize:
 # Offense count: 32
 Metrics/BlockNesting:
   Max: 8
+
+Metrics/BlockLength:
+  Include:
+    - src/lib/**/*.rb
+  Exclude:
+    - src/lib/installation/clients/*.rb
+    # skip for now, as loop block is too huge
+    - src/lib/installation/proposal_runner.rb
 
 # Offense count: 29
 # Configuration parameters: CountComments.
@@ -43,7 +51,7 @@ Style/Documentation:
 
 # Offense count: 6
 # Configuration parameters: Exclude.
-Style/FileName:
+Naming/FileName:
   Include:
     - src/lib/**/*.rb
   Exclude:
@@ -51,7 +59,7 @@ Style/FileName:
 
 # Offense count: 179
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MethodName:
+Naming/MethodName:
   Include:
    - src/lib/**/*.rb
   Exclude:
@@ -59,13 +67,16 @@ Style/MethodName:
 
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/VariableName:
+Naming/VariableName:
   Include:
     - src/lib/**/*.rb
   Exclude:
     - src/lib/installation/clients/*.rb
 
-Style/PredicateName:
+Naming/PredicateName:
   Exclude:
     # mocked Registration.is_registered?
     - test/lib/upgrade_repo_manager_test.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

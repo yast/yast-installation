@@ -133,7 +133,7 @@ module Installation
       def proposals
         # Filter proposals with content
         [cpu_mitigations_proposal, firewall_proposal, sshd_proposal,
-         ssh_port_proposal, vnc_fw_proposal, selinux_proposal,
+         ssh_port_proposal, vnc_fw_proposal, lsm_proposal,
          polkit_default_priv_proposal].compact
       end
 
@@ -238,16 +238,35 @@ module Installation
         format(_("PolicyKit Default Privileges: %s"), human_value)
       end
 
-      def selinux_proposal
-        return nil unless @settings.selinux_config.configurable?
+      # Returns the text describing the Linux Security Module proposal or nil in case that there is
+      # no module selected explicitly.
+      #
+      # @return [String, nil] returns the description of the selected LSM or nil in case no module
+      #   is selected explicitly
+      def lsm_proposal
+        return nil unless @settings.lsm_config.configurable?
 
         # add required patterns
-        Yast::PackagesProposal.SetResolvables("SELinux", :pattern,
-          @settings.selinux_config.needed_patterns)
-
-        _(
-          "SELinux Default Mode is %s"
-        ) % @settings.selinux_config.mode.to_human_string
+        log.info("Setting LSM resolvables to : #{@settings.lsm_config.needed_patterns}")
+        Yast::PackagesProposal.SetResolvables("LSM", :pattern, @settings.lsm_config.needed_patterns)
+        selected = @settings.lsm_config.selected
+        case selected&.id
+        when :selinux
+          # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
+          # after the installation will be SELinux running in the selected mode which could be
+          # 'enforcing', 'permissive' or 'disabled'
+          format(_(
+                   "Linux Security Module: Activate %{module} in '%{mode}' mode"
+                 ), module: selected.label, mode: selected.mode.to_human_string)
+        when :apparmor
+          # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
+          # after the installation will be AppArmor
+          format(_("Linux Security Module: Activate %{module}"), module: selected.label)
+        when :none
+          # TRANSLATORS: Proposal's text describing that no Linux Security Major Module will be
+          # activated after the installation
+          _("Linux Security Module: No major module will be activated")
+        end
       end
     end
   end

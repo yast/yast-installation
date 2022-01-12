@@ -36,15 +36,16 @@ module Installation
       end
 
       def items
-        @settings.selinux_config.modes.map { |m| [m.id.to_s, m.to_human_string] }
+        @settings.modes.map { |m| [m.id.to_s, m.to_human_string] }
       end
 
       def init
-        self.value = @settings.selinux_config.mode.id.to_s
+        self.value = @settings.mode.id.to_s
+        disable unless @settings.configurable?
       end
 
       def store
-        @settings.selinux_config.mode = value.to_sym
+        @settings.mode = value.to_sym
       end
 
       def help

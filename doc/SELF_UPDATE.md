@@ -8,9 +8,9 @@ installation even after the media has been released. Check
 ### :information_source: Note
 
 The self update feature is removed from the updated SLE Service Pack media
-(the updated media released after the initial SP release), these media already
-contain the updated installer and the included updates could conflict with
-the self updates.
+(the updated media released after the initial SP release, so called "quarterly
+updates"), these media already contain the updated installer and the included
+updates could conflict with the self updates.
 
 If you need to patch the installer on these updated media you have to use
 a driver update disk (DUD).
@@ -31,7 +31,7 @@ using AutoYaST, it is also possible to disable this feature using the
 Please, take into account that self-update will be skipped if any option
 disables it (boot parameter *or* AutoYaST profile).
 
-During the rest of this document it is assumed that self-update is enabled.
+For the rest of this document it is assumed that the self-update is enabled.
 
 ## Basic Workflow
 
@@ -136,17 +136,20 @@ The URL of the update repository is evaluated in this order:
 
    The registration server is then asked for the list of update repositories.
    In order to determine such list, the product `name`, `version` and
-   `architecture` are used
+   `architecture` are used.
 
-   In case of a multi-product installation medium, as the installer is the same
-   for all the included products, the product `name` can be hard-coded in the
-   `control.xml` file with the `/globals/self_update_id` XML node.
+   The product `name` and `version` are hard-coded in the
+   `control.xml` file in the `/globals/self_update_id` and
+   `/globals/self_update_version` XML nodes.
 
    ```xml
    <globals>
      <self_update_id>SLES</self_update_id>
    </globals>
    ```
+
+   If the `self_update_version` value is missing then the `VERSION_ID` value
+   from the `/etc/os-release` file is used as a fallback.
 
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
@@ -156,6 +159,9 @@ The URL of the update repository is evaluated in this order:
      <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url>
    </globals>
    ```
+
+   The variables are documented in the [variable expansion](#variable-expansion)
+   section below.
 
 The first suitable URL will be used. There are two exceptions:
 
@@ -201,9 +207,15 @@ SSL certificate should be preferred.
 The URL can contain a variable `$arch` that will be replaced by the system's
 architecture, such as `x86_64`, `i586`, `s390x`, etc.
 
-YaST uses [libzypp](https://github.com/openSUSE/libzypp/blob/e68b5df6c96e3f1d140ba15e2a9e85a990210f37/zypp/ZConfig.cc#L63)
-for detecting the system architecture so the `$arch` expansion is compatible
-with the expansion used in usual repository URLs.
+The URLs can contain these variables which are replaced by YaST:
+- `$arch` - is replaced by the RPM package architecture used by the machine
+ (like `x86_64` or `ppc64le`)
+- These variables are replaced by the value from the `/etc/os-release` file:
+ - `$os_release_name`       => `NAME`       (e.g. `SLE`)
+ - `$os_release_id`         => `ID`         (e.g. `sle`)
+ - `$os_release_version`    => `VERSION`    (e.g. `15-SP4`)
+ - `$os_release_version_id` => `VERSION_ID` (e.g. `15.4`)
+
 
 ### Actual URLs
 
@@ -211,7 +223,8 @@ When using registration servers, the regular update URLs have the form
 `https://updates.suse.com/SUSE/Updates/$PRODUCT/$VERSION/$ARCH/update` where
 - PRODUCT is like OpenStack-Cloud, SLE-DESKTOP, SLE-SDK, SLE-SERVER,
 - VERSION (for SLE-SERVER) is like 12, 12-SP1,
-- ARCH is one of `aarch64` `ppc64le` `s390x` `x86_64`
+- ARCH is one of `aarch64`, `ppc64le`, `s390x` or `x86_64`
+  (all archs supported by the SLE product line)
 
 For the self-update the *PRODUCT* is replaced
 with *PRODUCT*-INSTALLER, producing these repository paths
@@ -230,7 +243,7 @@ versions of some specific packages in the self-update repository and in the inst
 If any unexpected version is found then an error is displayed and the self-update
 step is completely skipped.
 
-Is is possible to skip this validation is special cases and force applying the
+It is possible to skip this validation is special cases and force applying the
 updates despite the version mismatch by setting environment variable
 `Y2_FORCE_SELF_UPDATE=1`. *This should be done only in special cases (testing)
 when you know what you are doing!*
@@ -283,7 +296,47 @@ or by the `setup_dhcp` YaST client which does not need to remember any state.
 
 Currently only HTTP/HTTPS and FTP URL schemes are supported for downloading
 the updates. Some additional schemes might work but are not tested and therefore
-not supported.
+not supported. (See `man zypper` for the complete list of possible URLs.)
+
+Additionally the self-update supports the `relurl://` schema. This refers to a
+location relative to the installation repository (defined by the `install` boot
+parameter which by default uses the booting device).
+
+### Relative URL Examples
+
+Using a relative URL (relurl://) can be useful when serving the packages via a
+local installation server or when building a custom installation medium which
+includes a self-update repository.
+
+#### Custom DVD/USB Medium
+
+Assume the installation repository is at the medium root (`/`) and the
+self-update repository in the `self_update` subdirectory.
+
+Then you can add the `self_update=relurl://self_update` boot option directly to
+the default boot parameters and it will work properly even if the medium is
+copied to an USB stick, hard disk or a network server.
+
+#### Installation Server
+
+Relative URL can be also useful when you copy the original installation medium
+unmodified to a network server.
+
+Assume that the installation packages are available via
+`http://example.com/repo` and a self-update repository is available at
+`http://example.com/self_update`.
+
+Then you can use the `install=http://example.com/repo` and
+`self_update=relurl://../self_update` boot parameters. *That means you can even
+go up in the directory structure using the usual `../` notation!*
+
+The advantage is that you do not need to change the `self_update` parameter
+when the repositories are moved to a different location or different server.
+
+But the most beneficial is using a relative URL in an AutoYaST profile. Then the
+same AutoYaST profile can work with different product versions without any
+change if you use the same repository structure on the server for all versions.
+
 
 ## Error Handling
 

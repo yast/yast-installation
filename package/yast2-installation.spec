@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        4.4.22
+Version:        4.4.33
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -28,8 +28,8 @@ Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
-# ProductSpec API
-BuildRequires:  yast2 >= 4.4.21
+# Y2Packager::Resolvable.none? (bsc#1194387)
+BuildRequires:  yast2 >= 4.4.33
 # CIOIgnore
 BuildRequires:  yast2-bootloader
 # storage-ng based version
@@ -43,7 +43,7 @@ BuildRequires:  yast2-network >= 4.4.12
 BuildRequires:  yast2-packager >= 4.4.13
 # for AbortException and handle direct abort
 BuildRequires:  yast2-ruby-bindings >= 4.0.6
-# For selinux classes
+# For LSM classes
 BuildRequires:  yast2-security
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
@@ -70,8 +70,8 @@ Requires:       iproute2
 Requires:       pciutils
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:       tar
-# ProductSpec API
-Requires:       yast2 >= 4.4.21
+# Y2Packager::Resolvable.none? (bsc#1194387)
+Requires:       yast2 >= 4.4.33
 # CIOIgnore
 Requires:       yast2-bootloader
 Requires:       yast2-country >= 3.3.1
@@ -117,8 +117,8 @@ Conflicts:      yast2-mouse < 2.18.0
 Conflicts:      yast2-pkg-bindings < 2.17.25
 # Registration#get_updates_list does not handle exceptions
 Conflicts:      yast2-registration < 3.2.3
-# moved security_finish client
-Conflicts:      yast2-security < 4.3.11
+# Added support for selecting the desired LSM during installation
+Conflicts:      yast2-security < 4.4.2
 # Top bar with logo
 Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc

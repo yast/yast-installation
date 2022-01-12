@@ -1,6 +1,4 @@
 #!/usr/bin/env rspec
-# encoding: utf-8
-
 # Copyright (c) [2018-2020] SUSE LLC
 #
 # All Rights Reserved.
@@ -213,17 +211,6 @@ describe Yast::CopyFilesFinishClient do
         .and_return("/media.1/media")
 
       expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/build")
-
-      subject.write
-    end
-
-    it "copies all product profiles" do
-      allow(Yast::ProductProfile).to receive(:all_profiles).and_return(["/product1.xml", "/product2.xml"])
-      allow(::FileUtils).to receive(:mkdir_p)
-
-      expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/productprofiles.d")
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product1.xml/)
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product2.xml/)
 
       subject.write
     end

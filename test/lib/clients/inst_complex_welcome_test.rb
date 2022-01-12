@@ -19,7 +19,9 @@ describe Yast::InstComplexWelcomeClient do
       arch:                           "x86_64",
       base:                           true,
       order:                          1,
-      to_product:                     product
+      to_product:                     product,
+      selected?:                      false,
+      select:                         nil
     )
   end
 
@@ -31,7 +33,8 @@ describe Yast::InstComplexWelcomeClient do
       version:      "15.3",
       arch:         "x86_64",
       base:         true,
-      order:        2
+      order:        2,
+      selected?:    false
     )
   end
 
@@ -254,6 +257,12 @@ describe Yast::InstComplexWelcomeClient do
       end
     end
 
+    context "when only 1 product is available" do
+      let(:product_specs) { [product_spec] }
+      let(:selected?) { false }
+
+    end
+
     describe "dialog content" do
       context "when running on install mode" do
         let(:update_mode) { false }
@@ -276,6 +285,22 @@ describe Yast::InstComplexWelcomeClient do
               .with(product_specs, anything)
             subject.main
           end
+
+          it "preselects the product" do
+            expect(product_spec).to receive(:select)
+            subject.main
+          end
+
+          context "and the product is already selected" do
+            before do
+              allow(product_spec).to receive(:selected?).and_return(true)
+            end
+
+            it "does not preselect the product again" do
+              expect(product_spec).to_not receive(:select)
+              subject.main
+            end
+          end
         end
 
         # Test the behavior when the product name is hardcoded in the control file, which solves the
@@ -288,6 +313,7 @@ describe Yast::InstComplexWelcomeClient do
           it "runs the complex welcome dialog with the selected product" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
               .with([other_product_spec], anything)
+            expect(other_product_spec).to receive(:select)
             subject.main
           end
         end
@@ -312,6 +338,11 @@ describe Yast::InstComplexWelcomeClient do
           it "runs the complex welcome dialog with the list of available products" do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
               .with(product_specs, anything)
+            subject.main
+          end
+
+          it "does not preselect the product" do
+            expect(product_spec).to_not receive(:select)
             subject.main
           end
         end

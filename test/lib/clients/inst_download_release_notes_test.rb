@@ -13,11 +13,17 @@ describe Yast::InstDownloadReleaseNotesClient do
     let(:language) { double("Yast::Language", language: "en_US") }
 
     let(:sles) do
-      instance_double(Y2Packager::Product, short_name: "SLES", release_notes: sles_relnotes)
+      instance_double(
+        Y2Packager::Product, name: "SLES", display_name: "SUSE Linux Enteprise Server",
+        short_name: "SLES", release_notes: sles_relnotes
+      )
     end
 
     let(:sdk) do
-      instance_double(Y2Packager::Product, short_name: "SDK", release_notes: sdk_relnotes)
+      instance_double(
+        Y2Packager::Product, name: "sle-development-tools", display_name: "Development Kit",
+        short_name: "SDK", release_notes: sdk_relnotes
+      )
     end
 
     let(:prod_reader) do
@@ -73,6 +79,28 @@ describe Yast::InstDownloadReleaseNotesClient do
       it "does not enable the release notes button" do
         expect(Yast::UI).to receive(:SetReleaseNotes).with({})
         expect(Yast::Wizard).to_not receive(:ShowReleaseNotesButton)
+        client.main
+      end
+    end
+
+    context "when it was not possible to fetch the package containing the release notes" do
+      before do
+        allow(sles).to receive(:release_notes).and_raise(Y2Packager::PackageFetchError)
+      end
+
+      it "warns the user" do
+        expect(Yast::Report).to receive(:LongWarning).with(/The release notes for/)
+        client.main
+      end
+    end
+
+    context "when it was not possible to extract the package containing the release notes" do
+      before do
+        allow(sles).to receive(:release_notes).and_raise(Y2Packager::PackageExtractionError)
+      end
+
+      it "warns the user" do
+        expect(Yast::Report).to receive(:LongWarning).with(/The release notes for/)
         client.main
       end
     end

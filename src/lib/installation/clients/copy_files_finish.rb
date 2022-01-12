@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # Copyright (c) [2006-2020] SUSE LLC
 #
 # All Rights Reserved.
@@ -33,7 +31,6 @@ Yast.import "Directory"
 Yast.import "Mode"
 Yast.import "Packages"
 Yast.import "ProductControl"
-Yast.import "ProductProfile"
 Yast.import "String"
 Yast.import "WorkflowManager"
 Yast.import "SystemFilesCopy"
@@ -61,9 +58,7 @@ module Yast
     # @raise RuntimeError if called with switched SCR to have defined behavior and prevent
     #   accidental overwrite and data loss
     def write
-      if Yast::WFM.scr_chrooted?
-        raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}"
-      end
+      raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}" if Yast::WFM.scr_chrooted?
 
       # bugzilla #221815 and #485980
       # Adding blacklisted modules into the /etc/modprobe.d/50-blacklist.conf
@@ -87,7 +82,6 @@ module Yast
       # Copy /media.1/media to the installed system (fate#311377)
       # Formerly /media.1/build (bsc#1062297)
       copy_media_file
-      copy_product_profiles
 
       # List of files used as additional workflow definitions
       # TODO check if it is still needed
@@ -108,22 +102,6 @@ module Yast
     end
 
   private
-
-    def copy_product_profiles
-      all_profiles = ProductProfile.all_profiles
-      # copy all product profiles to the installed system (fate#310730)
-      return if all_profiles.empty?
-
-      target_dir = File.join(Installation.destdir, "/etc/productprofiles.d")
-      ::FileUtils.mkdir_p(target_dir)
-      all_profiles.each do |profile_path|
-        log.info "Copying '#{profile_path}' to #{target_dir}"
-        WFM.Execute(
-          path(".local.bash"),
-          "/usr/bin/cp -a #{profile_path.shellescape} #{target_dir.shellescape}/"
-        )
-      end
-    end
 
     def copy_hardware_status
       log.info "Copying hardware information"
@@ -176,6 +154,7 @@ module Yast
     # see bugzilla #328126
     def copy_hardware_udev_rules
       return if Mode.update
+
       udev_rules_destdir = ::File.join(installation_destination, UDEV_RULES_DIR)
       ::FileUtils.mkdir_p(udev_rules_destdir)
 
@@ -306,12 +285,12 @@ module Yast
       return unless Arch.s390
 
       path = "/boot/zipl/active_devices.txt"
-      if File.exist?(path)
-        log.info "Copying zipl active devices '#{path}'"
-        target_path = File.join(Installation.destdir, path)
-        ::FileUtils.mkdir_p(File.dirname(target_path))
-        ::FileUtils.cp(path, target_path)
-      end
+      return unless File.exist?(path)
+
+      log.info "Copying zipl active devices '#{path}'"
+      target_path = File.join(Installation.destdir, path)
+      ::FileUtils.mkdir_p(File.dirname(target_path))
+      ::FileUtils.cp(path, target_path)
     end
 
     def handle_second_stage

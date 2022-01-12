@@ -1,4 +1,86 @@
 -------------------------------------------------------------------
+Fri Jan  7 09:02:05 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Updated yast2 dependency to ensure the new
+  Y2Packager::Resolvable.none? method is used (bsc#1194387)
+- 4.4.33
+
+-------------------------------------------------------------------
+Wed Jan  5 09:45:20 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Do not propose Linux Security Module default configuration when
+  it is declared as not configurable in the control file or in the
+  AutoYaST profile (related to jsc#SLE-22069).
+- 4.4.32
+
+-------------------------------------------------------------------
+Mon Dec 27 07:22:50 UTC 2021 - Knut Alejandro Anderssen González <kanderssen@suse.com>
+
+- Add support for selecting and configuring the desired Linux
+  Security Module during installation (jsc#SLE-22069)
+- 4.4.31
+
+-------------------------------------------------------------------
+Thu Dec 16 13:43:05 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Self-update now supports relative URLs (relurl://), it defines
+  the self-update repository relatively to the main installation
+  repository (jsc#SLE-22669)
+- 4.4.30
+
+-------------------------------------------------------------------
+Thu Dec 16 07:34:27 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not preselect any product during upgrade (related to
+  bsc#1192230).
+- 4.4.29
+
+-------------------------------------------------------------------
+Thu Dec  9 16:07:34 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Improve the self-update process, do not read the products from
+  the installation medium (bsc#1193536)
+- Adde more /etc/os-release replacements in the self-update URL
+- 4.4.28
+
+-------------------------------------------------------------------
+Thu Dec  9 14:11:35 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Display the correct title in the welcome screen depending
+  on its content (related to bsc#1193223 and bsc#1192230).
+- 4.4.27
+
+-------------------------------------------------------------------
+Fri Dec  3 06:53:52 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Display the product's license when only 1 product is available
+  in the online medium (bsc#1193223).
+- Do not display the product's selector during upgrade
+  (kanderssen@suse.com, bsc#1192230).
+- 4.4.26
+
+-------------------------------------------------------------------
+Thu Dec  2 16:56:16 UTC 2021 - Ladislav Slezák <lslezak@suse.cz>
+
+- Drop support for subscription-tools, that package is not present
+  in SLE15 anymore (bsc#1193339)
+- 4.4.25
+
+-------------------------------------------------------------------
+Tue Nov 30 14:45:45 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Do not crash when it is not possible to fetch the package
+  containing the release notes (bsc#1193148).
+- 4.4.24
+
+-------------------------------------------------------------------
+Wed Nov 24 15:13:23 UTC 2021 - David Diaz <dgonzalez@suse.com>
+
+- Remove no longer used extra warning about destructive actions
+  before starting the installation process (related to bsc#1057437).
+- 4.4.23
+
+-------------------------------------------------------------------
 Fri Nov 12 14:08:02 UTC 2021 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - bsc#1192626:

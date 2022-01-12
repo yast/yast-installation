@@ -19,7 +19,7 @@
 
 require "yast"
 require "cwm/dialog"
-require "installation/widgets/selinux_mode"
+require "installation/widgets/lsm"
 require "installation/widgets/polkit_default_priv"
 
 Yast.import "Hostname"
@@ -47,7 +47,7 @@ module Installation
 
         left_col = [firewall_frame, polkit_frame]
         right_col = [cpu_frame]
-        right_col << selinux_frame if selinux_configurable?
+        right_col << lsm_frame if lsm_configurable?
 
         HBox(
           HStretch(),
@@ -99,8 +99,8 @@ module Installation
         true
       end
 
-      def selinux_configurable?
-        @settings.selinux_config.configurable?
+      def lsm_configurable?
+        @settings.lsm_config.configurable?
       end
 
       def firewall_frame
@@ -124,10 +124,10 @@ module Installation
         )
       end
 
-      def selinux_frame
+      def lsm_frame
         frame(
-          _("SELinux"),
-          Widgets::SelinuxMode.new(@settings)
+          _("Linux Security Module"),
+          Widgets::LSM.new(@settings)
         )
       end
 
@@ -135,11 +135,12 @@ module Installation
         Left(
           Frame(
             label,
-            HSquash(
-              MarginBox(
-                0.5,
-                0.5,
-                widget
+            MarginBox(
+              0.5,
+              0.5,
+              HBox(
+                widget,
+                HStretch()
               )
             )
           )

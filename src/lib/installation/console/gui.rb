@@ -99,8 +99,8 @@ module Installation
         # send an empty string to the waiting "read" process
         File.write(fd_path(@pid, @close_fd), "\n") if @pid && @close_fd
         # close the pipes
-        @read.close if @read
-        @write.close if @write
+        @read&.close
+        @write&.close
       end
 
       # run a block with redirected IO (redirect to the started xterm console)
@@ -127,9 +127,9 @@ module Installation
 
       # get /proc path for a file descriptor
       # @param pid [String, Integer] PID of the process
-      # @param fd [String, Integer] file descriptor number
-      def fd_path(pid, fd)
-        "/proc/#{pid}/fd/#{fd}"
+      # @param file_descriptor [String, Integer] file descriptor number
+      def fd_path(pid, file_descriptor)
+        "/proc/#{pid}/fd/#{file_descriptor}"
       end
     end
   end

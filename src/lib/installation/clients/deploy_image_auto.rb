@@ -145,7 +145,7 @@ module Yast
         ret = UI.UserInput
         log.info("ret={ret}")
 
-        if ret == :ok || ret == :next
+        if [:ok, :next].include?(ret)
           selected = UI.QueryWidget(:images_rbg, :CurrentButton)
           if selected == :inst_from_images
             Installation.image_installation = true

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -381,15 +379,9 @@ module Yast
           Builtins.y2warning(
             "User didn't want to restart the second stage installation..."
           )
-          if FileUtils.Exists(Installation.file_inst_aborted)
-            SCR.Execute(path(".target.remove"), Installation.file_inst_aborted)
-          end
-          if FileUtils.Exists(Installation.file_inst_failed)
-            SCR.Execute(path(".target.remove"), Installation.file_inst_failed)
-          end
-          if FileUtils.Exists(Installation.run_yast_at_boot)
-            SCR.Execute(path(".target.remove"), Installation.run_yast_at_boot)
-          end
+          SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
+          SCR.Execute(path(".target.remove"), Installation.file_inst_failed) if FileUtils.Exists(Installation.file_inst_failed)
+          SCR.Execute(path(".target.remove"), Installation.run_yast_at_boot) if FileUtils.Exists(Installation.run_yast_at_boot)
 
           # skipping the second stage
           return :skipped
@@ -404,9 +396,7 @@ module Yast
         "Creating files for case if installation fails (reset button)"
       )
       # might be left from the previous run
-      if FileUtils.Exists(Installation.file_inst_aborted)
-        SCR.Execute(path(".target.remove"), Installation.file_inst_aborted)
-      end
+      SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
       SCR.Execute(
         path(".target.bash"),
         "/usr/bin/touch #{Installation.file_inst_failed.shellescape}"
@@ -478,9 +468,7 @@ module Yast
         SCR.Execute(path(".target.remove"), Installation.current_step)
       end
 
-      if WFM.ClientExists("product_post")
-        WFM.CallFunction("product_post", [Mode.update])
-      end
+      WFM.CallFunction("product_post", [Mode.update]) if WFM.ClientExists("product_post")
 
       nil
     end
@@ -525,12 +513,8 @@ module Yast
 
       # restarting yast, removing files that identify the user-abort or installation-crash
       # bugzilla #222896
-      if FileUtils.Exists(Installation.file_inst_aborted)
-        SCR.Execute(path(".target.remove"), Installation.file_inst_aborted)
-      end
-      if FileUtils.Exists(Installation.file_inst_failed)
-        SCR.Execute(path(".target.remove"), Installation.file_inst_failed)
-      end
+      SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
+      SCR.Execute(path(".target.remove"), Installation.file_inst_failed) if FileUtils.Exists(Installation.file_inst_failed)
 
       # creating new files to identify restart
       last_step = ProductControl.CurrentStep
@@ -638,9 +622,7 @@ module Yast
     def SetLanguageAndEncoding
       Installation.encoding = Console.Restore
       Console.Init
-      if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
-        Installation.encoding = "UTF-8"
-      end
+      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
 
       # //////////////////////////////////////////////////////////
       # activate language settings and console font

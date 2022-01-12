@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2016 SUSE LLC
 #
@@ -119,6 +117,7 @@ module Yast
 
       if updated
         return false unless valid_repositories?
+
         # copy the addon packages before applying the updates to inst-sys,
         # #apply_all removes the repositories!
         Yast::Progress.NextStage
@@ -183,10 +182,10 @@ module Yast
     # @see #custom_self_update_url
     def update_repositories
       return @update_repositories if @update_repositories
+
       @update_repositories = update_repositories_finder.updates
       log.info("self-update repositories are #{@update_repositories.inspect}")
       @update_repositories
-
     rescue ::Installation::RegistrationURLError
       Report.Error(_("The registration URL provided is not valid.\n" \
                   "Skipping installer update.\n"))
@@ -224,23 +223,21 @@ module Yast
     def add_repository(repo)
       log.info("Adding update from #{repo.inspect}")
       updates_manager.add_repository(repo.uri)
-
     rescue ::Installation::UpdatesManager::NotValidRepo
       if repo.user_defined?
         # TRANSLATORS: %s is an URL
         Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), repo.uri))
       end
       false
-
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
       if repo.user_defined?
         # TRANSLATORS: %s is an URL
         Report.Error(format(_("Could not fetch update from\n%s.\n\n"), repo.uri))
       end
       false
-
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
       return false unless repo.user_defined?
+
       msg = could_not_probe_repo_msg(repo.uri)
       if Mode.auto
         Report.Warning(msg)
@@ -314,6 +311,7 @@ module Yast
     # @raise LoadError
     def require_registration_libraries
       return @require_registration_libraries unless @require_registration_libraries.nil?
+
       require "registration/url_helpers"
       require "registration/registration"
       require "registration/ui/regservice_selection_dialog"
@@ -328,8 +326,10 @@ module Yast
     #
     def store_registration_url
       return unless require_registration_libraries
+
       url = Registration::Storage::InstallationOptions.instance.custom_url
       return if url.nil?
+
       data = { "custom_url" => url.to_s }
       File.write(REGISTRATION_DATA_PATH, data.to_yaml)
     end
@@ -339,7 +339,8 @@ module Yast
     # @return [Boolean] true if data was loaded; false otherwise.
     def load_registration_url
       return false unless File.exist?(REGISTRATION_DATA_PATH) && require_registration_libraries
-      data = YAML.load(File.read(REGISTRATION_DATA_PATH))
+
+      data = YAML.safe_load(File.read(REGISTRATION_DATA_PATH))
       Registration::Storage::InstallationOptions.instance.custom_url = data["custom_url"]
       ::FileUtils.rm_rf(REGISTRATION_DATA_PATH)
       true
@@ -349,6 +350,7 @@ module Yast
     # the update repository.
     def initialize_packager
       return if @packager_initialized
+
       log.info "Initializing the package management..."
 
       # Add the initial installation repository.
@@ -375,6 +377,7 @@ module Yast
     # to make sure there is no leftover which could affect the installation later
     def finish_packager
       return unless @packager_initialized
+
       # false = all repositories, even the disabled ones
       Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
       Pkg.SourceSaveAll
@@ -450,10 +453,10 @@ module Yast
       else
         repos = update_repositories.map(&:uri).join("\n")
         # TRANSLATORS: error message, %{repos} is replaced by an URL list
-        msg = _("The installer found unexpected package versions in the installer\n" \
+        msg = format(_("The installer found unexpected package versions in the installer\n" \
           "self update repository. Make sure that the self update\n" \
           "URL points to a correct repository.\n\n" \
-          "Configured update repositories:\n%{repos}") % { repos: repos }
+          "Configured update repositories:\n%{repos}"), repos: repos)
 
         if OSRelease.os_release_exists?
           # TRANSLATORS: part of an popup message, %s is replaced by the name

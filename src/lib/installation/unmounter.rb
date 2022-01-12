@@ -1,4 +1,3 @@
-# encoding: utf-8
 # ------------------------------------------------------------------------------
 # Copyright (c) 2021 SUSE LLC
 #
@@ -93,7 +92,7 @@ module Installation
     #
     def read_mounts_file(file_name)
       log.info("Reading file #{file_name}")
-      open(file_name).each { |line| add_mount(line) }
+      File.readlines(file_name).each { |line| add_mount(line) }
     end
 
     # Parse one entry of /proc/mounts and add it to @mounts

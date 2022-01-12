@@ -62,7 +62,7 @@ module Installation
         # insert a small spacing between the widgets depending on the list size,
         # no spacing in ncurses if there are too many widgets
         # (the size is rounded down to 0)
-        spacing = widgets.size > 10 ? 0.4 : 1
+        spacing = (widgets.size > 10) ? 0.4 : 1
         # this is a "join" for an Array...
         widgets = widgets.flat_map { |w| [w, VSpacing(spacing)] }.tap(&:pop)
 

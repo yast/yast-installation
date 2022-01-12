@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 # ------------------------------------------------------------------------------
 # Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
 #
@@ -19,10 +17,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	installation/general/inst_congratulate.ycp
-# Module:	Installation
-# Summary:	Display congratulation
-# Authors:	Arvin Schnell <arvin@suse.de>
+# File:  installation/general/inst_congratulate.ycp
+# Module:  Installation
+# Summary:  Display congratulation
+# Authors:  Arvin Schnell <arvin@suse.de>
 #
 # Display a congratulation message for the user.
 #
@@ -127,17 +125,13 @@ module Yast
 
       # fallback
       @vendor_url = "http://www.suse.com/"
-      if ProductFeatures.GetStringFeature("globals", "ui_mode") == "simple"
-        @vendor_url = "http://www.openSUSE.org"
-      end
+      @vendor_url = "http://www.openSUSE.org" if ProductFeatures.GetStringFeature("globals", "ui_mode") == "simple"
       Builtins.y2milestone(
         "UI mode: %1",
         ProductFeatures.GetStringFeature("globals", "ui_mode")
       )
 
-      if !@vendor_url_tmp.nil? && @vendor_url_tmp != ""
-        @vendor_url = @vendor_url_tmp
-      end
+      @vendor_url = @vendor_url_tmp if !@vendor_url_tmp.nil? && @vendor_url_tmp != ""
 
       @check_box_do_clone = Empty()
 
@@ -156,9 +150,9 @@ module Yast
 
       @text = ProductControl.GetTranslatedText("congratulate")
 
-      if @text == ""
+      @text = if @text == ""
         # congratulation text 1/4
-        @text = Ops.add(
+        Ops.add(
           Ops.add(
             _("<p><b>Congratulations!</b></p>") +
               # congratulation text 2/4
@@ -172,7 +166,7 @@ module Yast
           _("<p>Have a lot of fun!<br>Your SUSE Development Team</p>")
         )
       else
-        @text = Builtins.sformat(@text, @vendor_url)
+        Builtins.sformat(@text, @vendor_url)
       end
 
       @contents = VBox(
@@ -237,9 +231,7 @@ module Yast
       # hide the option (bsc#1095253)
       Wizard.HideAbortButton if Stage.firstboot
       Wizard.SetFocusToNextButton
-      if UI.WidgetExists(Id(:do_clone))
-        UI.ChangeWidget(Id(:do_clone), :Enabled, @clone_enabled)
-      end
+      UI.ChangeWidget(Id(:do_clone), :Enabled, @clone_enabled) if UI.WidgetExists(Id(:do_clone))
 
       @ret = nil
       loop do
@@ -300,6 +292,7 @@ module Yast
           Builtins.issubstring(Builtins.tolower(default_wm), "kde")
         return true
       end
+
       false
     end
 

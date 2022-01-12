@@ -29,8 +29,42 @@ describe Installation::Dialogs::ComplexWelcome do
   let(:products) { [] }
 
   describe "#title" do
-    it "returns a string" do
-      expect(widget.title).to be_a(::String)
+    context "when more than one product exists" do
+      let(:products) do
+        [instance_double("Y2Packager::ProductSpec"), instance_double("Y2Packager::ProductSpec")]
+      end
+
+      it "returns 'Language, Keyboard and Product Selection'" do
+        expect(widget.title).to eq("Language, Keyboard and Product Selection")
+      end
+    end
+
+    context "when just a single product exists" do
+      let(:products) do
+        [instance_double("Y2Packager::ProductSpec", license?: license?)]
+      end
+
+      context "and it has a license" do
+        let(:license?) { true }
+
+        it "returns 'Language, Keyboard and License Agreement" do
+          expect(widget.title).to eq("Language, Keyboard and License Agreement")
+        end
+      end
+
+      context "but it has no license" do
+        let(:license?) { false }
+
+        it "returns 'Language and Keyboard Selection" do
+          expect(widget.title).to eq("Language and Keyboard Selection")
+        end
+      end
+    end
+
+    context "when there are not products" do
+      it "returns 'Language and Keyboard Selection" do
+        expect(widget.title).to eq("Language and Keyboard Selection")
+      end
     end
   end
 
@@ -46,14 +80,37 @@ describe Installation::Dialogs::ComplexWelcome do
     end
   end
 
-  describe "#content" do
+  describe "#contents" do
     let(:license) { instance_double("Y2Packager::ProductLicense") }
-    let(:sles_product) { instance_double("Y2Packager::ProductSpec", label: "SLES", license: license) }
-    let(:sles_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLES", license: license) }
-    let(:sles_offline_product) { instance_double("Y2Packager::RepoProductSpec", label: "SLES") }
-    let(:sled_product) { instance_double("Y2Packager::Product", label: "SLED", license: license) }
-    let(:sled_online_product) { instance_double("Y2Packager::ControlProductSpec", label: "SLED", license: license) }
-    let(:sled_offline_product) { instance_double("Y2Packager::RepoProductSpec", label: "SLED") }
+
+    let(:sles_product) do
+      instance_double("Y2Packager::ProductSpec", label: "SLES", license: license, license?: true)
+    end
+
+    let(:sles_online_product) do
+      instance_double(
+        "Y2Packager::ControlProductSpec", label: "SLES", license: license, license?: true
+      )
+    end
+
+    let(:sles_offline_product) do
+      instance_double("Y2Packager::RepoProductSpec", label: "SLES", license?: true)
+    end
+
+    let(:sled_product) do
+      instance_double("Y2Packager::Product", label: "SLED", license: license, license?: true)
+    end
+
+    let(:sled_online_product) do
+      instance_double(
+        "Y2Packager::ControlProductSpec", label: "SLED", license: license, license?: true
+      )
+    end
+
+    let(:sled_offline_product) do
+      instance_double("Y2Packager::RepoProductSpec", label: "SLED", license?: true)
+    end
+
     let(:language_widget) { Yast::Term.new(:language_widget) }
     let(:keyboard_widget) { Yast::Term.new(:keyboard_widget) }
     let(:license_widget) { Yast::Term.new(:license_widget) }
@@ -80,13 +137,30 @@ describe Installation::Dialogs::ComplexWelcome do
         let(:products) { [sles_product] }
         include_examples "show_license"
       end
+
       context "when it is the online medium" do
         let(:products) { [sles_online_product] }
         include_examples "show_license"
       end
+
       context "when it is the offline medium" do
         let(:products) { [sles_offline_product] }
-        include_examples "show_selector"
+        include_examples "show_license"
+      end
+
+      context "when the license is not available" do
+        let(:products) { [sles_product] }
+
+        before do
+          allow(sles_product).to receive(:license?).and_return(false)
+        end
+
+        it "does not show neither the license nor the product selection" do
+          expect(Y2Packager::Widgets::ProductLicense).to_not receive(:new)
+          expect(Installation::Widgets::ProductSelector).to_not receive(:new)
+
+          widget.contents
+        end
       end
     end
 
