@@ -335,9 +335,9 @@ module YUpdate
       msg "Downloading #{url}"
 
       if block_given?
-        URI.open(url) { |f| block.call(f) }
+        URI.parse(url).open { |f| block.call(f) }
       else
-        URI.open(url, &:read)
+        URI.parse(url).open(&:read)
       end
     end
   end
