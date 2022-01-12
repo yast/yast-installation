@@ -51,14 +51,15 @@ module Yast
 
       Builtins.y2milestone("starting network_finish")
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
           "title" => _("Saving network configuration..."),
           "when"  => [:installation, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         Builtins.y2milestone("Save network configuration")
         WFM.CallFunction("save_network")
         # false == don't force

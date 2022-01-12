@@ -196,7 +196,7 @@ describe Yast::Transfer::FileFromUrl do
         allow(Yast::SCR).to receive(:Execute)
           .with(path(".target.bash"), /bin\/cp/) do |*args|
           cmd = args.last
-          _, from, to = cmd.split(" ")
+          _, from, to = cmd.split
           begin
             FileUtils.cp(from, to)
           rescue Errno::ENOENT

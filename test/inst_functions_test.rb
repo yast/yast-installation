@@ -11,7 +11,7 @@ describe Yast::InstFunctions do
   def stub_install_inf(install_inf)
     allow(Yast::Linuxrc).to receive(:keys).and_return(install_inf.keys)
 
-    install_inf.keys.each do |key|
+    install_inf.each_key do |key|
       allow(Yast::Linuxrc).to receive(:InstallInf).with(key).and_return(install_inf[key])
     end
   end

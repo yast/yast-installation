@@ -56,14 +56,15 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
           "title" => _("Moving to installed system..."),
           "when"  => [:installation, :live_installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         # --------------------------------------------------------------
         #   stop SCR
         #   restart on destination

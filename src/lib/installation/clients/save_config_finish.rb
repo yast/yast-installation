@@ -75,7 +75,8 @@ module Yast
 
       minimal_inst = ::Installation::MinimalInstallation.instance.enabled?
 
-      if @func == "Info"
+      case @func
+      when "Info"
         if Mode.autoinst
           steps = minimal_inst ? 3 : 6
         elsif Mode.update
@@ -89,7 +90,7 @@ module Yast
           "steps" => steps,
           "when"  => [:installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         # Bugzilla #209119
         # ProductFeatures::Save() moved here from inst_kickoff.ycp
         # (After the SCR is switched)

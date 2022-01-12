@@ -355,9 +355,10 @@ module Installation
       # * nil -> an error ocurred (resolving a hostname, for example)
       probed = Yast::Pkg.RepositoryProbe(uri.to_s, "/")
       log.info("Probed repository #{uri}: #{probed}")
-      if probed == "NONE"
+      case probed
+      when "NONE"
         :not_found
-      elsif probed.is_a?(String)
+      when String
         :ok
       else
         log.warn("Status of repository at #{uri} cannot be determined")

@@ -43,7 +43,8 @@ module Yast
       @im_do_enable = "deploying_enable"
       @im_do_disable = "deploying_disable"
 
-      if @func == "MakeProposal"
+      case @func
+      when "MakeProposal"
         @force_reset = Ops.get_boolean(@param, "force_reset", false)
         @language_changed = Ops.get_boolean(@param, "language_changed", false)
 
@@ -91,7 +92,7 @@ module Yast
             "warning_level"         => :error
           }
         end
-      elsif @func == "AskUser"
+      when "AskUser"
         @chosen_id = Ops.get(@param, "chosen_id")
         Builtins.y2milestone(
           "Images proposal change requested, id %1",
@@ -125,7 +126,7 @@ module Yast
 
         ImageInstallation.changed_by_user = true
         @ret = { "workflow_sequence" => :next }
-      elsif @func == "Description"
+      when "Description"
         @ret = {
           # this is a heading
           "rich_text_title" => _("Installation from Images"),

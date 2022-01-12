@@ -46,7 +46,7 @@ module Installation
       log.info "Write SSH keys to #{dir}:\n#{self}"
       files.each do |file|
         path = File.join(dir, file.filename)
-        IO.write(path, file.content)
+        File.write(path, file.content)
         if file.filename =~ /^ssh_host_.*key$/
           # ssh deamon accepts only private keys with restricted
           # file permissions.
@@ -71,7 +71,7 @@ module Installation
     KeyFile = Struct.new(:filename, :content, :permissions)
 
     def add_file(path)
-      content = IO.read(path)
+      content = File.read(path)
       permissions = File.stat(path).mode
       files << KeyFile.new(File.basename(path), content, permissions)
       atime = File.atime(path)

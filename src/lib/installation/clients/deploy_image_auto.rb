@@ -146,9 +146,10 @@ module Yast
 
         if [:ok, :next].include?(ret)
           selected = UI.QueryWidget(:images_rbg, :CurrentButton)
-          if selected == :inst_from_images
+          case selected
+          when :inst_from_images
             Installation.image_installation = true
-          elsif selected == :dont_inst_from_images
+          when :dont_inst_from_images
             Installation.image_installation = false
           end
           log.info("Changed by user, Installation from images will be used: " \

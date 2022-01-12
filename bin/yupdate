@@ -345,10 +345,6 @@ module YUpdate
   # specialized tarball downloader, it can extract the downloaded
   # tarball on the fly (without saving the actual tarball) to the target directory
   class TarballDownloader < Downloader
-    def initialize(url)
-      super
-    end
-
     # start the downloading, extract the tarball to the specified directory
     def extract_to(dir)
       download do |input|

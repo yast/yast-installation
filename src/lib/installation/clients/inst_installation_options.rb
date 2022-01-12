@@ -93,14 +93,15 @@ module Yast
         Builtins.y2milestone("ret: %1", @ret)
 
         # Use-Add-On-Product status changed
-        if @ret == :add_on
+        case @ret
+        when :add_on
           if UI.WidgetExists(Id(:add_on))
             Installation.add_on_selected = UI.QueryWidget(Id(:add_on), :Value)
             Builtins.y2milestone("add_on_selected: %1", Installation.add_on_selected)
             AdjustStepsAccordingToInstallationSettings()
           end
         # Use-Community-Repositories status changed
-        elsif @ret == :productsources
+        when :productsources
           if UI.WidgetExists(Id(:productsources))
             Installation.productsources_selected = UI.QueryWidget(Id(:productsources), :Value)
             Builtins.y2milestone(
@@ -110,7 +111,7 @@ module Yast
             AdjustStepsAccordingToInstallationSettings()
           end
         # Abort button
-        elsif @ret == :abort
+        when :abort
           return :abort if Popup.ConfirmAbort(Stage.initial ? :painless : :incomplete)
         end
         break if [:back, :next].include?(@ret)
@@ -118,12 +119,13 @@ module Yast
 
       # <-- Handling User Input in Installation Mode
 
-      if @ret == :next
+      case @ret
+      when :next
         Builtins.y2milestone(
           "Disabled modules: %1",
           ProductControl.GetDisabledModules
         )
-      elsif @ret == :back || @ret == :finish
+      when :back, :finish
         Builtins.y2milestone("Returning: %1", @ret)
         return @ret
       end

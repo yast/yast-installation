@@ -56,7 +56,8 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
@@ -65,7 +66,7 @@ module Yast
           ),
           "when"  => [:installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
 
         # create backup copy from from inst-sys config to be available in installed
         # or updated system copy /etc/X11/XF86Config from inst-sys to

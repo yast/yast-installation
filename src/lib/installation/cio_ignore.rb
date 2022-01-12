@@ -52,12 +52,10 @@ module Installation
     def cio_setting
       if Yast::Mode.autoinst
         Yast::AutoinstConfig.cio_ignore
-      elsif kvm? || zvm?
-        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
-        false
       else
-        # default value requested in FATE#315586
-        true
+        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+        # but for other cases return true as requested FATE#315586
+        !(kvm? || zvm?)
       end
     end
   end

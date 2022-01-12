@@ -34,7 +34,7 @@ module Installation
       # get widgets for all plugins
       def self.widgets
         plugins.sort_by! { |p| [p.order, p.class.to_s] }
-        plugins.map(&:widget).reject(&:nil?)
+        plugins.map(&:widget).compact
       end
 
       # return a widget do display

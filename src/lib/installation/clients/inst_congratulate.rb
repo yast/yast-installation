@@ -237,18 +237,20 @@ module Yast
       loop do
         @ret = Wizard.UserInput
 
-        if @ret == :abort
+        case @ret
+        when :abort
           break if Popup.ConfirmAbort(:incomplete)
-        elsif @ret == :help
+        when :help
           Wizard.ShowHelp(@help)
         end
         break if [:next, :back].include?(@ret)
       end
 
       # bugzilla #221190
-      if @ret == :back
+      case @ret
+      when :back
         Wizard.RestoreNextButton
-      elsif @ret == :next
+      when :next
         # BNC #441452
         # Remove the congrats dialog
         @zmd = UI.WidgetExists(Id(:turnoff_zmd)) &&

@@ -154,7 +154,8 @@ module Yast
       loop do
         @ret = UI.UserInput
 
-        if @ret == :next
+        case @ret
+        when :next
           @option_selected = Convert.to_string(
             UI.QueryWidget(
               Id("to_do_a_network_setup_or_not_to_do"),
@@ -203,11 +204,11 @@ module Yast
             @return_this = :next
             break
           end
-        elsif @ret == :back
+        when :back
           Builtins.y2milestone("Going back")
           @return_this = :back
           break
-        elsif @ret == :abort
+        when :abort
           if Popup.ConfirmAbort(:painless)
             @return_this = :abort
             break

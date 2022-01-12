@@ -542,7 +542,8 @@ module Yast
         Builtins.sformat("%1\n%2", next_step, restarting_step)
       )
 
-      if ret == :reboot
+      case ret
+      when :reboot
         Builtins.y2milestone("Creating %1 file", Installation.reboot_file)
         SCR.Execute(
           path(".target.bash"),
@@ -551,7 +552,7 @@ module Yast
         # bnc #432005
         Builtins.y2milestone("YaST needs rebooting")
         yast_needs_rebooting = true
-      elsif ret == :restart_yast
+      when :restart_yast
         Builtins.y2milestone("Creating %1 file", Installation.restart_file)
         SCR.Execute(
           path(".target.bash"),

@@ -51,7 +51,8 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         @ret = {
           "steps" => 1,
           # progress step title
@@ -66,7 +67,7 @@ module Yast
             :autoinst
           ]
         }
-      elsif @func == "Write"
+      when "Write"
         Write()
       else
         Builtins.y2error("unknown function: %1", @func)
