@@ -159,11 +159,9 @@ describe Yast::Transfer::FileFromUrl do
 
       end
 
-      context "when host specifies a device" do
-      end
+      context "when host specifies a device"
 
-      context "when host+path specify a device" do
-      end
+      context "when host+path specify a device"
     end
 
     context "when scheme is 'usb'" do
@@ -175,10 +173,8 @@ describe Yast::Transfer::FileFromUrl do
     end
 
     # not yet covered
-    context "when scheme is 'http' or 'https'" do
-    end
-    context "when scheme is 'ftp'" do
-    end
+    context "when scheme is 'http' or 'https'"
+    context "when scheme is 'ftp'"
     context "when scheme is 'file'" do
       let(:scheme) { "file" }
       let(:cd_device) { "/dev/sr0" }
@@ -295,13 +291,9 @@ describe Yast::Transfer::FileFromUrl do
       end
     end
 
-    context "when scheme is 'nfs'" do
-    end
-    context "when scheme is 'cifs'" do
-    end
-    context "when scheme is 'floppy'" do
-    end
-    context "when scheme is 'tftp'" do
-    end
+    context "when scheme is 'nfs'"
+    context "when scheme is 'cifs'"
+    context "when scheme is 'floppy'"
+    context "when scheme is 'tftp'"
   end
 end
