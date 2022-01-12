@@ -70,7 +70,9 @@ module Yast
 
       # --- //
 
-      @basedirectory = Ops.add(Directory.custom_workflow_dir, @basedirectory) if Ops.get_string(@argmap, "directory", "") != ""
+      @basedirectory = Ops.add(Directory.custom_workflow_dir, @basedirectory) if Ops.get_string(
+        @argmap, "directory", ""
+      ) != ""
 
       @readproducts = []
       # Release notes might be missing
@@ -128,7 +130,8 @@ module Yast
           " "
         )
         @relnotesproducts = Builtins.add(@relnotesproducts, cleanproduct)
-        @minwidtprodsel = Builtins.size(cleanproduct) if Ops.less_than(@minwidtprodsel, Builtins.size(cleanproduct))
+        @minwidtprodsel = Builtins.size(cleanproduct) if Ops.less_than(@minwidtprodsel,
+          Builtins.size(cleanproduct))
         Ops.set(@cleanproduct_product, cleanproduct, product)
         @prodnamelen = Ops.add(@prodnamelen, Builtins.size(cleanproduct))
         # read release notes
@@ -150,7 +153,10 @@ module Yast
           )
           lang_name = Ops.get(@languages_translations, relnotes_lang, "")
           # combobox item
-          lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang) if lang_name.nil? || lang_name == ""
+          if lang_name.nil? || lang_name == ""
+            lang_name = Builtins.sformat(_("Language: %1"),
+              relnotes_lang)
+          end
           # set minimal width (maximal length of language name)
           if Ops.less_than(
             Ops.get(@minwidthlang, product, 0),
@@ -220,10 +226,10 @@ module Yast
         deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
-          (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
-            Ops.less_than(@prodnamelen, 90) ||
-            Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
-              Ops.less_than(@prodnamelen, 70))
+          ((Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
+            Ops.less_than(@prodnamelen, 90)) ||
+            (Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
+              Ops.less_than(@prodnamelen, 70)))
         DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else
@@ -251,7 +257,8 @@ module Yast
 
       # help text for dialog "Release Notes"
       @help = _(
-        "<p>The <b>release notes</b> for the installed Linux system provide a brief\nsummary of new features and changes.</p>\n"
+        "<p>The <b>release notes</b> for the installed Linux system provide a brief\n" \
+        "summary of new features and changes.</p>\n"
       )
 
       # in normal mode no BackAbortNext-button layout

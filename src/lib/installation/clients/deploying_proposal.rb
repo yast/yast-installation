@@ -43,7 +43,8 @@ module Yast
       @im_do_enable = "deploying_enable"
       @im_do_disable = "deploying_disable"
 
-      if @func == "MakeProposal"
+      case @func
+      when "MakeProposal"
         @force_reset = Ops.get_boolean(@param, "force_reset", false)
         @language_changed = Ops.get_boolean(@param, "language_changed", false)
 
@@ -66,17 +67,20 @@ module Yast
             # TRANSLATORS: help text
             "help"                  => _(
               "<p><b>Installation from Images</b> is used to speed the installation up.\n" \
-                "Images contain compressed snapshots of an installed system matching your\n" \
-                "selection of patterns. The rest of the packages which are not contained in the\n" \
-                "images will be installed from packages the standard way.</p>\n"
+              "Images contain compressed snapshots of an installed system matching your\n" \
+              "selection of patterns. The rest of the packages which are not contained in the\n" \
+              "images will be installed from packages the standard way.</p>\n"
             ) +
               # TRANSLATORS: help text
               _(
-                "<p>Note that when installing from images, the time stamps of all packages originating from the images will\nnot match the installation date but rather the date the image was created.</p>"
+                "<p>Note that when installing from images, the time stamps of all packages " \
+                "originating from the images will\nnot match the installation date but rather " \
+                "the date the image was created.</p>"
               ) +
               # TRANSLATORS: help text
               _(
-                "<p>Installation from images is disabled by default if the current\npattern selection does not fit any set of images.</p>"
+                "<p>Installation from images is disabled by default if the current\n" \
+                "pattern selection does not fit any set of images.</p>"
               )
           }
         else
@@ -91,7 +95,7 @@ module Yast
             "warning_level"         => :error
           }
         end
-      elsif @func == "AskUser"
+      when "AskUser"
         @chosen_id = Ops.get(@param, "chosen_id")
         Builtins.y2milestone(
           "Images proposal change requested, id %1",
@@ -116,16 +120,16 @@ module Yast
           Report.Message(
             _(
               "Cannot enable installation from images.\n" \
-                "\n" \
-                "Currently selected patterns do not fit the images\n" \
-                "stored on the installation media.\n"
+              "\n" \
+              "Currently selected patterns do not fit the images\n" \
+              "stored on the installation media.\n"
             )
           )
         end
 
         ImageInstallation.changed_by_user = true
         @ret = { "workflow_sequence" => :next }
-      elsif @func == "Description"
+      when "Description"
         @ret = {
           # this is a heading
           "rich_text_title" => _("Installation from Images"),
@@ -160,7 +164,8 @@ module Yast
             Ops.add(ret, "<li>"),
             Builtins.sformat(
               # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>,
+              # only visible text
               _(
                 "Installation from images is enabled (<a href=\"%1\">disable</a>)."
               ),
@@ -175,7 +180,8 @@ module Yast
             Ops.add(ret, "<li>"),
             Builtins.sformat(
               # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>,
+              # only visible text
               _(
                 "Installation from images is disabled (<a href=\"%1\">enable</a>)."
               ),
@@ -186,9 +192,7 @@ module Yast
         )
       end
 
-      ret = Ops.add(ret, "</ul>\n")
-
-      ret
+      Ops.add(ret, "</ul>\n")
     end
 
     def CallProposalScript

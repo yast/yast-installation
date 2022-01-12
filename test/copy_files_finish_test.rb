@@ -18,7 +18,7 @@
 # To contact SUSE LLC about this file by physical or electronic mail, you may
 # find current contact information at www.suse.com.
 
-require_relative "./test_helper.rb"
+require_relative "./test_helper"
 
 require "installation/clients/copy_files_finish"
 
@@ -68,7 +68,8 @@ describe Yast::CopyFilesFinishClient do
 
     let(:blacklist_file) { "/mnt/etc/modprobe.d/50-blacklist.conf" }
     it "appends modules blacklisted in linuxrc to target system blacklist" do
-      allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules").and_return("moduleA, moduleB")
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules")
+        .and_return("moduleA, moduleB")
       allow(::File).to receive(:exist?).with(blacklist_file).and_return(true)
       expect(::File).to receive(:read).with(blacklist_file).and_return("First Line")
       expect(::File).to receive(:write).with(blacklist_file, String) do |_path, content|
@@ -81,7 +82,8 @@ describe Yast::CopyFilesFinishClient do
     end
 
     it "creates blacklist file if target system does not contain it" do
-      allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules").and_return("moduleA, moduleB")
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules")
+        .and_return("moduleA, moduleB")
       allow(::File).to receive(:exist?).with(blacklist_file).and_return(false)
 
       expect(::File).to_not receive(:read)
@@ -119,7 +121,8 @@ describe Yast::CopyFilesFinishClient do
 
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/multipath")
       expect(::FileUtils).to receive(:cp).with("/etc/multipath.conf", "/mnt/etc/multipath.conf")
-      expect(::FileUtils).to receive(:cp).with("/etc/multipath/bindings", "/mnt/etc/multipath/bindings")
+      expect(::FileUtils).to receive(:cp).with("/etc/multipath/bindings",
+        "/mnt/etc/multipath/bindings")
       expect(::FileUtils).to receive(:cp).with("/etc/multipath/wwids", "/mnt/etc/multipath/wwids")
 
       subject.write
@@ -145,7 +148,8 @@ describe Yast::CopyFilesFinishClient do
       allow(::File).to receive(:exist?).with("/boot/zipl/active_devices.txt").and_return(true)
 
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/boot/zipl")
-      expect(::FileUtils).to receive(:cp).with("/boot/zipl/active_devices.txt", "/mnt/boot/zipl/active_devices.txt")
+      expect(::FileUtils).to receive(:cp).with("/boot/zipl/active_devices.txt",
+        "/mnt/boot/zipl/active_devices.txt")
 
       subject.write
     end
@@ -216,7 +220,8 @@ describe Yast::CopyFilesFinishClient do
     end
 
     it "copies all used control files" do
-      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles).and_return(["/control.xml", "/addon/addon.xml"])
+      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles)
+        .and_return(["/control.xml", "/addon/addon.xml"])
 
       expect(::FileUtils).to receive(:rm_rf).with("/mnt/etc/YaST2/control_files")
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/YaST2/control_files")
@@ -228,7 +233,8 @@ describe Yast::CopyFilesFinishClient do
     end
 
     it "ensures proper permissions of copied used control files" do
-      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles).and_return(["/control.xml", "/addon/addon.xml"])
+      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles)
+        .and_return(["/control.xml", "/addon/addon.xml"])
 
       expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/control_files/control.xml")
       expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/control_files/addon.xml")
@@ -237,7 +243,8 @@ describe Yast::CopyFilesFinishClient do
     end
 
     it "writes order of control files to order.ycp" do
-      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles).and_return(["/control.xml", "/addon/addon.xml"])
+      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles)
+        .and_return(["/control.xml", "/addon/addon.xml"])
 
       expect(Yast::SCR).to receive(:Write).with(
         path(".target.ycp"),
@@ -249,7 +256,8 @@ describe Yast::CopyFilesFinishClient do
     end
 
     it "ensures proper permission for order.ycp" do
-      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles).and_return(["/control.xml", "/addon/addon.xml"])
+      allow(Yast::WorkflowManager).to receive(:GetAllUsedControlFiles)
+        .and_return(["/control.xml", "/addon/addon.xml"])
 
       expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/control_files/order.ycp")
 
@@ -266,7 +274,8 @@ describe Yast::CopyFilesFinishClient do
       allow(Yast::Mode).to receive(:update).and_return(false)
 
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/udev/rules.d")
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash_output"), /cp.*\/etc\/udev\/rules.d/)
+      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash_output"),
+        /cp.*\/etc\/udev\/rules.d/)
         .and_return("exit" => 0)
 
       subject.write

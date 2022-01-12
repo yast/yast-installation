@@ -305,7 +305,8 @@ module Yast
       # lzma
       cmd = if Builtins.regexpmatch(image, ".lzma$")
         Builtins.sformat(
-          "lzmadec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
+          "lzmadec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 " \
+          "-C '%2' -xf -",
           String.Quote(image),
           String.Quote(target),
           @_checkpoint,
@@ -315,7 +316,8 @@ module Yast
         # BNC #476079
       elsif Builtins.regexpmatch(image, ".xz$")
         Builtins.sformat(
-          "xzdec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
+          "xzdec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 " \
+          "-C '%2' -xf -",
           String.Quote(image),
           String.Quote(target),
           @_checkpoint,
@@ -348,7 +350,19 @@ module Yast
           SCR.Read(path(".process.read_line_stderr"), pid)
         )
 
-        if !newline.nil?
+        if newline.nil?
+          ret = UI.PollInput
+          if [:abort, :cancel].include?(ret)
+            if Popup.ConfirmAbort(:unusable)
+              Builtins.y2warning("Aborted!")
+              aborted = true
+              break
+            end
+          else
+            SlideShow.HandleInput(ret)
+            Builtins.sleep(200)
+          end
+        else
           if !Builtins.regexpmatch(newline, read_checkpoint_str)
             Builtins.y2milestone("Deploying image: %1", newline)
             next
@@ -361,18 +375,6 @@ module Yast
           @tar_image_progress&.call(
             Ops.add(Builtins.tointeger(newline), better_feeling_constant)
           )
-        else
-          ret = UI.PollInput
-          if [:abort, :cancel].include?(ret)
-            if Popup.ConfirmAbort(:unusable)
-              Builtins.y2warning("Aborted!")
-              aborted = true
-              break
-            end
-          else
-            SlideShow.HandleInput(ret)
-            Builtins.sleep(200)
-          end
         end
       end
 
@@ -1052,11 +1054,11 @@ module Yast
       # FIXME: this does not copy pipes in filesystem (usually not an issue)
       cmd = Builtins.sformat(
         "mkfifo %3 ;\n" \
-          "\t mkfifo %4 ;\n" \
-          "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" \
-          "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" \
-          "\t jobs -l >&2;\n" \
-          "\t tar -C %2 --numeric-owner -xSf %4",
+        "\t mkfifo %4 ;\n" \
+        "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" \
+        "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" \
+        "\t jobs -l >&2;\n" \
+        "\t tar -C %2 --numeric-owner -xSf %4",
         from,
         to,
         tmp_pipe1,
@@ -1075,7 +1077,7 @@ module Yast
         )
         until line.nil?
           if pid == ""
-            if !Builtins.regexpmatch(
+            if Builtins.regexpmatch(
               line,
               Builtins.sformat(
                 "dd bs=1048576 if=%1 of=%2",
@@ -1083,12 +1085,12 @@ module Yast
                 tmp_pipe2
               )
             )
-              pid = ""
-            else
               pid = Builtins.regexpsub(line, "([0-9]+) [^ 0-9]+ +dd", "\\1")
               Builtins.y2milestone("DD's pid: %1", pid)
               # sleep in order not to kill -USR1 to dd too early, otherwise it finishes
               Builtins.sleep(5000)
+            else
+              pid = ""
             end
           elsif Builtins.regexpmatch(line, "^[0-9]+ ")
             done = Builtins.regexpsub(line, "^([0-9]+) ", "\\1")
@@ -1194,8 +1196,10 @@ module Yast
       # Query for changed state of all knwon types
       # 'changed' means that they were 'installed' and 'not locked' before
       Builtins.foreach(@all_supported_types) do |one_type|
-        # list of $[ "name":string, "version":string, "arch":string, "source":integer, "status":symbol, "locked":boolean ]
-        # status is `installed, `removed, `selected or `available, source is source ID or -1 if the resolvable is installed in the target
+        # list of $[ "name":string, "version":string, "arch":string, "source":integer,
+        #            "status":symbol, "locked":boolean ]
+        # status is `installed, `removed, `selected or `available, source is source ID or
+        # -1 if the resolvable is installed in the target
         # if status is `available and locked is true then the object is set to taboo
         # if status is `installed and locked is true then the object locked
         resolvable_properties = Y2Packager::Resolvable.find(kind: one_type)
@@ -1293,7 +1297,8 @@ module Yast
       ret
     end
 
-    # Restores packages statuses from 'objects_state': Selects packages for removal, installation, upgrade.
+    # Restores packages statuses from 'objects_state': Selects packages for removal, installation
+    # and upgrade.
     #
     # @return [Boolean] if successful
     def RestoreAllChanges
@@ -1397,7 +1402,8 @@ module Yast
       # Error message
       Report.Error(
         _(
-          "Installation was unable to solve package dependencies automatically.\nSoftware manager will be opened for you to solve them manually."
+          "Installation was unable to solve package dependencies automatically.\n" \
+          "Software manager will be opened for you to solve them manually."
         )
       )
 
@@ -1455,7 +1461,8 @@ module Yast
     publish variable: :image_installation_available, type: "boolean"
     publish function: :ImageOrder, type: "list <string> ()"
     publish function: :SetDeployTarImageProgress, type: "void (void (integer))"
-    publish function: :SetDownloadTarImageProgress, type: "void (boolean (integer, integer, integer))"
+    publish function: :SetDownloadTarImageProgress,
+      type: "void (boolean (integer, integer, integer))"
     publish function: :SetStartDownloadImageProgress, type: "void (void (string, string))"
     publish function: :SetOverallDeployingProgress, type: "void (void (string, integer))"
     publish function: :TotalSize, type: "integer ()"
@@ -1464,7 +1471,8 @@ module Yast
     publish function: :DeployImageTemporarily, type: "boolean (string, string)"
     publish function: :CleanTemporaryImage, type: "boolean (string, string)"
     publish function: :FillUpImagesDetails, type: "boolean ()"
-    publish function: :DeployImages, type: "boolean (list <string>, string, void (integer, integer))"
+    publish function: :DeployImages,
+      type: "boolean (list <string>, string, void (integer, integer))"
     publish function: :FindImageSet, type: "boolean (list <string>)"
     publish function: :ImagesToUse, type: "map ()"
     publish function: :FileSystemCopy, type: "boolean (string, string, integer, integer)"

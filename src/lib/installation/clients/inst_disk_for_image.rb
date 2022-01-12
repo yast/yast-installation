@@ -47,7 +47,8 @@ module Yast
       until continue_buttons.include?(ret)
         ret = UI.UserInput
 
-        if ret == :next
+        case ret
+        when :next
           disk = UI.QueryWidget(Id(:disk), :Value)
           ret = WFM.CallFunction("inst_doit", [])
           if ret == :next
@@ -55,7 +56,7 @@ module Yast
           else
             ret = nil
           end
-        elsif ret == :abort
+        when :abort
           ret = nil unless Popup.ConfirmAbort(:painless)
         end
       end

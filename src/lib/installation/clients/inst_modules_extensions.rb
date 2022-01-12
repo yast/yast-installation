@@ -54,8 +54,11 @@ module Installation
           extension_provide = dependencies[pkg_name].find do |d|
             d["provides"]&.match(/#{Regexp.escape(PROVIDES_KEY)}/)
           end
-          if extension_provide && extension_provide["provides"] && !extension_provide["provides"].empty?
-            module_name = extension_provide["provides"][/#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1]
+          if extension_provide && extension_provide["provides"] &&
+              !extension_provide["provides"].empty?
+            module_name = extension_provide["provides"][
+              /#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1
+            ]
             log.info "extension for module #{module_name} in package #{pkg_name}"
           end
 

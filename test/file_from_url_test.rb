@@ -21,8 +21,8 @@ describe Yast::Transfer::FileFromUrl do
     # adaptor for existing tests
     def Get(scheme, host, urlpath, localfile)
       get_file_from_url(scheme: scheme, host: host, urlpath: urlpath,
-                        localfile: localfile,
-                        urltok: {}, destdir: "/destdir")
+        localfile: localfile,
+        urltok: {}, destdir: "/destdir")
     end
   end
 
@@ -159,11 +159,9 @@ describe Yast::Transfer::FileFromUrl do
 
       end
 
-      context "when host specifies a device" do
-      end
+      context "when host specifies a device"
 
-      context "when host+path specify a device" do
-      end
+      context "when host+path specify a device"
     end
 
     context "when scheme is 'usb'" do
@@ -175,10 +173,8 @@ describe Yast::Transfer::FileFromUrl do
     end
 
     # not yet covered
-    context "when scheme is 'http' or 'https'" do
-    end
-    context "when scheme is 'ftp'" do
-    end
+    context "when scheme is 'http' or 'https'"
+    context "when scheme is 'ftp'"
     context "when scheme is 'file'" do
       let(:scheme) { "file" }
       let(:cd_device) { "/dev/sr0" }
@@ -196,7 +192,7 @@ describe Yast::Transfer::FileFromUrl do
         allow(Yast::SCR).to receive(:Execute)
           .with(path(".target.bash"), /bin\/cp/) do |*args|
           cmd = args.last
-          _, from, to = cmd.split(" ")
+          _, from, to = cmd.split
           begin
             FileUtils.cp(from, to)
           rescue Errno::ENOENT
@@ -268,7 +264,8 @@ describe Yast::Transfer::FileFromUrl do
 
         it "tries to copy the file from the CD/DVD" do
           expect(Yast::WFM).to receive(:Execute)
-            .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount, Yast::Installation.mountlog])
+            .with(Yast::Path.new(".local.mount"), [cd_device, tmp_mount,
+                                                   Yast::Installation.mountlog])
             .and_return(true)
           expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
 
@@ -279,12 +276,13 @@ describe Yast::Transfer::FileFromUrl do
         context "and the CD/DVD is already mounted" do
           let(:mounts) do
             "#{cd_device} /mounts/mp_0005 iso9660 ro,relatime 0 0\n" \
-            "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
+              "#{cd_device} /mounts/mp_0006 iso9660 ro,relatime 0 0"
           end
 
           it "bind mounts the CD/DVD and tries to copy the file from it" do
             expect(Yast::SCR).to receive(:Execute)
-              .with(path(".target.bash_output"), "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
+              .with(path(".target.bash_output"),
+                "/bin/mount -v --bind /mounts/mp_0005 #{tmp_mount}")
               .and_return("exit" => 0, "stdout" => "ok")
             expect(Yast::WFM).to receive(:Execute).with(path(".local.umount"), anything)
 
@@ -295,13 +293,9 @@ describe Yast::Transfer::FileFromUrl do
       end
     end
 
-    context "when scheme is 'nfs'" do
-    end
-    context "when scheme is 'cifs'" do
-    end
-    context "when scheme is 'floppy'" do
-    end
-    context "when scheme is 'tftp'" do
-    end
+    context "when scheme is 'nfs'"
+    context "when scheme is 'cifs'"
+    context "when scheme is 'floppy'"
+    context "when scheme is 'tftp'"
   end
 end

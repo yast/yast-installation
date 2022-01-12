@@ -63,14 +63,15 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
           "title" => _("Writing YaST configuration..."),
           "when"  => [:installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         # write boot information for linuxrc
         # collect data for linuxrc, will be written to /etc/yast.inf
         @linuxrc = {}
@@ -104,15 +105,15 @@ module Yast
               path(".dev.tty.stderr"),
               _(
                 "\n" \
-                  "**************************************************************\n" \
-                  "\n" \
-                  "Loading installed kernel using kexec.\n" \
-                  "\n" \
-                  "Trying to load installed kernel via kexec instead of rebooting\n" \
-                  "Please, wait.\n" \
-                  "\n" \
-                  "**************************************************************\n" \
-                  "\t\t"
+                "**************************************************************\n" \
+                "\n" \
+                "Loading installed kernel using kexec.\n" \
+                "\n" \
+                "Trying to load installed kernel via kexec instead of rebooting\n" \
+                "Please, wait.\n" \
+                "\n" \
+                "**************************************************************\n" \
+                "\t\t"
               )
             )
           end
@@ -167,7 +168,8 @@ module Yast
       kernel_args = Ops.get_string(out, "stdout", "")
       # check if kernel_params contains any data
       if Ops.less_than(Builtins.size(kernel_args), 2)
-        Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir, kernel_args)
+        Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir,
+          kernel_args)
         return false
       end
 

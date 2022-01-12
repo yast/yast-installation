@@ -40,7 +40,8 @@ module Yast
     end
 
     def InjectFile(filename)
-      command = "/bin/cp #{filename.shellescape} #{File.join(Installation.destdir, filename).shellescape}"
+      command = "/bin/cp #{filename.shellescape} #{File.join(Installation.destdir,
+        filename).shellescape}"
       Builtins.y2milestone("InjectFile: <%1>", filename)
       Builtins.y2debug("Inject command: #{command}")
       WFM.Execute(path(".local.bash"), command)
@@ -119,8 +120,8 @@ module Yast
       result << _("<p>Information required for the base installation is now complete.</p>")
       result << _(
         "<p>If you continue now, partitions on your\n" \
-          "hard disk will be modified according to the installation settings in the\n" \
-          "previous dialogs.</p>"
+        "hard disk will be modified according to the installation settings in the\n" \
+        "previous dialogs.</p>"
       )
       result << _(
         "<p>Go back and check the settings if you are unsure.</p>"
@@ -137,8 +138,8 @@ module Yast
       result << _("<p>Information required to perform an update is now complete.</p>")
       result << _(
         "\n" \
-          "<p>If you continue now, data on your hard disk will be overwritten\n" \
-          "according to the settings in the previous dialogs.</p>"
+        "<p>If you continue now, data on your hard disk will be overwritten\n" \
+        "according to the settings in the previous dialogs.</p>"
       )
       result << _("<p>Go back and check the settings if you are unsure.</p>")
     end
@@ -239,7 +240,8 @@ module Yast
       WFM.Execute(
         path(".local.bash"),
         Builtins.sformat(
-          "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; /usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
+          "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; " \
+          "/usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
           (scst_required == false) ? "0" : "1"
         )
       )

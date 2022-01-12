@@ -109,9 +109,9 @@ module Yast
                 Builtins.sformat(
                   _(
                     "An error occurred while connecting to the server.\n" \
-                      "Details: %1\n" \
-                      "\n" \
-                      "Try again?"
+                    "Details: %1\n" \
+                    "\n" \
+                    "Try again?"
                   ),
                   Pkg.LastError
                 )

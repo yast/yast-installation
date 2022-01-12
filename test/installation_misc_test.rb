@@ -30,6 +30,7 @@ class InstallationMiscIncludeTest < Yast::Client
   include Yast::I18n
 
   def initialize
+    super
     Yast.include self, "installation/misc.rb"
   end
 end

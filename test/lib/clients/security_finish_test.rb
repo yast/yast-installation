@@ -109,7 +109,9 @@ describe Installation::Clients::SecurityFinish do
 
       it "skips writting policy kit default privileges" do
         allow(proposal_settings).to receive(:polkit_default_privs).and_return("easy")
-        expect(Yast::SCR).to_not receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything)
+        expect(Yast::SCR).to_not receive(:Write).with(
+          path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything
+        )
       end
 
       it "skips writting LSM config" do
@@ -127,13 +129,15 @@ describe Installation::Clients::SecurityFinish do
       end
 
       it "writes sysconfig" do
-        expect(Yast::SCR).to receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), "easy")
+        expect(Yast::SCR).to receive(:Write).with(path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
+          "easy")
 
         subject.write
       end
 
       it "calls set_polkt_default_privs" do
-        expect(Yast::SCR).to receive(:Execute).with(path(".target.bash_output"), /set_polkit_default_privs/)
+        expect(Yast::SCR).to receive(:Execute).with(path(".target.bash_output"),
+          /set_polkit_default_privs/)
 
         subject.write
       end

@@ -20,8 +20,9 @@
 require "yast"
 
 module Installation
-  # 1. Provides access to metadata of proposal parts (clients), as defined in the control file elements
-  # /productDefines/proposals/proposal: https://github.com/yast/yast-installation-control/blob/master/control/control.rnc
+  # 1. Provides access to metadata of proposal parts (clients), as defined in the control file
+  #    elements /productDefines/proposals/proposal:
+  #    https://github.com/yast/yast-installation-control/blob/master/control/control.rnc
   # 2. Handles all calls to the parts (clients).
   class ProposalStore
     include Yast::Logger
@@ -63,16 +64,16 @@ module Installation
       # General part of the help text for all types of proposals
       how_to_change = _(
         "<p>\n" \
-          "Change the values by clicking on the respective headline\n" \
-          "or by using the <b>Change...</b> menu.\n" \
-          "</p>\n"
+        "Change the values by clicking on the respective headline\n" \
+        "or by using the <b>Change...</b> menu.\n" \
+        "</p>\n"
       )
 
       # Help text for installation proposal, continued
       not_modified = _(
         "<p>\n" \
-          "Your hard disk has not been modified yet. You can still safely abort.\n" \
-          "</p>\n"
+        "Your hard disk has not been modified yet. You can still safely abort.\n" \
+        "</p>\n"
       )
 
       help_text = global_help + how_to_change
@@ -127,13 +128,17 @@ module Installation
       @proposal_names.map!(&:first) # first element is name of client
 
       missing_proposals = @proposal_names.reject { |proposal| Yast::WFM::ClientExists(proposal) }
-      log.warn "These proposals are missing on system: #{missing_proposals}" unless missing_proposals.empty?
+      unless missing_proposals.empty?
+        log.warn "These proposals are missing on system: #{missing_proposals}"
+      end
 
       # Filter missing proposals out
       @proposal_names -= missing_proposals
 
       unavailable_proposals = @proposal_names.select { |name| description_for(name).nil? }
-      log.info "These proposals report itself as unavailable: #{unavailable_proposals}" unless unavailable_proposals.empty?
+      unless unavailable_proposals.empty?
+        log.info "These proposals report itself as unavailable: #{unavailable_proposals}"
+      end
 
       @proposal_names -= unavailable_proposals
     end
@@ -278,7 +283,7 @@ module Installation
         log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
         # TRANSLATORS: Warning message, can be split to more lines if needed
         Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
-          "and cannot be changed."))
+                               "and cannot be changed."))
         return nil
       end
 
@@ -297,7 +302,9 @@ module Installation
     # @param [String] link ID
     # @return [String] client name
     def client_for_link(link)
-      raise "There are no client proposals known, call 'client(MakeProposal)' first" if @proposals.nil?
+      if @proposals.nil?
+        raise "There are no client proposals known, call 'client(MakeProposal)' first"
+      end
 
       matching_client = @proposals.find do |_client, proposal|
         link == proposal["id"] || proposal.fetch("links", []).include?(link)
@@ -422,8 +429,8 @@ module Installation
 
       unless valid_trigger?(trigger)
         raise "Incorrect definition of 'trigger': #{trigger.inspect} \n" \
-          "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
-          "and [Any] 'value' must be set"
+              "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
+              "and [Any] 'value' must be set"
       end
 
       expectation_class  = trigger["expect"]["class"]
@@ -440,11 +447,11 @@ module Installation
 
       if value == expectation_value
         log.info "Proposal client #{client}: returned value matches expectation #{value.inspect}"
-        return false
+        false
       else
         log.info "Proposal client #{client}: returned value #{value.inspect} " \
-          "does not match expected value #{expectation_value.inspect}"
-        return true
+                 "does not match expected value #{expectation_value.inspect}"
+        true
       end
     end
 
@@ -503,16 +510,16 @@ module Installation
           # General part ("You can change values...") is added as the next paragraph.
           _(
             "<p>\n" \
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
-              "</p>\n"
+            "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
+            "</p>\n"
           )
         else # so update
           # Help text for update proposal
           # General part ("You can change values...") is added as the next paragraph.
           _(
             "<p>\n" \
-              "Select <b>Update</b> to perform an update with the values displayed.\n" \
-              "</p>\n"
+            "Select <b>Update</b> to perform an update with the values displayed.\n" \
+            "</p>\n"
           )
         end
       when "network"
@@ -520,31 +527,32 @@ module Installation
         # General part ("You can change values...") is added as the next paragraph.
         _(
           "<p>\n" \
-            "Put the network settings into effect by pressing <b>Next</b>.\n" \
-            "</p>\n"
+          "Put the network settings into effect by pressing <b>Next</b>.\n" \
+          "</p>\n"
         )
       when "service"
         # Help text for service configuration proposal
         # General part ("You can change values...") is added as the next paragraph.
         _(
           "<p>\n" \
-            "Put the service settings into effect by pressing <b>Next</b>.\n" \
-            "</p>\n"
+          "Put the service settings into effect by pressing <b>Next</b>.\n" \
+          "</p>\n"
         )
       when "hardware"
         # Help text for hardware configuration proposal
         # General part ("You can change values...") is added as the next paragraph.
         _(
           "<p>\n" \
-            "Put the hardware settings into effect by pressing <b>Next</b>.\n" \
-            "</p>\n"
+          "Put the hardware settings into effect by pressing <b>Next</b>.\n" \
+          "</p>\n"
         )
       when "uml"
         # Proposal in uml module
         _("<P><B>UML Installation Proposal</B></P>") \
         # help text
         _(
-          "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
+          "<P>UML (User Mode Linux) installation allows you to start independent\n" \
+          "Linux virtual machines in the host system.</P>"
         )
       else
         if properties["help"] && !properties["help"].empty?
@@ -559,8 +567,8 @@ module Installation
           # General part ("You can change values...") is added as the next paragraph.
           _(
             "<p>\n" \
-              "To use the settings as displayed, press <b>Next</b>.\n" \
-              "</p>\n"
+            "To use the settings as displayed, press <b>Next</b>.\n" \
+            "</p>\n"
           )
         end
       end

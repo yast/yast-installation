@@ -6,8 +6,14 @@ require "y2packager/product_spec"
 require "installation/widgets/product_selector"
 
 describe ::Installation::Widgets::ProductSelector do
-  let(:product1) { Y2Packager::ProductSpec.new(name: "test1", display_name: "Test 1", version: "15", arch: "x86_64") }
-  let(:product2) { Y2Packager::ProductSpec.new(name: "test2", display_name: "Test 2", version: "15", arch: "x86_64") }
+  let(:product1) do
+    Y2Packager::ProductSpec.new(name: "test1", display_name: "Test 1", version: "15",
+      arch: "x86_64")
+  end
+  let(:product2) do
+    Y2Packager::ProductSpec.new(name: "test2", display_name: "Test 2", version: "15",
+      arch: "x86_64")
+  end
   subject { described_class.new([product1, product2]) }
 
   include_examples "CWM::RadioButtons"

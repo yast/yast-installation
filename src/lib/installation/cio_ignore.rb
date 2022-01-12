@@ -52,12 +52,10 @@ module Installation
     def cio_setting
       if Yast::Mode.autoinst
         Yast::AutoinstConfig.cio_ignore
-      elsif kvm? || zvm?
-        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
-        false
       else
-        # default value requested in FATE#315586
-        true
+        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+        # but for other cases return true as requested FATE#315586
+        !(kvm? || zvm?)
       end
     end
   end
@@ -128,15 +126,18 @@ module Installation
       autoconf_enabled = CIOIgnore.instance.autoconf_enabled
 
       cio_text = toggle_text(_("Blacklist devices"), cio_enabled, CIO_ENABLE_LINK, CIO_DISABLE_LINK)
-      autoconf_text = toggle_text(_("I/O device auto-configuration"), autoconf_enabled, AUTOCONF_ENABLE_LINK, AUTOCONF_DISABLE_LINK)
+      autoconf_text = toggle_text(_("I/O device auto-configuration"), autoconf_enabled,
+        AUTOCONF_ENABLE_LINK, AUTOCONF_DISABLE_LINK)
 
       {
         "preformatted_proposal" => Yast::HTML.List([cio_text, autoconf_text]),
-        "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK, AUTOCONF_ENABLE_LINK, AUTOCONF_DISABLE_LINK],
+        "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK, AUTOCONF_ENABLE_LINK,
+                                    AUTOCONF_DISABLE_LINK],
         # TRANSLATORS: help text
         "help"                  => _(
           "<p>Use <b>Blacklist devices</b> " \
-          "if you want to create blacklist channels to such devices which will reduce kernel memory footprint.</p>" \
+          "if you want to create blacklist channels to such devices which will reduce " \
+          "kernel memory footprint.</p>" \
           "<p>Disable <b>I/O device auto-configuration</b> " \
           "if you don't want any existing I/O auto-configuration data to be applied.</p>"
         )

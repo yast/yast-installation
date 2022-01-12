@@ -23,7 +23,7 @@ module Installation
       def enabled=(services)
         if !services.is_a?(::Array)
           raise ArgumentError, "Services#enabled= allows only Array as " \
-            "argument, not #{services.inspect}"
+                               "argument, not #{services.inspect}"
         end
 
         @enabled = services

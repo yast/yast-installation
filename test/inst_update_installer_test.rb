@@ -20,7 +20,9 @@ describe Yast::InstUpdateInstaller do
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:remote_url) { true }
   let(:user_defined) { true }
-  let(:update) { double("update", uri: URI(real_url), remote?: remote_url, user_defined?: user_defined) }
+  let(:update) do
+    double("update", uri: URI(real_url), remote?: remote_url, user_defined?: user_defined)
+  end
   let(:updates) { [update] }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }

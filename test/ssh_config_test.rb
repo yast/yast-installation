@@ -94,7 +94,8 @@ describe Installation::SshConfig do
       root1 = described_class.from_dir(root1_dir)
       contents = root1.keys.map { |k| k.files.map(&:content) }
       expect(contents).to contain_exactly(
-        ["root1: content of ssh_host_dsa_key file\n", "root1: content of ssh_host_dsa_key.pub file\n"],
+        ["root1: content of ssh_host_dsa_key file\n",
+         "root1: content of ssh_host_dsa_key.pub file\n"],
         ["root1: content of ssh_host_key file\n", "root1: content of ssh_host_key.pub file\n"]
       )
     end
@@ -207,13 +208,13 @@ describe Installation::SshConfig do
     it "writes the original content for each file" do
       @config.write_files(@target_dir)
 
-      expect(IO.read("#{ssh_dir}/moduli")).to eq(
+      expect(File.read("#{ssh_dir}/moduli")).to eq(
         "root1: content of moduli file\n"
       )
-      expect(IO.read("#{ssh_dir}/ssh_host_key")).to eq(
+      expect(File.read("#{ssh_dir}/ssh_host_key")).to eq(
         "root1: content of ssh_host_key file\n"
       )
-      expect(IO.read("#{ssh_dir}/ssh_host_key.pub")).to eq(
+      expect(File.read("#{ssh_dir}/ssh_host_key.pub")).to eq(
         "root1: content of ssh_host_key.pub file\n"
       )
     end

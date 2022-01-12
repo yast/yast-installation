@@ -35,6 +35,7 @@ module Installation
       #
       # @param settings [Installation::SecuritySettings]
       def initialize(settings)
+        super()
         @settings = settings
         self.handle_all_events = true
       end
@@ -100,6 +101,7 @@ module Installation
       #
       # @param settings [Y2Security::LSM::Config]
       def initialize(settings)
+        super()
         textdomain "installation"
 
         @settings = settings

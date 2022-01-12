@@ -6,19 +6,19 @@ require "installation/clients/inst_upgrade_urls"
 describe Yast::InstUpgradeUrlsClient do
   let(:repo1) do
     Y2Packager::Repository.new(repo_id: 1, repo_alias: "test1",
-    url: "https://example.com/1", raw_url: "https://example.com/1",
-    name: "repo1", enabled: true, autorefresh: true)
+      url: "https://example.com/1", raw_url: "https://example.com/1",
+      name: "repo1", enabled: true, autorefresh: true)
   end
 
   let(:repo2) do
     Y2Packager::Repository.new(repo_id: 2, repo_alias: "test2",
-    url: "https://example.com/2", raw_url: "https://example.com/2",
-    name: "repo2", enabled: true, autorefresh: true)
+      url: "https://example.com/2", raw_url: "https://example.com/2",
+      name: "repo2", enabled: true, autorefresh: true)
   end
 
   let(:service1) do
     Y2Packager::Service.new(service_alias: "service1", name: "service1",
-    url: "https://example.com/service", enabled: true, auto_refresh: true)
+      url: "https://example.com/service", enabled: true, auto_refresh: true)
   end
 
   let(:repo_mgr) { Installation::UpgradeRepoManager.new([repo1, repo2], [service1]) }

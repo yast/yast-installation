@@ -55,7 +55,8 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
@@ -64,7 +65,7 @@ module Yast
           ),
           "when"  => [:installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         ModulesConf.Save(true)
 
         # on SGI Altix add fetchop and mmtimer to /etc/modules-load.d/*.conf

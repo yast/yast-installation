@@ -110,7 +110,8 @@ module Yast
 
         # TRANSLATORS: help text, see #ZMD
         @turnoff_zmd_help = _(
-          "<p>Select <b>Disable ZMD Service</b> to stop and disable\nthe ZMD service during system start.</p>\n"
+          "<p>Select <b>Disable ZMD Service</b> to stop and disable\n" \
+          "the ZMD service during system start.</p>\n"
         )
       else
         Builtins.y2milestone("ZMD Turnoff check-box will be invisible")
@@ -125,7 +126,8 @@ module Yast
 
       # fallback
       @vendor_url = "http://www.suse.com/"
-      @vendor_url = "http://www.openSUSE.org" if ProductFeatures.GetStringFeature("globals", "ui_mode") == "simple"
+      @vendor_url = "http://www.openSUSE.org" if ProductFeatures.GetStringFeature("globals",
+        "ui_mode") == "simple"
       Builtins.y2milestone(
         "UI mode: %1",
         ProductFeatures.GetStringFeature("globals", "ui_mode")
@@ -157,7 +159,8 @@ module Yast
             _("<p><b>Congratulations!</b></p>") +
               # congratulation text 2/4
               _(
-                "<p>The installation of &product; on your machine is complete.\nAfter clicking <b>Finish</b>, you can log in to the system.</p>\n"
+                "<p>The installation of &product; on your machine is complete.\n" \
+                "After clicking <b>Finish</b>, you can log in to the system.</p>\n"
               ),
             # congratulation text 3/4
             Builtins.sformat(_("<p>Visit us at %1.</p>"), @vendor_url)
@@ -190,14 +193,15 @@ module Yast
       @help = _("<p>Your system is ready for use.</p>") +
         # help 2/4 for dialog "Congratulation Dialog"
         _(
-          "<p><b>Finish</b> will close the YaST installation and take you\nto the login screen.</p>\n"
+          "<p><b>Finish</b> will close the YaST installation and take you\n" \
+          "to the login screen.</p>\n"
         ) +
         # help 3/4 for dialog "Congratulation Dialog"
         (if DisplayKDEHelp()
            _(
              "<p>If you choose the default graphical desktop KDE, you can\n" \
-               "adjust some KDE settings to your hardware. Also notice\n" \
-               "our SUSE Welcome Dialog.</p>\n"
+             "adjust some KDE settings to your hardware. Also notice\n" \
+             "our SUSE Welcome Dialog.</p>\n"
            )
          else
            ""
@@ -208,9 +212,12 @@ module Yast
           @help,
           _(
             "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" \
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
-              "needs a profile to know what the installed system should look like. If this option is\n" \
-              "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
+            "AutoYaST is a way to do a complete SUSE Linux installation without user " \
+            "interaction. AutoYaST\n" \
+            "needs a profile to know what the installed system should look like. " \
+            "If this option is\n" \
+            "selected, a profile of the current system is stored in " \
+            "<tt>/root/autoinst.xml</tt>.</p>"
           )
         )
       end
@@ -237,18 +244,20 @@ module Yast
       loop do
         @ret = Wizard.UserInput
 
-        if @ret == :abort
+        case @ret
+        when :abort
           break if Popup.ConfirmAbort(:incomplete)
-        elsif @ret == :help
+        when :help
           Wizard.ShowHelp(@help)
         end
         break if [:next, :back].include?(@ret)
       end
 
       # bugzilla #221190
-      if @ret == :back
+      case @ret
+      when :back
         Wizard.RestoreNextButton
-      elsif @ret == :next
+      when :next
         # BNC #441452
         # Remove the congrats dialog
         @zmd = UI.WidgetExists(Id(:turnoff_zmd)) &&
@@ -301,21 +310,21 @@ module Yast
       # Load Add-On products configured in the fist stage
       AddOnProduct.ReadTmpExportFilename
 
-      if !Package.InstallMsg(
+      if Package.InstallMsg(
         "autoyast2",
         _(
           "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
         ) +
           _("<p>Install it now?</p>")
       )
-        Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
-      else
         # #165860
         # Save sources now because cloning garbles the target
         # Cloning reinitializes sources when it needs them
         Pkg.SourceSaveAll
 
         Call.Function("clone_system", [])
+      else
+        Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
       end
 
       nil

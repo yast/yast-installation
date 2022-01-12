@@ -44,6 +44,7 @@ module Yast
     include Yast::I18n
 
     def initialize
+      super
       textdomain "installation"
     end
 
@@ -58,7 +59,9 @@ module Yast
     # @raise RuntimeError if called with switched SCR to have defined behavior and prevent
     #   accidental overwrite and data loss
     def write
-      raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}" if Yast::WFM.scr_chrooted?
+      if Yast::WFM.scr_chrooted?
+        raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}"
+      end
 
       # bugzilla #221815 and #485980
       # Adding blacklisted modules into the /etc/modprobe.d/50-blacklist.conf
@@ -128,7 +131,8 @@ module Yast
 
       # Remove the directory with all additional control files (if exists)
       # and create it again (empty). BNC #471454
-      control_files_directory = ::File.join(installation_destination, Directory.etcdir, "control_files")
+      control_files_directory = ::File.join(installation_destination, Directory.etcdir,
+        "control_files")
       ::FileUtils.rm_rf(control_files_directory)
       ::FileUtils.mkdir_p(control_files_directory)
 

@@ -42,7 +42,7 @@ module Installation
     end
 
     def read(path)
-      self.content = IO.read(path)
+      self.content = File.read(path)
       self.atime = File.atime(path)
       self.permissions = File.stat(path).mode
     end
@@ -51,7 +51,7 @@ module Installation
       log.info "Write SSH config file #{dir} to #{name}"
       path = File.join(dir, name)
       backup(path)
-      IO.write(path, content)
+      File.write(path, content)
       File.chmod(permissions, path)
     end
 

@@ -35,6 +35,7 @@ module Installation
     #  ::Installation::Console::Menu.run'
     class Menu < CWM::Dialog
       def initialize
+        super
         textdomain "installation"
       end
 
@@ -101,8 +102,8 @@ module Installation
 
         # TRANSLATORS: error message
         Yast::Report.Error(_("The installer configuration dialog cannot be displayed"\
-          " when a popup window is visible.\nClose the popup first and then" \
-          " repeat the action."))
+                             " when a popup window is visible.\nClose the popup first and then" \
+                             " repeat the action."))
 
         false
       end

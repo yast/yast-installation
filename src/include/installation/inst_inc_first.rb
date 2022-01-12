@@ -63,7 +63,8 @@ module Yast
 
       # properly set up initial language
       Installation.encoding = Console.SelectFont(Language.language)
-      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
+      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support",
+        true)
 
       unless Language.SwitchToEnglishIfNeeded(true)
         UI.SetLanguage(Language.language, Installation.encoding)
@@ -143,7 +144,8 @@ module Yast
             "Directory '%1' exists, removing...",
             String.Quote(zypp_data_item)
           )
-          result = WFM.Execute(path(".local.bash_output"), "/usr/bin/rm -rf #{zypp_data_item.shellescape}")
+          result = WFM.Execute(path(".local.bash_output"),
+            "/usr/bin/rm -rf #{zypp_data_item.shellescape}")
           Builtins.y2milestone("Result: #{result.inspect}")
         end
       end
@@ -162,9 +164,9 @@ module Yast
             "disks_activate", # disks activated before running upgrade
             "mode", # always doing update, is already preselected
             "update_partition", # no mounting
-            "prepdisk"
+            "prepdisk" # disks already mounted, it is dummy in update anyway
           ]
-        ) { |m| ProductControl.DisableModule(m) } # disks already mounted, it is dummy in update anyway
+        ) { |m| ProductControl.DisableModule(m) }
       end
 
       nil

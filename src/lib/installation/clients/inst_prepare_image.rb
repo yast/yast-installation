@@ -74,7 +74,9 @@ module Yast
       )
 
       # avoid useles calls
-      ImageInstallation.FindImageSet(@patterns_to_install) if Ops.greater_than(Builtins.size(@patterns_to_install), 0)
+      ImageInstallation.FindImageSet(@patterns_to_install) if Ops.greater_than(
+        Builtins.size(@patterns_to_install), 0
+      )
 
       Builtins.y2milestone("Images for installation ready")
 

@@ -45,6 +45,7 @@ module Installation
       # @param products        [Array<Y2Packager::Product>] List of available products
       # @param disable_buttons [Array<Symbol>] List of buttons to disable
       def initialize(products, disable_buttons: [])
+        super()
         textdomain "installation"
 
         @products = products

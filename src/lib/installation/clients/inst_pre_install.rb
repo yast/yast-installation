@@ -47,7 +47,10 @@ module Yast
 
       # The ssh_import proposal doesn't make sense if there is no
       # configuration to import from.
-      ProductControl.DisableSubProposal("inst_initial", "ssh_import") if ::Installation::SshImporter.instance.configurations.empty?
+      if ::Installation::SshImporter.instance.configurations.empty?
+        ProductControl.DisableSubProposal("inst_initial",
+          "ssh_import")
+      end
 
       # free the memory
       @useful_devices = nil
@@ -166,7 +169,8 @@ module Yast
         am = SCR.Execute(path(".target.bash_output"), already_mounted)
         if am["exit"] == 0 && !am["stdout"].to_s.empty?
           log.warning "#{mnt_tmpdir} is already mounted, trying to umount..."
-          log.error("Cannot umount #{mnt_tmpdir}") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
+          log.error("Cannot umount #{mnt_tmpdir}") unless SCR.Execute(path(".target.umount"),
+            mnt_tmpdir)
         end
         # mounting read-only
         if !SCR.Execute(path(".target.mount"), [device, mnt_tmpdir], "-o ro,noatime")

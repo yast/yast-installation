@@ -56,14 +56,15 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return {
           "steps" => 1,
           # progress step title
           "title" => _("Moving to installed system..."),
           "when"  => [:installation, :live_installation, :update, :autoinst]
         }
-      elsif @func == "Write"
+      when "Write"
         # --------------------------------------------------------------
         #   stop SCR
         #   restart on destination
@@ -153,9 +154,7 @@ module Yast
         SCR.Execute(path(".target.bash_output"), "LANG=en_US.UTF-8 /bin/df -h")
       )
 
-      if Ops.get_integer(ret_exec, "exit", -1) != 0
-        Builtins.y2error("Cannot find out free space: %1", ret_exec)
-      else
+      if Ops.get_integer(ret_exec, "exit", -1) == 0
         Builtins.y2milestone(
           "Free space: \n%1",
           Builtins.mergestring(
@@ -163,6 +162,8 @@ module Yast
             "\n"
           )
         )
+      else
+        Builtins.y2error("Cannot find out free space: %1", ret_exec)
       end
 
       nil

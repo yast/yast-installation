@@ -22,6 +22,7 @@ module Installation
       # define a button for starting the command line console
       class ConsoleButton < CWM::PushButton
         def initialize
+          super
           textdomain "installation"
         end
 

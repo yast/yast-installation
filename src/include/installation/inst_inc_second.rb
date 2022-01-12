@@ -326,15 +326,15 @@ module Yast
       if FileUtils.Exists(var_file)
         var_map = Convert.to_map(SCR.Read(path(".target.ycp"), var_file))
         lang = Ops.get_string(var_map, "second_stage_language")
-        if !lang.nil?
-          Builtins.y2milestone("Setting language to: %1", lang)
-          Language.QuickSet(lang)
-          Builtins.y2milestone("using %1 for second stage", lang)
-        else
+        if lang.nil?
           Builtins.y2error(
             "Cannot set language, tmp-file contains: %1",
             var_map
           )
+        else
+          Builtins.y2milestone("Setting language to: %1", lang)
+          Language.QuickSet(lang)
+          Builtins.y2milestone("using %1 for second stage", lang)
         end
         SCR.Execute(path(".target.remove"), var_file)
       end
@@ -353,17 +353,17 @@ module Yast
         # popup question (#x1)
         show_error = _(
           "The previous installation has failed.\n" \
-            "Would you like it to continue?\n" \
-            "\n" \
-            "Note: You may have to enter some information again."
+          "Would you like it to continue?\n" \
+          "\n" \
+          "Note: You may have to enter some information again."
         )
         if FileUtils.Exists(Installation.file_inst_aborted)
           # popup question (#x1)
           show_error = _(
             "The previous installation has been aborted.\n" \
-              "Would you like it to continue?\n" \
-              "\n" \
-              "Note: You may have to enter some information again."
+            "Would you like it to continue?\n" \
+            "\n" \
+            "Note: You may have to enter some information again."
           )
 
           Builtins.y2milestone("Case: aborted")
@@ -379,9 +379,18 @@ module Yast
           Builtins.y2warning(
             "User didn't want to restart the second stage installation..."
           )
-          SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
-          SCR.Execute(path(".target.remove"), Installation.file_inst_failed) if FileUtils.Exists(Installation.file_inst_failed)
-          SCR.Execute(path(".target.remove"), Installation.run_yast_at_boot) if FileUtils.Exists(Installation.run_yast_at_boot)
+          if FileUtils.Exists(Installation.file_inst_aborted)
+            SCR.Execute(path(".target.remove"),
+              Installation.file_inst_aborted)
+          end
+          if FileUtils.Exists(Installation.file_inst_failed)
+            SCR.Execute(path(".target.remove"),
+              Installation.file_inst_failed)
+          end
+          if FileUtils.Exists(Installation.run_yast_at_boot)
+            SCR.Execute(path(".target.remove"),
+              Installation.run_yast_at_boot)
+          end
 
           # skipping the second stage
           return :skipped
@@ -396,7 +405,10 @@ module Yast
         "Creating files for case if installation fails (reset button)"
       )
       # might be left from the previous run
-      SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
+      if FileUtils.Exists(Installation.file_inst_aborted)
+        SCR.Execute(path(".target.remove"),
+          Installation.file_inst_aborted)
+      end
       SCR.Execute(
         path(".target.bash"),
         "/usr/bin/touch #{Installation.file_inst_failed.shellescape}"
@@ -513,8 +525,14 @@ module Yast
 
       # restarting yast, removing files that identify the user-abort or installation-crash
       # bugzilla #222896
-      SCR.Execute(path(".target.remove"), Installation.file_inst_aborted) if FileUtils.Exists(Installation.file_inst_aborted)
-      SCR.Execute(path(".target.remove"), Installation.file_inst_failed) if FileUtils.Exists(Installation.file_inst_failed)
+      if FileUtils.Exists(Installation.file_inst_aborted)
+        SCR.Execute(path(".target.remove"),
+          Installation.file_inst_aborted)
+      end
+      if FileUtils.Exists(Installation.file_inst_failed)
+        SCR.Execute(path(".target.remove"),
+          Installation.file_inst_failed)
+      end
 
       # creating new files to identify restart
       last_step = ProductControl.CurrentStep
@@ -542,7 +560,8 @@ module Yast
         Builtins.sformat("%1\n%2", next_step, restarting_step)
       )
 
-      if ret == :reboot
+      case ret
+      when :reboot
         Builtins.y2milestone("Creating %1 file", Installation.reboot_file)
         SCR.Execute(
           path(".target.bash"),
@@ -551,7 +570,7 @@ module Yast
         # bnc #432005
         Builtins.y2milestone("YaST needs rebooting")
         yast_needs_rebooting = true
-      elsif ret == :restart_yast
+      when :restart_yast
         Builtins.y2milestone("Creating %1 file", Installation.restart_file)
         SCR.Execute(
           path(".target.bash"),
@@ -622,7 +641,8 @@ module Yast
     def SetLanguageAndEncoding
       Installation.encoding = Console.Restore
       Console.Init
-      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support", true)
+      Installation.encoding = "UTF-8" if Ops.get_boolean(UI.GetDisplayInfo, "HasFullUtf8Support",
+        true)
 
       # //////////////////////////////////////////////////////////
       # activate language settings and console font

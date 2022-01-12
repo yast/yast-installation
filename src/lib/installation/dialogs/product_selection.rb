@@ -13,6 +13,7 @@ module Installation
     # Currently it is mainly used for LeanOS that have on one media more products.
     class ProductSelection < CWM::Dialog
       def initialize
+        super
         textdomain "installation"
       end
 

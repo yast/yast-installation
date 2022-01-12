@@ -67,9 +67,7 @@ module Yast
 
       # Features mentioned in 'Cmdline' entry, it might not be defined (bnc#861465)
       cmdline = polish(Linuxrc.InstallInf("Cmdline") || "").split
-      cmdline_features = cmdline.select do |cmd|
-        cmd =~ /^ignored?features?=/i
-      end
+      cmdline_features = cmdline.grep(/^ignored?features?=/i)
 
       cmdline_features.collect! do |feature|
         feature.gsub(/^ignored?features?=(.*)/i, '\1')

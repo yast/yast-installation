@@ -92,8 +92,8 @@ module Yast
                     Label(
                       _(
                         "No network setup has been found.\n" \
-                          "It is important if using remote repositories,\n" \
-                          "otherwise you can safely skip it.\n"
+                        "It is important if using remote repositories,\n" \
+                        "otherwise you can safely skip it.\n"
                       )
                     )
                   )
@@ -139,7 +139,9 @@ module Yast
         ) +
           # TRANSLATORS: help text, part 2/2
           _(
-            "<p>A configured network is needed for using remote repositories\nor add-on products. If you do not use remote repositories, skip the configuration.</p>\n"
+            "<p>A configured network is needed for using remote repositories\n" \
+            "or add-on products. If you do not use remote repositories, " \
+            "skip the configuration.</p>\n"
           ),
         @enable_next,
         @enable_back
@@ -154,7 +156,8 @@ module Yast
       loop do
         @ret = UI.UserInput
 
-        if @ret == :next
+        case @ret
+        when :next
           @option_selected = Convert.to_string(
             UI.QueryWidget(
               Id("to_do_a_network_setup_or_not_to_do"),
@@ -168,7 +171,7 @@ module Yast
             Builtins.y2milestone("Running inst_lan")
             @ret2 = WFM.call(
               "inst_lan",
-              [GetInstArgs.argmap.merge("skip_detection" => true), "hide_abort_button" => true]
+              [GetInstArgs.argmap.merge("skip_detection" => true), { "hide_abort_button" => true }]
             )
             Builtins.y2milestone("inst_lan ret: %1", @ret2)
 
@@ -203,11 +206,11 @@ module Yast
             @return_this = :next
             break
           end
-        elsif @ret == :back
+        when :back
           Builtins.y2milestone("Going back")
           @return_this = :back
           break
-        elsif @ret == :abort
+        when :abort
           if Popup.ConfirmAbort(:painless)
             @return_this = :abort
             break

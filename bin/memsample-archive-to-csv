@@ -95,9 +95,7 @@ class MemsampleCsv < MemsampleArchive
   end
 
   def direct_children_of(processes, parent)
-    r = processes.find_all { |p| p[:PPID] == parent[:PID] }
-    # puts parent[:PID] + "=>" + r.map { |p| p[:PID] }.join(" ")
-    r
+    processes.find_all { |p| p[:PPID] == parent[:PID] }
   end
 
   def descendants_of(processes, parent)
@@ -119,16 +117,16 @@ class MemsampleCsv < MemsampleArchive
     end
 
     y = processes.find { |p| p[:COMMAND].include? "y2start" }
-    if !y
-      @row << 0
-      @row << 0
-    else
+    if y
       @row << y[:RSS]
 
       # array of processes that are y2start or its descendants
       yy = descendants_of(processes, y)
       sizes = yy.map { |p| p[:RSS].to_i }
       @row << sizes.reduce(0, &:+)
+    else
+      @row << 0
+      @row << 0
     end
 
     @row << datetime

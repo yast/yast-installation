@@ -15,7 +15,7 @@ describe Yast::InstExtrasourcesClient do
           "status" => :selected, "source" => source
         )])
       expect(subject.UpgradesAvailable([source])).to eq("packages"     => ["foo-1.0.x86_64"],
-                                                        "repositories" => [source])
+        "repositories" => [source])
     end
   end
 end

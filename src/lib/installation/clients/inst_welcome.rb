@@ -42,7 +42,8 @@ module Yast
 
       directory = argmap["directory"] || Directory.datadir
 
-      directory = Directory.custom_workflow_dir + directory if Ops.get_string(argmap, "directory", "") != ""
+      directory = Directory.custom_workflow_dir + directory if Ops.get_string(argmap, "directory",
+        "") != ""
 
       patterns = argmap["patterns"] || default_patterns
 
@@ -64,9 +65,9 @@ module Yast
         # welcome text 2/4
         _(
           "<p>There are a few more steps to take before your system is ready to\n" \
-            "use. YaST will now guide you through some basic configuration.  Click\n" \
-            "<b>Next</b> to continue. </p>\n" \
-            "            \n"
+          "use. YaST will now guide you through some basic configuration.  Click\n" \
+          "<b>Next</b> to continue. </p>\n" \
+          "            \n"
         )
 
       # welcome text

@@ -1,6 +1,6 @@
 #! /usr/bin/env rspec
 
-require_relative "../../test_helper.rb"
+require_relative "../../test_helper"
 require "cwm/rspec"
 
 require "installation/dialogs/ntp_setup"
@@ -49,9 +49,9 @@ describe ::Installation::Dialogs::NtpSetup do
       end
 
       it "proposes to use a random server from the default pool" do
-        expect(::Installation::Widgets::NtpServer).to receive(:new).and_wrap_original do |original, arg|
+        expect(::Installation::Widgets::NtpServer).to receive(:new).and_wrap_original do |orig, arg|
           expect(default_servers.map(&:hostname)).to include(arg.first)
-          original.call(arg)
+          orig.call(arg)
         end
         subject.run
       end

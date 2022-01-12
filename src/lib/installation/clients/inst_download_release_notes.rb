@@ -143,7 +143,7 @@ module Yast
     def fetch_release_notes(product, user_lang, format)
       product.release_notes(user_lang, format) || :missing
     rescue Y2Packager::PackageFetchError, Y2Packager::PackageExtractionError => e
-      log.warn "Could not download and extract the release notes package for '#{product.name}': #{e.inspect}"
+      log.warn "Failed downloading and extracting release notes for '#{product.name}': #{e.inspect}"
       :error
     end
 

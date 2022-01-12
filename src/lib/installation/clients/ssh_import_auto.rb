@@ -16,6 +16,7 @@ module Installation
     end
 
     def initialize
+      super
       textdomain "installation"
     end
 
@@ -112,7 +113,10 @@ module Installation
         if ssh_importer.device && !ssh_importer.device.empty?
           ret["import"] = true
           ret["copy_config"] = ssh_importer.copy_config
-          ret["device"] = ssh_importer.device if !ssh_importer.device.empty? && ssh_importer.device != "default"
+          if !ssh_importer.device.empty? && ssh_importer.device != "default"
+            ret["device"] =
+              ssh_importer.device
+          end
         else
           ret["import"] = false
           ret["copy_config"] = false

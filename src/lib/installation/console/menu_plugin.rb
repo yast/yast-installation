@@ -21,6 +21,7 @@ module Installation
 
       # when a new subclass is defined this code gets executed
       def self.inherited(subclass)
+        super
         # collect instances of all subclasses
         log.info("Found new plugin class: #{subclass}")
         plugins << subclass.new
@@ -34,7 +35,7 @@ module Installation
       # get widgets for all plugins
       def self.widgets
         plugins.sort_by! { |p| [p.order, p.class.to_s] }
-        plugins.map(&:widget).reject(&:nil?)
+        plugins.map(&:widget).compact
       end
 
       # return a widget do display
