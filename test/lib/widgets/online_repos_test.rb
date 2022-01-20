@@ -7,5 +7,9 @@ require "cwm/rspec"
 describe Installation::Widgets::OnlineRepos do
   subject { described_class.new }
 
+  before do
+    allow(Yast::WFM).to receive(:CallFunction)
+  end
+
   include_examples "CWM::PushButton"
 end

@@ -159,17 +159,19 @@ describe ::Installation::ProposalRunner do
       end
 
       context "and it enables soft r/o proposal in case of error" do
-        PROPERTIES = {
-          "enable_skip"      => "no",
-          "label"            => "Installation Settings",
-          "mode"             => "autoinstallation",
-          "name"             => "initial",
-          "stage"            => "initial",
-          "unique_id"        => "auto_inst_proposal",
-          "proposal_modules" => [
-            { "name" => "software", "presentation_order" => "15", "read_only" => "soft" }
-          ]
-        }.freeze
+        let(:properties) do
+          {
+            "enable_skip"      => "no",
+            "label"            => "Installation Settings",
+            "mode"             => "autoinstallation",
+            "name"             => "initial",
+            "stage"            => "initial",
+            "unique_id"        => "auto_inst_proposal",
+            "proposal_modules" => [
+              { "name" => "software", "presentation_order" => "15", "read_only" => "soft" }
+            ]
+          }
+        end
         let(:proposals) { [["software_proposal", 15]] }
 
         it "makes a proposal" do

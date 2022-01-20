@@ -128,7 +128,7 @@ describe ::Installation::SSHImportAutoClient do
 
       before do
         importer.add_config(fixtures_dir("root1"), "dev")
-        allow(::Installation).to receive(:destdir).and_return("/")
+        allow(Yast::Installation).to receive(:destdir).and_return("/")
       end
 
       it "writes the keys/configuration to the installation directory" do

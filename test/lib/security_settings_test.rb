@@ -142,7 +142,7 @@ describe Installation::SecuritySettings do
         lsm_config.configurable = true
         allow(Yast::PackagesProposal).to receive("SetResolvables")
           .with("LSM", :pattern, anything)
-        allow(subject).to receive(:propose_default)
+        allow(lsm_config).to receive(:propose_default)
       end
 
       context "but there is already a module selected" do

@@ -108,7 +108,7 @@ describe Installation::Clients::SecurityFinish do
       end
 
       it "skips writting policy kit default privileges" do
-        allow(proposal_settings).to receive(:polkit_default_privs).and_return("easy")
+        allow(proposal_settings).to receive(:polkit_default_privileges).and_return("easy")
         expect(Yast::SCR).to_not receive(:Write).with(
           path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"), anything
         )

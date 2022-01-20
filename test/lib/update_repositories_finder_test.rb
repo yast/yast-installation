@@ -77,8 +77,6 @@ describe Installation::UpdateRepositoriesFinder do
         allow(Yast::ProductFeatures).to receive(:GetStringFeature)
           .with("globals", "self_update_url")
           .and_return(url_from_control)
-        # TODO: test don't mock!
-        allow(finder).to receive(:add_installation_repo)
         allow(Yast::Linuxrc).to receive(:InstallInf).with("regurl")
           .and_return(nil)
       end
@@ -113,7 +111,7 @@ describe Installation::UpdateRepositoriesFinder do
           )
         end
 
-        let(:regservice_selection) { Class.new }
+        let(:regservice_selection) { Class.new { def self.run(_arg); end } }
 
         let(:url_helpers) do
           double("url_helpers", registration_url: smt0.slp_url, slp_discovery: [])
