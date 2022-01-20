@@ -133,7 +133,7 @@ module Installation
         Popup.Notify _("It makes no sense to write these settings to system.")
         true
       else
-        ssh_importer.write(::Installation.destdir)
+        ssh_importer.write(Yast::Installation.destdir)
       end
     end
 

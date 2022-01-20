@@ -15,31 +15,8 @@ require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
-# mock some dependencies, to not increase built dependencies
+# mock some dependencies, to not increase build dependencies
 $LOAD_PATH.unshift(File.join(FIXTURES_DIR.to_s, "stub_libs"))
-
-# stub module to prevent its Import
-# Useful for modules from different yast packages, to avoid build dependencies
-def stub_module(name)
-  Yast.const_set(name.to_sym, Class.new { def self.fake_method; end })
-end
-
-# stub classes from other modules to speed up a build
-stub_module("AddOnProduct")
-stub_module("AutoinstConfig")
-stub_module("AutoinstGeneral")
-stub_module("AutoinstSoftware")
-stub_module("Console")
-stub_module("InstURL")
-stub_module("Keyboard")
-stub_module("Language")
-stub_module("Packages")
-stub_module("ProductLicense")
-stub_module("Profile")
-stub_module("ProfileLocation")
-# we cannot depend on this module (circular dependency)
-stub_module("NtpClient")
-stub_module("Proxy")
 
 if ENV["COVERAGE"]
   require "simplecov"
@@ -73,7 +50,35 @@ RSpec.configure do |config|
   config.extend Yast::I18n  # available in context/describe
   config.include Yast::I18n # available in it/let/before/...
   config.include Helpers    # custom helpers
+
+  config.mock_with :rspec do |c|
+    # verify that the mocked methods actually exist
+    # https://relishapp.com/rspec/rspec-mocks/v/3-0/docs/verifying-doubles/partial-doubles
+    c.verify_partial_doubles = true
+  end
 end
+
+# stub YaST modules to prevent importing them,
+# useful for modules from different yast packages to avoid build dependencies
+Yast::RSpec::Helpers.define_yast_module("AddOnProduct", methods: [:selected_installation_products])
+Yast::RSpec::Helpers.define_yast_module("AutoinstConfig", methods: [:cio_ignore, :second_stage])
+Yast::RSpec::Helpers.define_yast_module("AutoinstGeneral",
+  methods: [:self_update, :self_update_url])
+Yast::RSpec::Helpers.define_yast_module("AutoinstSoftware")
+Yast::RSpec::Helpers.define_yast_module("Console")
+Yast::RSpec::Helpers.define_yast_module("InstURL", methods: [:installInf2Url])
+Yast::RSpec::Helpers.define_yast_module("Keyboard")
+Yast::RSpec::Helpers.define_yast_module("Language", methods: [:language])
+Yast::RSpec::Helpers.define_yast_module("NtpClient",
+  methods: [:modified=, :ntp_conf, :ntp_selected=, :run_service=, :synchronize_time=])
+Yast::RSpec::Helpers.define_yast_module("Packages",
+  methods: [:GetBaseSourceID, :Reset, :SelectSystemPackages, :SelectSystemPatterns,
+            :check_remote_installation_packages, :init_called])
+Yast::RSpec::Helpers.define_yast_module("ProductLicense")
+Yast::RSpec::Helpers.define_yast_module("Profile", methods: [:current])
+Yast::RSpec::Helpers.define_yast_module("ProfileLocation")
+Yast::RSpec::Helpers.define_yast_module("Proxy",
+  methods: [:Export, :Import, :WriteCurlrc, :WriteSysconfig, :modified, :to_target])
 
 # require the "bin/yupdate" script for testing it, unfortunately we cannot use
 # a simple require/require_relative for it, let's share the workaround in a single place

@@ -8,6 +8,8 @@ describe ::Installation::Widgets::SystemRoleReader do
   class DummySystemRoleReader
     include Yast::Logger
     include ::Installation::Widgets::SystemRoleReader
+
+    attr_accessor :value
   end
 
   subject { DummySystemRoleReader.new }
