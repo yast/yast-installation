@@ -54,9 +54,9 @@ module Installation
           "<li><b>Enforcing</b> the state that enforces SELinux security policy. "\
           "Access is denied to users and programs unless permitted by " \
           "SELinux security policy rules. All denial messages are logged.</li> "\
-          "<b>Permissive</b> is a diagnostic state. The security policy rules are " \
+          "<li><b>Permissive</b> is a diagnostic state. The security policy rules are " \
           "not enforced, but SELinux sends denial messages to a log file.</li>" \
-          "<b>Disabled</b> SELinux does not enforce a security policy.</li></ul></p>"
+          "<li><b>Disabled</b> SELinux does not enforce a security policy.</li></ul></p>"
         )
       end
     end
