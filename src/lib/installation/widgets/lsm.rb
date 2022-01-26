@@ -109,6 +109,7 @@ module Installation
 
       def init
         self.value = settings.selected&.id.to_s
+        disable if items.size <= 1
       end
 
       def opt
@@ -131,7 +132,7 @@ module Installation
       def help
         Yast::HTML.Para(
           # TRANSLATORS: Linux Security Module Selector help.
-          _("Allows to choose between available Linux Security major modules like:") +
+          _("Allows to choose between available major Linux Security Modules like:") +
           Yast::HTML.List(available_modules.map(&:label))
         )
       end

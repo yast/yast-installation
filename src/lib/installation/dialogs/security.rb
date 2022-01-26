@@ -127,7 +127,7 @@ module Installation
 
       def lsm_frame
         frame(
-          _("Linux Security Module"),
+          _("Major Linux Security Module"),
           Widgets::LSM.new(@settings)
         )
       end
