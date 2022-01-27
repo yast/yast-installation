@@ -157,7 +157,8 @@ describe Installation::UpgradeRepoManager do
     end
 
     it "does not remove the new services with same name as an old service" do
-      expect(Y2Packager::NewRepositorySetup.instance).to receive(:services).and_return([service1.name])
+      expect(Y2Packager::NewRepositorySetup.instance).to receive(:services)
+        .and_return([service1.name])
       expect(Y2Packager::OriginalRepositorySetup.instance).to receive(:services)
         .and_return([service1])
 
