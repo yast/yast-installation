@@ -13,6 +13,7 @@
 
 require "yast"
 
+require "y2packager/new_repository_setup"
 require "y2packager/original_repository_setup"
 require "y2packager/repository"
 require "y2packager/service"
@@ -53,6 +54,8 @@ module Installation
       current_repos = Y2Packager::Repository.all
       stored_repos = Y2Packager::OriginalRepositorySetup.instance.repositories
       stored_repo_aliases = stored_repos.map(&:repo_alias)
+      # exclude the newly added repositories with the same alias
+      stored_repo_aliases -= Y2Packager::NewRepositorySetup.instance.repositories
       reg_urls = registration_urls
 
       old_repos = current_repos.select do |r|
@@ -63,6 +66,8 @@ module Installation
       current_services = Y2Packager::Service.all
       stored_services = Y2Packager::OriginalRepositorySetup.instance.services
       stored_service_aliases = stored_services.map(&:alias)
+      # exclude the newly added services with the same name
+      stored_service_aliases -= Y2Packager::NewRepositorySetup.instance.services
       old_services = current_services.select { |s| stored_service_aliases.include?(s.alias) }
 
       # sort the repositories by name

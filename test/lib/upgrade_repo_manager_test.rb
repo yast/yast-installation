@@ -134,9 +134,14 @@ describe Installation::UpgradeRepoManager do
   describe ".create_from_old_repositories" do
     before do
       allow(Y2Packager::Repository).to receive(:all).and_return([repo1, repo2])
-      expect(Y2Packager::OriginalRepositorySetup.instance).to receive(:repositories)
+      allow(Y2Packager::Service).to receive(:all).and_return([])
+      allow(Y2Packager::OriginalRepositorySetup.instance).to receive(:repositories)
         .and_return([repo1, repo2])
+      allow(Y2Packager::OriginalRepositorySetup.instance).to receive(:services)
+        .and_return([])
       allow(Registration::Registration).to receive(:is_registered?).and_return(false)
+      allow(Y2Packager::NewRepositorySetup.instance).to receive(:services).and_return([])
+      allow(Y2Packager::NewRepositorySetup.instance).to receive(:repositories).and_return([])
     end
 
     it "initializes the UpgradeRepoManager from the stored old repositories" do
@@ -149,6 +154,19 @@ describe Installation::UpgradeRepoManager do
       allow(Y2Packager::Repository).to receive(:all).and_return([repo1])
       old_repo_manager = Installation::UpgradeRepoManager.create_from_old_repositories
       expect(old_repo_manager.repositories).to eq([repo1])
+    end
+
+    it "does not remove the new services with same name as an old service" do
+      expect(Y2Packager::NewRepositorySetup.instance).to receive(:services)
+        .and_return([service1.name])
+      expect(Y2Packager::OriginalRepositorySetup.instance).to receive(:services)
+        .and_return([service1])
+
+      upgrade_repo_manager = Installation::UpgradeRepoManager.create_from_old_repositories
+
+      # empty result as the old service has the same name as the new service
+      # so it is not deleted
+      expect(upgrade_repo_manager.services).to eq([])
     end
   end
 end
