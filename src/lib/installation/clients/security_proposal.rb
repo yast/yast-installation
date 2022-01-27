@@ -257,16 +257,16 @@ module Installation
           # after the installation will be SELinux running in the selected mode which could be
           # 'enforcing', 'permissive' or 'disabled'
           format(_(
-                   "Linux Security Module: Activate %{module} in '%{mode}' mode"
+                   "Major Linux Security Module: Activate %{module} in '%{mode}' mode"
                  ), module: selected.label, mode: selected.mode.to_human_string)
         when :apparmor
           # TRANSLATORS: Proposal's text describing that the active Linux Security Major Module
           # after the installation will be AppArmor
-          format(_("Linux Security Module: Activate %{module}"), module: selected.label)
+          format(_("Major Linux Security Module: Activate %{module}"), module: selected.label)
         when :none
           # TRANSLATORS: Proposal's text describing that no Linux Security Major Module will be
           # activated after the installation
-          _("Linux Security Module: No major module will be activated")
+          _("Major Linux Security Module: No major module will be activated")
         end
       end
     end
