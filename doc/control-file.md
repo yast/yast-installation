@@ -380,6 +380,9 @@ These options usually enable or disable some installation feature.
 -   (boolean) *enable\_clone* - the cloning feature will be either enabled
     or disabled.
 
+-   (integer) *boot\_timeout* - Allows to specify different boot timeout
+    for product or system role. Default is 8.
+
 -   (boolean) *skip\_language\_dialog* - the language dialog might be
     skipped (if language already selected).
 
