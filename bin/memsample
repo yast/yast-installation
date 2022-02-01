@@ -39,6 +39,7 @@ while true; do
   I=$((I + 1))
   I_TIME=$(printf %04d $I)-$(date -Iseconds)
 
+  # redirect STDERR to not break the YaST UI (bsc#1195116)
   {
       echo "### df-$I_TIME"
       df -k /
@@ -48,7 +49,7 @@ while true; do
 
       echo "### ps-$I_TIME"
       memsample_ps
-  } | gzip -c >> "$ARCHIVE"
+  } 2>&1 | gzip -c >> "$ARCHIVE"
 
   sleep "$SLEEP"
 done
