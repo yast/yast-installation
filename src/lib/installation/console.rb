@@ -37,6 +37,7 @@ module IrbLogger
 end
 
 # inject the code
+require "irb"
 require "irb/workspace"
 module IRB # :nodoc:
   class WorkSpace
@@ -67,9 +68,7 @@ module Installation
       # configure IRB and start an interactive session
       # @param context [Object] context in which the IRB session runs
       def irb(context)
-        # lazy loading
-        require "irb"
-        # enable TAB completion
+        # lazy loading, enable TAB completion
         require "irb/completion"
 
         # see the Binding::irb method in irb.rb in the Ruby stdlib
