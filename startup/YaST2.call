@@ -121,8 +121,10 @@ function prepare_for_x11 () {
 			elif [ "$DPI" -gt 288 ]; then
 				# This is a workaround against monitors
 				# that provide bad edid values
+				log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
 				set_xft_dpi 288
 			else
+				log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
 				set_xft_dpi 96
 			fi
 		fi
