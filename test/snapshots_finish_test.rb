@@ -17,28 +17,21 @@ describe ::Installation::SnapshotsFinish do
       allow(Yast::Mode).to receive(:installation).and_return(mode == :installation)
       allow(Yast2::FsSnapshot).to receive(:configure_on_install?).and_return configure
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage_manager)
+      allow(Y2Storage::MountPoint).to receive(:find_by_path).with(staging, "/")
+        .and_return(root_fs)
     end
 
     let(:second_stage_required) { false }
     let(:snapper_configured) { false }
     let(:mode) { :normal }
     let(:configure) { false }
-    let(:staging) do
-      instance_double(Y2Storage::Devicegraph, filesystems: [root_fs, home_fs])
-    end
+    let(:staging) { instance_double(Y2Storage::Devicegraph) }
     let(:storage_manager) { instance_double(Y2Storage::StorageManager, staging: staging) }
-
     let(:root_fs_options) { [] }
 
     let(:root_fs) do
       instance_double(
         Y2Storage::Filesystems::BlkFilesystem, mount_path: "/", mount_options: root_fs_options
-      )
-    end
-
-    let(:home_fs) do
-      instance_double(
-        Y2Storage::Filesystems::BlkFilesystem, mount_path: "/home", mount_options: []
       )
     end
 

@@ -2,7 +2,7 @@ require "yast"
 require "yast2/fs_snapshot"
 require "yast2/fs_snapshot_store"
 require "installation/finish_client"
-require "y2storage/storage_manager"
+require "y2storage"
 
 module Installation
   class SnapshotsFinish < ::Installation::FinishClient
@@ -85,7 +85,7 @@ module Installation
     #   mounted as read-only or if it is not found
     def ro_root_fs?
       staging = Y2Storage::StorageManager.instance.staging
-      root_fs = staging.filesystems.find { |f| f.mount_path == "/" }
+      root_fs = Y2Storage::MountPoint.find_by_path(staging, "/")
       return false unless root_fs
 
       root_fs.mount_options.include?("ro")
