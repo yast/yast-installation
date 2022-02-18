@@ -3,7 +3,7 @@ Fri Feb 18 06:38:05 UTC 2022 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Do not create a Btrfs snapshot at the end of the installation
   or upgrade when the root filesystem is mounted as read-only
-  (SLE-22560).
+  (jsc#SLE-22560).
 - 4.3.45
 
 -------------------------------------------------------------------
