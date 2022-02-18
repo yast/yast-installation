@@ -2,6 +2,7 @@ require "yast"
 require "yast2/fs_snapshot"
 require "yast2/fs_snapshot_store"
 require "installation/finish_client"
+require "y2storage"
 
 module Installation
   class SnapshotsFinish < ::Installation::FinishClient
@@ -28,16 +29,16 @@ module Installation
     def write
       snapper_config
 
-      if !InstFunctions.second_stage_required? && Yast2::FsSnapshot.configured?
-        log.info("Creating root filesystem snapshot")
-        if Mode.update
-          create_post_snapshot
-        else
-          create_single_snapshot
-        end
-      else
+      if InstFunctions.second_stage_required? || !Yast2::FsSnapshot.configured? || ro_root_fs?
         log.info("Skipping root filesystem snapshot creation")
-        false
+        return false
+      end
+
+      log.info("Creating root filesystem snapshot")
+      if Mode.update
+        create_post_snapshot
+      else
+        create_single_snapshot
       end
     end
 
@@ -76,6 +77,18 @@ module Installation
       else
         log.info("There is no need to configure Snapper")
       end
+    end
+
+    # Determines whether the root filesystem is mounted as read-only
+    #
+    # @return [Boolean] true if it is mounted as read-only; false if it is not
+    #   mounted as read-only or if it is not found
+    def ro_root_fs?
+      staging = Y2Storage::StorageManager.instance.staging
+      root_fs = Y2Storage::MountPoint.find_by_path(staging, "/").first
+      return false unless root_fs
+
+      root_fs.mount_options.include?("ro")
     end
   end
 end
