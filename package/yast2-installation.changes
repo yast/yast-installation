@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 18 08:47:35 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- LSM: Adjusted installation summary labels (bsc#1196013).
+- 4.4.41
+
+-------------------------------------------------------------------
 Wed Feb  9 15:05:32 UTC 2022 - Antonio Larrosa <alarrosa@suse.com>
 
 - Set the Xft.dpi resource after running the X server,
