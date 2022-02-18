@@ -28,16 +28,16 @@ module Installation
     def write
       snapper_config
 
-      if !InstFunctions.second_stage_required? && Yast2::FsSnapshot.configured?
-        log.info("Creating root filesystem snapshot")
-        if Mode.update
-          create_post_snapshot
-        else
-          create_single_snapshot
-        end
-      else
+      if InstFunctions.second_stage_required? || !Yast2::FsSnapshot.configured?
         log.info("Skipping root filesystem snapshot creation")
-        false
+        return false
+      end
+
+      log.info("Creating root filesystem snapshot")
+      if Mode.update
+        create_post_snapshot
+      else
+        create_single_snapshot
       end
     end
 
