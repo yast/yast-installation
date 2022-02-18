@@ -85,7 +85,7 @@ module Installation
     #   mounted as read-only or if it is not found
     def ro_root_fs?
       staging = Y2Storage::StorageManager.instance.staging
-      root_fs = Y2Storage::MountPoint.find_by_path(staging, "/")
+      root_fs = Y2Storage::MountPoint.find_by_path(staging, "/").first
       return false unless root_fs
 
       root_fs.mount_options.include?("ro")

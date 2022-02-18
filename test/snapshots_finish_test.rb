@@ -18,7 +18,7 @@ describe ::Installation::SnapshotsFinish do
       allow(Yast2::FsSnapshot).to receive(:configure_on_install?).and_return configure
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage_manager)
       allow(Y2Storage::MountPoint).to receive(:find_by_path).with(staging, "/")
-        .and_return(root_fs)
+        .and_return([root_fs])
     end
 
     let(:second_stage_required) { false }
