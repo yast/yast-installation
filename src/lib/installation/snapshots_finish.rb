@@ -30,8 +30,13 @@ module Installation
     def write
       snapper_config
 
-      if InstFunctions.second_stage_required? || !Yast2::FsSnapshot.configured? || ro_root_fs?
-        log.info("Skipping root filesystem snapshot creation")
+      skip_reason = nil
+      skip_reason = "no second stage" if InstFunctions.second_stage_required?
+      skip_reason = "snapper is not configured" unless Yast2::FsSnapshot.configured?
+      skip_reason = "root file system is read-only" if ro_root_fs?
+
+      if skip_reason
+        log.info("Skipping root filesystem snapshot creation: #{skip_reason}")
         return false
       end
 
