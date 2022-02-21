@@ -15,9 +15,8 @@
 # Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
-
 Name:           yast2-installation
-Version:        4.4.41
+Version:        4.4.42
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
