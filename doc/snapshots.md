@@ -75,4 +75,5 @@ checking whether the root filesystem is mounted as read-only.
 
 ## Related features
 
-[FATE#317932](https://w3.suse.de/~lpechacek/fate-archive/317973.html) and SLE-22560.
+[FATE#317932](https://w3.suse.de/~lpechacek/fate-archive/317973.html) and
+[SLE-22560](https://jira.suse.com/browse/SLE-22560).
