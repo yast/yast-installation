@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 21 14:59:55 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Modified Second Stage service dependencies fixing a root login
+  systemd timeout when installing with ssh (bsc#1195059)
+- 4.4.43
+
+-------------------------------------------------------------------
 Sun Feb 20 09:35:26 UTC 2022 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Do not create a Btrfs snapshot at the end of the installation
