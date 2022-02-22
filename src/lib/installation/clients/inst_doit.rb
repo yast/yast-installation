@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "installation/old_package_checker"
+
 module Yast
   # Asks user to really do the installation/update.
   class InstDoitClient < Client
@@ -34,6 +36,9 @@ module Yast
       Yast.import "Label"
 
       Yast.include self, "installation/misc.rb"
+
+      # warn about installing old packages (also in the AutoYaST mode)
+      ::Installation::OldPackageChecker.run
 
       return :next if Mode.autoinst && !AutoinstConfig.Confirm
 
