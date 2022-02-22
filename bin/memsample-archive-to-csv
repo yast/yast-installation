@@ -108,6 +108,8 @@ class MemsampleCsv < MemsampleArchive
   end
 
   def handle_ps(_counter, datetime, data)
+    return if data.include?("Signal 23 (URG) caught by ps")
+
     processes = data.lines.map { |l| l.chomp.split(" ", 9) }
     headings = processes.shift
     processes.map! do |cols|
