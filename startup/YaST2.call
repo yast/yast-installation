@@ -190,8 +190,6 @@ function prepare_for_ssh () {
 # prepare SSH installation
 # ---
 #
-	:
-        export Y2STYLE="installation_slim"
 	set_inst_qt_env
 }
 
