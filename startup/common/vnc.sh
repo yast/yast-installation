@@ -90,7 +90,6 @@ startVNCServer () {
 		-geometry "$VNCSize" \
 		-depth 16 \
                 -dpi 96 \
-		-rfbwait 120000 \
 		-rfbport 5901 \
 		-fp /usr/share/fonts/misc/,/usr/share/fonts/uni/,/usr/share/fonts/truetype/ \
 	>/var/log/YaST2/vncserver.log 2>&1 &
