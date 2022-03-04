@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  1 13:32:31 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Avoid terminal login prompt when running Second Stage service
+  (bsc#1196594 and related to bsc#1195059).
+- 4.3.47
+
+-------------------------------------------------------------------
 Mon Feb 21 14:59:55 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Modified Second Stage service dependencies fixing a root login
