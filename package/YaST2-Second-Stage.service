@@ -3,7 +3,7 @@ Description=YaST2 Second Stage
 After=apparmor.service local-fs.target plymouth-start.service
 # systemd-user-sessions is needed to allow ssh connection (bsc#1195059)
 After=systemd-user-sessions.service
-# Run after kernels are purged to prevent a zypper block (bsc#1196431) 
+# Run after kernels are purged to prevent a zypper lock (bsc#1196431)
 After=purge-kernels.service
 Conflicts=plymouth-start.service
 # Prevent getty auto-generation (bsc#1196614, bsc#1196594)
