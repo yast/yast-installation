@@ -172,7 +172,6 @@ function prepare_for_vnc () {
 	if [ $VNCPASS_EXCEPTION = 0 ];then
 		disable_splash
 		displayVNCMessage
-		stop_xvnc
 		startVNCServer
 		wait_for_x11
 		if [ "$server_running" = 1 ];then
