@@ -37,7 +37,7 @@ installation from its desktop.
 
 ### History
 
-There used to be a separate package [yast2-live-installer][] which was was
+There used to be a separate package [yast2-live-installer][] which was
 dropped from SLES-12-SP3 in 2016/17: [FATE321360][] (non-public link).
 
 Then Live Installation was brought back in yast2-installation (this repo)
@@ -53,7 +53,8 @@ A Jira epic [PM-1565] (non-public link) exists to clarify: "The
 possibility to Install directly from LiveCD was dead and now it's resurrected,
 but can't work without a lot of effort".
 
-There's a matching team Trello card [PM-1565-PBI][] (non-public link).
+There's a matching team Trello card [PM-1565-PBI][] (non-public link), not yet
+scheduled to be worked on.
 
 [PM-1565]: https://jira.suse.com/browse/PM-1565
 [PM-1565-PBI]: https://trello.com/c/ueqrCN8I/3630-improve-live-installation-usability-and-behavior
