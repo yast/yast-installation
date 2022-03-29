@@ -26,6 +26,39 @@ workflow described in a particular control file for:
 More subject-specific pieces of information can be found in the [doc](doc)
 directory.
 
+Live Installation
+-----------------
+
+The standard and supported way for openSUSE/SLE installation is
+to boot directly into the installation program, without anything else running.
+
+An *unsupported* alternative is to boot a Live CD/Live USB and start the
+installation from its desktop.
+
+### History
+
+There used to be a separate package [yast2-live-installer][] which was
+dropped from SLES-12-SP3 in 2016/17: [FATE321360][] (non-public link).
+
+Then Live Installation was brought back in yast2-installation (this repo)
+around 2019/2020 but [the status is a bit
+unclear](https://bugzilla.suse.com/show_bug.cgi?id=1155545#c18).
+
+[yast2-live-installer]: https://github.com/yast/yast-live-installer
+[FATE321360]: https://w3.suse.de/~lpechacek/fate-archive/321360.html
+
+### Status
+
+A Jira epic [PM-1565] (non-public link) exists to clarify: "The
+possibility to Install directly from LiveCD was dead and now it's resurrected,
+but can't work without a lot of effort".
+
+There's a matching team Trello card [PM-1565-PBI][] (non-public link), not yet
+scheduled to be worked on.
+
+[PM-1565]: https://jira.suse.com/browse/PM-1565
+[PM-1565-PBI]: https://trello.com/c/ueqrCN8I/3630-improve-live-installation-usability-and-behavior
+
 Development
 ===========
 
