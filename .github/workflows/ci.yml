@@ -11,9 +11,11 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        distro:  [ "tumbleweed", "leap_latest" ]
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby
+      image: registry.opensuse.org/yast/head/containers_${{matrix.distro}}/yast-ruby
 
     steps:
 
@@ -46,9 +48,11 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        distro: [ "leap_latest" ]
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby
+      image: registry.opensuse.org/yast/head/containers_${{matrix.distro}}/yast-ruby
 
     steps:
 
@@ -63,9 +67,11 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        distro:  [ "tumbleweed", "leap_latest" ]
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby
+      image: registry.opensuse.org/yast/head/containers_${{matrix.distro}}/yast-ruby
 
     steps:
 
@@ -83,9 +89,11 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        distro: [ "leap_latest" ]
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby
+      image: registry.opensuse.org/yast/head/containers_${{matrix.distro}}/yast-ruby
 
     steps:
 
@@ -102,9 +110,11 @@ jobs:
 
     strategy:
       fail-fast: false
+      matrix:
+        distro: [ "leap_latest" ]
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp4/containers/yast-ruby
+      image: registry.opensuse.org/yast/head/containers_${{matrix.distro}}/yast-ruby
 
     steps:
 
