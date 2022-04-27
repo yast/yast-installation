@@ -31,12 +31,12 @@ if [ -z "$Y2MAXLOGSIZE" ]; then
     if [ "$USE" -gt "$Y2LOG_DEFAULT_MIN_SIZE" ]; then
         # more than the maximum default
         if [ "$USE" -gt "$Y2LOG_DEFAULT_MAX_SIZE" ]; then
-	        export Y2MAXLOGSIZE=$Y2LOG_DEFAULT_MAX_SIZE
+	        export Y2MAXLOGSIZE="$Y2LOG_DEFAULT_MAX_SIZE"
         else
-	        export Y2MAXLOGSIZE=$USE
+	        export Y2MAXLOGSIZE="$USE"
         fi
     else
-        export Y2MAXLOGSIZE=$Y2LOG_DEFAULT_MIN_SIZE
+        export Y2MAXLOGSIZE="$Y2LOG_DEFAULT_MIN_SIZE"
     fi
 fi
 
