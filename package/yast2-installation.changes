@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 25 23:10:17 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Revert changes introduced in v4.3.50 as it produces some ordering
+  cycle issues (bsc#1198294)
+- 4.4.52
+
+-------------------------------------------------------------------
 Tue Mar 29 09:25:58 UTC 2022 - Martin Vidner <mvidner@suse.com>
 
 - AutoYaST: move custom file creation past user creation so that
