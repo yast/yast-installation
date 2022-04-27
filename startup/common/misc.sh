@@ -187,6 +187,36 @@ function disable_splash () {
 	[ -f /proc/splash ] && echo "verbose" > /proc/splash
 }
 
+#----[ stop_xvnc]-----#
+function stop_xvnc () {
+#--------------------------------------------------
+# stop xvnc since its default configuration collides
+# with the Xvnc server used for VNC installation
+# ---
+	systemctl stop xvnc.socket >/dev/null 2>&1
+# stop also running instances of xvnc to allow start our own
+        systemctl stop xvnc@* >/dev/null 2>&1
+}
+
+#----[ is_xvnc_enabled ]-----#
+function is_xvnc_enabled () {
+# return 0 if xvnc is enabled
+# ---
+	systemctl --quiet is-enabled xvnc.socket >/dev/null 2>&1
+	return $?
+}
+
+#----[ restore_xvnc ]-----#
+function restore_xvnc () {
+#--------------------------------------------------
+# start xvnc again if it is enabled, once the Xvnc
+# server already owns its port
+# ---
+	if is_xvnc_enabled; then
+		systemctl start xvnc.socket
+	fi
+}
+
 #----[ have_pid ]----#
 function have_pid () {
 #------------------------------------------------------
