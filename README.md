@@ -12,8 +12,7 @@ Description
 
 This repository contains an installation framework based on the shared
 functionality provided by [yast2](https://github.com/yast/yast-yast2/) project,
-especially on [these libraries]
-(https://github.com/yast/yast-yast2/tree/master/library/control/src/modules).
+especially on [these libraries](https://github.com/yast/yast-yast2/tree/master/library/control/src/modules).
 
 The framework typically calls different *experts in the field*, such as Network,
 Storage or Users plug-ins to do the real job according to an installation
