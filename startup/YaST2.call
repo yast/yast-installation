@@ -84,7 +84,7 @@ function calculate_x11_dpi () {
 	log "Monitor width mm: $MON_WIDTH_MM"
 	log "Monitor width px: $MON_WIDTH_PX"
 	log "Monitor dpi: $DPI"
-	echo "$DPI"
+	echo "$MON_WIDTH_PX"
 }
 
 #----[ set_xft_dpi ]----#
@@ -115,14 +115,14 @@ function prepare_for_x11 () {
 		if [ "$server_running" = 1 ];then
 			log "\tX-Server is ready: $xserver_pid"
 
-			local DPI=`calculate_x11_dpi`
-			if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
-				set_xft_dpi $DPI
-			elif [ "$DPI" -gt 288 ]; then
+			local MON_WIDTH_PX=`calculate_x11_dpi`
+			if [ "$MON_WIDTH_PX" -ge 2800 -a "$MON_WIDTH_PX" -le 3830 ]; then
+				set_xft_dpi 144
+			elif [ "$MON_WIDTH_PX" -ge 3840 ]; then
 				# This is a workaround against monitors
 				# that provide bad edid values
-				log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
-				set_xft_dpi 288
+				log "using value 192"
+				set_xft_dpi 192
 			else
 				log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
 				set_xft_dpi 96
