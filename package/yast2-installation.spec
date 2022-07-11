@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.3.53
+Version:        4.3.54
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-only
@@ -191,7 +191,7 @@ systemctl enable YaST2-Firstboot.service
 %service_del_preun YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %postun
-%service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_del_postun_without_restart YaST2-Second-Stage.service YaST2-Firstboot.service
 
 #suse_version
 %endif
