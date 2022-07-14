@@ -122,24 +122,20 @@ function prepare_for_x11 () {
 		if [ "$server_running" = 1 ];then
 			log "\tX-Server is ready: $xserver_pid"
 
-			if [ -x /usr/bin/xrdb ]; then
-				local DPI=`calculate_x11_dpi`
+			local DPI=`calculate_x11_dpi`
 
-				if [[ "$DPI" =~ ^[0-9]+$ ]]; then
-					if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
-						set_xft_dpi $DPI
-					elif [ "$DPI" -gt 288 ]; then
-						# This is a workaround against monitors
-						# that provide bad edid values
-						log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
-						set_xft_dpi 288
-					else
-						log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
-						set_xft_dpi 96
-					fi
+			if [[ "$DPI" =~ ^[0-9]+$ ]]; then
+				if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
+					set_xft_dpi $DPI
+				elif [ "$DPI" -gt 288 ]; then
+					# This is a workaround against monitors
+					# that provide bad edid values
+					log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
+					set_xft_dpi 288
+				else
+					log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
+					set_xft_dpi 96
 				fi
-			else
-				log "WARNING: Missing xrdb, cannot set the monitor DPI"
 			fi
 		fi
 	fi
