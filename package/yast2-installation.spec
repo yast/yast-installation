@@ -69,8 +69,8 @@ Requires:       iproute2
 Requires:       pciutils
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:       tar
-# xrdb is used to set Xft.dpi in YaST2.call
-Requires:       xrdb
+# xrdb is used to set Xft.dpi in YaST2.call, install it only when the GUI is installed
+Requires:       (xrdb if libyui-qt)
 # Y2Packager::NewRepositorySetup
 Requires:       yast2 >= 4.4.42
 # CIOIgnore

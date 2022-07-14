@@ -79,12 +79,19 @@ function calculate_x11_dpi () {
 	local MON_SIZE=`xrandr |grep mm |head -n 1`
 	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
 	local MON_WIDTH_PX=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)x[0-9]\++.*/\1/"`
-	local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
+
 	log "Monitor size: $MON_SIZE"
 	log "Monitor width mm: $MON_WIDTH_MM"
 	log "Monitor width px: $MON_WIDTH_PX"
-	log "Monitor dpi: $DPI"
-	echo "$DPI"
+
+	if [ -z "$MON_WIDTH_MM" ] || [ "$MON_WIDTH_MM" == "0" ]; then
+		log "Unknown monitor size, cannot set the DPI"
+		echo "unknown"
+	else
+		local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
+		log "Monitor dpi: $DPI"
+		echo "$DPI"
+	fi
 }
 
 #----[ set_xft_dpi ]----#
@@ -115,17 +122,24 @@ function prepare_for_x11 () {
 		if [ "$server_running" = 1 ];then
 			log "\tX-Server is ready: $xserver_pid"
 
-			local DPI=`calculate_x11_dpi`
-			if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
-				set_xft_dpi $DPI
-			elif [ "$DPI" -gt 288 ]; then
-				# This is a workaround against monitors
-				# that provide bad edid values
-				log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
-				set_xft_dpi 288
+			if [ -x /usr/bin/xrdb ]; then
+				local DPI=`calculate_x11_dpi`
+
+				if [[ "$DPI" =~ ^[0-9]+$ ]]; then
+					if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
+						set_xft_dpi $DPI
+					elif [ "$DPI" -gt 288 ]; then
+						# This is a workaround against monitors
+						# that provide bad edid values
+						log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
+						set_xft_dpi 288
+					else
+						log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
+						set_xft_dpi 96
+					fi
+				fi
 			else
-				log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
-				set_xft_dpi 96
+				log "WARNING: Missing xrdb, cannot set the monitor DPI"
 			fi
 		fi
 	fi
