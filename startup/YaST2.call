@@ -90,9 +90,9 @@ function calculate_x11_dpi () {
 #----[ set_xft_dpi ]----#
 function set_xft_dpi () {
 #------------------------------------------------------
-# Set Xft.dpi resource using xrdb
+# Set Xft.dpi resource using a helper tool
 # ---
-	echo "Xft.dpi: $1" | xrdb -merge - && log "Xft.dpi set to: $1"
+	/usr/lib/YaST2/bin/xftdpi "$1" && log "Xft.dpi set to: $1"
 }
 
 #----[ prepare_for_x11 ]----#
