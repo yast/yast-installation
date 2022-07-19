@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Tue Aug  2 14:56:52 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not use "xrdb" for setting the "Xft.dpi" value, use a specific
+  YaST tool from the yast2-x11 package (bsc#1201532)
+  (xrdb depends on the C pre-processor increasing the dependencies
+   about of 22MB)
+- Install yast2-x11 only when GUI (libyui-qt) is installed,
+  avoid installing the dependent X libraries in minimal (text mode)
+  installation (bsc#1201966)
+- 4.4.56
+
+-------------------------------------------------------------------
 Fri Jul 22 11:35:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - AutoYaST SecondStage: Revert changes introduced in 4.3.46 running
