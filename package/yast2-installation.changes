@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jul 22 11:35:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- AutoYaST SecondStage: Revert changes introduced in 4.3.46 running
+  the initscript service before systemd-user-sessions again once
+  systemd patched logind (bsc#1195059, bsc#1200780)
+- 4.4.55
+
+-------------------------------------------------------------------
 Wed Jun 15 11:28:30 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Do not restart services when updating the package (bsc#1199480,
