@@ -563,6 +563,18 @@ function start_yast_again () {
 . /usr/lib/YaST2/startup/requires
 
 
+# Debugging helper: Only calculate and show the DPI, then exit.
+if [ -n "$DEBUG_YAST_DPI" ]; then
+        echo "*** DPI Debug mode ***"
+        DPI=`calculate_x11_dpi`
+        echo "DPI: $DPI"
+        set_qt_scale_factor $DPI
+        env | grep "^QT_SCALE"
+        echo "Done."
+        exit 1
+fi
+
+
 #=============================================
 # 1.1) set splash progress bar to 90%
 #---------------------------------------------
