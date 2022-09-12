@@ -21,16 +21,15 @@
 #               : - Via serial line ttyS0/115200 baud, 8N1, RTS/CTS
 #               :   which is the same as the NCURSES mode
 #               : - VNC Installation via browser
-#               :
-# STATUS        : $Id$
 #----------------
 #
 #set -x
 
 #=============================================
-# Functions...
-#---------------------------------------------
-#----[ wait_for_x11 ]----#
+# Functions
+#=============================================
+
+
 function wait_for_x11() {
 #------------------------------------------------------
 # after a X-Server has been started you can wait until
@@ -71,7 +70,7 @@ function wait_for_x11() {
 	done
 }
 
-#----[ calculate_x11_dpi ]----#
+
 function calculate_x11_dpi () {
 #------------------------------------------------------
 # Calculate the monitor's dpi from xrandr's output
@@ -87,7 +86,7 @@ function calculate_x11_dpi () {
 	echo "$DPI"
 }
 
-#----[ set_xft_dpi ]----#
+
 function set_xft_dpi () {
 #------------------------------------------------------
 # Set Xft.dpi resource using a helper tool
@@ -95,7 +94,7 @@ function set_xft_dpi () {
 	/usr/lib/YaST2/bin/xftdpi "$1" && log "Xft.dpi set to: $1"
 }
 
-#----[ prepare_for_x11 ]----#
+
 function prepare_for_x11 () {
 #------------------------------------------------------
 # prepare X11 installation
@@ -139,14 +138,13 @@ function prepare_for_x11 () {
 }
 
 
-#----[ prepare_for_qt ]----#
+
 function prepare_for_qt () {
     set_inst_qt_env
     prepare_for_x11
 }
 
 
-#----[ prepare_for_ncurses ]----#
 function prepare_for_ncurses () {
 #------------------------------------------------------
 # prepare NCURSES installation
@@ -184,7 +182,7 @@ function prepare_for_ncurses () {
 	fi
 }
 
-#----[ prepare_for_ssh ]----#
+
 function prepare_for_ssh () {
 #------------------------------------------------------
 # prepare SSH installation
@@ -193,7 +191,7 @@ function prepare_for_ssh () {
 	set_inst_qt_env
 }
 
-#----[ prepare_for_vnc ]----#
+
 function prepare_for_vnc () {
 #------------------------------------------------------
 # prepare VNC installation
@@ -230,7 +228,7 @@ function prepare_for_vnc () {
 	set_inst_qt_env
 }
 
-#----[ kill_xserver ]----#
+
 function kill_xserver () {
   if [ -n "$xserver_pid" ];then
     sleep 1 && kill $xserver_pid
@@ -241,7 +239,7 @@ function kill_xserver () {
   fi
 }
 
-#----[ check_x11 ]----#
+
 function check_x11 () {
 #------------------------------------------------------
 # check if the prepared medium X11 (Qt) is valid
@@ -269,7 +267,7 @@ function check_x11 () {
 	fi
 }
 
-#----[ check_network ]----#
+
 function check_network () {
 #------------------------------------------------------
 # check if the prepared medium SSH is valid. It is valid
@@ -294,7 +292,7 @@ function check_network () {
 	fi
 }
 
-#----[ check_vnc ]----#
+
 function check_vnc () {
 #------------------------------------------------------
 # check if the prepared medium VNC is valid
@@ -334,7 +332,7 @@ function ssh_reboot_message()
 	fi
 }
 
-#---[ validate_backup ]---#
+
 function validate_backup () {
   # Check that the ID and VERSION_ID in the backup os-release file
   # matches with the values in the /etc/os-release to considered it
@@ -359,7 +357,7 @@ function validate_backup () {
   fi
 }
 
-#----[ restore_backup ]----#
+
 function restore_backup () {
   # restores backup if it is available
   if [ -d /mnt/var/adm/backup/system-upgrade ]; then
@@ -377,7 +375,7 @@ function restore_backup () {
   fi
 }
 
-#----[ start_yast ]----#
+
 function start_yast () {
 #------------------------------------------------------
 # Start YaST2 refering to the contents of the Y2_*
@@ -477,7 +475,7 @@ function start_yast () {
 	fi
 }
 
-#----[ start_yast_and_reboot ]----#
+
 function start_yast_and_reboot () {
 #------------------------------------------------------
 # This function will reboot the system and start yast
@@ -495,7 +493,7 @@ function start_yast_and_reboot () {
 	fi
 }
 
-#----[ start_yast_again ]----#
+
 function start_yast_again () {
 #------------------------------------------------------
 # This function will restart yast again with the same
