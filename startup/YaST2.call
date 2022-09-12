@@ -75,13 +75,31 @@ function calculate_x11_dpi () {
 #------------------------------------------------------
 # Calculate the monitor's dpi from xrandr's output
 # ---
-	local MON_SIZE=`xrandr |grep mm |head -n 1`
-	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
+        local MON_SIZE=`xrandr |grep mm |head -n 1`
 	local MON_WIDTH_PX=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)x[0-9]\++.*/\1/"`
-	local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
+	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
+
 	log "Monitor size: $MON_SIZE"
-	log "Monitor width mm: $MON_WIDTH_MM"
 	log "Monitor width px: $MON_WIDTH_PX"
+	log "Monitor width mm: $MON_WIDTH_MM"
+
+        if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
+                log "Monitor width in mm unknown, using 96 dpi as default"
+                DPI=96
+        else
+                local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
+        fi
+
+        if [ ${DPI:-96} -gt 288 ]; then
+                log "Monitor dpi is suspiciously high (${DPI}), using 288 dpi"
+                DPI=288
+                # Not sure if capping this at 288 dpi is really appropriate;
+                # 13" 4k laptops easily get up to 336 dpi.
+                # The original intent was to protect against bogus EDID values.
+                #
+                # 2022-09-12 shundhammer
+        fi
+
 	log "Monitor dpi: $DPI"
 	echo "$DPI"
 }
@@ -92,6 +110,37 @@ function set_xft_dpi () {
 # Set Xft.dpi resource using a helper tool
 # ---
 	/usr/lib/YaST2/bin/xftdpi "$1" && log "Xft.dpi set to: $1"
+        # If the Xft.dpi X resource is set, it overrides the value
+        # that Qt otherwise calculates.
+}
+
+
+function set_qt_scale_factor () {
+#------------------------------------------------------
+# Set Qt environment variables for the scale factor, i.e. the factor by which
+# to increase the size of the UI in HiDPI cases.
+#
+# We assume the UI is designed for 96 dpi and calculate the scale factor based
+# on that. We use multiples of 0.5 here (1.0, 1.5, 2.0, 2.5, 3.0) which is
+# already guaranteed by enforcing a DPI value that is a multiple of 48
+# (see function calculate_x11_dpi()).
+# ---
+        local DPI=${1:-96}
+
+        if [ $DPI -le 96 ]; then
+                export QT_SCALE_FACTOR=1
+                # Also in non-HiDPI cases to avoid surprises if Qt
+                # should decide to do its own scaling
+        else
+                export QT_SCALE_FACTOR=`ruby -e "puts $DPI/96.0"`
+        fi
+
+        # Override the Qt default of rounding to the next integer.
+        # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
+        export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
+
+        log "QT_SCALE_FACTOR: $QT_SCALE_FACTOR"
+        log "QT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
 }
 
 
@@ -115,17 +164,8 @@ function prepare_for_x11 () {
 			log "\tX-Server is ready: $xserver_pid"
 
 			local DPI=`calculate_x11_dpi`
-			if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
-				set_xft_dpi $DPI
-			elif [ "$DPI" -gt 288 ]; then
-				# This is a workaround against monitors
-				# that provide bad edid values
-				log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
-				set_xft_dpi 288
-			else
-				log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
-				set_xft_dpi 96
-			fi
+			# set_xft_dpi $DPI
+                        set_qt_scale_factor $DPI
 		fi
 	fi
 
@@ -506,6 +546,13 @@ function start_yast_again () {
 	fi
 }
 
+
+
+#----------------------------------------------------------------------
+# MAIN
+#----------------------------------------------------------------------
+
+
 #=============================================
 # Start the Magic :-)
 #=============================================
@@ -514,6 +561,7 @@ function start_yast_again () {
 . /usr/lib/YaST2/startup/common/functions.sh
 . /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
+
 
 #=============================================
 # 1.1) set splash progress bar to 90%
