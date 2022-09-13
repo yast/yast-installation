@@ -83,21 +83,21 @@ function calculate_x11_dpi () {
 	log "Monitor width px: $MON_WIDTH_PX"
 	log "Monitor width mm: $MON_WIDTH_MM"
 
-        if [ -n "$OVERRIDE_MON_WIDTH_MM" ]; then
+        if [ -n "$YAST_MON_WIDTH_MM" ]; then
                 # Enable overriding the monitor width from the command line or
                 # from an installation ISO boot parameter:
                 #
                 # Either boot the installation ISO with something like
                 #
-                #   OVERRIDE_MON_WIDTH_MM=200
+                #   YAST_MON_WIDTH_MM=200
                 #
                 # (which will end up in the environment)
                 # or start this script in DPI debugging mode with
                 #
                 #   FAKE_MON_WIDTH_MM=200 ./YaST2.call
 
-                log "OVERRIDING the monitor width in mm with ${OVERRIDE_MON_WIDTH_MM}"
-                MON_WIDTH_MM="$OVERRIDE_MON_WIDTH_MM"
+                log "OVERRIDING the monitor width in mm with ${YAST_MON_WIDTH_MM}"
+                MON_WIDTH_MM="$YAST_MON_WIDTH_MM"
         fi
 
         if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
@@ -596,7 +596,7 @@ function start_yast_again () {
 
 if [ -n "$FAKE_MON_WIDTH_MM" ]; then
         echo "*** DPI Debug mode ***"
-        OVERRIDE_MON_WIDTH_MM="$FAKE_MON_WIDTH_MM"
+        YAST_MON_WIDTH_MM="$FAKE_MON_WIDTH_MM"
         DPI=`calculate_x11_dpi`
         echo "DPI: $DPI"
         set_qt_scale_factor $DPI
