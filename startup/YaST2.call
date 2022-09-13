@@ -85,7 +85,7 @@ function calculate_x11_dpi () {
 
         if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
                 log "Monitor width in mm unknown, using 96 dpi as default"
-                DPI=96
+                local DPI=96
         else
                 local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
         fi
