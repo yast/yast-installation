@@ -21,16 +21,15 @@
 #               : - Via serial line ttyS0/115200 baud, 8N1, RTS/CTS
 #               :   which is the same as the NCURSES mode
 #               : - VNC Installation via browser
-#               :
-# STATUS        : $Id$
 #----------------
 #
 #set -x
 
 #=============================================
-# Functions...
-#---------------------------------------------
-#----[ wait_for_x11 ]----#
+# Functions
+#=============================================
+
+
 function wait_for_x11() {
 #------------------------------------------------------
 # after a X-Server has been started you can wait until
@@ -71,31 +70,114 @@ function wait_for_x11() {
 	done
 }
 
-#----[ calculate_x11_dpi ]----#
+
 function calculate_x11_dpi () {
 #------------------------------------------------------
 # Calculate the monitor's dpi from xrandr's output
 # ---
-	local MON_SIZE=`xrandr |grep mm |head -n 1`
-	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
+        local MON_SIZE=`xrandr | grep mm | head -n 1`
 	local MON_WIDTH_PX=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)x[0-9]\++.*/\1/"`
-	local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM*0.0393701)/48).round)*48"`
-	log "Monitor size: $MON_SIZE"
-	log "Monitor width mm: $MON_WIDTH_MM"
-	log "Monitor width px: $MON_WIDTH_PX"
-	log "Monitor dpi: $DPI"
+	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
+
+        log "HiDPI Check..."
+        log "=============="
+	log "\tMonitor size: $MON_SIZE"
+	log "\tMonitor width px: $MON_WIDTH_PX"
+	log "\tMonitor width mm: $MON_WIDTH_MM"
+
+        if [ -n "$YAST_MON_WIDTH_MM" ]; then
+                # Enable overriding the monitor width from the command line or
+                # from an installation ISO boot parameter:
+                #
+                # Either boot the installation ISO with something like
+                #
+                #   YAST_MON_WIDTH_MM=200
+                #
+                # (which will end up in the environment)
+                # or start this script in DPI debugging mode with
+                #
+                #   FAKE_MON_WIDTH_MM=200 ./YaST2.call
+
+                log "\tOVERRIDING the monitor width in mm with ${YAST_MON_WIDTH_MM}"
+                MON_WIDTH_MM="$YAST_MON_WIDTH_MM"
+        fi
+
+        if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
+                log "\tMonitor width in mm is unknown, using 96 dpi as default"
+                log "\t(Use YAST_MON_WIDTH_MM=xx at the boot prompt to set manually)"
+                local DPI=96
+        else
+                # Convert the monitor width in mm to inches (25.4 mm per inch)
+                # and calculate the DPI (dots per inch), but round to multiples
+                # of 24 to avoid drawing artifacts due to weird scale factors.
+                # We want scale factors to be multiple of 0.25, i.e. 1, 1.25,
+                # 1.5 etc., not a weird fraction like 1.2734 or similar.
+                #
+                # All this assumes the YaST Qt UI to be designed for about 96 dpi.
+
+                local DPI=`ruby -e "puts (($MON_WIDTH_PX/($MON_WIDTH_MM/25.4)/24).round)*24"`
+        fi
+
+        if [ ${DPI:-0} -lt 96 ]; then
+                log "\tMonitor DPI is too low (${DPI}), using 96 dpi"
+                DPI=96
+        elif [ ${DPI:-96} -gt 384 ]; then
+                # Set an upper limit to protect against monitors reporting bogus EDID values
+                log "\tMonitor DPI is suspiciously high (${DPI}), using 384 dpi"
+                DPI=384
+        fi
+
+	log "\tMonitor DPI: $DPI"
 	echo "$DPI"
 }
 
-#----[ set_xft_dpi ]----#
+
 function set_xft_dpi () {
 #------------------------------------------------------
 # Set Xft.dpi resource using a helper tool
 # ---
 	/usr/lib/YaST2/bin/xftdpi "$1" && log "Xft.dpi set to: $1"
+        # If the Xft.dpi X resource is set, it overrides the value
+        # that Qt otherwise calculates.
 }
 
-#----[ prepare_for_x11 ]----#
+
+function set_qt_scale_factor () {
+#------------------------------------------------------
+# Set Qt environment variables for the scale factor, i.e. the factor by which
+# to increase the size of the UI in HiDPI cases.
+#
+# We assume the UI is designed for at most 144 dpi and calculate the scale
+# factor based on that. We use multiples of 0.25 here (1.0, 1.25, 1.5, , 1.75,
+# 2.0, ...).
+# ---
+        local DPI=${1:-96}
+        # Reference DPI as a base for scaling
+        local REF_DPI=144
+
+        if [ $DPI -le 96 ]; then
+                export QT_SCALE_FACTOR=1
+                # Also setting the environment variable in non-HiDPI cases to
+                # avoid surprises if Qt should decide to do its own scaling.
+        else
+                # Calculate a scale factor based on the reference DPI, but no
+                # smaller than 1.0; and round to multiples of 0.25 (1.25, 1.5,
+                # 1.75, ...) to avoid drawing artifacts due to very odd
+                # fractions.
+
+                export QT_SCALE_FACTOR=`ruby -e "puts [(($DPI/(1.0*$REF_DPI)/0.25).round * 0.25), 1.0].max"`
+        fi
+
+        # Override the Qt default of rounding to the next integer.
+        # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
+        export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
+
+        log "\tReference DPI: $REF_DPI"
+        log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
+        log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
+}
+
+
 function prepare_for_x11 () {
 #------------------------------------------------------
 # prepare X11 installation
@@ -116,17 +198,8 @@ function prepare_for_x11 () {
 			log "\tX-Server is ready: $xserver_pid"
 
 			local DPI=`calculate_x11_dpi`
-			if [ "$DPI" -ge 144 -a "$DPI" -le 288 ]; then
-				set_xft_dpi $DPI
-			elif [ "$DPI" -gt 288 ]; then
-				# This is a workaround against monitors
-				# that provide bad edid values
-				log "WARNING: Detected monitor DPI is too high ($DPI), using value 288"
-				set_xft_dpi 288
-			else
-				log "WARNING: Detected monitor DPI is too low ($DPI), using value 96"
-				set_xft_dpi 96
-			fi
+			# set_xft_dpi $DPI
+                        set_qt_scale_factor $DPI
 		fi
 	fi
 
@@ -139,14 +212,13 @@ function prepare_for_x11 () {
 }
 
 
-#----[ prepare_for_qt ]----#
+
 function prepare_for_qt () {
     set_inst_qt_env
     prepare_for_x11
 }
 
 
-#----[ prepare_for_ncurses ]----#
 function prepare_for_ncurses () {
 #------------------------------------------------------
 # prepare NCURSES installation
@@ -184,7 +256,7 @@ function prepare_for_ncurses () {
 	fi
 }
 
-#----[ prepare_for_ssh ]----#
+
 function prepare_for_ssh () {
 #------------------------------------------------------
 # prepare SSH installation
@@ -193,7 +265,7 @@ function prepare_for_ssh () {
 	set_inst_qt_env
 }
 
-#----[ prepare_for_vnc ]----#
+
 function prepare_for_vnc () {
 #------------------------------------------------------
 # prepare VNC installation
@@ -230,7 +302,7 @@ function prepare_for_vnc () {
 	set_inst_qt_env
 }
 
-#----[ kill_xserver ]----#
+
 function kill_xserver () {
   if [ -n "$xserver_pid" ];then
     sleep 1 && kill $xserver_pid
@@ -241,7 +313,7 @@ function kill_xserver () {
   fi
 }
 
-#----[ check_x11 ]----#
+
 function check_x11 () {
 #------------------------------------------------------
 # check if the prepared medium X11 (Qt) is valid
@@ -269,7 +341,7 @@ function check_x11 () {
 	fi
 }
 
-#----[ check_network ]----#
+
 function check_network () {
 #------------------------------------------------------
 # check if the prepared medium SSH is valid. It is valid
@@ -294,7 +366,7 @@ function check_network () {
 	fi
 }
 
-#----[ check_vnc ]----#
+
 function check_vnc () {
 #------------------------------------------------------
 # check if the prepared medium VNC is valid
@@ -334,7 +406,7 @@ function ssh_reboot_message()
 	fi
 }
 
-#---[ validate_backup ]---#
+
 function validate_backup () {
   # Check that the ID and VERSION_ID in the backup os-release file
   # matches with the values in the /etc/os-release to considered it
@@ -359,7 +431,7 @@ function validate_backup () {
   fi
 }
 
-#----[ restore_backup ]----#
+
 function restore_backup () {
   # restores backup if it is available
   if [ -d /mnt/var/adm/backup/system-upgrade ]; then
@@ -377,7 +449,7 @@ function restore_backup () {
   fi
 }
 
-#----[ start_yast ]----#
+
 function start_yast () {
 #------------------------------------------------------
 # Start YaST2 refering to the contents of the Y2_*
@@ -385,8 +457,13 @@ function start_yast () {
 # ---
 	local overcommit
 	read  overcommit < /proc/sys/vm/overcommit_memory
-	echo "*** Starting YaST2 ***"
+
+	echo "*** Starting YaST ***"
+        log "================"
+        log "Starting YaST..."
+        log "================"
 	log "\tAllow big memory allocation: overcommit_memory=1"
+
 	echo 1 > /proc/sys/vm/overcommit_memory
 	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
 		/sbin/splash -t "YaST running"
@@ -399,7 +476,6 @@ function start_yast () {
 	    OPT_FBITERM=
 	fi
 
-	log "\tStarting YaST2:"
 	log "\tMODULE_NAME:  $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:   $Y2_MODE_FLAGS"
 	log "\tMODULE_ARGS:  $Y2_MODULE_ARGS"
@@ -445,6 +521,9 @@ function start_yast () {
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
+        log "==============="
+        log "YaST terminated"
+        log "==============="
 	log "\tY2_EXIT_CODE: $Y2_EXIT_CODE"
 
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
@@ -477,7 +556,7 @@ function start_yast () {
 	fi
 }
 
-#----[ start_yast_and_reboot ]----#
+
 function start_yast_and_reboot () {
 #------------------------------------------------------
 # This function will reboot the system and start yast
@@ -495,7 +574,7 @@ function start_yast_and_reboot () {
 	fi
 }
 
-#----[ start_yast_again ]----#
+
 function start_yast_again () {
 #------------------------------------------------------
 # This function will restart yast again with the same
@@ -508,6 +587,13 @@ function start_yast_again () {
 	fi
 }
 
+
+
+#----------------------------------------------------------------------
+# MAIN
+#----------------------------------------------------------------------
+
+
 #=============================================
 # Start the Magic :-)
 #=============================================
@@ -516,6 +602,26 @@ function start_yast_again () {
 . /usr/lib/YaST2/startup/common/functions.sh
 . /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
+
+
+# Debugging helper: Only calculate and show the DPI, then exit.
+# Start with
+#
+#   FAKE_MON_WIDTH_MM=200 ./Yast2.call
+#
+# and watch stdout and /var/log/YaST2/y2start.log
+
+if [ -n "$FAKE_MON_WIDTH_MM" ]; then
+        echo "*** DPI Debug mode ***"
+        YAST_MON_WIDTH_MM="$FAKE_MON_WIDTH_MM"
+        DPI=`calculate_x11_dpi`
+        echo "DPI: $DPI"
+        set_qt_scale_factor $DPI
+        env | grep "^QT_SCALE"
+        echo "Done."
+        exit 1
+fi
+
 
 #=============================================
 # 1.1) set splash progress bar to 90%
