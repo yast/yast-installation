@@ -104,6 +104,7 @@ function calculate_x11_dpi () {
 
         if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
                 log "\tMonitor width in mm is unknown, using 96 dpi as default"
+                log "\t(Use YAST_MON_WIDTH_MM=xx at the boot prompt to set manually)"
                 local DPI=96
         else
                 # Convert the monitor width in mm to inches (25.4 mm per inch)
