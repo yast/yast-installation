@@ -79,9 +79,11 @@ function calculate_x11_dpi () {
 	local MON_WIDTH_PX=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)x[0-9]\++.*/\1/"`
 	local MON_WIDTH_MM=`echo $MON_SIZE | sed -e "s/.* \([0-9]\+\)mm x \([0-9]\+\)mm.*/\1/"`
 
-	log "Monitor size: $MON_SIZE"
-	log "Monitor width px: $MON_WIDTH_PX"
-	log "Monitor width mm: $MON_WIDTH_MM"
+        log "HiDPI Check..."
+        log "=============="
+	log "\tMonitor size: $MON_SIZE"
+	log "\tMonitor width px: $MON_WIDTH_PX"
+	log "\tMonitor width mm: $MON_WIDTH_MM"
 
         if [ -n "$YAST_MON_WIDTH_MM" ]; then
                 # Enable overriding the monitor width from the command line or
@@ -96,12 +98,12 @@ function calculate_x11_dpi () {
                 #
                 #   FAKE_MON_WIDTH_MM=200 ./YaST2.call
 
-                log "OVERRIDING the monitor width in mm with ${YAST_MON_WIDTH_MM}"
+                log "\tOVERRIDING the monitor width in mm with ${YAST_MON_WIDTH_MM}"
                 MON_WIDTH_MM="$YAST_MON_WIDTH_MM"
         fi
 
         if [ ${MON_WIDTH_MM:-0} -le 0 ]; then
-                log "Monitor width in mm is unknown, using 96 dpi as default"
+                log "\tMonitor width in mm is unknown, using 96 dpi as default"
                 local DPI=96
         else
                 # Convert the monitor width in mm to inches (25.4 mm per inch)
@@ -116,15 +118,15 @@ function calculate_x11_dpi () {
         fi
 
         if [ ${DPI:-0} -lt 96 ]; then
-                log "Monitor dpi is too low (${DPI}), using 96 dpi"
+                log "\tMonitor dpi is too low (${DPI}), using 96 dpi"
                 DPI=96
         elif [ ${DPI:-96} -gt 384 ]; then
                 # Set an upper limit to protect against monitors reporting bogus EDID values
-                log "Monitor dpi is suspiciously high (${DPI}), using 384 dpi"
+                log "\tMonitor dpi is suspiciously high (${DPI}), using 384 dpi"
                 DPI=384
         fi
 
-	log "Monitor dpi: $DPI"
+	log "\tMonitor dpi: $DPI"
 	echo "$DPI"
 }
 
@@ -163,8 +165,8 @@ function set_qt_scale_factor () {
         # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
         export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
 
-        log "QT_SCALE_FACTOR: $QT_SCALE_FACTOR"
-        log "QT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
+        log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
+        log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
 }
 
 
@@ -447,8 +449,13 @@ function start_yast () {
 # ---
 	local overcommit
 	read  overcommit < /proc/sys/vm/overcommit_memory
-	echo "*** Starting YaST2 ***"
+
+	echo "*** Starting YaST ***"
+        log "================"
+        log "Starting YaST..."
+        log "================"
 	log "\tAllow big memory allocation: overcommit_memory=1"
+
 	echo 1 > /proc/sys/vm/overcommit_memory
 	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
 		/sbin/splash -t "YaST running"
@@ -461,7 +468,6 @@ function start_yast () {
 	    OPT_FBITERM=
 	fi
 
-	log "\tStarting YaST2:"
 	log "\tMODULE_NAME:  $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:   $Y2_MODE_FLAGS"
 	log "\tMODULE_ARGS:  $Y2_MODULE_ARGS"
@@ -507,6 +513,9 @@ function start_yast () {
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
+        log "==============="
+        log "YaST terminated"
+        log "==============="
 	log "\tY2_EXIT_CODE: $Y2_EXIT_CODE"
 
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
