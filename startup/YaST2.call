@@ -119,15 +119,15 @@ function calculate_x11_dpi () {
         fi
 
         if [ ${DPI:-0} -lt 96 ]; then
-                log "\tMonitor dpi is too low (${DPI}), using 96 dpi"
+                log "\tMonitor DPI is too low (${DPI}), using 96 dpi"
                 DPI=96
         elif [ ${DPI:-96} -gt 384 ]; then
                 # Set an upper limit to protect against monitors reporting bogus EDID values
-                log "\tMonitor dpi is suspiciously high (${DPI}), using 384 dpi"
+                log "\tMonitor DPI is suspiciously high (${DPI}), using 384 dpi"
                 DPI=384
         fi
 
-	log "\tMonitor dpi: $DPI"
+	log "\tMonitor DPI: $DPI"
 	echo "$DPI"
 }
 
@@ -147,25 +147,32 @@ function set_qt_scale_factor () {
 # Set Qt environment variables for the scale factor, i.e. the factor by which
 # to increase the size of the UI in HiDPI cases.
 #
-# We assume the UI is designed for 96 dpi and calculate the scale factor based
-# on that. We use multiples of 0.25 here (1.0, 1.25, 1.5, , 1.75, 2.0, ...)
-# which is already guaranteed by enforcing a DPI value that is a multiple of 24
-# (see function calculate_x11_dpi()).
+# We assume the UI is designed for at most 144 dpi and calculate the scale
+# factor based on that. We use multiples of 0.25 here (1.0, 1.25, 1.5, , 1.75,
+# 2.0, ...).
 # ---
         local DPI=${1:-96}
+        # Reference DPI as a base for scaling
+        local REF_DPI=144
 
         if [ $DPI -le 96 ]; then
                 export QT_SCALE_FACTOR=1
                 # Also setting the environment variable in non-HiDPI cases to
                 # avoid surprises if Qt should decide to do its own scaling.
         else
-                export QT_SCALE_FACTOR=`ruby -e "puts $DPI/96.0"`
+                # Calculate a scale factor based on the reference DPI, but no
+                # smaller than 1.0; and round to multiples of 0.25 (1.25, 1.5,
+                # 1.75, ...) to avoid drawing artifacts due to very odd
+                # fractions.
+
+                export QT_SCALE_FACTOR=`ruby -e "puts [(($DPI/(1.0*$REF_DPI)/0.25).round * 0.25), 1.0].max"`
         fi
 
         # Override the Qt default of rounding to the next integer.
         # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
         export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
 
+        log "\tReference DPI: $REF_DPI"
         log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
         log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
 }
