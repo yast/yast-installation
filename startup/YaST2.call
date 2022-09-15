@@ -154,11 +154,13 @@ function set_qt_scale_factor () {
         local DPI=${1:-96}
         # Reference DPI as a base for scaling
         local REF_DPI=144
+        log "\tReference DPI: $REF_DPI"
 
         if [ $DPI -le 96 ]; then
-                export QT_SCALE_FACTOR=1
-                # Also setting the environment variable in non-HiDPI cases to
-                # avoid surprises if Qt should decide to do its own scaling.
+                # Don't set QT_SCALE_FACTOR unless really needed,
+                # otherwise all openQA needles need to be changed.
+
+                log "\tNo Qt scaling needed."
         else
                 # Calculate a scale factor based on the reference DPI, but no
                 # smaller than 1.0; and round to multiples of 0.25 (1.25, 1.5,
@@ -166,15 +168,14 @@ function set_qt_scale_factor () {
                 # fractions.
 
                 export QT_SCALE_FACTOR=`ruby -e "puts [(($DPI/(1.0*$REF_DPI)/0.25).round * 0.25), 1.0].max"`
+
+                # Override the Qt default of rounding to the next integer.
+                # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
+                export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
+
+                log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
+                log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
         fi
-
-        # Override the Qt default of rounding to the next integer.
-        # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
-        export QT_SCALE_FACTOR_ROUNDING_POLICY="PassThrough"
-
-        log "\tReference DPI: $REF_DPI"
-        log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
-        log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
 }
 
 
@@ -607,7 +608,7 @@ function start_yast_again () {
 # Debugging helper: Only calculate and show the DPI, then exit.
 # Start with
 #
-#   FAKE_MON_WIDTH_MM=200 ./Yast2.call
+#   FAKE_MON_WIDTH_MM=200 ./YaST2.call
 #
 # and watch stdout and /var/log/YaST2/y2start.log
 
