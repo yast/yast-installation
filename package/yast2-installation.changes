@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 15 14:04:42 UTC 2022 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't set QT_SCALE_FACTOR unless > 1 (bsc#1199020)
+  to avoid forcing QA to recreate all needles for all standard cases
+- 4.5.7
+
+-------------------------------------------------------------------
 Tue Sep 13 12:13:19 UTC 2022 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Directly calculate the Qt scale factor, no longer rely on the
