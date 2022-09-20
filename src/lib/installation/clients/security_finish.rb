@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Copyright (c) 2017 SUSE LLC
+# Copyright (c) [2017-2022] SUSE LLC
 #
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -21,6 +21,7 @@ require "yast"
 require "y2firewall/firewalld"
 require "installation/security_settings"
 require "installation/finish_client"
+require "y2security/security_policies/manager"
 
 Yast.import "Mode"
 Yast.import "SignatureCheckDialogs"
@@ -87,6 +88,8 @@ module Installation
 
         # Write down the Linux Security Module configuration
         settings.lsm_config.save
+
+        write_security_policies_config
 
         true
       end
@@ -181,6 +184,14 @@ module Installation
 
         Yast::Service.Enable("sshd") if @settings.enable_sshd
         configure_firewall if @firewalld.installed?
+      end
+
+      # Writes config for security policies
+      def write_security_policies_config
+        # write security policies config only during a fresh install
+        return if Yast::Mode.update
+
+        Y2Security::SecurityPolicies::Manager.instance.write_config
       end
     end
   end
