@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep 20 14:41:41 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Write config for ssh-apply script according to the enabled
+  security policy (part of jsc#SLE-24764).
+- 4.4.57
+
+-------------------------------------------------------------------
 Tue Aug  2 14:56:52 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
 
 - Do not use "xrdb" for setting the "Xft.dpi" value, use a specific
