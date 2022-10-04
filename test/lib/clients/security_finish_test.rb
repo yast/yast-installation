@@ -9,7 +9,7 @@ Yast.import "Service"
 describe Installation::Clients::SecurityFinish do
   before do
     allow_any_instance_of(Y2Firewall::Firewalld::Api).to receive(:running?).and_return(false)
-    allow(Y2Security::SecurityPolicies::Manager.instance).to receive(:write_config)
+    allow(Y2Security::SecurityPolicies::Manager.instance).to receive(:write)
   end
 
   let(:proposal_settings) { Installation::SecuritySettings.create_instance }
@@ -49,7 +49,7 @@ describe Installation::Clients::SecurityFinish do
     end
 
     it "writes the security policies config" do
-      expect(Y2Security::SecurityPolicies::Manager.instance).to receive(:write_config)
+      expect(Y2Security::SecurityPolicies::Manager.instance).to receive(:write)
 
       subject.write
     end
@@ -129,7 +129,7 @@ describe Installation::Clients::SecurityFinish do
       end
 
       it "skips writting the security policies config" do
-        expect(Y2Security::SecurityPolicies::Manager.instance).to_not receive(:write_config)
+        expect(Y2Security::SecurityPolicies::Manager.instance).to_not receive(:write)
 
         subject.write
       end
