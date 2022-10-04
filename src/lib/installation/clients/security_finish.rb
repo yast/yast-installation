@@ -191,7 +191,8 @@ module Installation
         # write security policies config only during a fresh install
         return if Yast::Mode.update
 
-        Y2Security::SecurityPolicies::Manager.instance.write_config
+        manager = Y2Security::SecurityPolicies::Manager.instance
+        manager.write
       end
     end
   end
