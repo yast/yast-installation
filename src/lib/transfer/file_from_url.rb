@@ -19,6 +19,7 @@
 
 require "yast"
 require "yast2/execute"
+require "yast2/rel_url"
 
 # rubocop:disable all
 module Yast::Transfer
@@ -97,9 +98,13 @@ module Yast::Transfer
       @GET_error = ""
       ok = false
       res = {}
+
+      # ensure both sets of parameters are in sync
       toks = deep_copy(urltok)
-      Ops.set(toks, "scheme", _Scheme)
-      Ops.set(toks, "host", _Host)
+      toks["scheme"] = _Scheme
+      toks["host"] = _Host
+      toks["path"] = _Path
+
       Builtins.y2milestone(
         "Scheme:%1 Host:%2 Path:%3 Localfile:%4",
         _Scheme,
@@ -107,11 +112,58 @@ module Yast::Transfer
         _Path,
         _Localfile
       )
+
+      log.info "toks initial: #{toks.inspect}"
+
+      if _Scheme == "repo"
+        base_url = InstURL.installInf2Url("")
+        if base_url.empty?
+          log.err "no ZyppRepoURL in /etc/install.inf"
+          return false
+        end
+
+        log.info("installation path from install.inf: #{base_url}")
+
+        toks["scheme"] = "relurl"
+        rel_url = URL.Build(toks)
+        log.info("relative url: #{rel_url}")
+
+        absolute_url = Yast2::RelURL.from_installation_repository(rel_url).absolute_url.to_s
+        log.info("absolute url: #{absolute_url}")
+
+        toks = URL.Parse(absolute_url)
+        log.info "toks absolute: #{toks.inspect}"
+      end
+
+      # convert 'cd' and 'hd' Zypp schemes to 'device' schema
+      if ["cd", "hd"].include?(toks["scheme"])
+        dev_name = toks["query"].match(/devices?=\/dev\/(.*)/)
+        if !dev_name.nil?
+          toks["scheme"] = "device"
+          toks["host"] = dev_name[1]
+          toks["query"] = ""
+        end
+      end
+
+      _Scheme = toks["scheme"]
+      _Host = toks["host"]
+      _Path = toks["path"]
+
       if Builtins.regexpsub(_Path, "(.*)//(.*)", "\\1/\\2") != nil
         _Path = Builtins.regexpsub(_Path, "(.*)//(.*)", "\\1/\\2")
+        log.info "path changed from #{toks["path"]} to #{_Path}"
       end
-      Ops.set(toks, "path", _Path)
+      toks["path"] = _Path
+
+      log.info "toks final: #{toks.inspect}"
+
+      # URL.Build does not reconstruct the URL in all cases; notably it has
+      # some ideas about what the host part might look like - which conflicts
+      # with the host part being used for device names in local disk URIs.
+      #
+      # It does not matter much as full_url is only used for ftp/http(s).
       full_url = URL.Build(toks)
+      log.info("full url (host part might be missing): #{full_url}")
 
       tmp_dir = Convert.to_string(WFM.Read(path(".local.tmpdir"), []))
       mount_point = Ops.add(tmp_dir, "/tmp_mount")
