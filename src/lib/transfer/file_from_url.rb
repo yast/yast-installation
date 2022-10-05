@@ -145,6 +145,12 @@ module Yast::Transfer
         end
       end
 
+      # convert 'label' scheme to 'device' scheme
+      if toks["scheme"] == "label"
+        toks["scheme"] = "device"
+        toks["host"] = "disk/by-label/#{toks["host"]}"
+      end
+
       _Scheme = toks["scheme"]
       _Host = toks["host"]
       _Path = toks["path"]
