@@ -77,7 +77,10 @@ module Yast::Transfer
     # The URL allows autoyast-specific schemes:
     # https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#Commandline.ay
     #
-    # @param scheme    [String] cifs, nfs, device, usb, http, https, ...
+    # @note Some arguments are duplicated in the urltok hash. Where they
+    #   differ, the explicitly passed arguments replace their counterparts in urltok.
+    #
+    # @param scheme    [String] ftp, tftp, http, https, cifs, nfs, device, cd, hd, usb, file, label, repo
     # @param host      [String]
     # @param urlpath   [String]
     # @param localfile [String] destination filename
