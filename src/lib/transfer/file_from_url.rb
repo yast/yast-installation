@@ -80,7 +80,7 @@ module Yast::Transfer
     # @note Some arguments are duplicated in the urltok hash. Where they
     #   differ, the explicitly passed arguments replace their counterparts in urltok.
     #
-    # @param scheme    [String] ftp, tftp, http, https, cifs, nfs, device, cd, hd, usb, file, label, repo
+    # @param scheme    [String] ftp, tftp, http, https, cifs, nfs, device, cd, dvd, hd, usb, file, label, repo
     # @param host      [String]
     # @param urlpath   [String]
     # @param localfile [String] destination filename
@@ -138,8 +138,8 @@ module Yast::Transfer
         log.info "toks absolute: #{toks.inspect}"
       end
 
-      # convert 'cd' and 'hd' Zypp schemes to 'device' schema
-      if ["cd", "hd"].include?(toks["scheme"])
+      # convert 'cd', "dvd', and 'hd' Zypp schemes to 'device' schema
+      if ["cd", "dvd", "hd"].include?(toks["scheme"])
         dev_name = toks["query"].match(/devices?=\/dev\/(.*)/)
         if !dev_name.nil?
           toks["scheme"] = "device"
