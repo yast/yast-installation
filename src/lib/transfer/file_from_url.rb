@@ -116,7 +116,7 @@ module Yast::Transfer
         _Localfile
       )
 
-      log.info "toks initial: #{toks.inspect}"
+      log.info "toks initial: #{hide_password(toks).inspect}"
 
       if _Scheme == "repo"
         base_url = InstURL.installInf2Url("")
@@ -125,17 +125,17 @@ module Yast::Transfer
           return false
         end
 
-        log.info("installation path from install.inf: #{base_url}")
+        log.info("installation path from install.inf: #{URL.HidePassword(base_url)}")
 
         toks["scheme"] = "relurl"
         rel_url = URL.Build(toks)
         log.info("relative url: #{rel_url}")
 
         absolute_url = Yast2::RelURL.from_installation_repository(rel_url).absolute_url.to_s
-        log.info("absolute url: #{absolute_url}")
+        log.info("absolute url: #{URL.HidePassword(absolute_url)}")
 
         toks = URL.Parse(absolute_url)
-        log.info "toks absolute: #{toks.inspect}"
+        log.info "toks absolute: #{hide_password(toks).inspect}"
       end
 
       # convert 'cd', "dvd', and 'hd' Zypp schemes to 'device' schema
@@ -164,7 +164,7 @@ module Yast::Transfer
       end
       toks["path"] = _Path
 
-      log.info "toks final: #{toks.inspect}"
+      log.info "toks final: #{hide_password(toks).inspect}"
 
       # URL.Build does not reconstruct the URL in all cases; notably it has
       # some ideas about what the host part might look like - which conflicts
@@ -172,7 +172,7 @@ module Yast::Transfer
       #
       # It does not matter much as full_url is only used for ftp/http(s).
       full_url = URL.Build(toks)
-      log.info("full url (host part might be missing): #{full_url}")
+      log.info("full url (host part might be missing): #{URL.HidePassword(full_url)}")
 
       tmp_dir = Convert.to_string(WFM.Read(path(".local.tmpdir"), []))
       mount_point = Ops.add(tmp_dir, "/tmp_mount")
@@ -592,6 +592,19 @@ module Yast::Transfer
       ::FileUtils.cp(source, destination)
     rescue SystemCallError => e
       log.warn "Could not copy #{source} to #{destination}: #{e.inspect}"
+    end
+
+    # Replace password with 'PASSWORD', if one was set.
+    #
+    # This is used to keep logs clean.
+    #
+    # @param toks [Hash{String => String}]
+    #
+    # @return [Hash{String => String}]
+    def hide_password(toks)
+      tmp = toks.dup
+      tmp["pass"] &&= "PASSWORD"
+      tmp
     end
   end
 end
