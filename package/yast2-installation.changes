@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 21 09:24:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Fix copy of entropy pool during installation (bsc#1204559).
+- 4.5.9
+
+-------------------------------------------------------------------
 Thu Oct 20 13:53:14 UTC 2022 - Steffen Winterfeldt <snwint@suse.com>
 
 - add 'repo', 'cd', 'dvd', 'hd', and 'label' schemes to
