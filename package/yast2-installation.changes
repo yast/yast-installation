@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 21 09:24:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Fix copy of entropy pool during installation (bsc#1204559).
+- 4.4.57
+
+-------------------------------------------------------------------
 Tue Aug  2 14:56:52 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
 
 - Do not use "xrdb" for setting the "Xft.dpi" value, use a specific

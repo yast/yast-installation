@@ -98,8 +98,8 @@ module Installation
         poolsize = Builtins.regexpsub(poolsize, "^([[:digit:]]+).*", "\\1")
       end
 
-      log.info "Using random/poolsize: #{poolsize}"
-      poolsize
+      poolsize = (poolsize.to_i / 8).to_s
+      log.info "Using random/poolsize: #{poolsize} (Bytes)"
     end
 
     RANDOM_PATH = "/dev/urandom".freeze
