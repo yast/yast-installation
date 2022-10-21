@@ -19,6 +19,7 @@
 
 require "yast"
 require "yast2/execute"
+require "yast2/rel_url"
 
 # rubocop:disable all
 module Yast::Transfer
@@ -76,7 +77,10 @@ module Yast::Transfer
     # The URL allows autoyast-specific schemes:
     # https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#Commandline.ay
     #
-    # @param scheme    [String] cifs, nfs, device, usb, http, https, ...
+    # @note Some arguments are duplicated in the urltok hash. Where they
+    #   differ, the explicitly passed arguments replace their counterparts in urltok.
+    #
+    # @param scheme    [String] ftp, tftp, http, https, cifs, nfs, device, cd, dvd, hd, usb, file, label, repo
     # @param host      [String]
     # @param urlpath   [String]
     # @param localfile [String] destination filename
@@ -97,9 +101,13 @@ module Yast::Transfer
       @GET_error = ""
       ok = false
       res = {}
+
+      # ensure both sets of parameters are in sync
       toks = deep_copy(urltok)
-      Ops.set(toks, "scheme", _Scheme)
-      Ops.set(toks, "host", _Host)
+      toks["scheme"] = _Scheme
+      toks["host"] = _Host
+      toks["path"] = _Path
+
       Builtins.y2milestone(
         "Scheme:%1 Host:%2 Path:%3 Localfile:%4",
         _Scheme,
@@ -107,11 +115,64 @@ module Yast::Transfer
         _Path,
         _Localfile
       )
+
+      log.info "toks initial: #{hide_password(toks).inspect}"
+
+      if _Scheme == "repo"
+        base_url = InstURL.installInf2Url("")
+        if base_url.empty?
+          log.err "no ZyppRepoURL in /etc/install.inf"
+          return false
+        end
+
+        log.info("installation path from install.inf: #{URL.HidePassword(base_url)}")
+
+        toks["scheme"] = "relurl"
+        rel_url = URL.Build(toks)
+        log.info("relative url: #{rel_url}")
+
+        absolute_url = Yast2::RelURL.from_installation_repository(rel_url).absolute_url.to_s
+        log.info("absolute url: #{URL.HidePassword(absolute_url)}")
+
+        toks = URL.Parse(absolute_url)
+        log.info "toks absolute: #{hide_password(toks).inspect}"
+      end
+
+      # convert 'cd', "dvd', and 'hd' Zypp schemes to 'device' schema
+      if ["cd", "dvd", "hd"].include?(toks["scheme"])
+        dev_name = toks["query"].match(/devices?=\/dev\/(.*)/)
+        if !dev_name.nil?
+          toks["scheme"] = "device"
+          toks["host"] = dev_name[1]
+          toks["query"] = ""
+        end
+      end
+
+      # convert 'label' scheme to 'device' scheme
+      if toks["scheme"] == "label"
+        toks["scheme"] = "device"
+        toks["host"] = "disk/by-label/#{toks["host"]}"
+      end
+
+      _Scheme = toks["scheme"]
+      _Host = toks["host"]
+      _Path = toks["path"]
+
       if Builtins.regexpsub(_Path, "(.*)//(.*)", "\\1/\\2") != nil
         _Path = Builtins.regexpsub(_Path, "(.*)//(.*)", "\\1/\\2")
+        log.info "path changed from #{toks["path"]} to #{_Path}"
       end
-      Ops.set(toks, "path", _Path)
+      toks["path"] = _Path
+
+      log.info "toks final: #{hide_password(toks).inspect}"
+
+      # URL.Build does not reconstruct the URL in all cases; notably it has
+      # some ideas about what the host part might look like - which conflicts
+      # with the host part being used for device names in local disk URIs.
+      #
+      # It does not matter much as full_url is only used for ftp/http(s).
       full_url = URL.Build(toks)
+      log.info("full url (host part might be missing): #{URL.HidePassword(full_url)}")
 
       tmp_dir = Convert.to_string(WFM.Read(path(".local.tmpdir"), []))
       mount_point = Ops.add(tmp_dir, "/tmp_mount")
@@ -531,6 +592,19 @@ module Yast::Transfer
       ::FileUtils.cp(source, destination)
     rescue SystemCallError => e
       log.warn "Could not copy #{source} to #{destination}: #{e.inspect}"
+    end
+
+    # Replace password with 'PASSWORD', if one was set.
+    #
+    # This is used to keep logs clean.
+    #
+    # @param toks [Hash{String => String}]
+    #
+    # @return [Hash{String => String}]
+    def hide_password(toks)
+      tmp = toks.dup
+      tmp["pass"] &&= "PASSWORD"
+      tmp
     end
   end
 end
