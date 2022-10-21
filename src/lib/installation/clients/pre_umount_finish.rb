@@ -100,6 +100,7 @@ module Installation
 
       poolsize = (poolsize.to_i / 8).to_s
       log.info "Using random/poolsize: #{poolsize} (Bytes)"
+      poolsize
     end
 
     RANDOM_PATH = "/dev/urandom".freeze
