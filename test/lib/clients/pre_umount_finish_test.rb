@@ -47,12 +47,15 @@ describe ::Installation::PreUmountFinish do
     end
 
     context "installation mode" do
+      let(:random_poolsize_path) { "/proc/sys/kernel/random/poolsize" }
+
       before do
         allow(Yast::Mode).to receive(:update).and_return(false)
+        allow(Yast::WFM).to receive(:Read).with(anything, random_poolsize_path).and_return("4096")
       end
 
       it "does preserve randomness state" do
-        expect(Yast::WFM).to receive(:Execute).with(anything, /dd/)
+        expect(Yast::WFM).to receive(:Execute).with(anything, /dd if='\/dev\/urandom' bs='512'/)
 
         subject.write
       end
