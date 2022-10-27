@@ -25,6 +25,11 @@ workflow described in a particular control file for:
 More subject-specific pieces of information can be found in the [doc](doc)
 directory.
 
+- [URL handling in the installer](doc/url.md) for an overview of the URLs
+  supported in various places, including `cd:`, `cifs:`, `device:`, `disk:`,
+  `dvd:`, `file:`, `ftp:`, `hd:`, `http:`, `https:`, `iso:`, `label:`, `nfs:`,
+  `rel:`, `relurl:`, `repo:`, `slp:`, `smb:`, `tftp:`, `usb:`.
+
 Live Installation
 -----------------
 
