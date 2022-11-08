@@ -611,16 +611,16 @@ module Installation
     end
 
     def modules_help(current_tab)
-      modules_order = presentation_order
-      if tabs? && current_tab
-        modules_order = modules_order[current_tab]
-
-        modules_order.each_with_object("") do |client, text|
-          description = description_for(client)
-          text << description["help"] if description && description["help"]
+      modules_order =
+        if tabs? && current_tab
+          presentation_order[current_tab]
+        else
+          presentation_order
         end
-      else
-        ""
+
+      modules_order.each_with_object("") do |client, text|
+        description = description_for(client)
+        text << description["help"] if description && description["help"]
       end
     end
   end

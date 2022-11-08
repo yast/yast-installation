@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Mon Nov  7 16:42:03 UTC 2022 - Ancor Gonzalez Sosa <ancor@suse.com>
+
+- Fixed the help in the installation summary to include the texts
+  from the corresponding proposals (related to jsc#SLE-24764).
+- 4.4.58
+
+-------------------------------------------------------------------
+Mon Nov  7 15:42:03 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Write config for ssg-apply script according to the enabled
+  security policy (part of jsc#SLE-24764).
+
+-------------------------------------------------------------------
 Fri Oct 21 09:24:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Fix copy of entropy pool during installation (bsc#1204559).
@@ -29,7 +42,7 @@ Wed Jun 15 11:28:30 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Do not restart services when updating the package (bsc#1199480,
   bsc#1200274)
--4.4.54
+- 4.4.54
 
 -------------------------------------------------------------------
 Mon May 23 15:42:10 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
