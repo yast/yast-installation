@@ -2,12 +2,14 @@
 
 require_relative "../../test_helper"
 require "installation/clients/security_finish"
+require "y2security/security_policies/manager"
 
 Yast.import "Service"
 
 describe Installation::Clients::SecurityFinish do
   before do
     allow_any_instance_of(Y2Firewall::Firewalld::Api).to receive(:running?).and_return(false)
+    allow(Y2Security::SecurityPolicies::Manager.instance).to receive(:write)
   end
 
   let(:proposal_settings) { Installation::SecuritySettings.create_instance }
@@ -42,6 +44,12 @@ describe Installation::Clients::SecurityFinish do
     it "enables the sshd service if enabled in the proposal" do
       allow(proposal_settings).to receive(:enable_sshd).and_return(true)
       expect(Yast::Service).to receive(:Enable).with("sshd")
+
+      subject.write
+    end
+
+    it "writes the security policies config" do
+      expect(Y2Security::SecurityPolicies::Manager.instance).to receive(:write)
 
       subject.write
     end
@@ -116,6 +124,12 @@ describe Installation::Clients::SecurityFinish do
 
       it "skips writting LSM config" do
         expect(proposal_settings.lsm_config).to_not receive(:save)
+
+        subject.write
+      end
+
+      it "skips writting the security policies config" do
+        expect(Y2Security::SecurityPolicies::Manager.instance).to_not receive(:write)
 
         subject.write
       end
