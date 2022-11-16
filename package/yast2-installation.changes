@@ -78,11 +78,7 @@ Wed Jun 15 11:28:30 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Do not restart services when updating the package (bsc#1199480,
   bsc#1200274)
-<<<<<<< HEAD
--4.5.3
-=======
-- 4.4.54
->>>>>>> SLE-15-SP4
+- 4.5.3
 
 -------------------------------------------------------------------
 Mon May 23 15:42:10 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
