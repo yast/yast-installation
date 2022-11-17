@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.5.8
+Version:        4.5.9
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -42,8 +42,8 @@ BuildRequires:  yast2-network >= 4.4.12
 BuildRequires:  yast2-packager >= 4.4.13
 # yast/rspec/helpers.rb
 BuildRequires:  yast2-ruby-bindings >= 4.4.7
-# For LSM classes
-BuildRequires:  yast2-security
+# Support for SecurityPolicies
+BuildRequires:  yast2-security >= 4.5.3
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
 # Y2Users
@@ -96,6 +96,8 @@ Requires:       yast2-services-manager >= 3.2.1
 Requires:       yast2-storage-ng >= 4.0.175
 # Y2Users
 Requires:       yast2-users >= 4.4.2
+# Support for SecurityPolicies
+Requires:      yast2-security >= 4.5.3
 PreReq:         %fillup_prereq
 Recommends:     yast2-add-on
 Recommends:     yast2-firewall
@@ -118,8 +120,6 @@ Conflicts:      yast2-mouse < 2.18.0
 Conflicts:      yast2-pkg-bindings < 2.17.25
 # Registration#get_updates_list does not handle exceptions
 Conflicts:      yast2-registration < 3.2.3
-# Added support for selecting the desired LSM during installation
-Conflicts:      yast2-security < 4.4.2
 # Top bar with logo
 Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
