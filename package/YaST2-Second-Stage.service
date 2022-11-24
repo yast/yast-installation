@@ -1,9 +1,8 @@
 [Unit]
 Description=YaST2 Second Stage
-After=apparmor.service local-fs.target plymouth-start.service
+After=apparmor.service local-fs.target plymouth-quit-wait.service
 # Run after kernels are purged to prevent a zypper lock (bsc#1196431)
 After=purge-kernels.service
-Conflicts=plymouth-start.service
 # Prevent getty auto-generation (bsc#1196614, bsc#1196594, bsc#1199746)
 Before=getty@tty1.service getty@tty2.service getty@tty3.service getty@tty4.service getty@tty5.service getty@tty6.service
 Before=serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
@@ -21,8 +20,6 @@ Type=oneshot
 # and envvar extensions are still loaded, /etc/sysconfig/proxy values are still
 # used correctly (see bnc#866692 and bnc#866692 for details).
 Environment=TERM=linux PX_MODULE_PATH=""
-# Block non-privileged user login (bsc#1195059)
-ExecStartPre=-/usr/bin/plymouth quit
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
