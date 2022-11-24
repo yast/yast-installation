@@ -145,8 +145,9 @@ describe Installation::SystemRole do
     end
 
     it "modifies the network proposal settings with defaults from the control file" do
+      defaults = { "ipv4_forward" => true, "ipv6_forward" => true }
       expect(settings).to receive(:modify_defaults)
-        .with("ipv4_forward" => true, "ipv6_forward" => true)
+        .with(defaults)
 
       role.adapt_network
     end
@@ -161,8 +162,9 @@ describe Installation::SystemRole do
     it "overlays the product features with the ones defined in the control file for this role" do
       role = described_class.find("role_one")
 
+      overlay = { "software" => { "desktop" => "knome" } }
       expect(Yast::ProductFeatures).to receive(:SetOverlay)
-        .with("software" => { "desktop" => "knome" })
+        .with(overlay)
 
       role.overlay_features
     end
