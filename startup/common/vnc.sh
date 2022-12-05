@@ -83,12 +83,12 @@ startVNCServer () {
 	[ -z "$VNCSize" ] && VNCSize=1024x768
 
 	# For -noreset see BNC #351338
+        # No longer using -depth 16 (bsc#1205585)
 	/usr/bin/Xvnc :0 \
 		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
 		-desktop "Installation" \
 		-geometry "$VNCSize" \
-		-depth 16 \
                 -dpi 96 \
 		-rfbport 5901 \
 		-fp /usr/share/fonts/misc/,/usr/share/fonts/uni/,/usr/share/fonts/truetype/ \
