@@ -109,10 +109,16 @@ module YUpdate
   # a simple /etc/install.inf parser/writer,
   # we need to disable the YaST self-update feature to avoid conflicts
   class InstallInf
+    PATH = "/etc/install.inf".freeze
+
     attr_reader :path
 
+    def self.exist?(path = PATH)
+      File.exist?(path)
+    end
+
     # read the file
-    def initialize(path = "/etc/install.inf")
+    def initialize(path = PATH)
       @path = path
       @values = File.read(path).lines.map(&:chomp)
     end
@@ -566,8 +572,8 @@ module YUpdate
     end
   end
 
-  # inst-sys test
-  class InstSys
+  # inst-sys or live medium test
+  class System
     # check if the script is running in the inst-sys,
     # the script might not work as expected in an installed system
     # and using OverlayFS is potentially dangerous
@@ -575,8 +581,11 @@ module YUpdate
       # the inst-sys contains the /.packages.initrd file with a list of packages
       return if File.exist?("/.packages.initrd")
 
+      # live medium uses overlay FS for the root
+      return if `mount`.match?(/^\w+ on \/ type overlay/)
+
       # exit immediately if running in an installed system
-      warn "ERROR: This script can only work in the installation system (inst-sys)!"
+      warn "ERROR: This script can only work in the installation system (inst-sys) or Live medium!"
       exit 1
     end
   end
@@ -590,10 +599,10 @@ module YUpdate
       when "version"
         VersionCommand.new
       when "overlay"
-        InstSys.check!
+        System.check!
         OverlayCommand.new(argv)
       when "patch"
-        InstSys.check!
+        System.check!
         PatchCommand.new(argv)
       when "servers"
         ServersCommand.new(argv)
@@ -700,10 +709,29 @@ module YUpdate
       g.install_required_gems
     end
 
+    def run_pre_script(download_dir)
+      script = File.join(download_dir, ".yupdate.pre")
+      run_script(script)
+    end
+
+    def run_post_script(download_dir)
+      script = File.join(download_dir, ".yupdate.post")
+      run_script(script)
+    end
+
+    def run_script(script)
+      return unless File.exist?(script)
+
+      puts "Running script #{File.basename(script)}..."
+      raise "Script #{File.basename(script)} failed" unless system(script)
+    end
+
     def install_tar(downloader)
       Dir.mktmpdir do |download_dir|
         downloader.extract_to(download_dir)
+        run_pre_script(download_dir)
         install_sources(download_dir)
+        run_post_script(download_dir)
       end
     end
 
@@ -712,6 +740,8 @@ module YUpdate
 
     # disable the self update in the install.inf file
     def disable_self_update
+      return unless InstallInf.exist?
+
       inf = InstallInf.new
       return if inf[SELF_UPDATE_KEY] == "0"
 
