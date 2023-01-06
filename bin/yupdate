@@ -482,7 +482,10 @@ module YUpdate
 
       src_dir = File.dirname(rakefile)
       Dir.chdir(src_dir) do
-        `rake install DESTDIR=#{target.shellescape} 2> /dev/null`
+        redir = ENV["VERBOSE"] == "1" ? "" : " > /dev/null 2>&1"
+        unless system("rake install DESTDIR=#{target.shellescape} #{redir}")
+          raise "rake install failed"
+        end
       end
     end
 
