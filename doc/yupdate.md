@@ -223,6 +223,28 @@ state.
   AutoYaST second stage cannot be fixed by `yupdate`, you need to build
   a DUD, see below.
 
+## Hooks
+
+The source code might contain several callback scripts which are executed
+at specific points. The goal is to allow adjusting the target system before
+or after installing new files.
+
+- `.yupdate.pre` - This script is executed *before* installing the package (before
+  running `rake install`). It can prepare the system for installation, install
+  required packages.
+- `.yupdate.post` - This script is executed *after* installing the package (after
+  running `rake install`). It can activate the changes, restart services.
+
+When a hook script fails then yupdate aborts the update process immediately.
+
+## Environment Variables
+
+The yupdate script uses these environment variables:
+
+- `VERBOSE` - When set to `1` the output of the `rake install` command is
+  displayed in the terminal. By default it is hidden because the output is too
+  long and verbose. Use this option for debugging installation problems.
+
 ## Alternative
 
 1. For all repos, run `rake osc:build`
