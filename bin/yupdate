@@ -35,7 +35,7 @@ module YUpdate
   class Version
     MAJOR = 0
     MINOR = 2
-    PATCH = 0
+    PATCH = 1
 
     STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
   end
@@ -575,9 +575,9 @@ module YUpdate
     end
   end
 
-  # inst-sys or live medium test
+  # inst-sys, live medium or container test
   class System
-    # check if the script is running in the inst-sys,
+    # check if the script is running in the inst-sys, live medium or in a container
     # the script might not work as expected in an installed system
     # and using OverlayFS is potentially dangerous
     def self.check!
@@ -587,10 +587,34 @@ module YUpdate
       # live medium uses overlay FS for the root
       return if `mount`.match?(/^\w+ on \/ type overlay/)
 
+      return if in_container?
+
       # exit immediately if running in an installed system
-      warn "ERROR: This script can only work in the installation system (inst-sys) or Live medium!"
+      warn "ERROR: This script can only work in the installation system (inst-sys), " \
+           "live medium or in a container!"
       exit 1
     end
+
+    # Check whether running in a container.
+    # @return [Boolean] `true` if running inside a container, `false` otherwise
+    def self.in_container?
+      # use the systemd-detect-virt tool for container detection
+      detected = `systemd-detect-virt --container`.chomp
+
+      # the variable contains the detected system, like "docker" or "podman"
+      # see "man systemd-detect-virt" for details
+      !detected.empty? && detected != "none"
+    # systemd-detect-virt tool not present
+    rescue Errno::ENOENT
+      # fallback to detection by special files, this is less reliable
+      # (the files might be removed in the future) and does not
+      # support all container virtualizations
+
+      # docker or podman environment
+      File.exist?("/.dockerenv") || File.exist?("/run/.containerenv")
+    end
+
+    private_class_method :in_container?
   end
 
   # parse the command line options
