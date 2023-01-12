@@ -9,6 +9,7 @@ describe YUpdate::System do
   before do
     allow(File).to receive(:exist?).with(file).and_return(false)
     allow(described_class).to receive(:`).with("mount").and_return("")
+    allow(described_class).to receive(:`).with("systemd-detect-virt --container").and_return("")
   end
 
   describe ".check!" do
@@ -48,7 +49,7 @@ describe YUpdate::System do
 
       it "prints an error on STDERR" do
         _stdout, stderr = capture_stdio { described_class.check! }
-        expect(stderr).to match(/ERROR: .*inst-sys/)
+        expect(stderr).to start_with("ERROR: This script can only work")
       end
     end
   end
