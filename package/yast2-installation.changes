@@ -2,7 +2,7 @@
 Wed Jan 25 15:25:50 UTC 2023 - Knut Anderssen <kanderssen@suse.com>
 
 - Discover and connect to all NVMe-over-Fabrics subsystems in case
-  that linuxrc sets UseNBFT (jsc#PED-3138).
+  that linuxrc sets UseNBFT (jsc#PED-967).
 - 4.5.14
 
 -------------------------------------------------------------------
