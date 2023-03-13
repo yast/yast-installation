@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 13 08:35:59 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Removed unnecessary executable flag from file security_proposal.rb
+  (bsc#1209094)
+- 4.5.16
+
+-------------------------------------------------------------------
 Wed Jan 25 19:56:12 UTC 2023 - Knut Anderssen <kanderssen@suse.com>
 
 - Connect only NBFT when linuxrc sets UseNBFT (jsc#PED-967)
