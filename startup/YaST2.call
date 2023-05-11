@@ -142,7 +142,7 @@ function set_xft_dpi () {
 }
 
 
-function set_qt_scale_factor () {
+function set_font_size () {
 #------------------------------------------------------
 # Set Qt environment variables for the scale factor, i.e. the factor by which
 # to increase the size of the UI in HiDPI cases.
@@ -154,6 +154,7 @@ function set_qt_scale_factor () {
         local DPI=${1:-96}
         # Reference DPI as a base for scaling
         local REF_DPI=144
+        local FONT_SIZE=10
         log "\tReference DPI: $REF_DPI"
 
         if [ $DPI -le 96 ]; then
@@ -168,6 +169,7 @@ function set_qt_scale_factor () {
                 # fractions.
 
                 export QT_SCALE_FACTOR=`ruby -e "puts [(($DPI/(1.0*$REF_DPI)/0.25).round * 0.25), 1.0].max"`
+                FONT_SIZE=$(ruby -e "puts 12 * $QT_SCALE_FACTOR")
 
                 # Override the Qt default of rounding to the next integer.
                 # https://doc-snapshots.qt.io/qt5-5.15/highdpi.html
@@ -176,14 +178,6 @@ function set_qt_scale_factor () {
                 log "\tQT_SCALE_FACTOR: $QT_SCALE_FACTOR"
                 log "\tQT_SCALE_FACTOR_ROUNDING_POLICY: $QT_SCALE_FACTOR_ROUNDING_POLICY"
         fi
-}
-
-
-function calculate_xterm_font_size() {
-#------------------------------------------------------
-# Calculate an appropriate font size for xterm based on the DPI
-# ($1) and set XTERM_FONT_SIZE accordingly.
-# ---
 
 	if [ -n "$XTERM_FONT_SIZE" ]; then
 		# Enable overriding the xterm font size from the command line or
@@ -198,21 +192,10 @@ function calculate_xterm_font_size() {
 		#
 		#   FAKE_MON_WIDTH_MM=200 XTERM_FONT_SIZE=21 ./YaST2.call
 		log "\tUsing XTERM_FONT_SIZE from environment: ${XTERM_FONT_SIZE}"
-		return
-	fi
-
-	local DPI=${1:-96}
-
-	if [ ${DPI:-0} -le 96 ]; then
-		XTERM_FONT_SIZE=10
-	elif [ $DPI -le 192 ]; then
-		XTERM_FONT_SIZE=12
 	else
-		XTERM_FONT_SIZE=14
+		export XTERM_FONT_SIZE=$FONT_SIZE
+		log "\tXTERM_FONT_SIZE: $XTERM_FONT_SIZE for $DPI dpi"
 	fi
-
-	export XTERM_FONT_SIZE
-	log "\tXTERM_FONT_SIZE: $XTERM_FONT_SIZE for $DPI dpi"
 }
 
 
@@ -260,8 +243,7 @@ function prepare_for_x11 () {
 
 			local DPI=`calculate_x11_dpi`
 			# set_xft_dpi $DPI
-                        set_qt_scale_factor $DPI
-                        calculate_xterm_font_size $DPI
+                        set_font_size $DPI
                         add_x11_resources
 		fi
 	fi
@@ -679,8 +661,7 @@ if [ -n "$FAKE_MON_WIDTH_MM" ]; then
         YAST_MON_WIDTH_MM="$FAKE_MON_WIDTH_MM"
         DPI=`calculate_x11_dpi`
         echo "DPI: $DPI"
-        set_qt_scale_factor $DPI
-        calculate_xterm_font_size $DPI
+        set_font_size $DPI
         env | grep -E "^(QT_SCALE|XTERM)"
         # add_x11_resources
         echo "Done."
