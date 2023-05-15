@@ -179,6 +179,66 @@ function set_qt_scale_factor () {
 }
 
 
+function calculate_xterm_font_size() {
+#------------------------------------------------------
+# Calculate an appropriate font size for xterm based on the DPI
+# ($1) and set XTERM_FONT_SIZE accordingly.
+# ---
+
+	if [ -n "$XTERM_FONT_SIZE" ]; then
+		# Enable overriding the xterm font size from the command line or
+		# from an installation ISO boot parameter:
+		#
+		# Either boot the installation ISO with something like
+		#
+		#   XTERM_FONT_SIZE=21
+		#
+		# (which will end up in the environment)
+		# or start this script in DPI debugging mode with
+		#
+		#   FAKE_MON_WIDTH_MM=200 XTERM_FONT_SIZE=21 ./YaST2.call
+		log "\tUsing XTERM_FONT_SIZE from environment: ${XTERM_FONT_SIZE}"
+		return
+	fi
+
+	local DPI=${1:-96}
+
+	if [ ${DPI:-0} -le 96 ]; then
+		XTERM_FONT_SIZE=10
+	elif [ $DPI -le 192 ]; then
+		XTERM_FONT_SIZE=12
+	else
+		XTERM_FONT_SIZE=14
+	fi
+
+	export XTERM_FONT_SIZE
+	log "\tXTERM_FONT_SIZE: $XTERM_FONT_SIZE for $DPI dpi"
+}
+
+
+function add_x11_resources() {
+#------------------------------------------------------
+# Add some X resources for xterm to /root/.Xdefaults
+#
+# Notice that this file is only used if nothing has been
+# loaded into the X server with 'xrdb' yet.
+# ---
+
+	local RESOURCE_FILE=/root/.Xdefaults
+	XTERM_FONT_SIZE=${XTERM_FONT_SIZE:-12}
+	log "\tAdding X resources for xterm to $RESOURCE_FILE"
+
+	cat >>$RESOURCE_FILE <<EOF
+
+! Fonts for xterm during a YaST Qt UI installation
+! (You can start an xterm with Ctrl-Shift-Alt X)
+XTerm*faceName:	 DejaVu Sans Mono
+XTerm*faceSize:	 $XTERM_FONT_SIZE
+
+EOF
+}
+
+
 function prepare_for_x11 () {
 #------------------------------------------------------
 # prepare X11 installation
@@ -201,6 +261,8 @@ function prepare_for_x11 () {
 			local DPI=`calculate_x11_dpi`
 			# set_xft_dpi $DPI
                         set_qt_scale_factor $DPI
+                        calculate_xterm_font_size $DPI
+                        add_x11_resources
 		fi
 	fi
 
@@ -618,7 +680,9 @@ if [ -n "$FAKE_MON_WIDTH_MM" ]; then
         DPI=`calculate_x11_dpi`
         echo "DPI: $DPI"
         set_qt_scale_factor $DPI
-        env | grep "^QT_SCALE"
+        calculate_xterm_font_size $DPI
+        env | grep -E "^(QT_SCALE|XTERM)"
+        # add_x11_resources
         echo "Done."
         exit 1
 fi
