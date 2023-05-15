@@ -185,14 +185,30 @@ function calculate_xterm_font_size() {
 # ($1) and set XTERM_FONT_SIZE accordingly.
 # ---
 
+	if [ -n "$XTERM_FONT_SIZE" ]; then
+		# Enable overriding the xterm font size from the command line or
+		# from an installation ISO boot parameter:
+		#
+		# Either boot the installation ISO with something like
+		#
+		#   XTERM_FONT_SIZE=21
+		#
+		# (which will end up in the environment)
+		# or start this script in DPI debugging mode with
+		#
+		#   FAKE_MON_WIDTH_MM=200 XTERM_FONT_SIZE=21 ./YaST2.call
+		log "\tUsing XTERM_FONT_SIZE from environment: ${XTERM_FONT_SIZE}"
+		return
+	fi
+
 	local DPI=${1:-96}
 
 	if [ ${DPI:-0} -le 96 ]; then
-	    XTERM_FONT_SIZE=10
+		XTERM_FONT_SIZE=10
 	elif [ $DPI -le 192 ]; then
-	    XTERM_FONT_SIZE=12
+		XTERM_FONT_SIZE=12
 	else
-	    XTERM_FONT_SIZE=14
+		XTERM_FONT_SIZE=14
 	fi
 
 	export XTERM_FONT_SIZE
