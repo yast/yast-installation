@@ -144,7 +144,7 @@ module Installation
     #   authentication and the system is not accesible through ssh
     def access_problem?
       # public key is not the only way
-      return false unless only_public_key_auth
+      return false unless only_public_key_auth?
 
       # without running sshd it is useless
       return true unless @enable_sshd
@@ -181,11 +181,11 @@ module Installation
     end
 
     def wanted_enable_sshd?
-      Yast::Linuxrc.usessh || only_public_key_auth || @enable_sshd
+      Yast::Linuxrc.usessh || only_public_key_auth? || @enable_sshd
     end
 
     def wanted_open_ssh?
-      Yast::Linuxrc.usessh || only_public_key_auth || @open_ssh
+      Yast::Linuxrc.usessh || only_public_key_auth? || @open_ssh
     end
 
     def wanted_open_vnc?
@@ -197,7 +197,7 @@ module Installation
     # @note If the root user does not have a password, we assume that we will use a public
     #   key in order to log into the system. In such a case, we need to enable the SSH
     #   service (including opening the port).
-    def only_public_key_auth
+    def only_public_key_auth?
       return true unless root_user
 
       password = root_user.password_content || ""
