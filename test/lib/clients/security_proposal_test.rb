@@ -154,7 +154,7 @@ describe Installation::Clients::SecurityProposal do
       let(:ssh_open) { true }
 
       before do
-        allow(proposal_settings).to receive(:only_public_key_auth).and_return(true)
+        allow(proposal_settings).to receive(:only_public_key_auth?).and_return(true)
         proposal_settings.enable_sshd = ssh_enabled
         proposal_settings.open_ssh = ssh_open
       end
@@ -166,7 +166,7 @@ describe Installation::Clients::SecurityProposal do
             expect(proposal["warning"]).to be_nil
           end
         end
-        context "and the SSH port is close" do
+        context "and the SSH port is closed" do
           let(:ssh_open) { false }
 
           it "returns the proposal warning about the situation" do
