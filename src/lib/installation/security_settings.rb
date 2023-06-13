@@ -29,10 +29,6 @@ module Installation
 
     # [Boolean] Whether the firewalld service will be enable
     attr_accessor :enable_firewall
-    # [Boolean] Whether the sshd service will be enable
-    attr_accessor :enable_sshd
-    # [Boolean] Whether the ssh port will be opened
-    attr_accessor :open_ssh
     # [Boolean] Whether the vnc port will be opened
     attr_accessor :open_vnc
     # [String] Name of the default zone where perform the changes
@@ -65,6 +61,42 @@ module Installation
       load_feature(:firewall_enable_ssh, :open_ssh)
       load_feature(:enable_sshd, :enable_sshd)
       load_feature(:polkit_default_privs, :polkit_default_privileges)
+    end
+
+    # Return whether the sshd service will be enabled.
+    #
+    # @return [Boolean]
+    def enable_sshd
+      if only_public_key_auth?
+        log.info("Only public key auth - enabling SSHD")
+        @enable_sshd = true
+      end
+
+      @enable_sshd
+    end
+
+    # Setter for enable_sshd
+    # @param value [Boolean]
+    def enable_sshd=(value)
+      @enable_sshd = value
+    end
+
+    # Return whether the ssh port will be opened.
+    #
+    # @return [Boolean]
+    def open_ssh
+      if only_public_key_auth?
+        log.info("Only public key auth - opening SSH port")
+        @open_ssh = true
+      end
+
+      @open_ssh
+    end
+
+    # Setter for open_ssh
+    # @param value [Boolean]
+    def open_ssh=(value)
+      @open_ssh = value
     end
 
     # When Linux Security Module is declared as configurable and there is no Module selected yet
@@ -181,27 +213,32 @@ module Installation
     end
 
     def wanted_enable_sshd?
-      Yast::Linuxrc.usessh || only_public_key_auth? || @enable_sshd
+      Yast::Linuxrc.usessh || @enable_sshd
     end
 
     def wanted_open_ssh?
-      Yast::Linuxrc.usessh || only_public_key_auth? || @open_ssh
+      Yast::Linuxrc.usessh || @open_ssh
     end
 
     def wanted_open_vnc?
       Yast::Linuxrc.vnc
     end
 
-    # Determines whether only public key authentication is supported
+    # Determines whether only public key authentication is supported.
+    #
+    # Do not call this prematurely before the user was even prompted for a root password;
+    # in particular, do not call this from the constructor of this class.
     #
     # @note If the root user does not have a password, we assume that we will use a public
     #   key in order to log into the system. In such a case, we need to enable the SSH
     #   service (including opening the port).
     def only_public_key_auth?
-      return true unless root_user
+      if root_user.nil?
+        log.warn("No root user created yet; can't check root password!")
+        return false
+      end
 
       password = root_user.password_content || ""
-
       password.empty?
     end
 
