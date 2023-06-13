@@ -85,7 +85,7 @@ module Installation
     def enable_firewall!
       Yast::PackagesProposal.AddResolvables("firewall", :package, ["firewalld"])
 
-      log.info "Enabling Firewall"
+      log.info "Enabling firewall"
       self.enable_firewall = true
     end
 
@@ -93,7 +93,7 @@ module Installation
     # service to be disabled
     def disable_firewall!
       Yast::PackagesProposal.RemoveResolvables("firewall", :package, ["firewalld"])
-      log.info "Disabling Firewall"
+      log.info "Disabling firewall"
       self.enable_firewall = false
     end
 
@@ -121,19 +121,19 @@ module Installation
 
     # Set the ssh port to be closed
     def close_ssh!
-      log.info "Opening SSH port"
+      log.info "Closing SSH port"
       self.open_ssh = false
     end
 
     # Set the vnc port to be opened
     def open_vnc!
-      log.info "Close VNC port"
+      log.info "Opening VNC port"
       self.open_vnc = true
     end
 
     # Set the vnc port to be closed
     def close_vnc!
-      log.info "Close VNC port"
+      log.info "Closing VNC port"
       self.open_vnc = false
     end
 
