@@ -26,6 +26,20 @@ describe Installation::Clients::SecurityProposal do
   subject(:client) { described_class.new }
   let(:proposal_settings) { Installation::SecuritySettings.create_instance }
 
+  def create_target_config
+    root = Y2Users::User.create_root
+    config = Y2Users::Config.new.attach(root)
+
+    Y2Users::ConfigManager.instance.target = config
+  end
+
+  before do
+    create_target_config
+    Y2Users::ConfigManager.instance.target.users.root.password = root_password
+  end
+
+  let(:root_password) { Y2Users::Password.create_plain("s3cr3t") }
+
   describe "#initialize" do
     it "instantiates a new proposal settings" do
       expect(Installation::SecuritySettings).to receive(:instance)
@@ -152,6 +166,7 @@ describe Installation::Clients::SecurityProposal do
     context "when the user uses only SSH key based authentication" do
       let(:ssh_enabled) { true }
       let(:ssh_open) { true }
+      let(:root_password) { Y2Users::Password.create_plain("") }
 
       before do
         allow(proposal_settings).to receive(:only_public_key_auth?).and_return(true)
@@ -176,7 +191,11 @@ describe Installation::Clients::SecurityProposal do
         end
       end
 
-      context "and the SSH is disabled" do
+      # This is no longer possible now since the check for only_public_key_auth?
+      # is done in SecuritySettings::open_ssh and SecuritySettings::enable_sshd:
+      # If only public key auth is active, the SSH port is forced to be open,
+      # and SSHD is forced to be enabled.
+      xcontext "and the SSH service is disabled" do
         let(:ssh_enabled) { false }
 
         it "returns the proposal warning about the situation" do
