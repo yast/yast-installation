@@ -29,6 +29,10 @@ module Installation
 
     # [Boolean] Whether the firewalld service will be enable
     attr_accessor :enable_firewall
+    # [Boolean] Whether the sshd service will be enable
+    attr_writer :enable_sshd
+    # [Boolean] Whether the ssh port will be opened
+    attr_writer :open_ssh
     # [Boolean] Whether the vnc port will be opened
     attr_accessor :open_vnc
     # [String] Name of the default zone where perform the changes
@@ -75,12 +79,6 @@ module Installation
       @enable_sshd
     end
 
-    # Setter for enable_sshd
-    # @param value [Boolean]
-    def enable_sshd=(value)
-      @enable_sshd = value
-    end
-
     # Return whether the ssh port will be opened.
     #
     # @return [Boolean]
@@ -91,12 +89,6 @@ module Installation
       end
 
       @open_ssh
-    end
-
-    # Setter for open_ssh
-    # @param value [Boolean]
-    def open_ssh=(value)
-      @open_ssh = value
     end
 
     # When Linux Security Module is declared as configurable and there is no Module selected yet
