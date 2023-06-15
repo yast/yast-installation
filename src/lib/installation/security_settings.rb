@@ -181,27 +181,32 @@ module Installation
     end
 
     def wanted_enable_sshd?
-      Yast::Linuxrc.usessh || only_public_key_auth? || @enable_sshd
+      Yast::Linuxrc.usessh || @enable_sshd
     end
 
     def wanted_open_ssh?
-      Yast::Linuxrc.usessh || only_public_key_auth? || @open_ssh
+      Yast::Linuxrc.usessh || @open_ssh
     end
 
     def wanted_open_vnc?
       Yast::Linuxrc.vnc
     end
 
-    # Determines whether only public key authentication is supported
+    # Determines whether only public key authentication is supported.
+    #
+    # Do not call this prematurely before the user was even prompted for a root password;
+    # in particular, do not call this from the constructor of this class.
     #
     # @note If the root user does not have a password, we assume that we will use a public
     #   key in order to log into the system. In such a case, we need to enable the SSH
     #   service (including opening the port).
     def only_public_key_auth?
-      return true unless root_user
+      if root_user.nil?
+        log.warn("No root user created yet; can't check root password!")
+        return false
+      end
 
       password = root_user.password_content || ""
-
       password.empty?
     end
 
