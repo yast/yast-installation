@@ -224,9 +224,7 @@ module Installation
         # Check if only public key auth is configured, and if yes,
         # enable SSHD and open the SSH port; but only now, after we are sure
         # that the user was prompted for the root password (bsc#1211764).
-        @settings.propose unless @sshd_proposed # Only once to allow the user to override this
-
-        @sshd_proposed = true
+        @settings.propose
         if @settings.enable_sshd
           _(
             "SSH service will be enabled (<a href=\"%s\">disable</a>)"

@@ -78,20 +78,31 @@ module Installation
       Yast::PackagesProposal.SetResolvables("LSM", :pattern, lsm_config.needed_patterns)
     end
 
-    # Make a proposal for the security settings:
+    # Make a one-time proposal for the security settings:
     #
     # If only public key authentication is configured, and no root password is set,
     # open the SSH port and enable SSHD so at least SSH access can be used.
     #
     # This should be called AFTER the user was prompted for the root password, e.g.
     # when the security proposal is made during installation.
+    #
+    # This is done only once. Use 'reset_proposal' to do do it again.
     def propose
+      return if @proposal_done
+
+      @proposal_done = true
       log.info("Making security settings proposal")
       return unless only_public_key_auth?
 
       log.info("Only public key auth")
       open_ssh! unless @open_ssh
       enable_sshd! unless @enable_sshd
+    end
+
+    # Reset the proposal; i.e. the next call to 'propose' will do a fresh
+    # proposal.
+    def reset_proposal
+      @proposal_done = false
     end
 
     # Services
