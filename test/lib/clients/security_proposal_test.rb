@@ -183,7 +183,14 @@ describe Installation::Clients::SecurityProposal do
         context "and the SSH port is closed" do
           let(:ssh_open) { false }
 
-          it "returns the proposal warning about the situation" do
+          it "returns no warning for the the original proposal" do
+            proposal = client.make_proposal({})
+            expect(proposal["warning"]).to be_nil
+          end
+
+          it "returns a warning after the user changed settings manually" do
+            client.make_proposal({})
+            proposal_settings.close_ssh!
             proposal = client.make_proposal({})
             expect(proposal["warning"]).to include("might not be allowed")
           end
@@ -193,7 +200,14 @@ describe Installation::Clients::SecurityProposal do
       context "and the SSH is disabled" do
         let(:ssh_enabled) { false }
 
+        it "returns no warning for the the original proposal" do
+          proposal = client.make_proposal({})
+          expect(proposal["warning"]).to be_nil
+        end
+
         it "returns the proposal warning about the situation" do
+          client.make_proposal({})
+          proposal_settings.disable_sshd!
           proposal = client.make_proposal({})
           expect(proposal["warning"]).to include("might not be allowed")
         end

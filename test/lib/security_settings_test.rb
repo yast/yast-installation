@@ -109,7 +109,9 @@ describe Installation::SecuritySettings do
         described_class.create_instance
       end
     end
+  end
 
+  describe "#propose" do
     context "when no root password was set" do
       let(:root_password) { Y2Users::Password.create_plain("") }
 
@@ -117,11 +119,35 @@ describe Installation::SecuritySettings do
         allow(Yast::Linuxrc).to receive(:usessh).and_return(false)
       end
 
-      it "opens SSH to allow public key authentication" do
+      it "without propose does not change the SSH settings" do
+        expect_any_instance_of(described_class).not_to receive(:enable_sshd!)
+        expect_any_instance_of(described_class).not_to receive(:open_ssh!)
+
+        described_class.create_instance
+      end
+
+      it "with propose opens SSH to allow public key authentication" do
         expect_any_instance_of(described_class).to receive(:enable_sshd!)
         expect_any_instance_of(described_class).to receive(:open_ssh!)
 
-        described_class.create_instance
+        instance = described_class.create_instance
+        instance.propose
+      end
+    end
+
+    context "when a root password was set" do
+      let(:root_password) { Y2Users::Password.create_plain("s3cr3t") }
+
+      before do
+        allow(Yast::Linuxrc).to receive(:usessh).and_return(false)
+      end
+
+      it "does not change the SSH settings" do
+        expect_any_instance_of(described_class).not_to receive(:enable_sshd!)
+        expect_any_instance_of(described_class).not_to receive(:open_ssh!)
+
+        instance = described_class.create_instance
+        instance.propose
       end
     end
   end
