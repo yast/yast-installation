@@ -68,6 +68,12 @@ describe Installation::SecuritySettings do
       described_class.create_instance
     end
 
+    it "does not yet check for public key auth only" do
+      expect_any_instance_of(described_class).not_to receive(:only_public_key_auth?)
+
+      described_class.create_instance
+    end
+
     context "when firewall has been enabled in the control file" do
       let(:global_section) { { "enable_firewall" => true, "enable_sshd" => false } }
 
@@ -290,19 +296,19 @@ describe Installation::SecuritySettings do
       subject.enable_sshd = ssh_enabled
       subject.enable_firewall = firewall_enabled
       subject.open_ssh = ssh_open
-      allow(subject).to receive(:only_public_key_auth).and_return(only_ssh_key_auth)
+      allow(subject).to receive(:only_public_key_auth?).and_return(only_ssh_key_auth)
     end
 
     context "when the root user uses only SSH key based authentication" do
       context "when sshd is enabled" do
-        context "and firewall is enabled" do
+        context "and the firewall is enabled" do
           context "and the SSH port is open" do
             it "returns false" do
               expect(subject.access_problem?).to eql(false)
             end
           end
 
-          context "and the SSH port is close" do
+          context "and the SSH port is closed" do
             let(:ssh_open) { false }
 
             it "returns true" do
@@ -311,7 +317,7 @@ describe Installation::SecuritySettings do
           end
         end
 
-        context "and firewall is disabled" do
+        context "and the firewall is disabled" do
           let(:firewall_enabled) { false }
 
           it "returns false" do
