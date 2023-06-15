@@ -26,6 +26,20 @@ describe Installation::Clients::SecurityProposal do
   subject(:client) { described_class.new }
   let(:proposal_settings) { Installation::SecuritySettings.create_instance }
 
+  def create_target_config
+    root = Y2Users::User.create_root
+    config = Y2Users::Config.new.attach(root)
+
+    Y2Users::ConfigManager.instance.target = config
+  end
+
+  before do
+    create_target_config
+    Y2Users::ConfigManager.instance.target.users.root.password = root_password
+  end
+
+  let(:root_password) { Y2Users::Password.create_plain("s3cr3t") }
+
   describe "#initialize" do
     it "instantiates a new proposal settings" do
       expect(Installation::SecuritySettings).to receive(:instance)
@@ -154,7 +168,7 @@ describe Installation::Clients::SecurityProposal do
       let(:ssh_open) { true }
 
       before do
-        allow(proposal_settings).to receive(:only_public_key_auth).and_return(true)
+        allow(proposal_settings).to receive(:only_public_key_auth?).and_return(true)
         proposal_settings.enable_sshd = ssh_enabled
         proposal_settings.open_ssh = ssh_open
       end
@@ -166,10 +180,17 @@ describe Installation::Clients::SecurityProposal do
             expect(proposal["warning"]).to be_nil
           end
         end
-        context "and the SSH port is close" do
+        context "and the SSH port is closed" do
           let(:ssh_open) { false }
 
-          it "returns the proposal warning about the situation" do
+          it "returns no warning for the the original proposal" do
+            proposal = client.make_proposal({})
+            expect(proposal["warning"]).to be_nil
+          end
+
+          it "returns a warning after the user changed settings manually" do
+            client.make_proposal({})
+            proposal_settings.close_ssh!
             proposal = client.make_proposal({})
             expect(proposal["warning"]).to include("might not be allowed")
           end
@@ -179,7 +200,14 @@ describe Installation::Clients::SecurityProposal do
       context "and the SSH is disabled" do
         let(:ssh_enabled) { false }
 
+        it "returns no warning for the the original proposal" do
+          proposal = client.make_proposal({})
+          expect(proposal["warning"]).to be_nil
+        end
+
         it "returns the proposal warning about the situation" do
+          client.make_proposal({})
+          proposal_settings.disable_sshd!
           proposal = client.make_proposal({})
           expect(proposal["warning"]).to include("might not be allowed")
         end
