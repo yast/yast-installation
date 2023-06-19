@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+-------------------------------------------------------------------
+Thu Jun 15 15:01:13 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't always enable sshd and open the ssh port (bsc#1211764)
+- 4.5.17
+
+-------------------------------------------------------------------
 Mon Mar 13 08:35:59 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
 
 - Removed unnecessary executable flag from file security_proposal.rb
