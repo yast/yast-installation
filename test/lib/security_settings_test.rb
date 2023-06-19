@@ -68,6 +68,12 @@ describe Installation::SecuritySettings do
       described_class.create_instance
     end
 
+    it "does not yet check for public key auth only" do
+      expect_any_instance_of(described_class).not_to receive(:only_public_key_auth?)
+
+      described_class.create_instance
+    end
+
     context "when firewall has been enabled in the control file" do
       let(:global_section) { { "enable_firewall" => true, "enable_sshd" => false } }
 
@@ -103,7 +109,9 @@ describe Installation::SecuritySettings do
         described_class.create_instance
       end
     end
+  end
 
+  describe "#propose" do
     context "when no root password was set" do
       let(:root_password) { Y2Users::Password.create_plain("") }
 
@@ -111,11 +119,35 @@ describe Installation::SecuritySettings do
         allow(Yast::Linuxrc).to receive(:usessh).and_return(false)
       end
 
-      it "opens SSH to allow public key authentication" do
+      it "without propose does not change the SSH settings" do
+        expect_any_instance_of(described_class).not_to receive(:enable_sshd!)
+        expect_any_instance_of(described_class).not_to receive(:open_ssh!)
+
+        described_class.create_instance
+      end
+
+      it "with propose opens SSH to allow public key authentication" do
         expect_any_instance_of(described_class).to receive(:enable_sshd!)
         expect_any_instance_of(described_class).to receive(:open_ssh!)
 
-        described_class.create_instance
+        instance = described_class.create_instance
+        instance.propose
+      end
+    end
+
+    context "when a root password was set" do
+      let(:root_password) { Y2Users::Password.create_plain("s3cr3t") }
+
+      before do
+        allow(Yast::Linuxrc).to receive(:usessh).and_return(false)
+      end
+
+      it "does not change the SSH settings" do
+        expect_any_instance_of(described_class).not_to receive(:enable_sshd!)
+        expect_any_instance_of(described_class).not_to receive(:open_ssh!)
+
+        instance = described_class.create_instance
+        instance.propose
       end
     end
   end
@@ -290,19 +322,19 @@ describe Installation::SecuritySettings do
       subject.enable_sshd = ssh_enabled
       subject.enable_firewall = firewall_enabled
       subject.open_ssh = ssh_open
-      allow(subject).to receive(:only_public_key_auth).and_return(only_ssh_key_auth)
+      allow(subject).to receive(:only_public_key_auth?).and_return(only_ssh_key_auth)
     end
 
     context "when the root user uses only SSH key based authentication" do
       context "when sshd is enabled" do
-        context "and firewall is enabled" do
+        context "and the firewall is enabled" do
           context "and the SSH port is open" do
             it "returns false" do
               expect(subject.access_problem?).to eql(false)
             end
           end
 
-          context "and the SSH port is close" do
+          context "and the SSH port is closed" do
             let(:ssh_open) { false }
 
             it "returns true" do
@@ -311,7 +343,7 @@ describe Installation::SecuritySettings do
           end
         end
 
-        context "and firewall is disabled" do
+        context "and the firewall is disabled" do
           let(:firewall_enabled) { false }
 
           it "returns false" do
