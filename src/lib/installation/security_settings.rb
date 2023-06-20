@@ -78,6 +78,33 @@ module Installation
       Yast::PackagesProposal.SetResolvables("LSM", :pattern, lsm_config.needed_patterns)
     end
 
+    # Make a one-time proposal for the security settings:
+    #
+    # If only public key authentication is configured, and no root password is set,
+    # open the SSH port and enable SSHD so at least SSH access can be used.
+    #
+    # This should be called AFTER the user was prompted for the root password, e.g.
+    # when the security proposal is made during installation.
+    #
+    # This is done only once. Use 'reset_proposal' to do do it again.
+    def propose
+      return if @proposal_done
+
+      @proposal_done = true
+      log.info("Making security settings proposal")
+      return unless only_public_key_auth?
+
+      log.info("Only public key auth")
+      open_ssh! unless @open_ssh
+      enable_sshd! unless @enable_sshd
+    end
+
+    # Reset the proposal; i.e. the next call to 'propose' will do a fresh
+    # proposal.
+    def reset_proposal
+      @proposal_done = false
+    end
+
     # Services
 
     # Add the firewall package to be installed and sets the firewalld service
@@ -85,7 +112,7 @@ module Installation
     def enable_firewall!
       Yast::PackagesProposal.AddResolvables("firewall", :package, ["firewalld"])
 
-      log.info "Enabling Firewall"
+      log.info "Enabling firewall"
       self.enable_firewall = true
     end
 
@@ -93,7 +120,7 @@ module Installation
     # service to be disabled
     def disable_firewall!
       Yast::PackagesProposal.RemoveResolvables("firewall", :package, ["firewalld"])
-      log.info "Disabling Firewall"
+      log.info "Disabling firewall"
       self.enable_firewall = false
     end
 
@@ -121,19 +148,19 @@ module Installation
 
     # Set the ssh port to be closed
     def close_ssh!
-      log.info "Opening SSH port"
+      log.info "Closing SSH port"
       self.open_ssh = false
     end
 
     # Set the vnc port to be opened
     def open_vnc!
-      log.info "Close VNC port"
+      log.info "Opening VNC port"
       self.open_vnc = true
     end
 
     # Set the vnc port to be closed
     def close_vnc!
-      log.info "Close VNC port"
+      log.info "Closing VNC port"
       self.open_vnc = false
     end
 
@@ -144,7 +171,7 @@ module Installation
     #   authentication and the system is not accesible through ssh
     def access_problem?
       # public key is not the only way
-      return false unless only_public_key_auth
+      return false unless only_public_key_auth?
 
       # without running sshd it is useless
       return true unless @enable_sshd
@@ -181,27 +208,32 @@ module Installation
     end
 
     def wanted_enable_sshd?
-      Yast::Linuxrc.usessh || only_public_key_auth || @enable_sshd
+      Yast::Linuxrc.usessh || @enable_sshd
     end
 
     def wanted_open_ssh?
-      Yast::Linuxrc.usessh || only_public_key_auth || @open_ssh
+      Yast::Linuxrc.usessh || @open_ssh
     end
 
     def wanted_open_vnc?
       Yast::Linuxrc.vnc
     end
 
-    # Determines whether only public key authentication is supported
+    # Determines whether only public key authentication is supported.
+    #
+    # Do not call this prematurely before the user was even prompted for a root password;
+    # in particular, do not call this from the constructor of this class.
     #
     # @note If the root user does not have a password, we assume that we will use a public
     #   key in order to log into the system. In such a case, we need to enable the SSH
     #   service (including opening the port).
-    def only_public_key_auth
-      return true unless root_user
+    def only_public_key_auth?
+      if root_user.nil?
+        log.warn("No root user created yet; can't check root password!")
+        return false
+      end
 
       password = root_user.password_content || ""
-
       password.empty?
     end
 
