@@ -140,7 +140,7 @@ module Installation
       def cpu_mitigations_proposal
         require "bootloader/bootloader_factory"
         bl = ::Bootloader::BootloaderFactory.current
-        return nil if bl.name == "none"
+        return nil unless bl.respond_to?(:cpu_mitigations)
 
         mitigations = bl.cpu_mitigations
 
