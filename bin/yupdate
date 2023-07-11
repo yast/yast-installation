@@ -751,13 +751,13 @@ module YUpdate
       g.install_required_gems
     end
 
-    def run_pre_script(download_dir, subdir)
-      script = File.join(download_dir, subdir, ".yupdate.pre")
+    def run_pre_script(download_dir)
+      script = File.join(download_dir, ".yupdate.pre")
       run_script(script)
     end
 
-    def run_post_script(download_dir, subdir)
-      script = File.join(download_dir, subdir, ".yupdate.post")
+    def run_post_script(download_dir)
+      script = File.join(download_dir, ".yupdate.post")
       run_script(script)
     end
 
@@ -774,9 +774,9 @@ module YUpdate
     def install_tar(downloader, subdir = "")
       Dir.mktmpdir do |download_dir|
         downloader.extract_to(download_dir)
-        run_pre_script(download_dir, subdir)
+        run_pre_script(File.join(download_dir, subdir))
         install_sources(download_dir)
-        run_post_script(download_dir, subdir)
+        run_post_script(File.join(download_dir, subdir))
       end
     end
 
