@@ -717,7 +717,9 @@ module YUpdate
       # add the default "yast" GitHub organization if missing
       repo = "yast/#{repo}" unless repo.include?("/")
       downloader = GithubDownloader.new(repo, branch)
-      install_tar(downloader)
+      # the GitHub tarballs have all content in a "<repo>-<branch>" subdirectory
+      dir = repo.split("/", 2).last + "-" + branch
+      install_tar(downloader, dir)
     end
 
     def install_from_tar(url)
@@ -766,12 +768,15 @@ module YUpdate
       raise "Script #{File.basename(script)} failed" unless system(script)
     end
 
-    def install_tar(downloader)
+    # extract the tarball into a temporary directory and install it
+    # @param downloader the downloader to use
+    # @param subdir subdirectory in the source tarball
+    def install_tar(downloader, subdir = "")
       Dir.mktmpdir do |download_dir|
         downloader.extract_to(download_dir)
-        run_pre_script(download_dir)
+        run_pre_script(File.join(download_dir, subdir))
         install_sources(download_dir)
-        run_post_script(download_dir)
+        run_post_script(File.join(download_dir, subdir))
       end
     end
 
