@@ -121,7 +121,7 @@ module Installation
       def cpu_frame
         frame(
           _("CPU"),
-          ::Bootloader::CpuMitigationsWidget.new
+          ::Bootloader::Grub2Widget::CpuMitigationsWidget.new
         )
       end
 
