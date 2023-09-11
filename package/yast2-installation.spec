@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.6.0
+Version:        4.6.7
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -58,6 +58,8 @@ Requires:       coreutils
 Requires:       gzip
 # use in startup scripts
 Requires:       initviocons
+# bsc#1214277; require awk, not gawk, to allow for lighterweight alternatives like busybox
+Requires:       awk
 # Needed call /sbin/ip in vnc.sh/network.sh
 Requires:       iproute2
 # for the first/second stage of installation

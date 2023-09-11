@@ -584,14 +584,20 @@ module YUpdate
       # the inst-sys contains the /.packages.initrd file with a list of packages
       return if File.exist?("/.packages.initrd")
 
-      # live medium uses overlay FS for the root
-      return if `mount`.match?(/^\w+ on \/ type overlay/)
+      mount_out = `mount`
+      # live medium uses overlay FS or device mapper for the root
+      if mount_out.match?(/^\w+ on \/ type overlay/) ||
+          mount_out.match?(/^\/dev\/mapper\/live-rw on \/ /)
+
+        return
+      end
 
       return if in_container?
 
       # exit immediately if running in an installed system
       warn "ERROR: This script can only work in the installation system (inst-sys), " \
            "live medium or in a container!"
+      warn "If you are sure it is OK to use the script add the --force option."
       exit 1
     end
 
@@ -620,16 +626,23 @@ module YUpdate
   # parse the command line options
   class Options
     def self.parse(argv)
+      force = argv.include?("--force")
+      if force
+        argv.delete("--force")
+        # pass the force option to the executed scripts
+        ENV["YUPDATE_FORCE"] = "1"
+      end
+
       command = argv.shift
 
       case command
       when "version"
         VersionCommand.new
       when "overlay"
-        System.check!
+        System.check! unless force
         OverlayCommand.new(argv)
       when "patch"
-        System.check!
+        System.check! unless force
         PatchCommand.new(argv)
       when "servers"
         ServersCommand.new(argv)
@@ -704,7 +717,9 @@ module YUpdate
       # add the default "yast" GitHub organization if missing
       repo = "yast/#{repo}" unless repo.include?("/")
       downloader = GithubDownloader.new(repo, branch)
-      install_tar(downloader)
+      # the GitHub tarballs have all content in a "<repo>-<branch>" subdirectory
+      dir = repo.split("/", 2).last + "-" + branch
+      install_tar(downloader, dir)
     end
 
     def install_from_tar(url)
@@ -753,12 +768,15 @@ module YUpdate
       raise "Script #{File.basename(script)} failed" unless system(script)
     end
 
-    def install_tar(downloader)
+    # extract the tarball into a temporary directory and install it
+    # @param downloader the downloader to use
+    # @param subdir subdirectory in the source tarball
+    def install_tar(downloader, subdir = "")
       Dir.mktmpdir do |download_dir|
         downloader.extract_to(download_dir)
-        run_pre_script(download_dir)
+        run_pre_script(File.join(download_dir, subdir))
         install_sources(download_dir)
-        run_post_script(download_dir)
+        run_post_script(File.join(download_dir, subdir))
       end
     end
 
