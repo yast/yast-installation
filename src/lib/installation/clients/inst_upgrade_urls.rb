@@ -150,10 +150,10 @@ module Yast
       when :removed
         # TRANSLATORS: The action to perform with a repository
         _("Remove")
-      when :disable
+      when :disabled
         # TRANSLATORS: The action to perform with a repository
         _("Disable")
-      when :enable
+      when :enabled
         # TRANSLATORS: The action to perform with a repository
         _("Enable")
       else

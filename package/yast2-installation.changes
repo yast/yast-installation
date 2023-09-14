@@ -1,21 +1,56 @@
 -------------------------------------------------------------------
-Fri Sep 01 19:57:03 UTC 2023 - Josef Reidinger <jreidinger@suse.com>
+Tue Aug 15 08:42:50 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
 
-- Branch package for SP6 (bsc#1208913)
+- Require awk for use in startup scripts (bsc#1214277)
+- 4.6.7
 
 -------------------------------------------------------------------
+Fri Aug  4 07:09:13 UTC 2023 - Michal Filka <mfilka@suse.com>
+
+- bsc#1213959
+  - Change status label properly when toggling status in the
+    "Previousy used repositories" dialog.
+- 4.6.6 
+
+-------------------------------------------------------------------
+Tue Jul 11 07:20:29 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Fixed yupdate script to properly run pre/post scripts
+  when patching from GitHub (bsc#1213197)
+- 4.6.5
+
 -------------------------------------------------------------------
 Thu Jun 15 15:01:13 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Don't always enable sshd and open the ssh port (bsc#1211764)
-- 4.5.17
+- 4.6.4
 
 -------------------------------------------------------------------
-Mon Mar 13 08:35:59 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+Thu May 11 16:44:38 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Use a larger font for xterm during installation via X resources
+  (bsc#1211267)
+  Details: https://github.com/yast/yast-installation/pull/1085
+  4.6.3
+
+-------------------------------------------------------------------
+Mon Apr  3 12:04:23 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- yupdate - improved Live ISO detection, added "--force" option
+  (related to bsc#1206927)
+- 4.6.2
+
+-------------------------------------------------------------------
+Mon Mar 13 08:49:20 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
 
 - Removed unnecessary executable flag from file security_proposal.rb
   (bsc#1209094)
-- 4.5.16
+- 4.6.1
+
+-------------------------------------------------------------------
+Fri Mar 03 14:44:07 UTC 2023 - Ladislav Slezák <lslezak@suse.cz>
+
+- Bump version to 4.6.0 (bsc#1208913)
 
 -------------------------------------------------------------------
 Wed Jan 25 19:56:12 UTC 2023 - Knut Anderssen <kanderssen@suse.com>
