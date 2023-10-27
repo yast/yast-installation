@@ -125,6 +125,12 @@ module Installation
       update_urls
       process_repos
       remove_services
+
+      # reload the package manager to activate the changes
+      Yast::Pkg.SourceSaveAll
+      Yast::Pkg.SourceFinishAll
+      Yast::Pkg.SourceRestore
+      Yast::Pkg.SourceLoad
     end
 
   private
@@ -167,6 +173,9 @@ module Installation
     def update_urls
       new_urls.each do |repo, url|
         repo.url = url
+
+        # if the repository will be enabled refresh the content
+        Yast::Pkg.SourceForceRefreshNow(repo.repo_id) if status_map[repo] == :enabled
       end
     end
 

@@ -97,6 +97,10 @@ describe Installation::UpgradeRepoManager do
       allow(repo1).to receive(:disable!)
       allow(repo1).to receive(:delete!)
       allow(Yast::Pkg).to receive(:ServiceDelete)
+      allow(Yast::Pkg).to receive(:SourceSaveAll)
+      allow(Yast::Pkg).to receive(:SourceFinishAll)
+      allow(Yast::Pkg).to receive(:SourceRestore)
+      allow(Yast::Pkg).to receive(:SourceLoad)
     end
 
     it "removes the selected repositories" do
