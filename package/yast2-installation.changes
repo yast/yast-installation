@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 27 14:13:14 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Refresh repositories with changed URL and reload them again
+  to activate the changes (related to bsc#1215884)
+- 4.5.18
+
 -------------------------------------------------------------------
 Thu Jun 15 15:01:13 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
 
