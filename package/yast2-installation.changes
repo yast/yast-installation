@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Oct 31 08:29:48 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Refresh repositories with changed URL and reload them again
+  to activate the changes (related to bsc#1215884)
+- 4.6.8
+
+-------------------------------------------------------------------
 Tue Aug 15 08:42:50 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Require awk for use in startup scripts (bsc#1214277)

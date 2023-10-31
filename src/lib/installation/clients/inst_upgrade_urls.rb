@@ -19,6 +19,7 @@
 
 require "yast"
 require "installation/upgrade_repo_manager"
+require "y2packager/medium_type"
 require "y2packager/repository"
 
 Yast.import "GetInstArgs"
@@ -296,6 +297,9 @@ module Yast
     def save_pkg_mgr
       # do not save the changes in the test mode
       Pkg.SourceSaveAll unless test?
+
+      # reload repositories only when using the openSUSE Leap media
+      Pkg.SourceLoad if Y2Packager::MediumType.standard?
 
       # clear the old repositories
       Y2Packager::OriginalRepositorySetup.instance.repositories.clear
