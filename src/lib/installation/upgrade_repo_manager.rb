@@ -175,7 +175,7 @@ module Installation
         repo.url = url
 
         # if the repository will be enabled refresh the content
-        Yast::Pkg.SourceForceRefreshNow(repo.repo_id) if status_map[repo] == :enabled
+        repo.refresh(force: true) if status_map[repo] == :enabled
       end
     end
 
