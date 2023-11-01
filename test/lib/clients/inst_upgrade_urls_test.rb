@@ -36,6 +36,8 @@ describe Yast::InstUpgradeUrlsClient do
     allow(Yast::UI).to receive(:QueryWidget)
     allow(Yast::UI).to receive(:ChangeWidget)
     allow(Yast::Pkg).to receive(:SourceSaveAll)
+    allow(Y2Packager::MediumType).to receive(:standard?).and_return(true)
+    allow(Yast::Pkg).to receive(:SourceLoad)
   end
 
   describe "#main" do
