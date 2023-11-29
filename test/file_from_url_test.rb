@@ -369,7 +369,52 @@ describe Yast::Transfer::FileFromUrl do
       end
     end
 
-    context "when scheme is 'cifs'"
+    context "when scheme is cifs" do
+      let(:scheme) { "cifs" }
+      let(:host) { "myhost" }
+      let(:tmp_mount) { File.join(tmpdir, "tmp_mount") }
+      let(:localfile) { File.join(dir, "dest") }
+      let(:source) { File.join(dir, "source") }
+      let(:dir) { Dir.mktmpdir }
+      let(:destdir) { Dir.mktmpdir("chroot") }
+
+      before do
+        FileUtils.mkdir_p(File.join(destdir, tmp_mount))
+        FileUtils.touch(File.join(destdir, tmp_mount, "source"))
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"), any_args
+        ).and_return(true)
+
+        allow(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+      end
+
+      it "mounts the file system and copies the file" do
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"),
+          ["//#{host}#{dir}/", tmp_mount], "-t cifs -o guest,ro,noatime"
+        ).and_return(true)
+
+        expect(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+
+        expect(subject.Get(scheme, host, source, localfile, destdir: destdir)).to eq(true)
+        expect(File).to exist(localfile)
+      end
+    end
     context "when scheme is 'floppy'"
     context "when scheme is 'tftp'"
   end
