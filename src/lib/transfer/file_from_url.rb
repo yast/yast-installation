@@ -338,17 +338,18 @@ module Yast::Transfer
           ok = false
         end
       elsif _Scheme == "nfs" # NFS
+        nfs_host = find_nfs_host(_Host)
         if !Convert.to_boolean(
           SCR.Execute(
             path(".target.mount"),
-            [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
+            [Ops.add(Ops.add(nfs_host, ":"), dirname(_Path)), mount_point],
             "-o noatime,nolock"
           )
         ) &&
             !Convert.to_boolean(
               SCR.Execute(
                 path(".target.mount"),
-                [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
+                [Ops.add(Ops.add(nfs_host, ":"), dirname(_Path)), mount_point],
                 "-o noatime -t nfs4"
               )
             )
@@ -605,6 +606,18 @@ module Yast::Transfer
       tmp = toks.dup
       tmp["pass"] &&= "PASSWORD"
       tmp
+    end
+
+    # Determines the host to use when trying to mount an NFS volume.
+    #
+    # IPv6 addresses should be enclosed between square brackets.
+    #
+    # @param host [String] Hostname or IP address.
+    def find_nfs_host(host)
+      ip = IPAddr.new(host)
+      ip.ipv6? ? "[#{host}]" : host
+    rescue IPAddr::InvalidAddressError
+      host
     end
   end
 end
