@@ -342,7 +342,7 @@ describe Yast::Transfer::FileFromUrl do
         expect(File).to exist(localfile)
       end
 
-      context "when an IPv6 address is given" do
+      context "when an IPv4 address is given" do
         let(:host) { "192.168.1.1" }
 
         it "passes the address to the mount command" do
