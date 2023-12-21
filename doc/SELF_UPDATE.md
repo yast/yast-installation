@@ -66,7 +66,7 @@ and select the language from the list. Or use the `language` boot option, e.g.
 `language=de_DE`.
 
 If you want to use a different keyboard layout for the console then use the
-[`keytable`](https://en.opensuse.org/SDB:Linuxrc#p_keytable) boot option.
+[keytable](https://en.opensuse.org/SDB:Linuxrc#p_keytable) boot option.
 
 ## Network Setup
 
