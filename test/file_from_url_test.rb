@@ -3,6 +3,7 @@
 require_relative "test_helper"
 
 require "transfer/file_from_url"
+require "fileutils"
 require "tmpdir"
 
 describe Yast::Transfer::FileFromUrl do
@@ -19,12 +20,14 @@ describe Yast::Transfer::FileFromUrl do
     include Yast::Transfer::FileFromUrl
 
     # adaptor for existing tests
-    def Get(scheme, host, urlpath, localfile)
+    def Get(scheme, host, urlpath, localfile, destdir: "/destdir")
       get_file_from_url(scheme: scheme, host: host, urlpath: urlpath,
         localfile: localfile,
-        urltok: {}, destdir: "/destdir")
+        urltok: {}, destdir: destdir)
     end
   end
+
+  let(:destdir) { "/destdir" }
 
   # avoid BuildRequiring a package that we stub entirely anyway
   before do
@@ -42,7 +45,7 @@ describe Yast::Transfer::FileFromUrl do
       expect(Yast::WFM).to receive(:SCRGetName).with(333)
         .and_return("chroot=/mnt:scr")
       allow(Yast::WFM).to receive(:Execute)
-        .with(path(".local.mkdir"), "/destdir/tmp_dir/tmp_mount")
+        .with(path(".local.mkdir"), "#{destdir}/tmp_dir/tmp_mount")
       # the local/target mess was last modified in
       # https://github.com/yast/yast-autoinstallation/commit/69f1966dd1456301a69102c6d3bacfe7c9f9dc49
       # for https://bugzilla.suse.com/show_bug.cgi?id=829265
@@ -293,8 +296,125 @@ describe Yast::Transfer::FileFromUrl do
       end
     end
 
-    context "when scheme is 'nfs'"
-    context "when scheme is 'cifs'"
+    context "when scheme is 'nfs'" do
+      let(:scheme) { "nfs" }
+      let(:host) { "myhost" }
+      let(:tmp_mount) { File.join(tmpdir, "tmp_mount") }
+      let(:localfile) { File.join(dir, "dest") }
+      let(:source) { File.join(dir, "source") }
+      let(:dir) { Dir.mktmpdir }
+      let(:destdir) { Dir.mktmpdir("chroot") }
+
+      before do
+        FileUtils.mkdir_p(File.join(destdir, tmp_mount))
+        FileUtils.touch(File.join(destdir, tmp_mount, "source"))
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"), any_args
+        ).and_return(true)
+
+        allow(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+      end
+
+      it "mounts the file system and copies the file" do
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"),
+          ["#{host}:#{dir}/", tmp_mount], "-o noatime,nolock"
+        ).and_return(true)
+
+        expect(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+
+        expect(subject.Get(scheme, host, source, localfile, destdir: destdir)).to eq(true)
+        expect(File).to exist(localfile)
+      end
+
+      context "when an IPv4 address is given" do
+        let(:host) { "192.168.1.1" }
+
+        it "passes the address to the mount command" do
+          expect(Yast::SCR).to receive(:Execute).with(
+            Yast::Path.new(".target.mount"),
+            ["#{host}:#{dir}/", tmp_mount], "-o noatime,nolock"
+          ).and_return(true)
+
+          expect(subject.Get(scheme, host, source, localfile, destdir: destdir)).to eq(true)
+        end
+      end
+
+      context "when an IPv6 address is given" do
+        let(:host) { "fd12:3456:789a:1::1" }
+
+        it "passes the address between square brackets" do
+          expect(Yast::SCR).to receive(:Execute).with(
+            Yast::Path.new(".target.mount"),
+            ["[#{host}]:#{dir}/", tmp_mount], "-o noatime,nolock"
+          ).and_return(true)
+
+          expect(subject.Get(scheme, host, source, localfile, destdir: destdir)).to eq(true)
+        end
+      end
+    end
+
+    context "when scheme is cifs" do
+      let(:scheme) { "cifs" }
+      let(:host) { "myhost" }
+      let(:tmp_mount) { File.join(tmpdir, "tmp_mount") }
+      let(:localfile) { File.join(dir, "dest") }
+      let(:source) { File.join(dir, "source") }
+      let(:dir) { Dir.mktmpdir }
+      let(:destdir) { Dir.mktmpdir("chroot") }
+
+      before do
+        FileUtils.mkdir_p(File.join(destdir, tmp_mount))
+        FileUtils.touch(File.join(destdir, tmp_mount, "source"))
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"), any_args
+        ).and_return(true)
+
+        allow(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        allow(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+      end
+
+      it "mounts the file system and copies the file" do
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.mount"),
+          ["//#{host}#{dir}/", tmp_mount], "-t cifs -o guest,ro,noatime"
+        ).and_return(true)
+
+        expect(Yast::WFM).to receive(:Execute).with(
+          Yast::Path.new(".local.bash"),
+          "/bin/cp #{destdir}#{tmp_mount}/source #{localfile}"
+        ).and_call_original
+
+        expect(Yast::SCR).to receive(:Execute).with(
+          Yast::Path.new(".target.umount"), tmp_mount
+        ).and_return(true)
+
+        expect(subject.Get(scheme, host, source, localfile, destdir: destdir)).to eq(true)
+        expect(File).to exist(localfile)
+      end
+    end
     context "when scheme is 'floppy'"
     context "when scheme is 'tftp'"
   end

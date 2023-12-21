@@ -1,6 +1,6 @@
 # URL handling in the installer
 
-*For a general description of URL formats see [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986#section-3).*
+For a general description of URL formats see [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986#section-3).
 
 ## Absolute URLs
 
@@ -9,11 +9,11 @@ all can be traced to one of three backends:
 
 1. [Linuxrc](https://en.opensuse.org/SDB:Linuxrc#Parameter_Reference)
 2. [Zypp](https://doc.opensuse.org/projects/libzypp/HEAD/classzypp_1_1media_1_1MediaManager.html#MediaAccessUrl)
-3. [YaST/AutoYaST](https://doc.opensuse.org/projects/autoyast/#Commandline-ay) itself in [`Yast::Transfer::FileFromUrl.get_file_from_url`](https://github.com/yast/yast-installation/blob/b950b062729d98d11d98609cba829bbc39355143/src/lib/transfer/file_from_url.rb#L76-L92)
+3. [YaST/AutoYaST](https://doc.opensuse.org/projects/autoyast/#Commandline-ay) itself in [Yast::Transfer::FileFromUrl.get_file_from_url](https://github.com/yast/yast-installation/blob/b950b062729d98d11d98609cba829bbc39355143/src/lib/transfer/file_from_url.rb#L76-L92)
 
 > There was additionally a 4th one hidden in AutoYaST:
 > 
-> 4. [`Yast::ProfileLocationClass.Process`](https://github.com/yast/yast-autoinstallation/blob/SLE-15-SP4/src/modules/ProfileLocation.rb#L101-L116)
+> 4. [Yast::ProfileLocationClass.Process](https://github.com/yast/yast-autoinstallation/blob/SLE-15-SP4/src/modules/ProfileLocation.rb#L101-L116)
 >   took care of the `label` scheme in AutoYaST context. It's been added to `Yast::Transfer::FileFromUrl` now.
 
 ## Relative URLs
@@ -141,7 +141,7 @@ end
 There are often hidden assumptions in these regexps (e.g. that `relurl` starts with at least two slashes)
 that might break things at some point.
 
-But there is a perfectly fine [`URI`](https://docs.ruby-lang.org/en/master/URI.html) class
+But there is a perfectly fine [URI](https://docs.ruby-lang.org/en/master/URI.html) class
 in ruby that can do this better. For example:
 
 ```ruby
@@ -151,7 +151,7 @@ end
 ```
 
 And there is also the
-[`Yast::URLClass`](https://github.com/yast/yast-yast2/blob/master/library/types/src/modules/URL.rb)
+[Yast::URLClass](https://github.com/yast/yast-yast2/blob/master/library/types/src/modules/URL.rb)
 class for handling URLs. On the negative side this is old YCP code but on the
 positive side it deals with idiosyncrasies like varying number of slashes.
 
@@ -182,7 +182,7 @@ def resolve_location
 end
 ```
 
-There is a [`Yast2::RelURL`](https://github.com/yast/yast-yast2/blob/master/library/general/src/lib/yast2/rel_url.rb) class that can do exactly that.
+There is a [Yast2::RelURL](https://github.com/yast/yast-yast2/blob/master/library/general/src/lib/yast2/rel_url.rb) class that can do exactly that.
 
 ```ruby
 Yast2::RelURL.new("http://example.com", "relurl://foo/bar").absolute_url.to_s

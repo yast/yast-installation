@@ -148,9 +148,9 @@ the start.
 By default this will use port 8000, if the server uses another port just add
 `:` followed by the port number.
 
-*Note: Make sure the server port is open in the firewall configuration,
+Note: Make sure the server port is open in the firewall configuration,
 see the [documentation](https://github.com/yast/yast-rake/#server) for
-more details.*
+more details.
 
 #### Patching Multiple Packages
 
