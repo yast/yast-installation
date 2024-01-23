@@ -24,16 +24,6 @@ module Installation
 
   private
 
-    def kvm?
-      File.exist?("/proc/sysinfo") &&
-        File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any?
-    end
-
-    def zvm?
-      File.exist?("/proc/sysinfo") &&
-        File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
-    end
-
     # Get current I/O device autoconf setting (rd.zdev kernel option)
     #
     # @return [Boolean]
@@ -50,13 +40,7 @@ module Installation
     #
     # @return [Boolean]
     def cio_setting
-      if Yast::Mode.autoinst
-        Yast::AutoinstConfig.cio_ignore
-      else
-        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
-        # but for other cases return true as requested FATE#315586
-        !(kvm? || zvm?)
-      end
+      Yast::Mode.autoinst ? Yast::AutoinstConfig.cio_ignore : true
     end
   end
 
@@ -182,6 +166,7 @@ module Installation
     ].freeze
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
+    YAST_LOCAL_BASH_PATH = Yast::Path.new ".local.bash_output"
 
     def initialize
       textdomain "installation"
@@ -224,9 +209,9 @@ module Installation
     def write_cio_setting
       return unless CIOIgnore.instance.cio_enabled
 
-      res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore --unused --purge")
+      res = Yast::WFM.Execute(YAST_LOCAL_BASH_PATH, "/sbin/cio_ignore --unused --purge")
 
-      log.info "result of cio_ignore call: #{res.inspect}"
+      log.info "result of cio_ignore --unused --purge call: #{res.inspect}"
 
       raise "cio_ignore command failed with stderr: #{res["stderr"]}" if res["exit"] != 0
 
@@ -255,15 +240,22 @@ module Installation
     def add_cio_boot_kernel_parameters
       Yast.import "Bootloader"
 
-      # boot code is already proposed and will be written in next step, so just modify
-      Yast::Bootloader.modify_kernel_params("cio_ignore" => "all,!ipldev,!condev")
+      param = Yast::Bootloader.kernel_param(:common, "cio_ignore")
+
+      if param == :missing
+        res = Yast::WFM.Execute(YAST_LOCAL_BASH_PATH, "/sbin/cio_ignore -k")
+
+        raise "cio_ignore -k failed with #{res["stderr"]}" if res["exit"] != 0
+
+        # boot code is already proposed and will be written in next step, so just modify
+        Yast::Bootloader.modify_kernel_params("cio_ignore" => res["stdout"].lines.first)
+      end
     end
 
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt".freeze
     def store_active_devices
       Yast.import "Installation"
-      res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore -L")
-      log.info "active devices: #{res}"
+      res = Yast::WFM.Execute(YAST_LOCAL_BASH_PATH, "/sbin/cio_ignore -L")
 
       raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
 
@@ -275,6 +267,7 @@ module Installation
 
       # make sure the file ends with a new line character
       devices << "" unless devices.empty?
+      log.info "active devices to be written: #{devices.join(',')}"
 
       File.write(target_file, devices.join("\n"))
     end
