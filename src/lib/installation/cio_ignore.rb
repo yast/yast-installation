@@ -242,14 +242,14 @@ module Installation
 
       param = Yast::Bootloader.kernel_param(:common, "cio_ignore")
 
-      if param == :missing
-        res = Yast::WFM.Execute(YAST_LOCAL_BASH_PATH, "/sbin/cio_ignore -k")
+      return unless param == :missing
 
-        raise "cio_ignore -k failed with #{res["stderr"]}" if res["exit"] != 0
+      res = Yast::WFM.Execute(YAST_LOCAL_BASH_PATH, "/sbin/cio_ignore -k")
 
-        # boot code is already proposed and will be written in next step, so just modify
-        Yast::Bootloader.modify_kernel_params("cio_ignore" => res["stdout"].lines.first)
-      end
+      raise "cio_ignore -k failed with #{res["stderr"]}" if res["exit"] != 0
+
+      # boot code is already proposed and will be written in next step, so just modify
+      Yast::Bootloader.modify_kernel_params("cio_ignore" => res["stdout"].lines.first)
     end
 
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt".freeze
@@ -267,7 +267,7 @@ module Installation
 
       # make sure the file ends with a new line character
       devices << "" unless devices.empty?
-      log.info "active devices to be written: #{devices.join(',')}"
+      log.info "active devices to be written: #{devices.join(",")}"
 
       File.write(target_file, devices.join("\n"))
     end
