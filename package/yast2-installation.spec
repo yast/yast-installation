@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        5.0.3
+Version:        5.0.4
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -27,10 +27,10 @@ Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
-# Y2Packager::Repository.refresh
-BuildRequires:  yast2 >= 5.0.3
-# new name for CPUMitigation widget
-BuildRequires:  yast2-bootloader >= 5.0.1
+# Kernel: Read kernel arguments from cmdline if install.inf does not exist (bsc#1216408).
+BuildRequires:  yast2 >= 5.0.4
+# Whitelist cio_ignore s390 parameter
+BuildRequires:  yast2-bootloader >= 5.0.4
 # storage-ng based version
 BuildRequires:  yast2-country >= 3.3.1
 BuildRequires:  yast2-devtools >= 3.1.10

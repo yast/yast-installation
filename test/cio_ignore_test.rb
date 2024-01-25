@@ -12,19 +12,28 @@ describe ::Installation::CIOIgnore do
   end
 
   describe "cio_ignore enable/disable" do
-    it "take AutoYaST cio_ignore setting" do
-      allow(Yast::Mode).to receive(:autoinst).and_return(true)
-      allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return(false)
-      ::Installation::CIOIgnore.instance.reset
-      expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(false)
+    let(:auto) { false }
+
+    before do
+      allow(Yast::Mode).to receive(:autoinst).and_return(auto)
     end
 
-    it "take default cio_ignore entry if it is in the normal workflow" do
-      allow(Yast::Mode).to receive(:autoinst).and_return(false)
-      expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
-      expect(File).to receive(:exist?).with("/proc/sysinfo").exactly(2).times.and_return(false)
-      ::Installation::CIOIgnore.instance.reset
-      expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
+    context "in autoinstallation" do
+      let(:auto) { true }
+
+      it "takes AutoYaST cio_ignore setting" do
+        allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return(false)
+        ::Installation::CIOIgnore.instance.reset
+        expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(false)
+      end
+    end
+
+    context "in other modes" do
+      it "takes the default cio_ignore entry" do
+        expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
+        ::Installation::CIOIgnore.instance.reset
+        expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
+      end
     end
   end
 end
@@ -161,6 +170,8 @@ describe ::Installation::CIOIgnoreFinish do
     end
 
     describe "first parameter \"Write\"" do
+      let(:param) { "all,!ipldev,!condev" }
+
       before(:each) do
         stub_const("Yast::Installation", double(destdir: "/mnt"))
         stub_const("Yast::Bootloader", double)
@@ -168,8 +179,10 @@ describe ::Installation::CIOIgnoreFinish do
         allow(Yast::Bootloader).to receive(:Write) { true }
         allow(Yast::Bootloader).to receive(:Read) { true }
         allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
+        allow(Yast::Bootloader).to receive(:kernel_param)
+          .with(:common, "cio_ignore").and_return(param)
 
-        allow(Yast::SCR).to receive(:Execute)
+        allow(Yast::WFM).to receive(:Execute)
           .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
         allow(File).to receive(:write)
@@ -179,7 +192,7 @@ describe ::Installation::CIOIgnoreFinish do
         it "does nothing" do
           ::Installation::CIOIgnore.instance.cio_enabled = false
 
-          expect(Yast::SCR).to_not receive(:Execute)
+          expect(Yast::WFM).to_not receive(:Execute)
           expect(Yast::Bootloader).to_not receive(:Read)
 
           subject.run("Write")
@@ -190,9 +203,9 @@ describe ::Installation::CIOIgnoreFinish do
         it "calls `cio_ignore --unused --purge`" do
           ::Installation::CIOIgnore.instance.cio_enabled = true
 
-          expect(Yast::SCR).to receive(:Execute)
+          expect(Yast::WFM).to receive(:Execute)
             .with(
-              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              ::Installation::CIOIgnoreFinish::YAST_LOCAL_BASH_PATH,
               "/sbin/cio_ignore --unused --purge"
             )
             .once
@@ -205,9 +218,9 @@ describe ::Installation::CIOIgnoreFinish do
           ::Installation::CIOIgnore.instance.cio_enabled = true
           stderr = "HORRIBLE ERROR!!!"
 
-          expect(Yast::SCR).to receive(:Execute)
+          expect(Yast::WFM).to receive(:Execute)
             .with(
-              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              ::Installation::CIOIgnoreFinish::YAST_LOCAL_BASH_PATH,
               "/sbin/cio_ignore --unused --purge"
             )
             .once
@@ -216,12 +229,33 @@ describe ::Installation::CIOIgnoreFinish do
           expect { subject.run("Write") }.to raise_error(RuntimeError, /stderr/)
         end
 
-        it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
-          expect(Yast::Bootloader).to receive(:modify_kernel_params)
-            .with("cio_ignore" => "all,!ipldev,!condev").once
-            .and_return(true)
+        context "when the cio_ignore kernel argument is already given" do
+          it "does not touch the kernel parameters" do
+            expect(Yast::Bootloader).to_not receive(:modify_kernel_params)
+              .with("cio_ignore" => anything)
 
-          subject.run("Write")
+            subject.run("Write")
+          end
+        end
+
+        context "when the cio_ignore kernel argument is not given" do
+          let(:param) { :missing }
+          let(:cio_k_output) { "all,!0009,!0160,!0800-0802" }
+
+          it "adds the parameter using the 'cio_ignore -k' output to the bootloader" do
+            expect(Yast::WFM).to receive(:Execute)
+              .with(
+                Installation::CIOIgnoreFinish::YAST_LOCAL_BASH_PATH,
+                "/sbin/cio_ignore -k"
+              )
+              .once
+              .and_return("exit" => 0, "stdout" => cio_k_output, "stderr" => "")
+            expect(Yast::Bootloader).to receive(:modify_kernel_params)
+              .with("cio_ignore" => cio_k_output).once
+              .and_return(true)
+
+            subject.run("Write")
+          end
         end
 
         it "writes list of active devices to zipl so it is not blocked" do
@@ -233,9 +267,9 @@ describe ::Installation::CIOIgnoreFinish do
             0.0.0700-0.0.0702
             0.0.fc00
           CIO_IGNORE
-          expect(Yast::SCR).to receive(:Execute)
+          expect(Yast::WFM).to receive(:Execute)
             .with(
-              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              ::Installation::CIOIgnoreFinish::YAST_LOCAL_BASH_PATH,
               "/sbin/cio_ignore -L"
             )
             .once
@@ -251,9 +285,9 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "raises an exception if cio_ignore -L failed" do
-          expect(Yast::SCR).to receive(:Execute)
+          expect(Yast::WFM).to receive(:Execute)
             .with(
-              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              ::Installation::CIOIgnoreFinish::YAST_LOCAL_BASH_PATH,
               "/sbin/cio_ignore -L"
             )
             .once
