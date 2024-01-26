@@ -7,18 +7,20 @@ require "installation/cio_ignore"
 Yast.import "Bootloader"
 
 describe ::Installation::CIOIgnore do
+  let(:param) { :missing }
+  let(:zvm) { false }
+  let(:kvm) { false }
+  let(:auto) { false }
+
   before do
     allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
-    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "cio_ignore")
+    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "cio_ignore").and_return(param)
+    allow_any_instance_of(described_class).to receive(:kvm?).and_return(kvm)
+    allow_any_instance_of(described_class).to receive(:zvm?).and_return(zvm)
+    allow(Yast::Mode).to receive(:autoinst).and_return(auto)
   end
 
   describe "cio_ignore enable/disable" do
-    let(:auto) { false }
-
-    before do
-      allow(Yast::Mode).to receive(:autoinst).and_return(auto)
-    end
-
     context "in autoinstallation" do
       let(:auto) { true }
 
@@ -34,6 +36,44 @@ describe ::Installation::CIOIgnore do
         expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
         ::Installation::CIOIgnore.instance.reset
         expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
+      end
+    end
+  end
+
+  describe "cio_ignore default value" do
+    before(:each) do
+      ::Installation::CIOIgnore.instance.reset
+    end
+
+    context "when the cio_kernel argument is given" do
+      let(:param) { "all,!ipdev,!condev" }
+
+      it "returns true" do
+        expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
+      end
+    end
+
+    context "when the cio_kernel argument is not given" do
+      context "in zVM" do
+        let(:zvm) { true }
+
+        it "returns true" do
+          expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(false)
+        end
+      end
+
+      context "in KVM" do
+        let(:kvm) { true }
+
+        it "returns true" do
+          expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(false)
+        end
+      end
+
+      context "in LPAR and others" do
+        it "returns false" do
+          expect(::Installation::CIOIgnore.instance.cio_enabled).to eq(true)
+        end
       end
     end
   end
