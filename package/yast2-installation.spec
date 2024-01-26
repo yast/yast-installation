@@ -27,8 +27,8 @@ Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
-# Kernel: Read kernel arguments from cmdline if install.inf does not exist (bsc#1216408).
-BuildRequires:  yast2 >= 5.0.4
+# Kernel: Use is_zvm from Yast::Arch
+BuildRequires:  yast2 >= 5.0.5
 # Whitelist cio_ignore s390 parameter
 BuildRequires:  yast2-bootloader >= 5.0.4
 # storage-ng based version
