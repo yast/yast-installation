@@ -24,16 +24,6 @@ module Installation
 
   private
 
-    def kvm?
-      File.exist?("/proc/sysinfo") &&
-        File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any?
-    end
-
-    def zvm?
-      File.exist?("/proc/sysinfo") &&
-        File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
-    end
-
     # Get current I/O device autoconf setting (rd.zdev kernel option)
     #
     # @return [Boolean]
@@ -53,11 +43,12 @@ module Installation
       if Yast::Mode.autoinst
         Yast::AutoinstConfig.cio_ignore
       else
+        Yast.import "Arch"
         # In case of given as a kernel parameter we should respect it,
         # if not it will depend on the installation environment (bsc#1210525)
         # cio_ignore does not make sense for KVM or z/VM (fate#317861)
         # but for other cases return true as requested FATE#315586
-        cio_ignore_given? || !(kvm? || zvm?)
+        cio_ignore_given? || !(Yast::Arch.is_zkvm || Yast::Arch.is_zvm)
       end
     end
 

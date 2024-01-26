@@ -13,10 +13,10 @@ describe ::Installation::CIOIgnore do
   let(:auto) { false }
 
   before do
+    arch_mock = double("Yast::Arch", s390: false, is_zkvm: kvm, is_zvm: zvm)
+    stub_const("Yast::Arch", arch_mock)
     allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
     allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "cio_ignore").and_return(param)
-    allow_any_instance_of(described_class).to receive(:kvm?).and_return(kvm)
-    allow_any_instance_of(described_class).to receive(:zvm?).and_return(zvm)
     allow(Yast::Mode).to receive(:autoinst).and_return(auto)
   end
 
