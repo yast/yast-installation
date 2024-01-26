@@ -9,6 +9,7 @@ Yast.import "Bootloader"
 describe ::Installation::CIOIgnore do
   before do
     allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
+    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "cio_ignore")
   end
 
   describe "cio_ignore enable/disable" do
@@ -43,6 +44,7 @@ describe ::Installation::CIOIgnoreProposal do
 
   before(:each) do
     allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "rd.zdev")
+    allow(Yast::Bootloader).to receive(:kernel_param).with(:common, "cio_ignore")
     ::Installation::CIOIgnore.instance.reset
   end
 
