@@ -36,11 +36,27 @@ module Installation
       rd_zdev != "no-auto"
     end
 
-    # Get current device blacklist setting (cio_ignore kernel option)
+    # Get current device blacklist setting (cio_ignore kernel option).
     #
     # @return [Boolean]
     def cio_setting
-      Yast::Mode.autoinst ? Yast::AutoinstConfig.cio_ignore : true
+      if Yast::Mode.autoinst
+        Yast::AutoinstConfig.cio_ignore
+      else
+        Yast.import "Arch"
+        # In case of given as a kernel parameter we should respect it,
+        # if not it will depend on the installation environment (bsc#1210525)
+        # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+        # but for other cases return true as requested FATE#315586
+        cio_ignore_given? || !(Yast::Arch.is_zkvm || Yast::Arch.is_zvm)
+      end
+    end
+
+    # Whether the cio_ignore kernel parameter was given or not
+    #
+    # @return [Boolean]
+    def cio_ignore_given?
+      Yast::Bootloader.kernel_param(:common, "cio_ignore") != :missing
     end
   end
 
