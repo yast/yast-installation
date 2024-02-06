@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Feb  6 15:14:27 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
+
+- Restore the selected products after reloading the package
+  manager, properly install all products for new modules and
+  extensions when upgrading from SLE12 (bsc#1218391)
+- 4.6.10
+
+-------------------------------------------------------------------
 Wed Nov 29 16:27:50 UTC 2023 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Enclose IPv6 addresses within square brackets when calling
