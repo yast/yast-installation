@@ -101,6 +101,7 @@ describe Installation::UpgradeRepoManager do
       allow(Yast::Pkg).to receive(:SourceFinishAll)
       allow(Yast::Pkg).to receive(:SourceRestore)
       allow(Yast::Pkg).to receive(:SourceLoad)
+      allow(Y2Packager::Resolvable).to receive(:find).and_return([])
     end
 
     it "removes the selected repositories" do
@@ -131,6 +132,15 @@ describe Installation::UpgradeRepoManager do
 
     it "removes the old services" do
       expect(Yast::Pkg).to receive(:ServiceDelete).with(service1.alias)
+      subject.activate_changes
+    end
+
+    it "restores the selected products" do
+      product = double(name: "SLES", kind: :product)
+      expect(Y2Packager::Resolvable).to receive(:find)
+        .with(status: :selected, transact_by: :appl_high).and_return([product])
+      expect(Yast::Pkg).to receive(:ResolvableInstall)
+        .with(product.name, product.kind).and_return(true)
       subject.activate_changes
     end
   end

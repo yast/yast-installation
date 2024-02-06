@@ -126,11 +126,17 @@ module Installation
       process_repos
       remove_services
 
-      # reload the package manager to activate the changes
+      # reload the package manager to activate the changes,
+      # remember the selected products/packages (ignore the dependencies selected by solver)
+      selected = Y2Packager::Resolvable.find(status: :selected, transact_by: :appl_high)
+
       Yast::Pkg.SourceSaveAll
       Yast::Pkg.SourceFinishAll
       Yast::Pkg.SourceRestore
       Yast::Pkg.SourceLoad
+
+      # restore the selection
+      selected.each { |s| Yast::Pkg.ResolvableInstall(s.name, s.kind) }
     end
 
   private
