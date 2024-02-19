@@ -448,6 +448,10 @@ These options usually enable or disable some installation feature.
     the installer, but not for the installed system which will use *en_US* by
     default.
 
+-   (string) *prefered\_bootloader* - Bootloader which should be used if
+    the system requirements are fulfilled. Valid values are "systemd-boot", "grub2-efi"
+    and "grub2"
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the

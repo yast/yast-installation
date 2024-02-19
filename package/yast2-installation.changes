@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb 19 16:14:49 UTC 2024 - Stefan Schubert <schubi@localhost>
+
+- LUKS2 and systemd-boot can be set by the user for the proposal
+  in the Configuration dialog.
+  (jsc#PED-1906)
+- 5.0.7
+
+-------------------------------------------------------------------
 Tue Feb  6 16:05:37 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
 
 - Restore the selected products after reloading the package
