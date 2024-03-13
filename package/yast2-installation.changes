@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 13 14:30:17 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
+
+- Updated self-update URL in the documentation (jsc#PED-4839)
+- 4.6.11
+
+-------------------------------------------------------------------
 Tue Feb  6 15:14:27 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
 
 - Restore the selected products after reloading the package
