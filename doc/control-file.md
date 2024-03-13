@@ -1264,7 +1264,7 @@ To enable the self update feature (FATE#319716), the location of the update
 repository should be defined in the control file.
 
 ```
-    <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url</self_update_url>
+    <self_update_url>https://installer-updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url</self_update_url>
 ```
 *$os_release_version* will be replaced by the *VERSION* entry in */etc/os-release* file. E.g. "15-SP2"
 *$arch* reflects the architecture of the current installation system.
