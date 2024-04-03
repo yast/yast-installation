@@ -255,7 +255,8 @@ module Yast
     def connect_nbft
       require "yast2/execute"
 
-      Yast::Execute.locally!("nvme", "connect-nbft")
+      # Replaced 'connect-nbft' by 'connect-all --nbft' (bsc#1222246).
+      Yast::Execute.locally!("nvme", "connect-all", "--nbft")
     rescue Cheetah::ExecutionFailed
       Builtins.y2error("Error connecting NBFT")
     end
