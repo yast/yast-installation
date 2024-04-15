@@ -84,7 +84,7 @@ module Yast
         Ops.set(@linuxrc, "Root", "kexec") if LoadKexec()
 
         # Override linuxrc settings in autoinst mode
-        if Mode.autoinst
+        if Mode.auto
           if AutoinstConfig.ForceBoot
             Ops.set(@linuxrc, "Root", "reboot")
           elsif AutoinstConfig.RebootMsg
