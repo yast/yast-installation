@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Apr 17 12:36:57 UTC 2024 - Stefan Schubert <schubi@suse.com>
+
+- Added encryption_method and encryption_pbkdf in the product
+  description file (section partitioning/proposal) in order to
+  encrypt the generated partitions (default: no encryption).
+- 5.0.9
+
+-------------------------------------------------------------------
 Wed Apr  3 13:39:37 UTC 2024 - Knut Anderssen <kanderssen@suse.com>
 
 - Adapted call for connecting all discovered NVMe-over-Fabrics 
