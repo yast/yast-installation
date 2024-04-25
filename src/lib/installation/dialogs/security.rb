@@ -119,9 +119,16 @@ module Installation
       end
 
       def cpu_frame
+        widget = nil
+        current_bl = ::Bootloader::BootloaderFactory.current
+        if current_bl.is_a?(::Bootloader::SystemdBoot)
+          widget = ::Bootloader::SystemdBootWidget::SdCpuMitigationsWidget.new
+        else
+          widget = ::Bootloader::Grub2Widget::Grub2CpuMitigationsWidget.new
+        end
         frame(
           _("CPU"),
-          ::Bootloader::Grub2Widget::CpuMitigationsWidget.new
+          widget
         )
       end
 
