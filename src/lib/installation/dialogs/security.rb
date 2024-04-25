@@ -124,7 +124,7 @@ module Installation
         if current_bl.is_a?(::Bootloader::SystemdBoot)
           widget = ::Bootloader::SystemdBootWidget::SdCpuMitigationsWidget.new
         else
-          widget = ::Bootloader::Grub2Widget::Grub2CpuMitigationsWidget.new
+          widget = ::Bootloader::Grub2Widget::GrubCpuMitigationsWidget.new
         end
         frame(
           _("CPU"),
