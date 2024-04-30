@@ -451,13 +451,13 @@ module Yast::Transfer
                 from: "any",
                 to:   "list <map>"
               )
-            Builtins.foreach(disks) do |m|
-              if _Scheme == "usb" && Ops.get_string(m, "bus", "USB") != "SCSI"
+            Builtins.foreach(disks) do |disk|
+              if _Scheme == "usb" && Ops.get_string(disk, "bus", "USB") != "SCSI"
                 next
               end
-              if Builtins.haskey(m, "dev_name")
+              if Builtins.haskey(disk, "dev_name")
                 i = 0
-                dev = Ops.get_string(m, "dev_name", "")
+                dev = Ops.get_string(disk, "dev_name", "")
                 deviceList = Builtins.add(
                   deviceList,
                   Builtins.substring(dev, 5)
@@ -465,7 +465,7 @@ module Yast::Transfer
                 begin
                   i = Ops.add(i, 1)
                   dev = Ops.add(
-                    Ops.get_string(m, "dev_name", ""),
+                    Ops.get_string(disk, "dev_name", ""),
                     Builtins.sformat("%1", i)
                   )
                   if SCR.Read(path(".target.lstat"), dev) != {}
