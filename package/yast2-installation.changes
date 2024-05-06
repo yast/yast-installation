@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 16 12:25:39 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Handle autoinst AND autoupgrade for the AutoYaST 'halt' mode
+  (bsc#1222153)
+- 4.5.20
+
+-------------------------------------------------------------------
 Wed Nov 29 16:27:50 UTC 2023 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
 
 - Enclose IPv6 addresses within square brackets when calling
