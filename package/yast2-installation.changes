@@ -1,9 +1,15 @@
 -------------------------------------------------------------------
-Wed Apr 17 12:36:57 UTC 2024 - Stefan Schubert <schubi@suse.com>
+Wed May  8 07:22:28 UTC 2024 - Stefan Schubert <schubi@suse.com>
 
 - Added encryption_method and encryption_pbkdf in the product
   description file (section partitioning/proposal) in order to
-  encrypt the generated partitions (default: no encryption).
+  set the default method/pbkdf for partition encryption.
+- 5.0.10
+
+-------------------------------------------------------------------
+Fri Apr 26 14:09:15 UTC 2024 - Stefan Schubert <schubi@suse.com>
+
+- Handle SystemdBoot mitigations. (bsc#1220892)
 - 5.0.9
 
 -------------------------------------------------------------------
