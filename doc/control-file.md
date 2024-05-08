@@ -972,10 +972,11 @@ This subsection contains the following options.
 
   * `lvm` *(boolean, default: `false`)*
     Whether LVM should be used by default.
-  * `encryption_method` *(`luks1`, `luks2`, default: no encryption)
-    Whether and which encryption will be done while creating the partitions.
-  * `encryption_pbkdf` *(`argon2i`, `argon2id`, `pbkdf2`, default: not defined)
-    Password-Based Key Derivation Function if luks2 has been selected for encryption.
+  * `encryption_method` *(`luks1`, `luks2`, default: luks1)
+    Set encryption method in the Guided Setup Partitioning.
+  * `encryption_pbkdf` *(`argon2i`, `argon2id`, `pbkdf2`, default: `pbkdf2`)
+    Password-Based Key Derivation Function if `luks2` has been selected
+    in the Guided Setup Partitioning.
   * `separate_vgs` *(boolean, default: `false`)*
     Whether every volume specifying a separate_vg_name should be created as
     isolated LVM Volume Group instead include them in the "system" group.
