@@ -666,8 +666,6 @@ function start_yast_again () {
 # This sources the files at /usr/lib/YaST2/startup/common/
 # as well as /usr/lib/YaST2/bin/yast2-funcs (from yast2.rpm)
 . /usr/lib/YaST2/startup/common/functions.sh
-
-. /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
 
 
