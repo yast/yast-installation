@@ -277,6 +277,7 @@ function prepare_for_x11 () {
 
 
 function prepare_for_qt () {
+    # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
     set_inst_qt_env
     prepare_for_x11
 }
@@ -307,7 +308,10 @@ function prepare_for_ncurses () {
         log "\tChecking supported NCurses locales"
         check_supported_ncurses_locales
         log "\tLANG: $LANG  LC_CTYPE: $LC_CTYPE"
+
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
 	set_inst_ncurses_env
+
 	#=============================================================
 	# Disable display of status messages on the console, as
 	# controlled via systemd.show_status=0 on the kernel command.
@@ -326,6 +330,7 @@ function prepare_for_ssh () {
 # prepare SSH installation
 # ---
 #
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
 	set_inst_qt_env
 }
 
@@ -363,7 +368,9 @@ function prepare_for_vnc () {
 	#=============================================
 	# Use YaST theme
 	#---------------------------------------------
-	set_inst_qt_env
+
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
+        set_inst_qt_env
 }
 
 
@@ -655,7 +662,11 @@ function start_yast_again () {
 #=============================================
 # 1) Source common script functions
 #---------------------------------------------
+
+# This sources the files at /usr/lib/YaST2/startup/common/
+# as well as /usr/lib/YaST2/bin/yast2-funcs (from yast2.rpm)
 . /usr/lib/YaST2/startup/common/functions.sh
+
 . /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
 
