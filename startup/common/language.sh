@@ -12,43 +12,28 @@
 # DESCRIPTION   : Common used functions used for the YaST2 startup process
 #               : refering to language environment issues
 #               :
-# STATUS        : $Id$
 #----------------
 #
-#----[ check_run_fbiterm ]----#
-function check_run_fbiterm () {
+
 #--------------------------------------------------
-# check whether the system can use fbiterm also
-# handle the CJK language mangle on linux console
-# set flag value in RUN_FBITERM
+# Check whether the locale is supported in ncurses mode
+# and fall back to en_US.UTF-8 if it is not
 # ---
-	RUN_FBITERM=0
-	if test "$MEM_TOTAL" -lt "57344" ; then
-		return
-	fi
-	TTY=`/usr/bin/tty`
+function check_supported_ncurses_locales () {
+        TTY=`/usr/bin/tty`
 	if test "$TERM" = "linux" -a \
 		\( "$TTY" = /dev/console -o "$TTY" != "${TTY#/dev/tty[0-9]}" \);
 	then
-	    # check whether fbiterm can run on console
-	    if test -x /usr/bin/fbiterm && \
-		    /usr/bin/fbiterm echo >/dev/null 2>&1;
-	    then
-		RUN_FBITERM=1
-	    else
-		# use english
-		export LANG=en_US.UTF-8
-		export LC_CTYPE=en_US.UTF-8
-		log "\tfbiterm is not available or it does not work in this environment"
-	    fi
+                # We are no longer using fbiterm to support nontrivial locales
+                # (bsc#1224053), so we fall back to English if we are on the
+                # system console
 
-	    case "$LANG" in
-		# These languages are not properly supported by fbiterm causing YaST to crash
-		# (fate#325746).
-		ar*|bn*|gu*|hi*|km*|mr*|pa*|ta*|th*)
-		    export LANG=en_US.UTF-8
-		    export LC_CTYPE=en_US.UTF-8
-	    esac
+                case "$LANG" in
+                        zh*|ja*|ko*|ar*|bn*|gu*|hi*|km*|mr*|pa*|ta*|th*)
+                                log "\tLanguage $LANG is unsupported in NCurses, falling back to en_US.UTF-8"
+                                export LANG=en_US.UTF-8
+                                export LC_CTYPE=en_US.UTF-8
+                esac
 	fi
 }
 

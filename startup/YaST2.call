@@ -277,6 +277,7 @@ function prepare_for_x11 () {
 
 
 function prepare_for_qt () {
+    # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
     set_inst_qt_env
     prepare_for_x11
 }
@@ -302,11 +303,15 @@ function prepare_for_ncurses () {
 	fi
 	fi
 	#=============================================
-	# Check for FbIterm
+	# Check for supported locales in NCurses
 	#---------------------------------------------
-	check_run_fbiterm
-	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
+        log "\tChecking supported NCurses locales"
+        check_supported_ncurses_locales
+        log "\tLANG: $LANG  LC_CTYPE: $LC_CTYPE"
+
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
 	set_inst_ncurses_env
+
 	#=============================================================
 	# Disable display of status messages on the console, as
 	# controlled via systemd.show_status=0 on the kernel command.
@@ -325,6 +330,7 @@ function prepare_for_ssh () {
 # prepare SSH installation
 # ---
 #
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
 	set_inst_qt_env
 }
 
@@ -362,7 +368,9 @@ function prepare_for_vnc () {
 	#=============================================
 	# Use YaST theme
 	#---------------------------------------------
-	set_inst_qt_env
+
+        # From /usr/lib/YaST2/bin/yast2-funcs (pkg yast2.rpm)
+        set_inst_qt_env
 }
 
 
@@ -533,12 +541,6 @@ function start_yast () {
 	fi
 	export QT_IM_MODULE=xim
 
-	if [ "$RUN_FBITERM" = "1" ]; then
-	    OPT_FBITERM="/usr/bin/fbiterm --"
-	else
-	    OPT_FBITERM=
-	fi
-
 	log "\tMODULE_NAME:  $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:   $Y2_MODE_FLAGS"
 	log "\tMODULE_ARGS:  $Y2_MODULE_ARGS"
@@ -571,9 +573,7 @@ function start_yast () {
         fi
 
 	if [ "$Y2GDB" != "1" ]; then
-	    $OPT_FBITERM \
-                "$Y2START"		\
-		$Y2START_ARGS
+            "$Y2START" $Y2START_ARGS
 	    Y2_EXIT_CODE=$?
 	else
 	    GDBCMDS=/var/lib/YaST2/gdb-cmds
@@ -662,8 +662,10 @@ function start_yast_again () {
 #=============================================
 # 1) Source common script functions
 #---------------------------------------------
+
+# This sources the files at /usr/lib/YaST2/startup/common/
+# as well as /usr/lib/YaST2/bin/yast2-funcs (from yast2.rpm)
 . /usr/lib/YaST2/startup/common/functions.sh
-. /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
 
 
