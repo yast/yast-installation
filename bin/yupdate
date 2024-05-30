@@ -570,7 +570,7 @@ module YUpdate
       when "diff"
         OverlayFS.find_all.map(&:print_diff)
       else
-        InvalidCommand.new(command)
+        InvalidCommand.new(command).run
       end
     end
   end
