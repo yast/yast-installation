@@ -137,7 +137,7 @@ module Yast
 
     def report_messages
       return if Misc.boot_msg.empty?
-      return if Mode.autoinst
+      return if Mode.auto
 
       # --------------------------------------------------------------
       # Check if there is a message left to display

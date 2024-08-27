@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 27 09:06:22 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't block in AutoYaST upgrade (bsc#1181625)
+- 4.6.13
+
+-------------------------------------------------------------------
 Wed Apr  3 13:39:37 UTC 2024 - Knut Anderssen <kanderssen@suse.com>
 
 - Adapted call for connecting all discovered NVMe-over-Fabrics 
