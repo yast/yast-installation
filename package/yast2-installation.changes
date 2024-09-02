@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep  2 07:55:45 UTC 2024 - locilka@suse.com
+
+- Fixing ptoptions usage in self_update documentation
+
+-------------------------------------------------------------------
 Tue May 14 13:55:18 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Drop fbiterm (bsc#1224053)
