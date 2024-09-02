@@ -198,7 +198,7 @@ certificate fingerprint before importing it.
 
 If there are other issues with the certificate (signed by an unknown certificate
 authority, expired certificate, ...) then you can disable the SSL check by
-the `ptoptions=reg_ssl_verify reg_ssl_verify=0` boot options. But this is
+the `ptoptions=+reg_ssl_verify reg_ssl_verify=0` boot options. But this is
 a security risk and should be used only in a trusted network, using a valid
 SSL certificate should be preferred.
 
