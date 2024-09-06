@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 06 07:14:32 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
+
+- Branch package for SP7 (bsc#1230201)
+
+-------------------------------------------------------------------
 Tue Aug 27 09:06:22 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Don't block in AutoYaST upgrade (bsc#1181625)
