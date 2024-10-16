@@ -26,7 +26,7 @@ module Installation
   # This library provides a simple dialog for setting
   # the admin role specific settings:
   #   - the NTP server names
-  class AdminRoleDialog < CWM::Dialog
+  class MicroOSRoleDialog < CWM::Dialog
     include DhcpNtpServers
 
     def initialize
