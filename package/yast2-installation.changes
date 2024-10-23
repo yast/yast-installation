@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 23 11:18:09 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
+
+- Improve handling spaces when list of blacklisted modules are
+  specified (bsc#1231313)
+- 4.7.1
+
+-------------------------------------------------------------------
 Fri Sep 06 07:14:32 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
 
 - Branch package for SP7 (bsc#1230201)
