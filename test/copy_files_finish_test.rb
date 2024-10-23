@@ -97,6 +97,22 @@ describe Yast::CopyFilesFinishClient do
       subject.write
     end
 
+    it "handles spaces around blacklist files (bsc#1231313)" do
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules")
+        .and_return("moduleA,moduleB , moduleC")
+      allow(::File).to receive(:exist?).with(blacklist_file).and_return(false)
+
+      expect(::File).to receive(:write).with(blacklist_file, String) do |_path, content|
+        expect(content).to_not match(/^$/) # no empty lines
+        expect(content).to match(/# Note: Entries added during installation\/update/)
+        expect(content).to match(/blacklist moduleA/)
+        expect(content).to match(/blacklist moduleB/)
+        expect(content).to match(/blacklist moduleC/)
+      end
+
+      subject.write
+    end
+
     it "copies information about hardware status" do
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/var/lib")
       expect(Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/var\/lib\/hardware/)
