@@ -190,7 +190,7 @@ module Yast
       end
 
       # comma-separated list of modules
-      blacklisted_modules = brokenmodules.split(", ")
+      blacklisted_modules = brokenmodules.split(/\s*,\s*/)
 
       # run before SCR switch
       blacklist_file = ::File.join(
