@@ -147,7 +147,7 @@ module Yast
       if Linuxrc.reboot_timeout
         Report.DisplayMessages(true, Linuxrc.reboot_timeout)
       else
-        # Skip in autoinstallation and autoupgrade mode only if not explicitelly
+        # Skip in autoinstallation and autoupgrade mode only if not explicitly
         # set on command line (bsc#1231522)
         return if Mode.auto
 
