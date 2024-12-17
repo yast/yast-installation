@@ -29,9 +29,15 @@ describe Installation::InstsysPackages do
 
     it "reads the package versions" do
       pkgs = Installation::InstsysPackages.read(test_file)
-      yast2 = pkgs.find { |p| p.name == "yast2" }
 
-      expect(yast2.version).to eq("4.2.67-1.7.x86_64")
+      yast2 = pkgs.find { |p| p.name == "yast2" }
+      yast2_add_on = pkgs.find { |p| p.name == "yast2-add-on" }
+
+      # no "x86_64" suffix
+      expect(yast2.version).to eq("4.2.67-1.7")
+
+      # no "noarch" suffix
+      expect(yast2_add_on.version).to eq("4.2.15-1.30")
     end
   end
 end
