@@ -16,7 +16,7 @@ to learn more about that. This document is mainly about `installation` and
 
 Although _YaST_ sits at the central point of the installation process, it is
 not the only software involved.
-[_Linuxrc_](https://en.opensuse.org/SDB:Linuxrc), which will be started just
+[Linuxrc](https://en.opensuse.org/SDB:Linuxrc), which will be started just
 before _YaST_, is another key player.
 
 _Linuxrc_ sets up the hardware and initializes the installation process. It can
@@ -108,7 +108,7 @@ at `/usr/lib/YaST2/startup/First-Stage`.
 For _YaST_, the installation is now in the `initial`
 [stage](https://github.com/yast/yast-yast2/blob/master/library/general/src/modules/Stage.rb).
 At this point, the `installation` client relies on
-[`inst_worker_initial`](src/clients/inst_worker_initial.rb). You could take a
+[inst_worker_initial](src/clients/inst_worker_initial.rb). You could take a
 look at the documentation about [installation
 clients](doc/installation_clients.md) to learn more.
 
@@ -166,7 +166,7 @@ The scripts which perform these steps live in
 #### inst_worker_continue
 
 The client which drives the second stage is
-[`inst_worker_continue`](src/clients/inst_worker_continue.rb). Of course, it
+[inst_worker_continue](src/clients/inst_worker_continue.rb). Of course, it
 relies on `ProductControl` as `inst_worker_initial` does.
 
 ### YaST2.call

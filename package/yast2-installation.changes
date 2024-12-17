@@ -1,4 +1,364 @@
 -------------------------------------------------------------------
+Wed Oct 23 11:18:09 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
+
+- Improve handling spaces when list of blacklisted modules are
+  specified (bsc#1231313)
+- 5.0.15
+
+-------------------------------------------------------------------
+Wed Oct 16 19:29:19 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
+
+- Fix for previous change which contain typo in class name causing
+  crash in microos installer (gh#yast/yast-installation#1126)
+- 5.0.14
+
+-------------------------------------------------------------------
+Tue Oct 15 09:00:15 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
+
+- Move microos system role dialog from yast2-caasp here to be able
+  to drop yast2-caasp (gh#yast/yast-caasp#49)
+- 5.0.13
+
+-------------------------------------------------------------------
+Mon Sep  9 12:33:25 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't block in AutoYaST upgrade (bsc#1181625)
+- 5.0.12
+
+-------------------------------------------------------------------
+Mon Sep  2 07:55:45 UTC 2024 - locilka@suse.com
+
+- Fixing ptoptions usage in self_update documentation
+
+-------------------------------------------------------------------
+Tue May 14 13:55:18 UTC 2024 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Drop fbiterm (bsc#1224053)
+- 5.0.11
+
+-------------------------------------------------------------------
+Wed May  8 07:22:28 UTC 2024 - Stefan Schubert <schubi@suse.com>
+
+- Added encryption_method and encryption_pbkdf in the product
+  description file (section partitioning/proposal) in order to
+  set the encryption method/pbkdf in the Guided Setup of
+  partitioning (related to bsc#1185291).
+- 5.0.10
+
+-------------------------------------------------------------------
+Fri Apr 26 14:09:15 UTC 2024 - Stefan Schubert <schubi@suse.com>
+
+- Handle SystemdBoot mitigations. (bsc#1220892)
+- 5.0.9
+
+-------------------------------------------------------------------
+Wed Apr  3 13:39:37 UTC 2024 - Knut Anderssen <kanderssen@suse.com>
+
+- Adapted call for connecting all discovered NVMe-over-Fabrics 
+  subsystems (bsc#1222246).
+- 5.0.8
+
+-------------------------------------------------------------------
+Wed Mar 13 14:41:14 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
+
+- Updated self-update URL in the documentation (jsc#PED-4839)
+- 5.0.7
+
+-------------------------------------------------------------------
+Tue Feb  6 16:05:37 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
+
+- Restore the selected products after reloading the package
+  manager, properly install all products for new modules and
+  extensions when upgrading from SLE12 (bsc#1218391)
+- 5.0.6
+
+-------------------------------------------------------------------
+Fri Jan 26 12:26:06 UTC 2024 - Knut Anderssen <kanderssen@suse.com>
+
+- In zVM or KVM installations the cio_ignore kernel argument will 
+  be written only if given (bsc#1210525).
+- 5.0.5
+
+-------------------------------------------------------------------
+Thu Jan 25 10:09:51 UTC 2024 - Knut Anderssen <kanderssen@suse.com>
+
+- Keep cio_ignore kernel argument when present in the parmfile or
+  use the cio_ignore -k output if not and write it always even
+  in zVM and KVM (bsc#1210525).
+- 5.0.4
+
+-------------------------------------------------------------------
+Wed Nov 29 16:27:50 UTC 2023 - Imobach Gonzalez Sosa <igonzalezsosa@suse.com>
+
+- Enclose IPv6 addresses within square brackets when calling
+  the mount command (bsc#1217637).
+- 5.0.3
+
+-------------------------------------------------------------------
+Tue Oct 31 12:40:00 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Refresh repositories with changed URL and reload them again
+  to activate the changes (related to bsc#1215884)
+- 5.0.2
+
+-------------------------------------------------------------------
+Tue Sep  5 09:41:29 UTC 2023 - Josef Reidinger <jreidinger@suse.com>
+
+- Adapt code for changes in yast2-bootloader done for systemd-boot
+  experimental support (jsc#PED-1906)
+- 5.0.1
+
+-------------------------------------------------------------------
+Wed Aug 30 20:16:10 UTC 2023 - Josef Reidinger <jreidinger@suse.cz>
+
+- 5.0.0 (#bsc1185510)
+
+-------------------------------------------------------------------
+Tue Aug 15 08:42:50 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Require awk for use in startup scripts (bsc#1214277)
+- 4.6.7
+
+-------------------------------------------------------------------
+Fri Aug  4 07:09:13 UTC 2023 - Michal Filka <mfilka@suse.com>
+
+- bsc#1213959
+  - Change status label properly when toggling status in the
+    "Previousy used repositories" dialog.
+- 4.6.6 
+
+-------------------------------------------------------------------
+Tue Jul 11 07:20:29 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Fixed yupdate script to properly run pre/post scripts
+  when patching from GitHub (bsc#1213197)
+- 4.6.5
+
+-------------------------------------------------------------------
+Thu Jun 15 15:01:13 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't always enable sshd and open the ssh port (bsc#1211764)
+- 4.6.4
+
+-------------------------------------------------------------------
+Thu May 11 16:44:38 UTC 2023 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Use a larger font for xterm during installation via X resources
+  (bsc#1211267)
+  Details: https://github.com/yast/yast-installation/pull/1085
+  4.6.3
+
+-------------------------------------------------------------------
+Mon Apr  3 12:04:23 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- yupdate - improved Live ISO detection, added "--force" option
+  (related to bsc#1206927)
+- 4.6.2
+
+-------------------------------------------------------------------
+Mon Mar 13 08:49:20 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- Removed unnecessary executable flag from file security_proposal.rb
+  (bsc#1209094)
+- 4.6.1
+
+-------------------------------------------------------------------
+Fri Mar 03 14:44:07 UTC 2023 - Ladislav Slezák <lslezak@suse.cz>
+
+- Bump version to 4.6.0 (bsc#1208913)
+
+-------------------------------------------------------------------
+Wed Jan 25 19:56:12 UTC 2023 - Knut Anderssen <kanderssen@suse.com>
+
+- Connect only NBFT when linuxrc sets UseNBFT (jsc#PED-967)
+- 4.5.15
+
+-------------------------------------------------------------------
+Wed Jan 25 15:25:50 UTC 2023 - Knut Anderssen <kanderssen@suse.com>
+
+- Discover and connect to all NVMe-over-Fabrics subsystems in case
+  that linuxrc sets UseNBFT (jsc#PED-967).
+- 4.5.14
+
+-------------------------------------------------------------------
+Thu Jan 12 07:42:55 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- yupdate - added suport for patching containers (bsc#1207069)
+- 4.5.13
+
+-------------------------------------------------------------------
+Fri Jan  6 12:33:29 UTC 2023 - Ladislav Slezák <lslezak@suse.com>
+
+- yupdate - added suport for patching the D-Installer
+  (bsc#1206927)
+- 4.5.12
+
+-------------------------------------------------------------------
+Mon Dec  5 10:13:28 UTC 2022 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Use default depth for Xvnc, no longer enforce depth 16
+  (bsc#1205585)
+- 4.5.11
+
+-------------------------------------------------------------------
+Thu Nov 24 09:24:34 UTC 2022 - Martin Vidner <mvidner@suse.com>
+
+- Fix hash vs keyword arguments in RSpec expectations (bsc#1204871)
+- 4.5.10
+
+-------------------------------------------------------------------
+Tue Nov 15 13:43:41 UTC 2022 - Ancor Gonzalez Sosa <ancor@suse.com>
+
+- Fixed the help in the installation summary to include the texts
+  from the corresponding proposals (related to jsc#SLE-24764).
+- 4.5.9
+
+-------------------------------------------------------------------
+Tue Nov 15 13:42:41 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Write config for ssg-apply script according to the enabled
+  security policy (part of jsc#SLE-24764).
+
+-------------------------------------------------------------------
+ Tue Nov 15 13:41:41 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Fix copy of entropy pool during installation (bsc#1204559).
+
+-------------------------------------------------------------------
+Tue Nov 15 13:40:41 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not use "xrdb" for setting the "Xft.dpi" value, use a specific
+  YaST tool from the yast2-x11 package (bsc#1201532)
+  (xrdb depends on the C pre-processor increasing the dependencies
+   about of 22MB)
+- Install yast2-x11 only when GUI (libyui-qt) is installed,
+  avoid installing the dependent X libraries in minimal (text mode)
+  installation (bsc#1201966)
+
+-------------------------------------------------------------------
+Thu Oct 20 13:53:14 UTC 2022 - Steffen Winterfeldt <snwint@suse.com>
+
+- add 'repo', 'cd', 'dvd', 'hd', and 'label' schemes to
+  Yast::Transfer::FileFromUrl (jsc#SLE-22578, jsc#SLE-24584)
+- 4.5.8
+
+-------------------------------------------------------------------
+Thu Sep 15 14:04:42 UTC 2022 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Don't set QT_SCALE_FACTOR unless > 1 (bsc#1199020)
+  to avoid forcing QA to recreate all needles for all standard cases
+- 4.5.7
+
+-------------------------------------------------------------------
+Tue Sep 13 12:13:19 UTC 2022 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Directly calculate the Qt scale factor, no longer rely on the
+  Xft.dpi X resource (bsc#1199020)
+- Support YAST_MON_WIDTH_MM=xx at installation boot prompt
+- Support YaST2.call script debugging with FAKE_MON_WIDTH_MM=xx
+- Support up to 392 dpi (up to scale factor 4.0)
+  More details: https://github.com/yast/yast-installation/pull/1057
+- No more console warnings if no EDID (bsc#1203161)
+- 4.5.6
+
+-------------------------------------------------------------------
+Fri Jul 22 11:35:42 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- AutoYaST SecondStage: Revert changes introduced in 4.3.46 running
+  the initscript service before systemd-user-sessions again once
+  systemd patched logind (bsc#1195059, bsc#1200780)
+- 4.5.5
+
+-------------------------------------------------------------------
+Mon Jul 18 16:05:26 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Do not use "xrdb" for setting the "Xft.dpi" value, use a specific
+  YaST tool from the yast2-x11 package (bsc#1201532)
+  (xrdb depends on the C pre-processor increasing the dependencies
+   about of 22MB)
+- Install yast2-x11 only when GUI (libyui-qt) is installed,
+  avoid installing the dependent X libraries in minimal (text mode)
+  installation
+- 4.5.4
+
+-------------------------------------------------------------------
+Wed Jun 15 11:28:30 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Do not restart services when updating the package (bsc#1199480,
+  bsc#1200274)
+- 4.5.3
+
+-------------------------------------------------------------------
+Mon May 23 15:42:10 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- AutoYaST Second Stage: Added a missing dependency to the service
+  to prevent getty-autogeneration listen on 5901 port (bsc#1199746)
+- 4.5.2
+
+-------------------------------------------------------------------
+Mon Apr 25 23:10:17 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Revert changes introduced in v4.3.50 as it produces some ordering
+  cycle issues (bsc#1198294)
+- 4.5.1
+
+-------------------------------------------------------------------
+Wed Apr 06 13:24:58 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Bump version to 4.5.0 (bsc#1198109)
+
+-------------------------------------------------------------------
+Tue Mar 29 09:25:58 UTC 2022 - Martin Vidner <mvidner@suse.com>
+
+- AutoYaST: move custom file creation past user creation so that
+  the element files/file/file_owner actually has an effect
+  (bsc#1196595)
+- 4.4.51
+
+-------------------------------------------------------------------
+Fri Mar 18 11:20:47 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Do not stop xvnc.socket but run the YaST2-Second-Stage and
+  YaST2-Firsboot services before it in order to prevent early
+  vnc connections (bsc#1197265)
+-4.4.50
+
+-------------------------------------------------------------------
+Thu Mar 17 12:46:16 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+
+- Run the YaST2-Second-Stage and YaST2-Firsboot services after
+  purge-kernels to prevent a zypper lock error message
+  (bsc#1196431).
+- 4.4.49
+
+-------------------------------------------------------------------
+Tue Mar  8 19:25:42 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Prevent getty auto-generation because it makes xvnc to fail when
+  it is started in YaST second stage (bsc#1196614).
+- 4.4.48
+
+-------------------------------------------------------------------
+Tue Mar  4 13:14:15 UTC 2022 - José Iván López González <jlopez@suse.com>
+
+- Avoid terminal login prompt when running Second Stage service
+  (bsc#1196594 and related to bsc#1195059).
+- 4.4.47
+
+-------------------------------------------------------------------
+Thu Mar  3 17:58:27 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
+
+- Fixed crash when starting the expert console (bsc#1196724)
+- 4.4.46
+
+-------------------------------------------------------------------
+Mon Feb 28 14:35:31 UTC 2022 - Ancor Gonzalez Sosa <ancor@suse.com>
+
+- Fixed the start of the VNC server during installation. Done by
+  Joan Torres López <joan.torres@suse.com> (bsc#1196201).
+- 4.4.45
+
+-------------------------------------------------------------------
 Tue Feb 22 13:06:51 UTC 2022 - Ladislav Slezák <lslezak@suse.cz>
 
 - Use the default UI theme in SSH installation, the

@@ -972,6 +972,11 @@ This subsection contains the following options.
 
   * `lvm` *(boolean, default: `false`)*
     Whether LVM should be used by default.
+  * `encryption_method` *(`luks1`, `luks2`, default: luks1)
+    Set encryption method in the Guided Setup Partitioning.
+  * `encryption_pbkdf` *(`argon2i`, `argon2id`, `pbkdf2`, default: `pbkdf2`)
+    Password-Based Key Derivation Function if `luks2` has been selected
+    in the Guided Setup Partitioning.
   * `separate_vgs` *(boolean, default: `false`)*
     Whether every volume specifying a separate_vg_name should be created as
     isolated LVM Volume Group instead include them in the "system" group.
@@ -1264,7 +1269,7 @@ To enable the self update feature (FATE#319716), the location of the update
 repository should be defined in the control file.
 
 ```
-    <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url</self_update_url>
+    <self_update_url>https://installer-updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url</self_update_url>
 ```
 *$os_release_version* will be replaced by the *VERSION* entry in */etc/os-release* file. E.g. "15-SP2"
 *$arch* reflects the architecture of the current installation system.

@@ -3,8 +3,14 @@
 require_relative "../test_helper"
 require_yupdate
 
-describe YUpdate::InstSys do
+describe YUpdate::System do
   let(:file) { "/.packages.initrd" }
+
+  before do
+    allow(File).to receive(:exist?).with(file).and_return(false)
+    allow(described_class).to receive(:`).with("mount").and_return("")
+    allow(described_class).to receive(:`).with("systemd-detect-virt --container").and_return("")
+  end
 
   describe ".check!" do
     context "when running in an inst-sys" do
@@ -18,9 +24,20 @@ describe YUpdate::InstSys do
       end
     end
 
+    context "when running on a live medium" do
+      before do
+        expect(described_class).to receive(:`).with("mount")
+          .and_return("LiveOS_rootfs on / type overlay (rw,relatime)")
+      end
+
+      it "does not exit" do
+        expect(described_class).to_not receive(:exit)
+        described_class.check!
+      end
+    end
+
     context "when running in a normal system" do
       before do
-        expect(File).to receive(:exist?).with(file).and_return(false)
         allow(described_class).to receive(:exit).with(1)
       end
 
@@ -32,7 +49,7 @@ describe YUpdate::InstSys do
 
       it "prints an error on STDERR" do
         _stdout, stderr = capture_stdio { described_class.check! }
-        expect(stderr).to match(/ERROR: .*inst-sys/)
+        expect(stderr).to start_with("ERROR: This script can only work")
       end
     end
   end

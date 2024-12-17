@@ -148,9 +148,9 @@ the start.
 By default this will use port 8000, if the server uses another port just add
 `:` followed by the port number.
 
-*Note: Make sure the server port is open in the firewall configuration,
+Note: Make sure the server port is open in the firewall configuration,
 see the [documentation](https://github.com/yast/yast-rake/#server) for
-more details.*
+more details.
 
 #### Patching Multiple Packages
 
@@ -222,6 +222,28 @@ state.
   contain the original files from the installation medium. That also means the
   AutoYaST second stage cannot be fixed by `yupdate`, you need to build
   a DUD, see below.
+
+## Hooks
+
+The source code might contain several callback scripts which are executed
+at specific points. The goal is to allow adjusting the target system before
+or after installing new files.
+
+- `.yupdate.pre` - This script is executed *before* installing the package (before
+  running `rake install`). It can prepare the system for installation, install
+  required packages.
+- `.yupdate.post` - This script is executed *after* installing the package (after
+  running `rake install`). It can activate the changes, restart services.
+
+When a hook script fails then yupdate aborts the update process immediately.
+
+## Environment Variables
+
+The yupdate script uses these environment variables:
+
+- `VERBOSE` - When set to `1` the output of the `rake install` command is
+  displayed in the terminal. By default it is hidden because the output is too
+  long and verbose. Use this option for debugging installation problems.
 
 ## Alternative
 

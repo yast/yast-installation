@@ -125,6 +125,18 @@ module Installation
       update_urls
       process_repos
       remove_services
+
+      # reload the package manager to activate the changes,
+      # remember the selected products/packages (ignore the dependencies selected by solver)
+      selected = Y2Packager::Resolvable.find(status: :selected, transact_by: :appl_high)
+
+      Yast::Pkg.SourceSaveAll
+      Yast::Pkg.SourceFinishAll
+      Yast::Pkg.SourceRestore
+      Yast::Pkg.SourceLoad
+
+      # restore the selection
+      selected.each { |s| Yast::Pkg.ResolvableInstall(s.name, s.kind) }
     end
 
   private
@@ -167,6 +179,9 @@ module Installation
     def update_urls
       new_urls.each do |repo, url|
         repo.url = url
+
+        # if the repository will be enabled refresh the content
+        repo.refresh(force: true) if status_map[repo] == :enabled
       end
     end
 

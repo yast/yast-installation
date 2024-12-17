@@ -81,9 +81,9 @@ module Installation
         commands
       end
 
-      def respond_to_missing?(_method_name)
+      def respond_to_missing?(_method_name, _include_private = false)
         # method missing is not used for fancy meta programming,
-        # but to provide different behavior. No not respond to anything missing.
+        # but to provide different behavior. Not to respond to anything missing.
         false
       end
 

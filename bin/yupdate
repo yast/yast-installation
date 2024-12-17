@@ -34,8 +34,8 @@ module YUpdate
   # version of the script
   class Version
     MAJOR = 0
-    MINOR = 1
-    PATCH = 3
+    MINOR = 2
+    PATCH = 1
 
     STRING = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
   end
@@ -109,10 +109,16 @@ module YUpdate
   # a simple /etc/install.inf parser/writer,
   # we need to disable the YaST self-update feature to avoid conflicts
   class InstallInf
+    PATH = "/etc/install.inf".freeze
+
     attr_reader :path
 
+    def self.exist?(path = PATH)
+      File.exist?(path)
+    end
+
     # read the file
-    def initialize(path = "/etc/install.inf")
+    def initialize(path = PATH)
       @path = path
       @values = File.read(path).lines.map(&:chomp)
     end
@@ -476,7 +482,10 @@ module YUpdate
 
       src_dir = File.dirname(rakefile)
       Dir.chdir(src_dir) do
-        `rake install DESTDIR=#{target.shellescape} 2> /dev/null`
+        redir = ENV["VERBOSE"] == "1" ? "" : " > /dev/null 2>&1"
+        unless system("rake install DESTDIR=#{target.shellescape} #{redir}")
+          raise "rake install failed"
+        end
       end
     end
 
@@ -561,39 +570,79 @@ module YUpdate
       when "diff"
         OverlayFS.find_all.map(&:print_diff)
       else
-        InvalidCommand.new(command)
+        InvalidCommand.new(command).run
       end
     end
   end
 
-  # inst-sys test
-  class InstSys
-    # check if the script is running in the inst-sys,
+  # inst-sys, live medium or container test
+  class System
+    # check if the script is running in the inst-sys, live medium or in a container
     # the script might not work as expected in an installed system
     # and using OverlayFS is potentially dangerous
     def self.check!
       # the inst-sys contains the /.packages.initrd file with a list of packages
       return if File.exist?("/.packages.initrd")
 
+      mount_out = `mount`
+      # live medium uses overlay FS or device mapper for the root
+      if mount_out.match?(/^\w+ on \/ type overlay/) ||
+          mount_out.match?(/^\/dev\/mapper\/live-rw on \/ /)
+
+        return
+      end
+
+      return if in_container?
+
       # exit immediately if running in an installed system
-      warn "ERROR: This script can only work in the installation system (inst-sys)!"
+      warn "ERROR: This script can only work in the installation system (inst-sys), " \
+           "live medium or in a container!"
+      warn "If you are sure it is OK to use the script add the --force option."
       exit 1
     end
+
+    # Check whether running in a container.
+    # @return [Boolean] `true` if running inside a container, `false` otherwise
+    def self.in_container?
+      # use the systemd-detect-virt tool for container detection
+      detected = `systemd-detect-virt --container`.chomp
+
+      # the variable contains the detected system, like "docker" or "podman"
+      # see "man systemd-detect-virt" for details
+      !detected.empty? && detected != "none"
+    # systemd-detect-virt tool not present
+    rescue Errno::ENOENT
+      # fallback to detection by special files, this is less reliable
+      # (the files might be removed in the future) and does not
+      # support all container virtualizations
+
+      # docker or podman environment
+      File.exist?("/.dockerenv") || File.exist?("/run/.containerenv")
+    end
+
+    private_class_method :in_container?
   end
 
   # parse the command line options
   class Options
     def self.parse(argv)
+      force = argv.include?("--force")
+      if force
+        argv.delete("--force")
+        # pass the force option to the executed scripts
+        ENV["YUPDATE_FORCE"] = "1"
+      end
+
       command = argv.shift
 
       case command
       when "version"
         VersionCommand.new
       when "overlay"
-        InstSys.check!
+        System.check! unless force
         OverlayCommand.new(argv)
       when "patch"
-        InstSys.check!
+        System.check! unless force
         PatchCommand.new(argv)
       when "servers"
         ServersCommand.new(argv)
@@ -668,7 +717,9 @@ module YUpdate
       # add the default "yast" GitHub organization if missing
       repo = "yast/#{repo}" unless repo.include?("/")
       downloader = GithubDownloader.new(repo, branch)
-      install_tar(downloader)
+      # the GitHub tarballs have all content in a "<repo>-<branch>" subdirectory
+      dir = repo.split("/", 2).last + "-" + branch
+      install_tar(downloader, dir)
     end
 
     def install_from_tar(url)
@@ -700,10 +751,32 @@ module YUpdate
       g.install_required_gems
     end
 
-    def install_tar(downloader)
+    def run_pre_script(download_dir)
+      script = File.join(download_dir, ".yupdate.pre")
+      run_script(script)
+    end
+
+    def run_post_script(download_dir)
+      script = File.join(download_dir, ".yupdate.post")
+      run_script(script)
+    end
+
+    def run_script(script)
+      return unless File.exist?(script)
+
+      puts "Running script #{File.basename(script)}..."
+      raise "Script #{File.basename(script)} failed" unless system(script)
+    end
+
+    # extract the tarball into a temporary directory and install it
+    # @param downloader the downloader to use
+    # @param subdir subdirectory in the source tarball
+    def install_tar(downloader, subdir = "")
       Dir.mktmpdir do |download_dir|
         downloader.extract_to(download_dir)
+        run_pre_script(File.join(download_dir, subdir))
         install_sources(download_dir)
+        run_post_script(File.join(download_dir, subdir))
       end
     end
 
@@ -712,6 +785,8 @@ module YUpdate
 
     # disable the self update in the install.inf file
     def disable_self_update
+      return unless InstallInf.exist?
+
       inf = InstallInf.new
       return if inf[SELF_UPDATE_KEY] == "0"
 

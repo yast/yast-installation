@@ -235,6 +235,8 @@ module Yast
     end
 
     def SetDiskActivationModule
+      # Connect all the discovered NVMe-over-Fabrics subsystems (jse#PED-318)
+      connect_nbft if Linuxrc.InstallInf("UseNBFT") == "1"
       # update the workflow according to current situation
       # disable disks activation if not needed
       iscsi = Linuxrc.InstallInf("WithiSCSI") == "1"
@@ -247,6 +249,16 @@ module Yast
       end
 
       nil
+    end
+
+    # Convenience method for discovering and connecting all NVMe over Fabrics subsystems
+    def connect_nbft
+      require "yast2/execute"
+
+      # Replaced 'connect-nbft' by 'connect-all --nbft' (bsc#1222246).
+      Yast::Execute.locally!("nvme", "connect-all", "--nbft")
+    rescue Cheetah::ExecutionFailed
+      Builtins.y2error("Error connecting NBFT")
     end
   end
 end

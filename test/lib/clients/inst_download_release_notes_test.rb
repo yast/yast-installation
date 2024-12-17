@@ -58,10 +58,11 @@ describe Yast::InstDownloadReleaseNotesClient do
     end
 
     it "sets release notes content" do
-      expect(Yast::UI).to receive(:SetReleaseNotes).with(
+      relnotes_texts = {
         "SLES" => "SLES RN",
         "SDK"  => "SDK RN"
-      )
+      }
+      expect(Yast::UI).to receive(:SetReleaseNotes).with(relnotes_texts)
       client.main
     end
 

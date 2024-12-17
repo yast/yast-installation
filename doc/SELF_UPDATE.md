@@ -66,7 +66,7 @@ and select the language from the list. Or use the `language` boot option, e.g.
 `language=de_DE`.
 
 If you want to use a different keyboard layout for the console then use the
-[`keytable`](https://en.opensuse.org/SDB:Linuxrc#p_keytable) boot option.
+[keytable](https://en.opensuse.org/SDB:Linuxrc#p_keytable) boot option.
 
 ## Network Setup
 
@@ -156,7 +156,7 @@ The URL of the update repository is evaluated in this order:
 
    ```xml
    <globals>
-     <self_update_url>https://updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url>
+     <self_update_url>https://installer-updates.suse.com/SUSE/Updates/SLE-INSTALLER/$os_release_version/$arch/update</self_update_url>
    </globals>
    ```
 
@@ -198,7 +198,7 @@ certificate fingerprint before importing it.
 
 If there are other issues with the certificate (signed by an unknown certificate
 authority, expired certificate, ...) then you can disable the SSL check by
-the `ptoptions=reg_ssl_verify reg_ssl_verify=0` boot options. But this is
+the `ptoptions=+reg_ssl_verify reg_ssl_verify=0` boot options. But this is
 a security risk and should be used only in a trusted network, using a valid
 SSL certificate should be preferred.
 

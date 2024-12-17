@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.4.44
+Version:        5.0.15
 Release:        0
 Summary:        YaST2 - Installation Parts
 License:        GPL-2.0-only
@@ -27,10 +27,10 @@ Source1:        YaST2-Second-Stage.service
 Source2:        YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
-# Y2Packager::NewRepositorySetup
-BuildRequires:  yast2 >= 4.4.42
-# CIOIgnore
-BuildRequires:  yast2-bootloader
+# Kernel: Use is_zvm from Yast::Arch
+BuildRequires:  yast2 >= 5.0.5
+# systemd-boot kernel parameters
+BuildRequires:  yast2-bootloader >= 5.0.9
 # storage-ng based version
 BuildRequires:  yast2-country >= 3.3.1
 BuildRequires:  yast2-devtools >= 3.1.10
@@ -42,8 +42,8 @@ BuildRequires:  yast2-network >= 4.4.12
 BuildRequires:  yast2-packager >= 4.4.13
 # yast/rspec/helpers.rb
 BuildRequires:  yast2-ruby-bindings >= 4.4.7
-# For LSM classes
-BuildRequires:  yast2-security
+# Support for SecurityPolicies
+BuildRequires:  yast2-security >= 4.5.3
 # using /usr/bin/udevadm
 BuildRequires:  yast2-storage-ng >= 4.2.71
 # Y2Users
@@ -58,6 +58,8 @@ Requires:       coreutils
 Requires:       gzip
 # use in startup scripts
 Requires:       initviocons
+# bsc#1214277; require awk, not gawk, to allow for lighterweight alternatives like busybox
+Requires:       awk
 # Needed call /sbin/ip in vnc.sh/network.sh
 Requires:       iproute2
 # for the first/second stage of installation
@@ -69,12 +71,11 @@ Requires:       iproute2
 Requires:       pciutils
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:       tar
-# xrdb is used to set Xft.dpi in YaST2.call
-Requires:       xrdb
-# Y2Packager::NewRepositorySetup
-Requires:       yast2 >= 4.4.42
-# CIOIgnore
-Requires:       yast2-bootloader
+# /usr/lib/YaST2/bin/xftdpi, install only when the GUI is installed
+Requires:       (yast2-x11 >= 4.5.1 if libyui-qt)
+# Y2Packager::Repository.refresh
+Requires:       yast2 >= 5.0.3
+Requires:       yast2-bootloader >= 5.0.9
 Requires:       yast2-country >= 3.3.1
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -96,6 +97,8 @@ Requires:       yast2-services-manager >= 3.2.1
 Requires:       yast2-storage-ng >= 4.0.175
 # Y2Users
 Requires:       yast2-users >= 4.4.2
+# Support for SecurityPolicies
+Requires:      yast2-security >= 4.5.3
 PreReq:         %fillup_prereq
 Recommends:     yast2-add-on
 Recommends:     yast2-firewall
@@ -118,11 +121,12 @@ Conflicts:      yast2-mouse < 2.18.0
 Conflicts:      yast2-pkg-bindings < 2.17.25
 # Registration#get_updates_list does not handle exceptions
 Conflicts:      yast2-registration < 3.2.3
-# Added support for selecting the desired LSM during installation
-Conflicts:      yast2-security < 4.4.2
 # Top bar with logo
 Conflicts:      yast2-ycp-ui-bindings < 3.1.7
 Obsoletes:      yast2-installation-devel-doc
+# we provide here only client that is used in microos from caasp package
+# and those clients conflicts on file level
+Conflicts:      yast2-caasp <= 5.0.0
 BuildArch:      noarch
 %if 0%{?suse_version} >= 1210
 %{systemd_requires}
@@ -182,7 +186,7 @@ systemctl enable YaST2-Firstboot.service
 %service_del_preun YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %postun
-%service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_del_postun_without_restart YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %files
 %license COPYING
