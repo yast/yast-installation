@@ -150,6 +150,7 @@ module Yast
         # Skip in autoinstallation and autoupgrade mode only if not explicitelly
         # set on command line (bsc#1231522)
         return if Mode.auto
+
         # Display the message and wait for user to accept it
         # also live installation - bzilla #297691
         Report.DisplayMessages(true,
