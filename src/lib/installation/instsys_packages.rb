@@ -27,6 +27,9 @@ module Installation
         name, version = /^(\S+) \[(\S+)\]/.match(line)[1, 2]
         next unless name && version
 
+        # remove the architecture suffix
+        version.sub!(/\.(noarch|aarch64|i[3-6]86|ppc64|ppc64le|s390x?|x86_64)$/, "")
+
         # nil repository ID
         packages << Y2Packager::Package.new(name, nil, version)
       end
