@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Dec 17 15:56:21 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
+
+- skip showing reboot message in autoinstallation and
+  autoupgrade mode only if not explicitly set on command line
+  (bsc#1231522)
+- 4.7.3
+
+-------------------------------------------------------------------
 Tue Dec 17 15:05:22 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
 
 - Self-update fix (bsc#1234661)

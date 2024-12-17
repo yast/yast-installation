@@ -137,7 +137,6 @@ module Yast
 
     def report_messages
       return if Misc.boot_msg.empty?
-      return if Mode.auto
 
       # --------------------------------------------------------------
       # Check if there is a message left to display
@@ -148,6 +147,10 @@ module Yast
       if Linuxrc.reboot_timeout
         Report.DisplayMessages(true, Linuxrc.reboot_timeout)
       else
+        # Skip in autoinstallation and autoupgrade mode only if not explicitly
+        # set on command line (bsc#1231522)
+        return if Mode.auto
+
         # Display the message and wait for user to accept it
         # also live installation - bzilla #297691
         Report.DisplayMessages(true,
