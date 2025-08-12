@@ -6,19 +6,3 @@ log "======================"
 # 8) provide configuration files
 #---------------------------------------------
 log "\tNo configuration files needs to be provided..."
-
-#=============================================
-# 8.1) setup virtual console
-#---------------------------------------------
-
-if ! skip_initviocons ; then
-	eval `/bin/initviocons -e`
-
-	#export TERM only, initviocons takes care about
-        #LINES and COLUMNS automatically (#184179)
-	export TERM
-	log "\tSetup virtual console:"
-	log "\tLines:   $LINES"
-	log "\tColumns: $COLUMNS"
-	log "\tType:    $TERM"
-fi

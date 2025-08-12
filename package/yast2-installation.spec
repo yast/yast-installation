@@ -56,8 +56,6 @@ BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
 Requires:       augeas-lenses
 Requires:       coreutils
 Requires:       gzip
-# use in startup scripts
-Requires:       initviocons
 # bsc#1214277; require awk, not gawk, to allow for lighterweight alternatives like busybox
 Requires:       awk
 # Needed call /sbin/ip in vnc.sh/network.sh
