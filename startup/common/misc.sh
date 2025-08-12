@@ -233,25 +233,6 @@ function load_module () {
 	/sbin/modprobe $1
 }
 
-#----[ skip_initviocons ]----#
-function skip_initviocons () {
-#------------------------------------------------------
-# check if the call to initviocons must be skipped
-# ---
-	# bnc #173426#c17: it is missing on single-CD repos
-	if [ ! -x /bin/initviocons ] ; then
-		return 0
-	fi
-
-	# initviocons should only be required on consoles, see bnc #800790
-	TTY=`/usr/bin/tty`
-	if [ "$TTY" != "/dev/console" -a "$TTY" == "${TTY#/dev/tty[0-9]}" ] ; then
-		return 0
-	fi
-
-	grep -qw TERM /proc/cmdline && return 0 || return 1
-}
-
 function log_export()
 {
     IFS_SAVE=$IFS
