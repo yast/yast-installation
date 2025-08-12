@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 12 13:45:09 UTC 2025 - Josef Reidinger <jreidinger@suse.com>
+
+- Drop dependency and usage of initviocons (bsc#1247578)
+- 5.0.17
+
+-------------------------------------------------------------------
 Tue Dec 17 15:56:21 UTC 2024 - Josef Reidinger <jreidinger@suse.com>
 
 - skip showing reboot message in autoinstallation and
