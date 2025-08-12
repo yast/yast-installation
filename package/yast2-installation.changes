@@ -245,7 +245,8 @@ Tue Nov 15 13:42:41 UTC 2022 - José Iván López González <jlopez@suse.com>
 - Write config for ssg-apply script according to the enabled
   security policy (part of jsc#SLE-24764).
 
- Tue Nov 15 13:41:41 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
+-------------------------------------------------------------------
+Tue Nov 15 13:41:41 UTC 2022 - Knut Anderssen <kanderssen@suse.com>
 
 - Fix copy of entropy pool during installation (bsc#1204559).
 
