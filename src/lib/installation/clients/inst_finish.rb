@@ -409,8 +409,8 @@ module Yast
       else
         [
           "cio_ignore", # needs to be run before initrd is created (bsc#933177)
-          (ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true) ? "kdump" : "",
-          "bootloader"
+          "bootloader",
+          (ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true) ? "kdump" : ""
         ]
       end
     end
