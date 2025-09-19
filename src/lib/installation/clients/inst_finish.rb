@@ -410,6 +410,10 @@ module Yast
         [
           "cio_ignore", # needs to be run before initrd is created (bsc#933177)
           "bootloader",
+          # Writing kdump settings must be after writing bootloader settings.
+          # Otherwise mkdumprd has no information about the installed kernel.
+          # If kdump has to set bootloader settings, the bootloader write function
+          # will be called again (bsc#1249370, bsc#1226676, bsc#1226676)
           (ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true) ? "kdump" : ""
         ]
       end
