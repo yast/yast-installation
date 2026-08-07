@@ -260,7 +260,7 @@ correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
 
 When using AutoYaST, this behavior can be modified including the
-[/general/signature-handling](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881381840)
+[/general/signature-handling](https://documentation.suse.com/sles/15-SP7/single-html/SLES-autoyast/#CreateProfile-General-signature)
 section in the profile.
 
 ### SLP Discovery
